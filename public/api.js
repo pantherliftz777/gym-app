@@ -1,6 +1,6 @@
 /* FitFuel API client — server se data save/load. Server na mile to localStorage pe chalta rehta hai. */
 const FF = {
-  token: localStorage.getItem('ff_token') || null,
+  token: typeof localStorage !== 'undefined' ? (localStorage.getItem('ff_token') || null) : null,
   user: null,
   online: false,
   _syncQ: [],

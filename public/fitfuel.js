@@ -1,6 +1,9 @@
 /* ================= FitFuel app ================= */
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+if (typeof window === 'undefined' || typeof document === 'undefined') {
+  if (typeof module !== 'undefined') module.exports = (req, res) => { if (res) { res.writeHead(200); res.end('FitFuel'); } };
+} else {
+const $ = s => typeof document !== 'undefined' ? document.querySelector(s) : null;
+const $$ = s => typeof document !== 'undefined' ? [...document.querySelectorAll(s)] : [];
 const today = () => new Date().toISOString().slice(0,10);
 const store = {
   get:(k,d)=>{ try{ const v=localStorage.getItem('ff_'+k); return v?JSON.parse(v):d; }catch(e){ return d; } },
@@ -1349,3 +1352,4 @@ async function boot(){
   dbBadge(); renderUser(); renderPlanPage(); renderWorkouts(); renderAll(); renderProfileModal();
 }
 boot();
+}
