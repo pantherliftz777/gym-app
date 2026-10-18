@@ -9,7 +9,16 @@ const { DatabaseSync } = require('node:sqlite');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
-const DB_PATH = path.join(ROOT, 'fitfuel.db');
+let DB_PATH = path.join(ROOT, 'fitfuel.db');
+if (process.env.VERCEL) {
+  const tmpDb = path.join('/tmp', 'fitfuel.db');
+  try {
+    if (!fs.existsSync(tmpDb) && fs.existsSync(DB_PATH)) {
+      fs.copyFileSync(DB_PATH, tmpDb);
+    }
+  } catch (e) {}
+  DB_PATH = tmpDb;
+}
 
 /* ---------- DATABASE ---------- */
 const db = new DatabaseSync(DB_PATH);
@@ -342,7 +351,8 @@ const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p === '/') p = '/index.html';
-  const file = path.normalize(path.join(ROOT, p));
+  let file = path.normalize(path.join(ROOT, 'public', p));
+  if (!fs.existsSync(file)) file = path.normalize(path.join(ROOT, p));
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
   fs.readFile(file, (err, buf) => {
     if (err) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
@@ -351,16 +361,27 @@ function serveStatic(req, res) {
   });
 }
 
-const server = http.createServer(async (req, res) => {
+async function requestHandler(req, res) {
   try {
-    const key = req.method + ' ' + new URL(req.url, 'http://x').pathname;
+    const parsed = new URL(req.url, 'http://localhost');
+    let pathname = parsed.pathname;
+    const matched = req.headers['x-matched-path'];
+    if (matched && matched.startsWith('/api/')) pathname = matched;
+    const key = req.method + ' ' + pathname;
     if (routes[key]) return await routes[key](req, res);
-    if (key.startsWith('GET /api/')) return json(res, 404, { error: 'Unknown API route' });
+    if (key.startsWith('GET /api/') || key.startsWith('POST /api/') || key.startsWith('DELETE /api/')) {
+      return json(res, 404, { error: 'Unknown API route' });
+    }
     if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(req, res);
     res.writeHead(405); res.end();
   } catch (e) {
     json(res, 500, { error: 'Server error: ' + e.message });
   }
-});
-server.listen(PORT, '0.0.0.0', () => console.log('🔥 FitFuel running on port ' + PORT + ' (DB: fitfuel.db)'));
-module.exports = app;
+}
+
+if (require.main === module) {
+  const server = http.createServer(requestHandler);
+  server.listen(PORT, '0.0.0.0', () => console.log('🔥 FitFuel running on port ' + PORT + ' (DB: ' + DB_PATH + ')'));
+}
+
+module.exports = requestHandler;

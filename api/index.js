@@ -1,2 +1,5 @@
-﻿const app = require('../server');
-module.exports = app;
+const requestHandler = require('../server');
+
+module.exports = (req, res) => {
+  return requestHandler(req, res);
+};
