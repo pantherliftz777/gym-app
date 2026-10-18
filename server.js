@@ -48,7 +48,12 @@ const hashPass = (pass, salt) =>
   crypto.scryptSync(pass, salt, 64).toString('hex');
 const todayStr = () => new Date().toISOString().slice(0, 10);
 const json = (res, code, obj) => {
-  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.writeHead(code, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+  });
   res.end(JSON.stringify(obj));
 };
 const readBody = req => new Promise((resolve, reject) => {
@@ -327,19 +332,38 @@ function serveStatic(req, res) {
 
 async function requestHandler(req, res) {
   try {
-    let pathname = new URL(req.url, 'http://localhost').pathname;
-    const orig = req.headers['x-forwarded-uri'] || req.headers['x-invoke-path'] || req.headers['x-matched-path'];
-    if (orig) {
-      const p = new URL(orig, 'http://localhost').pathname;
-      if (p.startsWith('/api/')) pathname = p;
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      });
+      return res.end();
     }
-    if (req.headers['x-now-route-matches']) {
-      const m = /1=([^&]+)/.exec(req.headers['x-now-route-matches']);
-      if (m) pathname = '/api/' + decodeURIComponent(m[1]);
+
+    const parsed = new URL(req.url, 'http://localhost');
+    let pathname = parsed.pathname;
+    
+    // 1. Check path param from Vercel rewrite (?path=auth/register)
+    const qPath = parsed.searchParams.get('path');
+    if (qPath) {
+      pathname = '/api/' + qPath.replace(/^\/+/, '');
+    } else {
+      // 2. Fallbacks from headers
+      const orig = req.headers['x-forwarded-uri'] || req.headers['x-invoke-path'] || req.headers['x-matched-path'];
+      if (orig) {
+        const p = new URL(orig, 'http://localhost').pathname;
+        if (p.startsWith('/api/')) pathname = p;
+      }
+      if (req.headers['x-now-route-matches']) {
+        const m = /1=([^&]+)/.exec(req.headers['x-now-route-matches']);
+        if (m) pathname = '/api/' + decodeURIComponent(m[1]);
+      }
     }
+
     const key = req.method + ' ' + pathname;
     if (routes[key]) return await routes[key](req, res);
-    if (key.startsWith('GET /api/') || key.startsWith('POST /api/') || key.startsWith('DELETE /api/')) {
+    if (key.startsWith('GET /api/') || key.startsWith('POST /api/') || key.startsWith('PUT /api/') || key.startsWith('DELETE /api/')) {
       return json(res, 404, { error: 'Unknown API route: ' + key });
     }
     if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(req, res);

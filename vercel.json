@@ -2,8 +2,8 @@
   "outputDirectory": "public",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
+      "source": "/api/:path*",
+      "destination": "/server.js?path=:path*"
     }
   ]
 }
