@@ -1,1 +1,27 @@
-﻿{"version":2,"builds":[{"src":"server.js","use":"@vercel/node"}],"routes":[{"src":"(.*)","dest":"server.js"}]}
+﻿{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "{index.html,styles.css,app.js,api.js,data.js}",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/(styles\\.css|app\\.js|api\\.js|data\\.js|favicon\\.ico)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

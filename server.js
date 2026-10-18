@@ -363,3 +363,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 server.listen(PORT, '0.0.0.0', () => console.log('🔥 FitFuel running on port ' + PORT + ' (DB: fitfuel.db)'));
+module.exports = app;
