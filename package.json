@@ -1,0 +1,9 @@
+{
+  "name": "fitfuel",
+  "version": "1.0.0",
+  "description": "FitFuel — calorie & workout tracker with real database, tracking, nutrients panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
