@@ -327,14 +327,20 @@ function serveStatic(req, res) {
 
 async function requestHandler(req, res) {
   try {
-    const parsed = new URL(req.url, 'http://localhost');
-    let pathname = parsed.pathname;
-    const matched = req.headers['x-matched-path'];
-    if (matched && matched.startsWith('/api/')) pathname = matched;
+    let pathname = new URL(req.url, 'http://localhost').pathname;
+    const orig = req.headers['x-forwarded-uri'] || req.headers['x-invoke-path'] || req.headers['x-matched-path'];
+    if (orig) {
+      const p = new URL(orig, 'http://localhost').pathname;
+      if (p.startsWith('/api/')) pathname = p;
+    }
+    if (req.headers['x-now-route-matches']) {
+      const m = /1=([^&]+)/.exec(req.headers['x-now-route-matches']);
+      if (m) pathname = '/api/' + decodeURIComponent(m[1]);
+    }
     const key = req.method + ' ' + pathname;
     if (routes[key]) return await routes[key](req, res);
     if (key.startsWith('GET /api/') || key.startsWith('POST /api/') || key.startsWith('DELETE /api/')) {
-      return json(res, 404, { error: 'Unknown API route' });
+      return json(res, 404, { error: 'Unknown API route: ' + key });
     }
     if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(req, res);
     res.writeHead(405); res.end();
