@@ -1623,6 +1623,12 @@ function applyTheme(themeChoice) {
     if (document.body) document.body.classList.remove('dark');
   }
 
+  // Update browser chrome/status bar theme color
+  const metaTheme = $('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', effectiveTheme === 'dark' ? '#080c14' : '#f5f5ef');
+  }
+
   // Sync Topbar theme selector
   const sel = $('#themeSelector');
   if (sel && sel.value !== themeChoice) {
