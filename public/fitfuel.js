@@ -1750,6 +1750,15 @@ $('#markWorkoutDoneBtn').onclick = () => {
 };
 
 /* ---------- Exercise Library View Rendering ---------- */
+const MUSCLE_GROUPS = {
+  Chest: ['All Chest', 'Upper chest', 'Mid chest', 'Lower chest'],
+  Back: ['All Back', 'Lats', 'Upper back & Traps', 'Lower back'],
+  Shoulders: ['All Shoulders', 'Front delts', 'Side delts', 'Rear delts'],
+  Arms: ['All Arms', 'Biceps', 'Triceps', 'Forearms'],
+  Legs: ['All Legs', 'Quads', 'Hamstrings', 'Glutes', 'Calves'],
+  Core: ['All Core', 'Upper abs', 'Lower abs', 'Obliques']
+};
+
 function renderExerciseLibrary() {
   const tabs = $('#muscleTabs');
   if (tabs) {
@@ -2440,7 +2449,7 @@ if ($('#aiChatForm')) {
   };
 }
 
-$('#aiChatChips .ai-chip').forEach(chip => {
+$$('#aiChatChips .ai-chip').forEach(chip => {
   chip.onclick = () => {
     const q = chip.dataset.q;
     if (q) handleUserAiQuery(q);
