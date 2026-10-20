@@ -46,6 +46,8 @@ let workoutsDone = store.get('workoutsDone', []);
 let session = store.get('session', null);
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
+let selectedSubMuscle = 'All Legs';
+let chatHistory = [];
 
 /* ---------- Hydration Calculation from Bodyweight ---------- */
 function calcWaterFromWeight(w, units, creatine, days) {
@@ -120,27 +122,457 @@ const WORKOUT_PLANS = [
 ];
 
 const EXERCISES_LIBRARY = [
-  { name: 'Dumbbell Romanian deadlift', category: 'Legs', sub: 'Hamstrings · Glutes', type: 'DUMBBELL · GYM OR HOME', benefit: 'Strengthens posterior chain and hip-hinge control.', steps: 'Stand tall with soft knees. Push hips back as weights track down your legs, drive through feet to stand.' },
-  { name: 'Goblet squat', category: 'Legs', sub: 'Quads · Glutes · Core', type: 'DUMBBELL · GYM OR HOME', benefit: 'Builds lower-body strength with an upright posture.', steps: 'Hold weight at chest. Sit between hips, keep chest proud, press through whole foot.' },
-  { name: 'Glute bridge', category: 'Legs', sub: 'Glutes · Core', type: 'BODYWEIGHT · HOME', benefit: 'Trains hip extension and glute activation without equipment.', steps: 'Lie on back with knees bent. Squeeze glutes to lift hips, pause, lower with control.' },
-  { name: 'Dumbbell reverse lunge', category: 'Legs', sub: 'Quads · Glutes', type: 'DUMBBELL · GYM OR HOME', benefit: 'Unilateral leg strength, balance, and coordination.', steps: 'Step back softly and bend both knees. Push through front foot to return to standing.' },
-  { name: 'Single-leg RDL', category: 'Legs', sub: 'Hamstrings · Glutes', type: 'BODYWEIGHT OR DUMBBELL · HOME', benefit: 'Challenges balance while targeting hamstrings and glutes.', steps: 'Balance on one foot, hinge at hip, reach opposite leg back keeping hips square.' },
-  { name: 'Calf raise', category: 'Legs', sub: 'Calves', type: 'BODYWEIGHT · GYM OR HOME', benefit: 'Supports ankle stability and lower-leg power.', steps: 'Rise onto balls of feet, pause at peak contraction, lower heels slowly.' },
+  // --- CHEST: Upper, Mid, Lower ---
+  {
+    name: 'Incline Dumbbell Bench Press',
+    category: 'Chest',
+    sub: 'Upper chest',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3-4 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1 (2s lower, 1s stretch pause, explode up)',
+    rxWhy: 'Setting bench to 30° aligns the resistance vector directly with the clavicular head fibers for upper chest hypertrophy.',
+    benefit: 'Maximizes upper chest thickness while allowing natural wrist and shoulder rotation.',
+    steps: 'Set bench to 30-45 degrees. Drive dumbbells up in a slight arc without clanking them at top. Lower slowly under control.'
+  },
+  {
+    name: 'Incline Barbell Bench Press',
+    category: 'Chest',
+    sub: 'Upper chest',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3 sets × 6-8 reps · 2 min rest',
+    rxTempo: 'Tempo: 2-0-1 (Controlled eccentric)',
+    rxWhy: 'High mechanical tension on clavicular pectoralis with heavy overload capability.',
+    benefit: 'Key compound mass builder for dense upper pectorals.',
+    steps: 'Grip slightly wider than shoulder width. Lower bar to upper chest right below collarbone, drive straight up.'
+  },
+  {
+    name: 'Low-to-High Cable Fly',
+    category: 'Chest',
+    sub: 'Upper chest',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1-1 (Squeeze peak for 1s)',
+    rxWhy: 'Provides continuous peak tension at maximum contraction of the upper chest fibers.',
+    benefit: 'Isolates upper chest without tricep fatigue.',
+    steps: 'Set pulleys to bottom. Bring handles up and together towards chin height, squeezing upper chest hard at the top.'
+  },
+  {
+    name: 'Incline Push-up',
+    category: 'Chest',
+    sub: 'Upper chest',
+    type: 'BODYWEIGHT · HOME',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Pause at bottom)',
+    rxWhy: 'Accessible bodyweight angle prioritizing clavicular head with minimal equipment.',
+    benefit: 'Great hypertrophy warm-up or home workout finisher.',
+    steps: 'Hands on sturdy elevated bench or step. Keep torso rigid and lower chest to bench edge, press away.'
+  },
+  {
+    name: 'Flat Barbell Bench Press',
+    category: 'Chest',
+    sub: 'Mid chest',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3-4 sets × 6-8 reps · 2 min rest',
+    rxTempo: 'Tempo: 2-0-1 (Control down, power up)',
+    rxWhy: 'The gold standard for sternal pectoralis recruitment and horizontal pressing strength.',
+    benefit: 'Builds overall chest mass and pushing power.',
+    steps: 'Retract shoulder blades and plant feet firmly. Lower bar to mid-sternum, drive up explosively.'
+  },
+  {
+    name: 'Flat Dumbbell Press',
+    category: 'Chest',
+    sub: 'Mid chest',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1 (1s stretch pause)',
+    rxWhy: 'Deep stretch at bottom recruits high motor units in sternal fibers.',
+    benefit: 'Balanced bilateral hypertrophy with greater range of motion than barbell.',
+    steps: 'Lie flat. Lower dumbbells with elbows at 45-60 degrees until deep chest stretch, press back up.'
+  },
+  {
+    name: 'Dumbbell Floor Press',
+    category: 'Chest',
+    sub: 'Mid chest',
+    type: 'DUMBBELL · HOME OR GYM',
+    rxSetsReps: '3 sets × 10-12 reps · 75s rest',
+    rxTempo: 'Tempo: 2-1-1 (Triceps touch floor gently)',
+    rxWhy: 'Eliminates shoulder strain while maintaining heavy mid-chest tension.',
+    benefit: 'Excellent home alternative for pressing with dumbbells.',
+    steps: 'Lie on floor. Lower until upper arms tap the floor softly, pause, and press up to full extension.'
+  },
+  {
+    name: 'Chest Dips',
+    category: 'Chest',
+    sub: 'Lower chest',
+    type: 'BODYWEIGHT / WEIGHTED · GYM',
+    rxSetsReps: '3 sets × 8-12 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1 (Lean forward 30°)',
+    rxWhy: 'Downward pressing angle directly follows abdominal pectoralis fiber orientation.',
+    benefit: 'Unlocks sharp lower chest definition and serratus activation.',
+    steps: 'Grip parallel bars, lean torso forward 30 degrees, flare elbows slightly, lower until 90 degrees at elbows, drive up.'
+  },
+  {
+    name: 'Decline Dumbbell Press',
+    category: 'Chest',
+    sub: 'Lower chest',
+    type: 'DUMBBELL · GYM',
+    rxSetsReps: '3 sets × 10-12 reps · 75s rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Targets lower costal pectoralis while placing minimal stress on anterior delts.',
+    benefit: 'Creates full lower chest curve and density.',
+    steps: 'Secure legs on decline bench. Press dumbbells straight up over lower chest, lower with control.'
+  },
+  {
+    name: 'High-to-Low Cable Fly',
+    category: 'Chest',
+    sub: 'Lower chest',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Squeeze bottom for 1s)',
+    rxWhy: 'Continuous resistance across the adduction plane of the lower pectoral fibers.',
+    benefit: 'Sharp isolation and mind-muscle pump.',
+    steps: 'Pulleys set high. Step forward, draw handles down and across towards your waist, squeeze lower chest.'
+  },
 
-  { name: 'Dumbbell floor press', category: 'Chest', sub: 'Mid chest · Triceps', type: 'DUMBBELL · GYM OR HOME', benefit: 'Builds chest pressing strength with shoulder safety.', steps: 'Lie on floor with dumbbells. Lower until upper arms tap floor, then press up.' },
-  { name: 'Incline push-up', category: 'Chest', sub: 'Upper chest · Shoulders', type: 'BODYWEIGHT · HOME', benefit: 'Scalable pressing movement for upper body endurance.', steps: 'Hands elevated on sturdy bench. Lower chest to edge, press away keeping body rigid.' },
+  // --- BACK: Lats, Upper Back & Traps, Lower Back ---
+  {
+    name: 'Lat Pulldown',
+    category: 'Back',
+    sub: 'Lats',
+    type: 'CABLE / MACHINE · GYM',
+    rxSetsReps: '3-4 sets × 8-12 reps · 90s rest',
+    rxTempo: 'Tempo: 2-0-1-1 (1s squeeze at collarbone)',
+    rxWhy: 'Optimal downward vertical pull to develop wide latissimus dorsi sweeps.',
+    benefit: 'Builds V-taper back width and pull-up strength.',
+    steps: 'Grip slightly wider than shoulders. Drive elbows down towards back pockets, squeeze lats, control bar back up.'
+  },
+  {
+    name: 'Pull-up / Chin-up',
+    category: 'Back',
+    sub: 'Lats',
+    type: 'BODYWEIGHT · GYM OR HOME',
+    rxSetsReps: '3 sets × 6-10 reps · 2 min rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'High motor recruitment compound pull for lat width and core stabilization.',
+    benefit: 'Fundamental relative strength and back builder.',
+    steps: 'Hang with overhand or neutral grip. Pull chest up to bar by depressing scapula, lower with full control.'
+  },
+  {
+    name: 'Single-Arm Dumbbell Row',
+    category: 'Back',
+    sub: 'Lats',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 10-12 reps each · 60s rest',
+    rxTempo: 'Tempo: 2-0-1 (Drive elbow to hip)',
+    rxWhy: 'Unilateral pull prevents compensation and allows extreme lat stretch and contraction.',
+    benefit: 'Increases lat thickness and corrects muscular imbalances.',
+    steps: 'Support knee on bench. Row dumbbell towards hip keeping elbow tucked close to ribcage, lower slowly.'
+  },
+  {
+    name: 'Barbell Bent-Over Row',
+    category: 'Back',
+    sub: 'Upper back & Traps',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3-4 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Heavy loading across rhomboids, mid-traps, and posterior chain.',
+    benefit: 'Adds dense 3D back thickness and posture power.',
+    steps: 'Hinge at hips at 45°. Pull barbell into lower ribcage leading with elbows, squeeze shoulder blades together.'
+  },
+  {
+    name: 'Face Pull',
+    category: 'Back',
+    sub: 'Upper back & Traps',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 15-20 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Hold external rotation)',
+    rxWhy: 'Targets mid-traps, rhomboids, and rotator cuff for postural balance and shoulder health.',
+    benefit: 'Fixes rounded shoulders and bulletproofs rotator cuff.',
+    steps: 'Rope at eye level. Pull rope towards forehead while rotating hands back, hold peak squeeze for 1 second.'
+  },
+  {
+    name: 'Dumbbell Shrug',
+    category: 'Back',
+    sub: 'Upper back & Traps',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (1s top squeeze, no rolling)',
+    rxWhy: 'Pure vertical scapular elevation targeting upper trapezius fibers.',
+    benefit: 'Builds prominent neck and upper shoulder trap thickness.',
+    steps: 'Hold heavy dumbbells at sides. Elevate shoulders straight up towards ears without rolling shoulders, pause at top.'
+  },
+  {
+    name: 'Conventional Deadlift',
+    category: 'Back',
+    sub: 'Lower back',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3 sets × 5 reps · 3 min rest',
+    rxTempo: 'Tempo: 2-0-1 (Power from floor)',
+    rxWhy: 'Maximum full-body axial loading strengthening spinal erectors, glutes, and traps.',
+    benefit: 'Supreme functional power and total posterior chain density.',
+    steps: 'Bar over midfoot. Hinge down, grip tight, brace core, push floor away through midfoot until locked out.'
+  },
+  {
+    name: 'Hyperextension / Back Extension',
+    category: 'Back',
+    sub: 'Lower back',
+    type: 'BODYWEIGHT / DUMBBELL · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Isolates spinal erectors with safe hip-hinge mechanics.',
+    benefit: 'Prevents lower back pain and builds lumbar endurance.',
+    steps: 'Pad below hips. Hinge forward at waist, contract lower back and glutes to raise torso in line with legs.'
+  },
 
-  { name: 'Single-arm dumbbell row', category: 'Back', sub: 'Lats · Rhomboids', type: 'DUMBBELL · GYM OR HOME', benefit: 'Builds back thickness and balanced pulling strength.', steps: 'Support one hand on bench. Pull dumbbell towards hip without torso twisting, lower slowly.' },
-  { name: 'Dumbbell reverse fly', category: 'Back', sub: 'Rear delts · Rhomboids', type: 'DUMBBELL · GYM OR HOME', benefit: 'Targets posterior shoulders and postural muscles.', steps: 'Hinge forward with flat back. Raise arms wide with soft elbows, control descent.' },
+  // --- SHOULDERS: Front, Side, Rear ---
+  {
+    name: 'Overhead Dumbbell Shoulder Press',
+    category: 'Shoulders',
+    sub: 'Front delts',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3-4 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Primary vertical pressing movement loading anterior deltoid and clavicular fibers.',
+    benefit: 'Broad shoulder caps and upper-body pressing stability.',
+    steps: 'Dumbbells at ear height. Press overhead in a smooth arc until arms extended, lower under control.'
+  },
+  {
+    name: 'Barbell Military Press',
+    category: 'Shoulders',
+    sub: 'Front delts',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3 sets × 6-8 reps · 2 min rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Strict standing press building anterior delt power and core rigidity.',
+    benefit: 'Classic raw shoulder strength benchmark.',
+    steps: 'Rest bar on collarbone. Squeeze glutes and core, press straight up moving head back slightly, lockout overhead.'
+  },
+  {
+    name: 'Dumbbell Lateral Raise',
+    category: 'Shoulders',
+    sub: 'Side delts',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '4 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Slight pinky tilt up)',
+    rxWhy: 'Directly isolates the lateral head of the deltoid responsible for visual shoulder width.',
+    benefit: 'Key exercise for the wide V-taper look.',
+    steps: 'Hold dumbbells at sides. Raise arms in scapular plane (slight forward angle) to shoulder height, lower slowly.'
+  },
+  {
+    name: 'Cable Lateral Raise',
+    category: 'Shoulders',
+    sub: 'Side delts',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 15 reps each · 45s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Delivers continuous tension even at bottom of movement where dumbbells offer zero load.',
+    benefit: 'Maximizes time under tension for stubborn side deltoids.',
+    steps: 'Cables set low behind back. Raise handle out to side, control descent.'
+  },
+  {
+    name: 'Rear Delt Fly / Reverse Pec Deck',
+    category: 'Shoulders',
+    sub: 'Rear delts',
+    type: 'MACHINE / DUMBBELL · GYM',
+    rxSetsReps: '3-4 sets × 15-20 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Hold peak squeeze)',
+    rxWhy: 'Isolates posterior deltoid to complete 3D rounded shoulders and support rotator cuff.',
+    benefit: 'Improves posture and prevents impingement from heavy benching.',
+    steps: 'Sit facing machine or hinge forward with dumbbells. Sweep arms wide leading with elbows, squeeze rear delts.'
+  },
 
-  { name: 'Dumbbell shoulder press', category: 'Shoulders', sub: 'Front delts · Shoulders', type: 'DUMBBELL · GYM OR HOME', benefit: 'Vertical pressing power and shoulder stability.', steps: 'Dumbbells at ear height. Press upward until arms are straight overhead, lower smoothly.' },
-  { name: 'Lateral raise', category: 'Shoulders', sub: 'Side delts', type: 'DUMBBELL · GYM OR HOME', benefit: 'Isolates medial deltoids for broader shoulders.', steps: 'Raise arms out to sides until parallel to floor, lead with elbows, lower slowly.' },
+  // --- ARMS: Biceps, Triceps, Forearms ---
+  {
+    name: 'Incline Dumbbell Bicep Curl',
+    category: 'Arms',
+    sub: 'Biceps',
+    type: 'DUMBBELL · GYM',
+    rxSetsReps: '3 sets × 10-12 reps · 75s rest',
+    rxTempo: 'Tempo: 3-0-1 (Deep stretch at bottom)',
+    rxWhy: 'Shoulder extension on incline puts the long head of the bicep into maximum stretch for growth.',
+    benefit: 'Builds taller bicep peak and arm thickness.',
+    steps: 'Sit on 45° incline bench. Let arms hang straight down, curl weights up supinating wrists, lower with control.'
+  },
+  {
+    name: 'Barbell / EZ-Bar Bicep Curl',
+    category: 'Arms',
+    sub: 'Biceps',
+    type: 'BARBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Permits heaviest bicep loading for maximum mechanical tension.',
+    benefit: 'Supreme overall bicep mass builder.',
+    steps: 'Shoulder width grip. Keep elbows pinned to sides, curl bar to collarbone height, lower smoothly.'
+  },
+  {
+    name: 'Preacher Curl',
+    category: 'Arms',
+    sub: 'Biceps',
+    type: 'EZ-BAR / DUMBBELL · GYM',
+    rxSetsReps: '3 sets × 10-12 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Prevents cheating and isolates short head of bicep for inner arm fullness.',
+    benefit: 'Strict bicep isolation without shoulder assistance.',
+    steps: 'Arms resting flush on preacher pad. Curl bar up to chin, lower with strict control.'
+  },
+  {
+    name: 'Tricep Rope Pushdown',
+    category: 'Arms',
+    sub: 'Triceps',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (Spread rope at bottom)',
+    rxWhy: 'Isolates lateral and medial heads of the triceps with continuous resistance.',
+    benefit: 'Defines horseshoe tricep shape.',
+    steps: 'Pin elbows to sides. Push rope down and flare ends outward at lockout, squeeze triceps for 1s.'
+  },
+  {
+    name: 'Overhead Tricep Extension',
+    category: 'Arms',
+    sub: 'Triceps',
+    type: 'DUMBBELL / CABLE · GYM OR HOME',
+    rxSetsReps: '3 sets × 10-12 reps · 75s rest',
+    rxTempo: 'Tempo: 2-1-1 (Deep stretch)',
+    rxWhy: 'Overhead position stretches the long head of the triceps (which makes up 60% of total arm mass).',
+    benefit: 'Adds massive thickness to the back of the upper arm.',
+    steps: 'Hold dumbbell overhead with both hands. Lower behind head bending at elbows, press straight back up.'
+  },
+  {
+    name: 'Skull Crusher (Lying Triceps Extension)',
+    category: 'Arms',
+    sub: 'Triceps',
+    type: 'EZ-BAR / DUMBBELL · GYM',
+    rxSetsReps: '3 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Heavy free-weight loading targeting long and medial heads simultaneously.',
+    benefit: 'Builds dense lockout pushing strength.',
+    steps: 'Lie flat. Lower bar towards forehead or slightly behind head, extend elbows to press bar back up.'
+  },
+  {
+    name: 'Hammer Curl',
+    category: 'Arms',
+    sub: 'Forearms',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 12 reps · 60s rest',
+    rxTempo: 'Tempo: 2-0-1',
+    rxWhy: 'Targets brachialis and brachioradialis for forearm thickness and elbow joint durability.',
+    benefit: 'Thickens forearms and pushes bicep peak higher.',
+    steps: 'Palms facing each other throughout. Curl straight up without swinging, squeeze at top.'
+  },
 
-  { name: 'Hammer curl', category: 'Arms', sub: 'Biceps · Forearms', type: 'DUMBBELL · GYM OR HOME', benefit: 'Develops bicep peak and forearm grip strength.', steps: 'Palms facing each other. Curl weights up without swinging elbows, squeeze at top.' },
-  { name: 'Overhead tricep extension', category: 'Arms', sub: 'Triceps', type: 'DUMBBELL · GYM OR HOME', benefit: 'Stretches and isolates the long head of the triceps.', steps: 'Hold weight overhead with both hands. Lower behind head bending elbows, press back up.' },
+  // --- LEGS: Quads, Hamstrings, Glutes, Calves ---
+  {
+    name: 'Barbell Back Squat',
+    category: 'Legs',
+    sub: 'Quads',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3-4 sets × 6-8 reps · 2.5 min rest',
+    rxTempo: 'Tempo: 2-1-1 (Hit parallel, explode up)',
+    rxWhy: 'The king of lower body exercises. Full knee and hip flexion drives massive quad and glute hypertrophy.',
+    benefit: 'Builds foundational lower-body power and systemic growth hormone release.',
+    steps: 'Bar across traps. Sit hips back and down until thighs parallel or below, drive up through whole foot.'
+  },
+  {
+    name: 'Bulgarian Split Squat',
+    category: 'Legs',
+    sub: 'Quads',
+    type: 'DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3 sets × 8-10 reps each leg · 90s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Extreme stretch on lead leg quad and glute with zero lower-back compressive stress.',
+    benefit: 'Balances unilateral quad strength and hip mobility.',
+    steps: 'Rear foot elevated on bench. Lower down until front thigh is parallel to ground, drive through front heel.'
+  },
+  {
+    name: 'Leg Extension',
+    category: 'Legs',
+    sub: 'Quads',
+    type: 'MACHINE · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (1s top squeeze)',
+    rxWhy: 'Pure knee extension isolating the rectus femoris and teardrop vastus medialis.',
+    benefit: 'Sharp quad separation and knee tendon strengthening.',
+    steps: 'Sit in machine with pad over ankles. Extend legs fully, hold peak contraction for 1s, lower slowly.'
+  },
+  {
+    name: 'Romanian Deadlift (RDL)',
+    category: 'Legs',
+    sub: 'Hamstrings',
+    type: 'BARBELL / DUMBBELL · GYM OR HOME',
+    rxSetsReps: '3-4 sets × 8-10 reps · 90s rest',
+    rxTempo: 'Tempo: 3-1-1 (3s eccentric stretch)',
+    rxWhy: 'Heavy eccentric stretch on hamstrings triggers powerful hypertrophy signaling.',
+    benefit: 'Supreme hamstring mass and hip-hinge athletics.',
+    steps: 'Soft knees, hips back. Slide weights down thighs until deep hamstring stretch, thrust hips forward to stand.'
+  },
+  {
+    name: 'Lying / Seated Leg Curl',
+    category: 'Legs',
+    sub: 'Hamstrings',
+    type: 'MACHINE · GYM',
+    rxSetsReps: '3 sets × 10-12 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1',
+    rxWhy: 'Isolates knee flexion function of the hamstrings without lower back fatigue.',
+    benefit: 'Complements RDLs for 360-degree hamstring development.',
+    steps: 'Pad behind ankles. Curl heels toward glutes, pause, lower smoothly.'
+  },
+  {
+    name: 'Barbell Hip Thrust',
+    category: 'Legs',
+    sub: 'Glutes',
+    type: 'BARBELL · GYM',
+    rxSetsReps: '3-4 sets × 8-12 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1 (1s peak squeeze at top)',
+    rxWhy: 'Peak glute tension occurs at horizontal hip lockout, where squats offer the least tension.',
+    benefit: 'The #1 exercise for glute size and sprint propulsion.',
+    steps: 'Upper back on bench, bar over hips. Drive through heels to raise hips flush with shoulders, squeeze glutes hard.'
+  },
+  {
+    name: 'Standing Calf Raise',
+    category: 'Legs',
+    sub: 'Calves',
+    type: 'MACHINE / DUMBBELL · GYM OR HOME',
+    rxSetsReps: '4 sets × 12-15 reps · 45s rest',
+    rxTempo: 'Tempo: 2-2-1 (2s deep stretch at bottom, 1s top squeeze)',
+    rxWhy: 'Knees straight directly loads the gastrocnemius muscle of the calves.',
+    benefit: 'Thickens lower leg and reinforces Achilles tendon.',
+    steps: 'Balls of feet on ledge. Lower heels into deep stretch, pause 2s to kill Achilles recoil, rise onto toes.'
+  },
 
-  { name: 'Dead bug', category: 'Core', sub: 'Deep abs · Core stability', type: 'BODYWEIGHT · HOME', benefit: 'Teaches core bracing while moving limbs.', steps: 'Lie on back, knees at 90 degrees. Extend opposite arm and leg while keeping back pressed to floor.' },
-  { name: 'Plank shoulder tap', category: 'Core', sub: 'Obliques · Shoulders', type: 'BODYWEIGHT · HOME', benefit: 'Anti-rotational core strength and shoulder stability.', steps: 'High plank position. Tap opposite shoulder with hand without rocking hips.' }
+  // --- CORE: Upper Abs, Lower Abs, Obliques ---
+  {
+    name: 'Hanging Leg Raise',
+    category: 'Core',
+    sub: 'Lower abs',
+    type: 'BODYWEIGHT · GYM OR HOME',
+    rxSetsReps: '3 sets × 10-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (No swinging)',
+    rxWhy: 'Posterior pelvic tilt targets the lower abdominal fibers and hip flexors.',
+    benefit: 'Chisels lower abdominal wall and improves grip.',
+    steps: 'Hang from pull-up bar. Curl knees or straight legs up to chest by curling pelvis up, lower slowly.'
+  },
+  {
+    name: 'Cable Kneeling Crunch',
+    category: 'Core',
+    sub: 'Upper abs',
+    type: 'CABLE · GYM',
+    rxSetsReps: '3 sets × 12-15 reps · 60s rest',
+    rxTempo: 'Tempo: 2-1-1 (C-curve spine curl)',
+    rxWhy: 'Allows progressive overload with weights for rectus abdominis block growth.',
+    benefit: 'Builds deep 6-pack abdominal ridges.',
+    steps: 'Kneel with rope at forehead. Curl ribcage down towards pelvis, exhaling forcefully, pause, return under control.'
+  },
+  {
+    name: 'Russian Twist with Weight',
+    category: 'Core',
+    sub: 'Obliques',
+    type: 'BODYWEIGHT / WEIGHT · HOME OR GYM',
+    rxSetsReps: '3 sets × 16-20 total twists · 60s rest',
+    rxTempo: 'Tempo: Controlled cadence',
+    rxWhy: 'Rotational torque across internal and external obliques.',
+    benefit: 'Tones rotational core power and waistline stability.',
+    steps: 'Sit on floor, feet elevated, torso back at 45°. Rotate weight from hip to hip under strict control.'
+  }
 ];
 
 /* ---------- Toast Notice ---------- */
@@ -427,6 +859,7 @@ function renderDashboard() {
   if ($('#streakCount')) $('#streakCount').textContent = `${streakCount} / 5`;
   if ($('#dayStreakDisplay')) $('#dayStreakDisplay').innerHTML = `${streakCount} <small>days</small>`;
   if ($('#weeklyGoalDisplay')) $('#weeklyGoalDisplay').innerHTML = `${Math.round((streakCount / 5) * 100)}<small>%</small>`;
+  updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 }
 
 // Dashboard Buttons Navigation
@@ -1061,24 +1494,102 @@ function openFoodModal() {
 // Built-in food database for search
 // Rich food database with accurate per-100g nutritional benchmarks & visuals
 const COMMON_FOODS = [
-  { name: 'White Rice (Cooked)', p: 2.7, c: 28, f: 0.3, k: 130, icon: '🍚' },
-  { name: 'Brown Rice (Cooked)', p: 2.6, c: 23, f: 0.9, k: 111, icon: '🌾' },
-  { name: 'Chicken Breast (Cooked)', p: 31, c: 0, f: 3.6, k: 165, icon: '🍗' },
-  { name: 'Eggs (Whole, Boiled)', p: 13, c: 1.1, f: 11, k: 155, icon: '🥚' },
-  { name: 'Egg Whites (Cooked)', p: 11, c: 0.7, f: 0.2, k: 52, icon: '🍳' },
-  { name: 'Greek Yogurt 0%', p: 10, c: 3.6, f: 0.4, k: 59, icon: '🥣', image: 'images/greek-yogurt.jpg' },
-  { name: 'Oatmeal (Rolled Oats)', p: 13, c: 68, f: 7, k: 389, icon: '🥣' },
-  { name: 'Banana', p: 1.1, c: 23, f: 0.3, k: 89, icon: '🍌' },
-  { name: 'Apple', p: 0.3, c: 14, f: 0.2, k: 52, icon: '🍎' },
-  { name: 'Salmon Fillet (Grilled)', p: 20, c: 0, f: 13, k: 208, icon: '🐟', image: 'images/salmon-bowl.jpg' },
-  { name: 'Paneer (Cottage Cheese)', p: 18, c: 3.5, f: 20, k: 265, icon: '🧀' },
-  { name: 'Tofu (Firm)', p: 12, c: 2.5, f: 5.5, k: 90, icon: '🧊' },
-  { name: 'Roti / Chapati (Whole Wheat)', p: 3.5, c: 17, f: 0.5, k: 85, icon: '🫓' },
-  { name: 'Dal (Yellow Lentil Soup)', p: 6.8, c: 15, f: 2.5, k: 110, icon: '🍲' },
-  { name: 'Whey Protein Powder', p: 80, c: 6, f: 3, k: 375, icon: '🥤' },
-  { name: 'Almonds', p: 21, c: 22, f: 49, k: 579, icon: '🥜' },
-  { name: 'Peanut Butter', p: 25, c: 20, f: 50, k: 588, icon: '🥜' },
-  { name: 'Sweet Potato (Baked)', p: 2, c: 21, f: 0.1, k: 90, icon: '🍠' }
+  // --- HOMEMADE & INDIAN STAPLES ---
+  { name: 'Roti / Chapati (Whole Wheat, 1 pc ~35g)', p: 3.5, c: 17, f: 0.5, k: 85, icon: '🫓', cat: 'Homemade', micros: 'Fiber, B-Vitamins, Iron, Magnesium' },
+  { name: 'Dal Tadka (Yellow Lentil, 1 bowl ~150g)', p: 7.5, c: 18, f: 3.5, k: 135, icon: '🍲', cat: 'Homemade', micros: 'Folate, Iron, Potassium, Zinc' },
+  { name: 'Dal Makhani (Homemade, 1 bowl ~150g)', p: 8.2, c: 22, f: 7.5, k: 190, icon: '🍲', cat: 'Homemade', micros: 'Calcium, Iron, Folate' },
+  { name: 'Rajma Curry (Kidney Beans, 1 bowl ~150g)', p: 9.5, c: 24, f: 3.2, k: 165, icon: '🍛', cat: 'Homemade', micros: 'High Fiber, Molybdenum, Folate, Iron' },
+  { name: 'Chole / Chana Masala (1 bowl ~150g)', p: 8.8, c: 26, f: 4.5, k: 180, icon: '🍛', cat: 'Homemade', micros: 'Zinc, Folate, Dietary Fiber' },
+  { name: 'Moong Dal Khichdi (1 bowl ~200g)', p: 8.0, c: 38, f: 3.0, k: 210, icon: '🥣', cat: 'Homemade', micros: 'Easy digestion, Potassium, B-Vitamins' },
+  { name: 'Aloo Paratha (Homemade, 1 pc ~80g)', p: 4.5, c: 34, f: 8.0, k: 230, icon: '🫓', cat: 'Homemade', micros: 'Carbs, Vitamin C, Potassium' },
+  { name: 'Paneer Paratha (Homemade, 1 pc ~90g)', p: 10.5, c: 30, f: 12.0, k: 275, icon: '🫓', cat: 'Homemade', micros: 'Calcium, Protein, Phosphorus' },
+  { name: 'Palak Paneer (1 bowl ~180g)', p: 12.0, c: 9.0, f: 14.0, k: 215, icon: '🥬', cat: 'Homemade', micros: 'Iron, Vitamin A, Vitamin K, Calcium' },
+  { name: 'Paneer Bhurji (Scrambled Paneer, 150g)', p: 16.5, c: 5.5, f: 18.0, k: 250, icon: '🧀', cat: 'Homemade', micros: 'High Calcium, Vitamin B12, Phosphorus' },
+  { name: 'Bhindi Masala (Okra Sabzi, 1 bowl ~120g)', p: 2.2, c: 9.0, f: 4.0, k: 80, icon: '🥗', cat: 'Homemade', micros: 'Vitamin C, Vitamin K, Folate, Fiber' },
+  { name: 'Mixed Veg Sabzi (Carrot, Peas, Beans ~150g)', p: 3.5, c: 14.0, f: 4.0, k: 105, icon: '🥕', cat: 'Homemade', micros: 'Beta-Carotene, Vit A, Vit C, Fiber' },
+  { name: 'Poha with Peanuts (1 plate ~150g)', p: 5.5, c: 38.0, f: 6.5, k: 235, icon: '🍚', cat: 'Homemade', micros: 'Iron, Carbohydrates, Healthy Fats' },
+  { name: 'Suji Upma with Veggies (1 bowl ~150g)', p: 4.5, c: 32.0, f: 4.5, k: 190, icon: '🥣', cat: 'Homemade', micros: 'B-Complex, Iron' },
+  { name: 'Idli (Steamed Rice & Lentil, 2 pcs ~100g)', p: 4.2, c: 28.0, f: 0.5, k: 135, icon: '⚪', cat: 'Homemade', micros: 'Fermented Gut Probiotics, B-Vitamins' },
+  { name: 'Plain Dosa (Homemade, 1 medium ~80g)', p: 3.8, c: 27.0, f: 3.5, k: 155, icon: '🥞', cat: 'Homemade', micros: 'Carbohydrates, Sodium' },
+  { name: 'Besan Chilla (Gram Flour Pancake, 1 pc)', p: 7.0, c: 18.0, f: 4.0, k: 140, icon: '🥞', cat: 'Homemade', micros: 'Zinc, Magnesium, Plant Protein' },
+  { name: 'Moong Dal Chilla (High Protein, 1 pc)', p: 9.5, c: 19.0, f: 3.0, k: 145, icon: '🥞', cat: 'Homemade', micros: 'Potassium, Folate, Iron' },
+  { name: 'Curd / Plain Dahi (1 cup ~150g)', p: 5.5, c: 7.0, f: 4.5, k: 95, icon: '🥣', cat: 'Homemade', micros: 'Active Probiotics, Calcium, Vitamin B12' },
+  { name: 'Buttermilk / Chaas (1 glass ~200ml)', p: 3.2, c: 4.8, f: 1.5, k: 45, icon: '🥛', cat: 'Homemade', micros: 'Electrolytes, Potassium, Hydration' },
+
+  // --- PROTEIN SOURCES (VEG & NON-VEG) ---
+  { name: 'Chicken Breast (Cooked, 100g)', p: 31.0, c: 0.0, f: 3.6, k: 165, icon: '🍗', cat: 'Protein', micros: 'Niacin (B3), B6, Selenium, Phosphorus' },
+  { name: 'Tandoori Chicken (1 leg/breast ~150g)', p: 32.0, c: 3.0, f: 8.0, k: 215, icon: '🍗', cat: 'Protein', micros: 'High Lean Protein, Iron, B-Vitamins' },
+  { name: 'Chicken Curry (Homemade, 1 bowl ~200g)', p: 26.0, c: 6.0, f: 12.0, k: 240, icon: '🍗', cat: 'Protein', micros: 'Zinc, Vitamin B12, Iron' },
+  { name: 'Boiled Egg (Whole, 1 Large ~50g)', p: 6.3, c: 0.5, f: 5.0, k: 74, icon: '🥚', cat: 'Protein', micros: 'Choline, Vitamin D, Vitamin B12, Lutein' },
+  { name: 'Egg Whites (Cooked, 3 whites ~100g)', p: 11.0, c: 0.7, f: 0.2, k: 52, icon: '🍳', cat: 'Protein', micros: 'Pure Albumin, Potassium, Sodium' },
+  { name: 'Egg Bhurji / Scramble (2 eggs + veggies)', p: 14.0, c: 4.0, f: 12.0, k: 185, icon: '🍳', cat: 'Protein', micros: 'Choline, Vitamin A, Selenium' },
+  { name: 'Masala Omelette (2 eggs with onions/chili)', p: 13.5, c: 3.5, f: 11.5, k: 175, icon: '🍳', cat: 'Protein', micros: 'Zinc, Iron, Vitamin D' },
+  { name: 'Fish Curry (Rohu / Catla, 1 bowl ~180g)', p: 22.0, c: 4.0, f: 9.0, k: 190, icon: '🐟', cat: 'Protein', micros: 'Omega-3 fatty acids, Iodine, Vitamin D' },
+  { name: 'Grilled Salmon Fillet (150g)', p: 34.0, c: 0.0, f: 18.0, k: 300, icon: '🐟', cat: 'Protein', image: 'images/salmon-bowl.jpg', micros: 'DHA/EPA Omega-3s, Vit B12, Selenium' },
+  { name: 'Paneer (Raw Fresh, 100g)', p: 18.0, c: 3.5, f: 20.0, k: 265, icon: '🧀', cat: 'Protein', micros: 'Calcium (480mg), Phosphorus, Vit A' },
+  { name: 'Tofu (Firm Soy Paneer, 100g)', p: 12.0, c: 2.5, f: 5.5, k: 90, icon: '🧊', cat: 'Protein', micros: 'Iron, Calcium, Isoflavones' },
+  { name: 'Soya Chunks (Cooked, 1 bowl ~120g)', p: 24.0, c: 14.0, f: 0.5, k: 160, icon: '🧆', cat: 'Protein', micros: 'High Plant Protein, Copper, Magnesium' },
+  { name: 'Whey Protein Isolate (1 scoop ~30g)', p: 26.0, c: 1.5, f: 0.5, k: 115, icon: '🥤', cat: 'Protein', micros: 'BCAAs (Leucine 2.7g), Glutamine, Calcium' },
+  { name: 'Casein Protein Powder (1 scoop ~30g)', p: 24.0, c: 2.0, f: 1.0, k: 120, icon: '🥤', cat: 'Protein', micros: 'Slow release amino acids, High Calcium' },
+  { name: 'Greek Yogurt 0% (Plain, 150g)', p: 15.0, c: 5.5, f: 0.5, k: 88, icon: '🥣', cat: 'Protein', image: 'images/greek-yogurt.jpg', micros: 'Probiotics, Calcium, B12, Zinc' },
+  { name: 'Sprouted Green Moong (Boiled, 100g)', p: 7.5, c: 19.0, f: 0.8, k: 105, icon: '🌱', cat: 'Protein', micros: 'Enzymes, Vitamin C, Folate, Iron' },
+  { name: 'Boiled Kala Chana (Black Chickpeas, 100g)', p: 9.0, c: 27.0, f: 2.5, k: 165, icon: '🥣', cat: 'Protein', micros: 'Iron, High Fiber, Low GI Energy' },
+
+  // --- HOTEL & RESTAURANT DELICACIES ---
+  { name: 'Chicken Dum Biryani (Restaurant, 1 plate ~350g)', p: 32.0, c: 68.0, f: 22.0, k: 590, icon: '🍗', cat: 'Restaurant', micros: 'Iron, Niacin, Sodium' },
+  { name: 'Veg Dum Biryani (Restaurant, 1 plate ~300g)', p: 10.0, c: 65.0, f: 16.0, k: 445, icon: '🍚', cat: 'Restaurant', micros: 'Carbohydrates, Spices antioxidants' },
+  { name: 'Butter Chicken (Restaurant, 1 portion ~220g)', p: 28.0, c: 12.0, f: 26.0, k: 395, icon: '🥘', cat: 'Restaurant', micros: 'Lycopene, Vit A, Saturated fats' },
+  { name: 'Paneer Butter Masala (Restaurant, 1 portion ~200g)', p: 15.0, c: 14.0, f: 28.0, k: 365, icon: '🥘', cat: 'Restaurant', micros: 'Calcium, Fat soluble vitamins' },
+  { name: 'Butter Naan (Restaurant, 1 pc ~90g)', p: 7.5, c: 45.0, f: 11.0, k: 310, icon: '🫓', cat: 'Restaurant', micros: 'Refined carbs, Sodium' },
+  { name: 'Garlic Naan (Restaurant, 1 pc ~90g)', p: 7.8, c: 44.0, f: 9.5, k: 295, icon: '🫓', cat: 'Restaurant', micros: 'Allicin, Carbohydrates' },
+  { name: 'Veg Hakka Noodles (1 plate ~250g)', p: 7.0, c: 56.0, f: 14.0, k: 380, icon: '🍜', cat: 'Restaurant', micros: 'Sodium, B-Vitamins' },
+  { name: 'Chicken Fried Rice (Restaurant, 1 plate ~300g)', p: 20.0, c: 62.0, f: 16.0, k: 475, icon: '🍳', cat: 'Restaurant', micros: 'Protein, Selenium, Sodium' },
+  { name: 'Veg Manchurian Gravy (1 portion ~180g)', p: 5.0, c: 24.0, f: 12.0, k: 225, icon: '🧆', cat: 'Restaurant', micros: 'Dietary fiber from veggies, Sodium' },
+  { name: 'Pav Bhaji with Butter (2 pav + bhaji)', p: 9.0, c: 58.0, f: 18.0, k: 430, icon: '🍛', cat: 'Restaurant', micros: 'Potassium, Lycopene, Vitamin C' },
+  { name: 'Chole Bhature (2 bhature + chole)', p: 16.0, c: 84.0, f: 32.0, k: 690, icon: '🫓', cat: 'Restaurant', micros: 'High calorie density, Iron, Folate' },
+
+  // --- FAST FOOD, BURGERS & STREET FOOD ---
+  { name: "McDonald's McChicken Burger (1 pc)", p: 14.0, c: 40.0, f: 18.0, k: 380, icon: '🍔', cat: 'FastFood', micros: 'Sodium (800mg), Iron, B-Vitamins' },
+  { name: "McDonald's McAloo Tikki Burger (1 pc)", p: 7.0, c: 44.0, f: 14.0, k: 330, icon: '🍔', cat: 'FastFood', micros: 'Carbs, Sodium (650mg)' },
+  { name: 'Burger King Whopper (1 regular burger)', p: 28.0, c: 52.0, f: 36.0, k: 645, icon: '🍔', cat: 'FastFood', micros: 'High protein, High sodium, Iron' },
+  { name: 'French Fries (Medium, 110g)', p: 3.5, c: 42.0, f: 16.0, k: 325, icon: '🍟', cat: 'FastFood', micros: 'Potassium, Sodium' },
+  { name: "Domino's Margherita Pizza (1 medium slice)", p: 9.0, c: 28.0, f: 8.5, k: 225, icon: '🍕', cat: 'FastFood', micros: 'Calcium, Lycopene, Saturated fat' },
+  { name: 'Subway 6-inch Roasted Chicken Sub', p: 24.0, c: 42.0, f: 5.0, k: 310, icon: '🥪', cat: 'FastFood', micros: 'Lean protein, Fiber with fresh veggies' },
+  { name: 'Subway 6-inch Paneer Tikka Sub', p: 16.0, c: 46.0, f: 12.0, k: 360, icon: '🥪', cat: 'FastFood', micros: 'Calcium, Fresh veggie antioxidants' },
+  { name: 'Steamed Chicken Momos (6 pcs)', p: 16.0, c: 32.0, f: 6.0, k: 245, icon: '🥟', cat: 'FastFood', micros: 'Lean protein, Capsaicin in chili dip' },
+  { name: 'Steamed Veg Momos (6 pcs)', p: 5.0, c: 36.0, f: 4.5, k: 205, icon: '🥟', cat: 'FastFood', micros: 'Fiber, Carbs' },
+  { name: 'Samosa (1 pc ~80g, Deep Fried)', p: 3.5, c: 28.0, f: 14.0, k: 250, icon: '🥟', cat: 'FastFood', micros: 'High fat, Potassium from potatoes' },
+  { name: 'Vada Pav (1 pc with chutney)', p: 5.5, c: 38.0, f: 13.0, k: 290, icon: '🍔', cat: 'FastFood', micros: 'Carbohydrates, Garlic antioxidants' },
+  { name: 'Chicken Shawarma Roll (1 roll ~180g)', p: 22.0, c: 34.0, f: 14.0, k: 350, icon: '🌯', cat: 'FastFood', micros: 'High Protein, Vitamin B6, Garlic' },
+  { name: 'Maggi 2-Minute Noodles (1 single pack ~70g)', p: 7.5, c: 45.0, f: 12.0, k: 320, icon: '🍜', cat: 'FastFood', micros: 'Sodium (950mg), Fortified Iron' },
+
+  // --- GRAINS, RICE & HEALTHY CARBS ---
+  { name: 'White Rice (Cooked, 100g)', p: 2.7, c: 28.0, f: 0.3, k: 130, icon: '🍚', cat: 'Carbs', micros: 'Fast digesting glycogen, Folate, Iron' },
+  { name: 'Brown Rice (Cooked, 100g)', p: 2.6, c: 23.0, f: 0.9, k: 111, icon: '🌾', cat: 'Carbs', micros: 'Magnesium, Phosphorus, Dietary fiber' },
+  { name: 'Rolled Oats (Raw, 100g)', p: 13.0, c: 68.0, f: 7.0, k: 389, icon: '🥣', cat: 'Carbs', micros: 'Beta-Glucan fiber (heart health), Zinc, Iron' },
+  { name: 'Sweet Potato (Boiled/Baked, 100g)', p: 2.0, c: 21.0, f: 0.1, k: 90, icon: '🍠', cat: 'Carbs', micros: 'Vitamin A (Beta-carotene 120% RDA), Potassium' },
+  { name: 'Whole Wheat Bread (2 slices ~60g)', p: 6.0, c: 26.0, f: 1.8, k: 145, icon: '🍞', cat: 'Carbs', micros: 'B-Vitamins, Complex fiber' },
+  { name: 'Quinoa (Cooked, 100g)', p: 4.4, c: 21.3, f: 1.9, k: 120, icon: '🌾', cat: 'Carbs', micros: 'Complete 9 Essential Aminos, Magnesium' },
+
+  // --- FRUITS & MICRONUTRIENT-RICH VEGGIES ---
+  { name: 'Banana (1 Medium ~118g)', p: 1.3, c: 27.0, f: 0.4, k: 105, icon: '🍌', cat: 'Fruits', micros: 'Potassium (422mg), Vitamin B6, Vit C' },
+  { name: 'Apple (1 Medium ~180g)', p: 0.5, c: 25.0, f: 0.3, k: 95, icon: '🍎', cat: 'Fruits', micros: 'Pectin fiber, Quercetin antioxidant, Vit C' },
+  { name: 'Papaya (Fresh Diced, 150g)', p: 0.8, c: 16.0, f: 0.2, k: 65, icon: '🍈', cat: 'Fruits', micros: 'Papain digestive enzyme, Vit C (100% RDA), Vit A' },
+  { name: 'Guava (Amrood, 1 medium ~100g)', p: 2.6, c: 14.0, f: 1.0, k: 68, icon: '🍐', cat: 'Fruits', micros: 'Ultra Vitamin C (228mg = 250% RDA), Fiber 5.4g' },
+  { name: 'Mango (Alphonso Slices, 150g)', p: 1.2, c: 25.0, f: 0.6, k: 99, icon: '🥭', cat: 'Fruits', micros: 'Vitamin A, Vitamin C, Antioxidants' },
+  { name: 'Watermelon (Fresh Chunks, 200g)', p: 1.2, c: 15.0, f: 0.3, k: 60, icon: '🍉', cat: 'Fruits', micros: 'Lycopene, Citrulline (muscle pump), 92% Hydration' },
+  { name: 'Orange (1 Medium ~130g)', p: 1.2, c: 15.4, f: 0.2, k: 62, icon: '🍊', cat: 'Fruits', micros: 'Vitamin C (70mg), Potassium, Folate' },
+  { name: 'Spinach / Raw Palak (100g)', p: 2.9, c: 3.6, f: 0.4, k: 23, icon: '🥬', cat: 'Veggies', micros: 'Iron (2.7mg), Vit K (483% RDA), Vit A, Folate' },
+  { name: 'Broccoli (Steamed, 100g)', p: 2.8, c: 7.0, f: 0.4, k: 35, icon: '🥦', cat: 'Veggies', micros: 'Sulforaphane, Vit C (89mg), Vit K, Fiber' },
+  { name: 'Cucumber (Fresh with peel, 100g)', p: 0.7, c: 3.6, f: 0.1, k: 15, icon: '🥒', cat: 'Veggies', micros: 'Silica, Potassium, 96% Water' },
+  { name: 'Carrot (Raw, 100g)', p: 0.9, c: 9.6, f: 0.2, k: 41, icon: '🥕', cat: 'Veggies', micros: 'Beta-Carotene (Vit A 835mcg), Lutein, Vit K' },
+
+  // --- NUTS, SEEDS & HEALTHY FATS ---
+  { name: 'Almonds (Raw, 1 fistful ~28g / 23 nuts)', p: 6.0, c: 6.0, f: 14.0, k: 164, icon: '🥜', cat: 'Nuts', micros: 'Vitamin E (50% RDA), Magnesium, Manganese' },
+  { name: 'Walnuts (Akhrot, 28g ~7 whole nuts)', p: 4.3, c: 3.9, f: 18.5, k: 185, icon: '🥜', cat: 'Nuts', micros: 'Plant Omega-3 (ALA 2.5g), Polyphenols' },
+  { name: 'Peanut Butter (1 tbsp ~16g)', p: 4.0, c: 3.5, f: 8.0, k: 95, icon: '🥜', cat: 'Nuts', micros: 'Niacin, Biotin, Monounsaturated fats' },
+  { name: 'Chia Seeds (1 tbsp ~12g)', p: 2.0, c: 5.0, f: 3.8, k: 60, icon: '🌱', cat: 'Nuts', micros: 'Omega-3 ALA, Soluble Fiber, Calcium (75mg)' },
+  { name: 'Desi Ghee (1 tsp ~5g)', p: 0.0, c: 0.0, f: 5.0, k: 45, icon: '🧈', cat: 'Nuts', micros: 'Butyric acid (gut lining), Vit A, Vit D, Vit E' }
 ];
 let selectedBaseFood = COMMON_FOODS[0];
 
@@ -1111,7 +1622,7 @@ if ($('#foodSearchInput')) {
           ${visual}
           <div>
             <b style="color:#203125;font-size:.9rem;">${f.name}</b>
-            <p style="color:#78887c;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F</p>
+            <p style="color:#78887c;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#4a7c59;font-weight:600;">· 💊 ${f.micros}</span>` : ''}</p>
           </div>
         </div>
         <span style="font-weight:700;color:#34483a;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#78887c;">kcal/100g</small></span>
@@ -1239,15 +1750,6 @@ $('#markWorkoutDoneBtn').onclick = () => {
 };
 
 /* ---------- Exercise Library View Rendering ---------- */
-const MUSCLE_GROUPS = {
-  Legs: ['Quads', 'Hamstrings', 'Glutes', 'Calves'],
-  Chest: ['Upper chest', 'Mid chest', 'Lower chest'],
-  Back: ['Lats', 'Traps', 'Rhomboids', 'Lower back'],
-  Shoulders: ['Front delts', 'Side delts', 'Rear delts'],
-  Arms: ['Biceps', 'Triceps', 'Forearms'],
-  Core: ['Deep abs', 'Upper abs', 'Obliques']
-};
-
 function renderExerciseLibrary() {
   const tabs = $('#muscleTabs');
   if (tabs) {
@@ -1259,31 +1761,60 @@ function renderExerciseLibrary() {
   const subTags = $('#muscleSubTags');
   if (subTags) {
     const list = MUSCLE_GROUPS[selectedExerciseCategory] || [];
-    subTags.innerHTML = list.map(sub => `<button type="button" class="chosen">${sub}</button>`).join('');
+    subTags.innerHTML = list.map(sub => `
+      <button type="button" class="chosen ${sub === selectedSubMuscle ? 'active' : ''}" onclick="selectSubMuscle('${sub}')">${sub}</button>
+    `).join('');
   }
 
   const q = ($('#exerciseSearchInput') ? $('#exerciseSearchInput').value.toLowerCase().trim() : '');
   const filtered = EXERCISES_LIBRARY.filter(e => {
-    if (q) return e.name.toLowerCase().includes(q) || e.sub.toLowerCase().includes(q);
-    return e.category === selectedExerciseCategory;
+    if (q) return e.name.toLowerCase().includes(q) || (e.sub && e.sub.toLowerCase().includes(q));
+    if (e.category !== selectedExerciseCategory) return false;
+    if (selectedSubMuscle && !selectedSubMuscle.startsWith('All ')) {
+      return (e.sub || '').toLowerCase().includes(selectedSubMuscle.toLowerCase());
+    }
+    return true;
   });
 
   if ($('#libFilterHeader')) {
-    $('#libFilterHeader').textContent = `${selectedExerciseCategory.toUpperCase()} · ${(MUSCLE_GROUPS[selectedExerciseCategory] || []).join(' / ').toUpperCase()}`;
+    const currentSubText = selectedSubMuscle ? selectedSubMuscle.toUpperCase() : selectedExerciseCategory.toUpperCase();
+    $('#libFilterHeader').textContent = `${selectedExerciseCategory.toUpperCase()} · ${currentSubText}`;
   }
   if ($('#libResultCount')) {
-    $('#libResultCount').textContent = q ? `${filtered.length} matching exercises` : `${selectedExerciseCategory} focus`;
+    $('#libResultCount').textContent = q ? `${filtered.length} matching moves` : `${filtered.length} exercises targeting ${selectedSubMuscle || selectedExerciseCategory}`;
   }
 
   const cardsContainer = $('#exerciseCardsContainer');
   if (cardsContainer) {
     cardsContainer.innerHTML = filtered.map(ex => `
-      <article class="panel exercise-card">
-        <span class="exercise-type">${ex.type}</span>
-        <h4>${ex.name}</h4>
-        <span class="exercise-group">${ex.sub}</span>
-        <p class="exercise-benefit">${ex.benefit}</p>
-        <p class="exercise-steps">${ex.steps}</p>
+      <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span class="exercise-type">${ex.type}</span>
+            <span style="font-size:.76rem;background:#eef5eb;color:#203b29;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
+          </div>
+          <h4 style="margin:4px 0 8px;color:#203125;font-size:1.15rem;">${ex.name}</h4>
+          
+          <!-- Scientific Prescription Box -->
+          <div class="exercise-prescription-box">
+            <div class="rx-header">
+              <span class="rx-sets-reps">🎯 ${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
+              <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
+            </div>
+            <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
+          </div>
+
+          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#637367;">💡 ${ex.steps}</p>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:8px;">
+          <button type="button" class="outline-button small" style="flex:1;font-size:.82rem;padding:7px;border-color:#b4db79;" onclick="logExerciseCompleted('${ex.name.replace(/'/g, "\\'")}')">
+            ✓ Log Done
+          </button>
+          <button type="button" class="solid-button small" style="flex:1;font-size:.82rem;padding:7px;background:#203b29;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+            🤖 AI Coach Tip
+          </button>
+        </div>
       </article>
     `).join('');
   }
@@ -1291,8 +1822,25 @@ function renderExerciseLibrary() {
 
 window.selectExerciseCategory = function(cat) {
   selectedExerciseCategory = cat;
+  selectedSubMuscle = 'All ' + cat;
   if ($('#exerciseSearchInput')) $('#exerciseSearchInput').value = '';
   renderExerciseLibrary();
+};
+
+window.selectSubMuscle = function(sub) {
+  selectedSubMuscle = sub;
+  renderExerciseLibrary();
+};
+
+window.logExerciseCompleted = function(name) {
+  workoutsDone.push({ name, date: today(), at: Date.now() });
+  store.set('workoutsDone', workoutsDone);
+  renderDashboard();
+  toast(`Great job! Completed "${name}"`);
+};
+
+window.askAiAboutExercise = function(name, sub) {
+  openAiChat(`What is the optimal biomechanical execution, sets, reps, and progression strategy for "${name}" targeting ${sub}?`);
 };
 
 if ($('#exerciseSearchInput')) {
@@ -1718,6 +2266,196 @@ if ($('#generateAiPlanBtn')) {
       btn.textContent = '✨ Generate & Apply My AI Plan';
       if (loading) loading.style.display = 'none';
     }
+  };
+}
+
+
+/* ================= AI FITNESS & NUTRITION CHATBOT CONTROLLER ================= */
+function getAiSystemContext() {
+  const d = today();
+  const entries = log[d] || [];
+  const totKcal = entries.reduce((a, b) => a + (b.k || b.calories || 0), 0);
+  const totP = entries.reduce((a, b) => a + (b.p || b.protein || 0), 0);
+  const totC = entries.reduce((a, b) => a + (b.c || b.carbs || 0), 0);
+  const totF = entries.reduce((a, b) => a + (b.f || b.fat || 0), 0);
+  const waterMl = (water && water.date === d) ? (water.ml || 0) : 0;
+  const woDone = (workoutsDone || []).filter(w => w.date === d).map(w => w.name);
+
+  return `You are FitFuel AI Coach — an elite sports nutritionist, clinical dietitian, and master strength coach.
+User Profile:
+- Weight: ${profile.wKg} kg (${profile.units || 'Metric'})
+- Daily Macro Goals: ${profile.cal || 2000} kcal, ${profile.p || 165}g Protein, ${profile.c || 139}g Carbs, ${profile.f || 87}g Fat
+- Primary Fitness Goal: ${profile.goal || 'Hypertrophy & Body Recomposition'}
+- Today's Consumed: ${totKcal} kcal (${totP}g Protein, ${totC}g Carbs, ${totF}g Fat)
+- Today's Water: ${(waterMl / 1000).toFixed(1)} L (Target: ${profile.waterGoal || '2.5'} L)
+- Completed Workouts Today: ${woDone.length ? woDone.join(', ') : 'None yet'}
+
+Instructions:
+1. Provide highly accurate micronutrient details (Vitamins A, C, D, B-complex, B12, Iron, Zinc, Magnesium, Calcium, Potassium, Sodium, etc.) for ANY food: homemade Indian dishes, hotel meals, fast foods (burgers, pizzas, momos, shawarma), fruits, and vegetables.
+2. For workouts, give precise scientific sets, reps, and tempo guidance tailored to the target muscle part (e.g. Upper Chest, Lower Chest, Lats, Quads, Hamstrings) and explain WHY that volume causes hypertrophy.
+3. If user asks to review their day, compare their consumed calories/protein/water with targets and provide immediate, actionable adjustments.
+4. Keep responses structured, concise, and pleasant using markdown bullet points and bold highlights.`;
+}
+
+function openAiChat(initialPrompt = null) {
+  const drawer = $('#aiChatDrawer');
+  if (!drawer) return;
+  drawer.classList.add('open');
+
+  if (!chatHistory.length) {
+    addBotChatMessage(`👋 **Hello ${profile.name ? profile.name.split(' ')[0] : 'there'}!** I am your **FitFuel AI Coach & Nutrition Specialist**.
+
+Ask me anything about:
+• 🥦 **Micronutrients & Diet**: Exact vitamins (D, B12, C), minerals (Iron, Zinc, Magnesium, Calcium) for ANY food (homemade, hotel dishes, fast food, fruits).
+• 💪 **Targeted Workouts**: Optimal sets, reps, and cues for specific muscle regions (Upper Chest vs Lower Chest, Lats, Glutes, Hamstrings).
+• 📊 **Daily Verification**: Ask me to review today's logged food, water, and workouts to see if you hit your targets!`);
+  }
+
+  if (initialPrompt) {
+    handleUserAiQuery(initialPrompt);
+  } else {
+    setTimeout(() => {
+      const inp = $('#aiChatInput');
+      if (inp) inp.focus();
+    }, 200);
+  }
+}
+
+function closeAiChat() {
+  const drawer = $('#aiChatDrawer');
+  if (drawer) drawer.classList.remove('open');
+}
+
+function addBotChatMessage(markdownText) {
+  chatHistory.push({ role: 'assistant', text: markdownText });
+  renderChatMessages();
+}
+
+function addUserChatMessage(text) {
+  chatHistory.push({ role: 'user', text });
+  renderChatMessages();
+}
+
+function renderChatMessages() {
+  const container = $('#aiChatMessages');
+  if (!container) return;
+
+  container.innerHTML = chatHistory.map(msg => {
+    const isBot = msg.role === 'assistant';
+    const formatted = formatChatMarkdown(msg.text);
+    return `<div class="ai-msg ${isBot ? 'bot' : 'user'}">
+      ${isBot ? '<span style="font-size:.74rem;color:#78887c;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>' : ''}
+      <div>${formatted}</div>
+    </div>`;
+  }).join('');
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function formatChatMarkdown(txt) {
+  if (!txt) return '';
+  return txt
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    .replace(/\*(.*?)\*/g, '<i>$1</i>')
+    .replace(/^• (.*$)/gim, '• $1<br>')
+    .replace(/\n/g, '<br>');
+}
+
+async function handleUserAiQuery(query) {
+  if (!query || !query.trim()) return;
+  const q = query.trim();
+  addUserChatMessage(q);
+
+  const container = $('#aiChatMessages');
+  const typingId = 'typing_' + Date.now();
+  if (container) {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'ai-msg bot';
+    typingDiv.id = typingId;
+    typingDiv.innerHTML = `<span style="font-size:.74rem;color:#78887c;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>
+      <div style="color:#78887c;font-style:italic;">Analyzing with AI cascade... ✨</div>`;
+    container.appendChild(typingDiv);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  try {
+    const systemPrompt = getAiSystemContext();
+    const reply = await FF.callAI(q, systemPrompt);
+    const typingEl = document.getElementById(typingId);
+    if (typingEl) typingEl.remove();
+    addBotChatMessage(reply);
+  } catch (err) {
+    const typingEl = document.getElementById(typingId);
+    if (typingEl) typingEl.remove();
+    addBotChatMessage(`Connection note: ${err.message}. Please retry or verify your network connection.`);
+  }
+}
+
+// AI Verification on Dashboard
+function updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, targetP, waterMl) {
+  const headline = $('#aiVerifyHeadline');
+  const sub = $('#aiVerifySub');
+  if (!headline || !sub) return;
+
+  const leftKcal = goalKcal - totalKcal;
+  const leftP = targetP - totalP;
+
+  if (entries.length === 0) {
+    headline.textContent = 'Ready to fuel your day?';
+    sub.textContent = `Target: ${goalKcal} kcal and ${targetP}g protein. Log your first meal, scan a food photo, or ask AI Coach!`;
+  } else if (leftP > 40) {
+    headline.textContent = `🍗 Protein Gap: ${leftP}g remaining today`;
+    sub.textContent = `You've logged ${totalP}g / ${targetP}g protein. AI recommends paneer, chicken breast, or Greek yogurt for your next meal.`;
+  } else if (leftKcal < 0) {
+    headline.textContent = `🔥 Calorie Target Reached (+${Math.abs(leftKcal)} kcal)`;
+    sub.textContent = `You've reached ${totalKcal} kcal today. Focus on lean protein and adequate hydration tonight.`;
+  } else if (waterMl < 1000) {
+    headline.textContent = '💧 Hydration Reminder';
+    sub.textContent = `Only ${(waterMl / 1000).toFixed(1)} L recorded so far. Drink 2-3 more glasses of water before your workout session.`;
+  } else {
+    headline.textContent = '✅ Optimal Day Progress';
+    sub.textContent = `Great adherence! ${totalKcal} / ${goalKcal} kcal with ${totalP}g protein logged. Click below to run a complete AI audit.`;
+  }
+}
+
+// Wire Chatbot Event Listeners
+if ($('#aiChatLauncher')) $('#aiChatLauncher').onclick = () => openAiChat();
+if ($('#aiChatCloseBtn')) $('#aiChatCloseBtn').onclick = () => closeAiChat();
+if ($('#aiChatClearBtn')) {
+  $('#aiChatClearBtn').onclick = () => {
+    chatHistory = [];
+    renderChatMessages();
+    toast('Chat history cleared');
+  };
+}
+
+if ($('#aiChatForm')) {
+  $('#aiChatForm').onsubmit = (e) => {
+    e.preventDefault();
+    const inp = $('#aiChatInput');
+    if (!inp) return;
+    const val = inp.value;
+    inp.value = '';
+    handleUserAiQuery(val);
+  };
+}
+
+$('#aiChatChips .ai-chip').forEach(chip => {
+  chip.onclick = () => {
+    const q = chip.dataset.q;
+    if (q) handleUserAiQuery(q);
+  };
+});
+
+if ($('#triggerAiVerifyBtn')) {
+  $('#triggerAiVerifyBtn').onclick = () => {
+    openAiChat('Please give me a complete verification and audit of my today check-in: calories, macros, hydration, and workout progress.');
+  };
+}
+
+if ($('#aiMicronutrientAuditBtn')) {
+  $('#aiMicronutrientAuditBtn').onclick = () => {
+    openAiChat('Analyze the micronutrients, fiber, and balance of my logged meals today. Tell me which vitamins or minerals I am getting or lacking, and suggest what to eat next.');
   };
 }
 

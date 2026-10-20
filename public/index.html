@@ -155,6 +155,20 @@
           <div class="strip-orbit orbit-two"></div>
         </div>
 
+        <!-- AI DAILY VERIFICATION & COACH INSIGHT BANNER -->
+        <div class="ai-verify-card" id="aiDailyVerifyCard">
+          <div class="ai-verify-content">
+            <div class="ai-verify-icon">🤖</div>
+            <div class="ai-verify-text">
+              <b id="aiVerifyHeadline">AI Health &amp; Adherence Verification</b>
+              <p id="aiVerifySub">Analyzing calories, protein targets, hydration &amp; workout volume in real time...</p>
+            </div>
+          </div>
+          <button type="button" class="ai-verify-action-btn" id="triggerAiVerifyBtn">
+            ✨ Verify My Day
+          </button>
+        </div>
+
         <div class="dashboard-grid">
           <!-- CALORIES PANEL -->
           <article class="panel calories-panel">
@@ -355,6 +369,9 @@
             <p>A clear picture of what’s fueling you today.</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button class="outline-button" id="aiMicronutrientAuditBtn" style="border-color:#b4db79;background:#f3f8ee;">
+              ✨ AI Micronutrient Audit
+            </button>
             <button class="outline-button" id="openCameraBtn" style="border-color:#b4db79;background:#f3f8ee;">
               📷 Scan Food Photo
             </button>
@@ -1147,6 +1164,50 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============ FLOATING AI CHATBOT LAUNCHER & DRAWER ============ -->
+<div class="ai-chat-launcher" id="aiChatLauncher" title="Ask AI Coach about diet, workout & micronutrients">
+  <div class="ai-chat-pulse"></div>
+  <span>🤖 Ask AI Coach</span>
+</div>
+
+<div class="ai-chat-drawer" id="aiChatDrawer">
+  <div class="ai-chat-header">
+    <div class="ai-chat-header-info">
+      <div style="font-size:1.4rem;">🤖</div>
+      <div>
+        <h4>FitFuel AI Coach</h4>
+        <span>Diet · Workout · Micronutrients</span>
+      </div>
+    </div>
+    <div class="ai-chat-header-actions">
+      <button type="button" id="aiChatClearBtn" title="Clear chat history">🗑️</button>
+      <button type="button" id="aiChatCloseBtn" title="Close chat">&times;</button>
+    </div>
+  </div>
+
+  <div class="ai-chat-body" id="aiChatMessages">
+    <!-- Messages dynamically rendered here -->
+  </div>
+
+  <div class="ai-chat-chips" id="aiChatChips">
+    <button type="button" class="ai-chip" data-q="What are the essential micronutrients I need daily and their food sources?">🥦 Daily Micronutrients</button>
+    <button type="button" class="ai-chip" data-q="Give me a high-protein dinner under 450 kcal with exact ingredients.">🍗 35g Protein Dinner</button>
+    <button type="button" class="ai-chip" data-q="What are the best exercises, sets, and reps for Upper Chest growth?">💪 Upper Chest sets &amp; reps</button>
+    <button type="button" class="ai-chip" data-q="Can I eat hotel biryani or pizza on a fat loss cut? How should I balance it?">🍕 Hotel &amp; Fast Food Guide</button>
+    <button type="button" class="ai-chip" data-q="Review my logged meals and water intake today and give me feedback.">📊 Verify My Today's Log</button>
+  </div>
+
+  <form class="ai-chat-footer" id="aiChatForm" onsubmit="return false;">
+    <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask about diet, workout, food, or micros..." autocomplete="off">
+    <button type="submit" class="ai-chat-send" id="aiChatSendBtn" title="Send message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </form>
 </div>
 
 <!-- TOAST -->
