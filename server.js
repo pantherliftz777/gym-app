@@ -11,6 +11,23 @@ const { createClient } = require('@libsql/client');
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 
+// Load local .env if present
+try {
+  if (fs.existsSync(path.join(ROOT, '.env'))) {
+    const envLines = fs.readFileSync(path.join(ROOT, '.env'), 'utf8').split(/\r?\n/);
+    for (const line of envLines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq > 0) {
+        const k = trimmed.slice(0, eq).trim();
+        const v = trimmed.slice(eq + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch (e) {}
+
 const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://gym-app-pantherliftz777.aws-ap-south-1.turso.io';
 const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTIzMTY4NzYsImlkIjoiMDFhMTRlNjgtZmYwMS03MTBlLWE0YmItOTUxYzAwNTAzNjc0Iiwia2lkIjoidldIWDFnYjZCNEtoT0l5WXpxVHQ2MDkxR18zQUhKZnNOZ3FmRTBkaUNJUSIsInJpZCI6Ijk2Mjg4OTRmLWRlMGYtNDlmZC1hYzA3LTgyZGQ2MjlmMzY4MCJ9.2GeLWOkLpH2QYFCB2gAgHk-qlpRg3MfUmuD8XH_qf-9qUEcwQpg8xbg5DzE7Gq_vwpXSbT2fN7z0BQyNDuJGAA';
 
@@ -312,11 +329,54 @@ const routes = {
       return json(res, 200, { ok: true });
     }
     json(res, 403, { error: 'Wrong admin secret' });
+  },
+  'POST /api/ai/chat': async (req, res) => {
+    const { prompt, systemPrompt } = await readBody(req);
+    const key = process.env.OPENROUTER_API_KEY;
+    const models = [
+      'openrouter/free',
+      'minimax/minimax-m3.1-flash:free',
+      'liquid/lfm-2.5-2.6b:free',
+      'nvidia/nemotron-3.5-lightning:free'
+    ];
+
+    for (const model of models) {
+      try {
+        const fetchRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + key,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://fitfuel.app',
+            'X-Title': 'FitFuel AI Engine'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt || 'You are an elite fitness and nutrition AI. Respond with strict JSON only.' },
+              { role: 'user', content: prompt }
+            ],
+            temperature: 0.3,
+            max_tokens: 850
+          })
+        });
+
+        if (fetchRes.ok) {
+          const data = await fetchRes.json();
+          if (data && data.choices && data.choices[0] && data.choices[0].message) {
+            return json(res, 200, { ok: true, model, content: data.choices[0].message.content });
+          }
+        }
+      } catch (e) {
+        // try next fallback model
+      }
+    }
+    json(res, 503, { error: 'All free AI models currently busy. Please try again.' });
   }
 };
 
 /* ---------- static files ---------- */
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.ico': 'image/x-icon', '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.ico': 'image/x-icon', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.json': 'application/json' };
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p === '/') p = '/index.html';

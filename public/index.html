@@ -493,12 +493,17 @@
             <h2>Personalize your plan.</h2>
             <p>A few details help us make your daily targets more accurate and useful.</p>
           </div>
-          <button class="solid-button small" id="saveProfileBtn">
-            Save profile
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
-            </svg>
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="solid-button small" id="openAiPlanModalBtn" style="background:#203b29;">
+              ✨ AI Personalize Plan
+            </button>
+            <button class="solid-button small" id="saveProfileBtn">
+              Save profile
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="profile-layout">
@@ -674,14 +679,18 @@
           </select>
         </label>
 
-        <label class="full-field">
-          Search food library
-          <input type="text" id="foodSearchInput" placeholder="e.g. Oatmeal, Chicken breast, Banana, Greek yogurt...">
+        <label class="full-field" style="position:relative;">
+          <span>Search or describe any food item</span>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <input type="text" id="foodSearchInput" placeholder="e.g. White rice, Paneer butter masala, 2 Boiled eggs, Protein oats..." autocomplete="off">
+            <button type="button" class="solid-button small" id="aiPredictFoodBtn" style="white-space:nowrap;padding:0 14px;height:38px;background:#203b29;" title="Use AI to estimate calories and macros">
+              ✨ AI Predict
+            </button>
+          </div>
+          <div id="foodSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:90;background:#ffffff;border:1px solid #dce2d7;border-radius:10px;max-height:210px;overflow-y:auto;box-shadow:0 14px 35px rgba(25,40,28,0.18);margin-top:4px;padding:6px;">
+            <!-- Autocomplete matches -->
+          </div>
         </label>
-
-        <div id="foodSearchResults" style="max-height:180px;overflow-y:auto;border:1px solid #edf0e9;border-radius:8px;padding:6px;display:none;">
-          <!-- Quick search options -->
-        </div>
 
         <label>
           Portion (grams / ml)
@@ -804,6 +813,64 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- AI PLAN PERSONALIZATION MODAL -->
+<div class="modal-backdrop" id="aiPlanModal">
+  <div class="modal-card" style="max-width:480px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">AI PERSONAL COACH</span>
+        <h2>Personalize Your Nutrition &amp; Workout</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <form id="aiPlanForm" onsubmit="return false;">
+      <p style="color:#637367;font-size:.88rem;margin-bottom:14px;line-height:1.45;">
+        Our AI engine analyzes your exact bodyweight, goal, and preferences using OpenRouter's free AI models with automatic failover to build an accurate, custom diet and training plan.
+      </p>
+
+      <div class="modal-fields" style="display:grid;gap:11px;">
+        <label>
+          Dietary Preference
+          <select id="aiDietPrefSelect">
+            <option value="Balanced" selected>Balanced / Healthy</option>
+            <option value="Vegetarian / Indian Veg">Vegetarian / Indian Veg</option>
+            <option value="High Protein Non-Veg">High Protein Non-Veg</option>
+            <option value="Vegan">Vegan (Plant-based)</option>
+            <option value="Keto / Low Carb">Keto / Low Carb</option>
+          </select>
+        </label>
+
+        <label>
+          Target Focus Area
+          <select id="aiFocusSelect">
+            <option value="Full Body Strength" selected>Full Body Strength</option>
+            <option value="Glutes & Legs">Glutes &amp; Legs Focus</option>
+            <option value="Chest, Back & Arms">Chest, Back &amp; Arms</option>
+            <option value="Abs, Core & Fat Loss">Abs &amp; Core Shred</option>
+          </select>
+        </label>
+
+        <label class="full-field">
+          Custom Note or Equipment (Optional)
+          <input type="text" id="aiCustomNote" placeholder="e.g. Home dumbbells only, want high-protein Indian breakfast">
+        </label>
+      </div>
+
+      <div style="margin-top:18px;">
+        <button type="button" class="solid-button full" id="generateAiPlanBtn" style="width:100%;height:44px;background:#203b29;">
+          ✨ Generate &amp; Apply My AI Plan
+        </button>
+      </div>
+
+      <div id="aiPlanLoadingIndicator" style="display:none;margin-top:14px;padding:12px;background:#f3f7f0;border:1px solid #dce8d5;border-radius:10px;text-align:center;">
+        <b style="color:#203b29;font-size:.9rem;">AI is crafting your personalized plan...</b>
+        <p style="color:#637367;font-size:.8rem;margin-top:4px;">Connecting to OpenRouter free models with automatic failover</p>
+      </div>
+    </form>
   </div>
 </div>
 

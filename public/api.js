@@ -88,5 +88,120 @@ const FF = {
   /* admin */
   async adminUsers() { const r = await this.req('GET', '/api/admin/users'); return r.users; },
   async adminComplaints() { const r = await this.req('GET', '/api/complaints'); return r.complaints; },
-  async adminDeleteUser(id) { await this.req('DELETE', '/api/admin/user', { id }); }
+  async adminDeleteUser(id) { await this.req('DELETE', '/api/admin/user', { id }); },
+
+  /* OpenRouter Free AI Engine with Cascade Failover */
+  openRouterKey: (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_openrouter_key') : '') || '',
+  freeModels: [
+    'openrouter/free',
+    'minimax/minimax-m3.1-flash:free',
+    'liquid/lfm-2.5-2.6b:free',
+    'nvidia/nemotron-3.5-lightning:free'
+  ],
+
+  async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI. Respond with valid JSON only.') {
+    // 1. Try server endpoint first
+    try {
+      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt });
+      if (res && res.content) return res.content;
+    } catch (e) {
+      // Proceed to direct client-side fallback
+    }
+
+    // 2. Cascade across free OpenRouter models
+    for (const model of this.freeModels) {
+      try {
+        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + this.openRouterKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': typeof location !== 'undefined' ? location.origin : 'https://fitfuel.app',
+            'X-Title': 'FitFuel AI Engine'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompt }
+            ],
+            temperature: 0.3,
+            max_tokens: 850
+          })
+        });
+
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && data.choices && data.choices[0] && data.choices[0].message) {
+            return data.choices[0].message.content;
+          }
+        }
+      } catch (err) {
+        console.warn('AI fallback triggered from model:', model, err);
+      }
+    }
+    throw new Error('All free AI models currently busy. Please try again.');
+  },
+
+  async aiPredictFood(foodName, meal = 'Snack') {
+    const prompt = `Analyze this food item or meal description: "${foodName}". Meal type: "${meal}".
+Estimate the standard serving size, calories, protein, carbs, and fat.
+Return ONLY valid JSON matching this exact structure:
+{
+  "name": "Food Name",
+  "detail": "Serving detail (e.g. 1 bowl / 150g)",
+  "portionGrams": 150,
+  "calories": 250,
+  "protein": 12,
+  "carbs": 35,
+  "fat": 6
+}`;
+    const raw = await this.callAI(prompt, 'You are an accurate nutritional database and AI nutrition analyzer. Respond with strict JSON only.');
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Could not parse nutrition data');
+    return JSON.parse(match[0]);
+  },
+
+  async aiGeneratePlan(profileData) {
+    const prompt = `Create a complete, highly personalized nutrition and workout plan for this user:
+- Weight: ${profileData.wKg} kg (${profileData.units})
+- Height: ${profileData.hCm} cm
+- Primary Goal: ${profileData.goal}
+- Training Frequency: ${profileData.days} days / week
+- Creatine: ${profileData.creatine}
+- Dietary Preference: ${profileData.dietPref || 'Balanced'}
+- Target Focus Areas: ${profileData.focus || 'Full body'}
+- Extra Notes: ${profileData.note || 'None'}
+
+Return ONLY valid JSON with this exact structure:
+{
+  "cal": 2200,
+  "p": 145,
+  "c": 220,
+  "f": 65,
+  "waterL": "2.5",
+  "meals": [
+    { "meal": "Breakfast", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 450, "p": 32, "c": 45, "f": 12 },
+    { "meal": "Lunch", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 600, "p": 45, "c": 60, "f": 18 },
+    { "meal": "Snack", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 250, "p": 20, "c": 25, "f": 8 },
+    { "meal": "Dinner", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 550, "p": 40, "c": 50, "f": 16 }
+  ],
+  "workout": {
+    "name": "Routine Name",
+    "focus": "PRIMARY MUSCLE TARGETS",
+    "duration": "40 min",
+    "benefit": "Why this workout was chosen for this goal.",
+    "moves": [
+      { "name": "Exercise 1", "sets": "3 sets × 10 reps", "tip": "Key technique cue" },
+      { "name": "Exercise 2", "sets": "3 sets × 12 reps", "tip": "Key technique cue" },
+      { "name": "Exercise 3", "sets": "3 sets × 10 reps", "tip": "Key technique cue" },
+      { "name": "Exercise 4", "sets": "3 sets × 15 reps", "tip": "Key technique cue" }
+    ]
+  }
+}`;
+    const raw = await this.callAI(prompt, 'You are Formwise AI, an elite personal trainer and sports nutritionist. Respond with strict JSON only.');
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Could not parse AI plan');
+    return JSON.parse(match[0]);
+  }
 };

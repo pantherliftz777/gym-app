@@ -521,69 +521,131 @@ $('#clearDayLogBtn').onclick = () => {
 function openFoodModal() {
   $('#foodSearchInput').value = '';
   $('#foodSearchResults').style.display = 'none';
+  selectedBaseFood = COMMON_FOODS[0];
   $('#foodPortionInput').value = 100;
-  $('#foodCalInput').value = 150;
-  $('#foodPInput').value = 10;
-  $('#foodCInput').value = 15;
-  $('#foodFInput').value = 4;
+  calcPortionNutrients();
   openModal('#foodModal');
 }
 
 // Built-in food database for search
+// Rich food database with accurate per-100g nutritional benchmarks & visuals
 const COMMON_FOODS = [
-  { name: 'Oatmeal', p: 13, c: 68, f: 7, k: 389 },
-  { name: 'Chicken Breast', p: 31, c: 0, f: 3.6, k: 165 },
-  { name: 'Greek Yogurt 0%', p: 10, c: 3.6, f: 0.4, k: 59 },
-  { name: 'Eggs (Whole)', p: 13, c: 1.1, f: 11, k: 155 },
-  { name: 'Banana', p: 1.1, c: 23, f: 0.3, k: 89 },
-  { name: 'White Rice (Cooked)', p: 2.7, c: 28, f: 0.3, k: 130 },
-  { name: 'Salmon Fillet', p: 20, c: 0, f: 13, k: 208 },
-  { name: 'Whey Protein Powder', p: 80, c: 6, f: 3, k: 375 },
-  { name: 'Almonds', p: 21, c: 22, f: 49, k: 579 },
-  { name: 'Whole Milk', p: 3.2, c: 4.8, f: 3.7, k: 62 },
-  { name: 'Peanut Butter', p: 25, c: 20, f: 50, k: 588 },
-  { name: 'Cottage Cheese (Paneer)', p: 18, c: 4, f: 20, k: 265 }
+  { name: 'White Rice (Cooked)', p: 2.7, c: 28, f: 0.3, k: 130, icon: '🍚' },
+  { name: 'Brown Rice (Cooked)', p: 2.6, c: 23, f: 0.9, k: 111, icon: '🌾' },
+  { name: 'Chicken Breast (Cooked)', p: 31, c: 0, f: 3.6, k: 165, icon: '🍗' },
+  { name: 'Eggs (Whole, Boiled)', p: 13, c: 1.1, f: 11, k: 155, icon: '🥚' },
+  { name: 'Egg Whites (Cooked)', p: 11, c: 0.7, f: 0.2, k: 52, icon: '🍳' },
+  { name: 'Greek Yogurt 0%', p: 10, c: 3.6, f: 0.4, k: 59, icon: '🥣', image: 'images/greek-yogurt.jpg' },
+  { name: 'Oatmeal (Rolled Oats)', p: 13, c: 68, f: 7, k: 389, icon: '🥣' },
+  { name: 'Banana', p: 1.1, c: 23, f: 0.3, k: 89, icon: '🍌' },
+  { name: 'Apple', p: 0.3, c: 14, f: 0.2, k: 52, icon: '🍎' },
+  { name: 'Salmon Fillet (Grilled)', p: 20, c: 0, f: 13, k: 208, icon: '🐟', image: 'images/salmon-bowl.jpg' },
+  { name: 'Paneer (Cottage Cheese)', p: 18, c: 3.5, f: 20, k: 265, icon: '🧀' },
+  { name: 'Tofu (Firm)', p: 12, c: 2.5, f: 5.5, k: 90, icon: '🧊' },
+  { name: 'Roti / Chapati (Whole Wheat)', p: 3.5, c: 17, f: 0.5, k: 85, icon: '🫓' },
+  { name: 'Dal (Yellow Lentil Soup)', p: 6.8, c: 15, f: 2.5, k: 110, icon: '🍲' },
+  { name: 'Whey Protein Powder', p: 80, c: 6, f: 3, k: 375, icon: '🥤' },
+  { name: 'Almonds', p: 21, c: 22, f: 49, k: 579, icon: '🥜' },
+  { name: 'Peanut Butter', p: 25, c: 20, f: 50, k: 588, icon: '🥜' },
+  { name: 'Sweet Potato (Baked)', p: 2, c: 21, f: 0.1, k: 90, icon: '🍠' }
 ];
-
-let selectedBaseFood = COMMON_FOODS[1];
+let selectedBaseFood = COMMON_FOODS[0];
 
 function calcPortionNutrients() {
-  const g = Number($('#foodPortionInput').value) || 100;
+  const g = Number($('#foodPortionInput') ? $('#foodPortionInput').value : 100) || 100;
   const ratio = g / 100;
-  $('#foodCalInput').value = Math.round(selectedBaseFood.k * ratio);
-  $('#foodPInput').value = Math.round(selectedBaseFood.p * ratio);
-  $('#foodCInput').value = Math.round(selectedBaseFood.c * ratio);
-  $('#foodFInput').value = Math.round(selectedBaseFood.f * ratio);
+  if ($('#foodCalInput')) $('#foodCalInput').value = Math.round((selectedBaseFood.k || 0) * ratio);
+  if ($('#foodPInput')) $('#foodPInput').value = Math.round((selectedBaseFood.p || 0) * ratio);
+  if ($('#foodCInput')) $('#foodCInput').value = Math.round((selectedBaseFood.c || 0) * ratio);
+  if ($('#foodFInput')) $('#foodFInput').value = Math.round((selectedBaseFood.f || 0) * ratio);
 }
 
-$('#foodPortionInput').oninput = calcPortionNutrients;
+if ($('#foodPortionInput')) $('#foodPortionInput').oninput = calcPortionNutrients;
 
-$('#foodSearchInput').oninput = e => {
-  const q = e.target.value.toLowerCase().trim();
-  const res = $('#foodSearchResults');
-  if (!q) { res.style.display = 'none'; return; }
-  const matches = COMMON_FOODS.filter(f => f.name.toLowerCase().includes(q));
-  if (!matches.length) { res.style.display = 'none'; return; }
-  res.style.display = 'block';
-  res.innerHTML = matches.map((f, i) => `
-    <div style="padding:6px 10px;cursor:pointer;border-radius:6px;font-size:.9rem;display:flex;justify-content:space-between;"
-         onmouseover="this.style.background='#f0f5ee'" onmouseout="this.style.background='transparent'"
-         onclick="selectSearchFood(${i})">
-      <b>${f.name}</b>
-      <span style="color:#78887c;">${f.k} kcal/100g</span>
-    </div>
-  `).join('');
-};
+if ($('#foodSearchInput')) {
+  $('#foodSearchInput').oninput = e => {
+    const q = e.target.value.toLowerCase().trim();
+    const res = $('#foodSearchResults');
+    if (!res) return;
+    if (!q) { res.style.display = 'none'; return; }
+    const matches = COMMON_FOODS.filter(f => f.name.toLowerCase().includes(q));
+    if (!matches.length) { res.style.display = 'none'; return; }
+    res.style.display = 'block';
+    res.innerHTML = matches.map((f, i) => {
+      const visual = f.image ? `<img src="${f.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;"/>` : `<span style="font-size:1.15rem;">${f.icon || '🍽️'}</span>`;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;cursor:pointer;border-radius:8px;transition:background .15s;border-bottom:1px solid #f2f5ef;"
+           onmouseover="this.style.background='#f0f5ee'" onmouseout="this.style.background='transparent'"
+           onclick="selectSearchFood(${i})">
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${visual}
+          <div>
+            <b style="color:#203125;font-size:.9rem;">${f.name}</b>
+            <p style="color:#78887c;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F</p>
+          </div>
+        </div>
+        <span style="font-weight:700;color:#34483a;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#78887c;">kcal/100g</small></span>
+      </div>`;
+    }).join('');
+  };
+
+  // Close search dropdown if clicking outside
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#foodSearchInput') && !e.target.closest('#foodSearchResults')) {
+      const res = $('#foodSearchResults');
+      if (res) res.style.display = 'none';
+    }
+  });
+}
 
 window.selectSearchFood = function(idx) {
-  const q = $('#foodSearchInput').value.toLowerCase().trim();
+  const q = ($('#foodSearchInput') ? $('#foodSearchInput').value : '').toLowerCase().trim();
   const matches = COMMON_FOODS.filter(f => f.name.toLowerCase().includes(q));
   const f = matches[idx] || COMMON_FOODS[idx];
+  if (!f) return;
   selectedBaseFood = f;
-  $('#foodSearchInput').value = f.name;
-  $('#foodSearchResults').style.display = 'none';
+  if ($('#foodSearchInput')) $('#foodSearchInput').value = f.name;
+  const res = $('#foodSearchResults');
+  if (res) res.style.display = 'none';
   calcPortionNutrients();
 };
+
+/* AI Food Predictor Button */
+if ($('#aiPredictFoodBtn')) {
+  $('#aiPredictFoodBtn').onclick = async () => {
+    const query = ($('#foodSearchInput') ? $('#foodSearchInput').value : '').trim();
+    const meal = ($('#foodMealSelect') ? $('#foodMealSelect').value : 'Snack');
+    if (!query) {
+      toast('Please enter or describe a food item first');
+      return;
+    }
+    const btn = $('#aiPredictFoodBtn');
+    btn.disabled = true;
+    btn.textContent = '✨ Estimating...';
+
+    try {
+      const data = await FF.aiPredictFood(query, meal);
+      selectedBaseFood = {
+        name: data.name || query,
+        k: Math.round((data.calories || 200) / ((data.portionGrams || 100) / 100)),
+        p: Math.round((data.protein || 10) / ((data.portionGrams || 100) / 100)),
+        c: Math.round((data.carbs || 20) / ((data.portionGrams || 100) / 100)),
+        f: Math.round((data.fat || 5) / ((data.portionGrams || 100) / 100))
+      };
+      if ($('#foodSearchInput')) $('#foodSearchInput').value = data.name || query;
+      if ($('#foodPortionInput')) $('#foodPortionInput').value = data.portionGrams || 100;
+      if ($('#foodCalInput')) $('#foodCalInput').value = data.calories;
+      if ($('#foodPInput')) $('#foodPInput').value = data.protein;
+      if ($('#foodCInput')) $('#foodCInput').value = data.carbs;
+      if ($('#foodFInput')) $('#foodFInput').value = data.fat;
+      toast(`✨ AI estimated ${data.calories} kcal for ${data.name || query}`);
+    } catch (e) {
+      toast(e.message || 'AI prediction unavailable');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '✨ AI Predict';
+    }
+  };
+}
 
 function confirmAddFood() {
   const name = $('#foodSearchInput').value.trim() || selectedBaseFood.name;
@@ -1055,6 +1117,79 @@ function initMotionEffects() {
 }
 
 /* ---------- Boot / Init ---------- */
+
+/* ---------- AI Plan Personalization Engine ---------- */
+if ($('#openAiPlanModalBtn')) {
+  $('#openAiPlanModalBtn').onclick = () => {
+    openModal('#aiPlanModal');
+  };
+}
+
+if ($('#generateAiPlanBtn')) {
+  $('#generateAiPlanBtn').onclick = async () => {
+    const btn = $('#generateAiPlanBtn');
+    const loading = $('#aiPlanLoadingIndicator');
+    btn.disabled = true;
+    btn.textContent = 'Generating Plan with AI...';
+    if (loading) loading.style.display = 'block';
+
+    const dietPref = $('#aiDietPrefSelect') ? $('#aiDietPrefSelect').value : 'Balanced';
+    const focus = $('#aiFocusSelect') ? $('#aiFocusSelect').value : 'Full Body Strength';
+    const note = $('#aiCustomNote') ? $('#aiCustomNote').value : '';
+
+    try {
+      const plan = await FF.aiGeneratePlan({
+        wKg: profile.wKg || 68,
+        hCm: profile.hCm || 175,
+        goal: profile.goal || 'Maintain weight',
+        days: profile.days || 4,
+        creatine: profile.creatine || 'yes',
+        units: profile.units || 'Metric',
+        dietPref,
+        focus,
+        note
+      });
+
+      // 1. Update Profile targets
+      if (plan.cal) profile.cal = plan.cal;
+      if (plan.p) profile.p = plan.p;
+      if (plan.c) profile.c = plan.c;
+      if (plan.f) profile.f = plan.f;
+      if (plan.waterL) profile.waterGoal = plan.waterL;
+
+      // 2. Update meals
+      if (plan.meals && Array.isArray(plan.meals) && plan.meals.length) {
+        const d = today();
+        log[d] = plan.meals;
+        store.set('log', log);
+      }
+
+      // 3. Update active workout
+      if (plan.workout && plan.workout.moves) {
+        WORKOUT_PLANS.unshift(plan.workout);
+        activeWorkoutIdx = 0;
+      }
+
+      // Save to storage & Turso database
+      store.set('profile', profile);
+      store.set('plan', plan);
+
+      closeModal('#aiPlanModal');
+      renderDashboard();
+      renderProfileView();
+      renderFoodLog();
+      renderWorkouts();
+      toast('🎉 AI Plan created & synced with your account!');
+    } catch (err) {
+      toast(err.message || 'Error generating AI plan');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '✨ Generate & Apply My AI Plan';
+      if (loading) loading.style.display = 'none';
+    }
+  };
+}
+
 async function bootApp() {
   initMotionEffects();
   renderProfileView();
