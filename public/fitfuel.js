@@ -61,6 +61,7 @@ let streakTracker = store.get('streakTracker', {
   brokenStreakCount: 0,
   history: []
 });
+let activeChallengePlan = store.get('activeChallengePlan', null);
 let session = store.get('session', null);
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
@@ -728,12 +729,14 @@ function switchView(viewName) {
   $('#sidebar').classList.remove('mobile-open');
 
   // Re-render view specifics
-  if (viewName === 'today') renderDashboard();
+  if (viewName === 'today') { renderDashboard(); renderDailyTip(); }
   if (viewName === 'food-log') renderFoodLog();
   if (viewName === 'workouts') renderWorkouts();
   if (viewName === 'exercise-library') renderExerciseLibrary();
   if (viewName === 'my-foods') renderMyFoods();
   if (viewName === 'profile') renderProfileView();
+  if (viewName === 'challenge') renderChallengeView();
+  if (viewName === 'tracking') renderTrackingView();
 }
 
 // Attach Nav Links
@@ -3025,14 +3028,17 @@ async function submitAuth() {
         if (st.log && Object.keys(st.log).length) { log = st.log; store.set('log', log); }
         if (st.custom && st.custom.length) { custom = st.custom; store.set('custom', custom); }
         if (st.workouts) { workoutsDone = st.workouts; store.set('workoutsDone', workoutsDone); }
+        if (st.activeChallenge) { activeChallengePlan = st.activeChallenge; store.set('activeChallengePlan', activeChallengePlan); }
       }
     } catch (e) {}
 
     closeModal('#authModal');
     renderProfileView();
     renderDashboard();
+    renderDailyTip();
     renderFoodLog();
     updateSyncStatus('Cloud database synced');
+    showMotivationalQuotePopup();
   } catch (err) {
     toast(err.message || 'Authentication error');
   } finally {
@@ -3438,14 +3444,991 @@ if ($('#aiMicronutrientAuditBtn')) {
   };
 }
 
+/* ================= MOTIVATIONAL QUOTES ON LOGIN / SIGNUP ================= */
+const MOTIVATION_QUOTES = [
+  { text: "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion.", author: "Arnold Schwarzenegger" },
+  { text: "Don't count the days, make the days count.", author: "Muhammad Ali" },
+  { text: "We don't rise to the level of our expectations, we fall to the level of our training.", author: "Archilochus" },
+  { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
+  { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+  { text: "You don't have to be extreme, just consistent. Small daily wins compound into greatness.", author: "Fitness Discipline" },
+  { text: "The pain of discipline is far less than the pain of regret.", author: "Sarah Bombell" },
+  { text: "Your body can stand almost anything. It's your mind that you have to convince.", author: "Elite Mindset" },
+  { text: "The only bad workout is the one that didn't happen.", author: "Strength Philosophy" },
+  { text: "Energy flows where attention goes. Focus on your reps, your nutrition, and your sleep.", author: "Formwise Coaching" }
+];
+
+function showMotivationalQuotePopup() {
+  const quote = MOTIVATION_QUOTES[Math.floor(Math.random() * MOTIVATION_QUOTES.length)];
+  if ($('#motivationQuoteText')) $('#motivationQuoteText').textContent = `"${quote.text}"`;
+  if ($('#motivationQuoteAuthor')) $('#motivationQuoteAuthor').textContent = `— ${quote.author}`;
+  openModal('#motivationModal');
+}
+
+if ($('#dismissMotivationBtn')) {
+  $('#dismissMotivationBtn').onclick = () => closeModal('#motivationModal');
+}
+
+/* ================= DAILY TIP & HABIT SCIENCE ================= */
+const DAILY_TIPS = [
+  {
+    category: "DAILY NUTRITION & MUSCLE SCIENCE",
+    title: "Target 1.6g to 2.2g Protein per kg Bodyweight",
+    content: "Consuming adequate protein throughout the day distributes leucine spikes to trigger muscle protein synthesis (MPS). Distribute your daily intake evenly over 3 to 4 meals to maximize recovery.",
+    takeaway: "Aim for ~25-40g protein per meal.",
+    source: "International Society of Sports Nutrition (ISSN)"
+  },
+  {
+    category: "HYDRATION & CELLULAR VOLUME",
+    title: "1-2% Dehydration Drops Muscular Strength by up to 10%",
+    content: "Muscles are over 70% water. Even minor dehydration compromises electrolyte pump gradients and muscular endurance. Drink a full glass of water first thing in the morning and sip steadily around your training session.",
+    takeaway: "Track your 12 glasses today on the dashboard.",
+    source: "Journal of Athletic Training"
+  },
+  {
+    category: "HYPERTROPHY & BIOMECHANICS",
+    title: "Emphasize the 3-Second Eccentric Lowering Phase",
+    content: "Research confirms that mechanical tension in the stretched, eccentric (lowering) portion of a lift yields significantly greater muscle damage and hypertrophic signaling than rapid concentric repetitions.",
+    takeaway: "Lower weights under strict 2-3s control without bouncing.",
+    source: "Sports Medicine Meta-Analysis"
+  },
+  {
+    category: "SLEEP & HORMONAL RECOVERY",
+    title: "Over 70% of Human Growth Hormone (HGH) Spikes During Deep Sleep",
+    content: "Deep Slow-Wave Sleep (stages 3 & 4) triggers peak release of anabolic hormones essential for repairing micro-tears in muscle tissue and resynthesizing glycogen. Skimping on sleep blunts insulin sensitivity.",
+    takeaway: "Target 7.5 to 8.5 hours in a cool, dark room.",
+    source: "Sleep Medicine Reviews"
+  },
+  {
+    category: "PROGRESSIVE OVERLOAD PRINCIPLE",
+    title: "Add 1 Rep or 1 kg Each Week to Force Muscular Adaptation",
+    content: "The body only adapts when exposed to a stimulus beyond what it is currently accustomed to. Log your lifts, track your sets, and strive for incremental micro-progressions each week.",
+    takeaway: "Track every completed workout in your Habit Log.",
+    source: "American College of Sports Medicine (ACSM)"
+  },
+  {
+    category: "REST INTERVAL PHYSIOLOGY",
+    title: "Longer Rest Intervals (2-3 min) Maximize Compound Muscle Strength",
+    content: "For heavy compound movements (squats, presses, deadlifts), resting 2-3 minutes allows ATP-CP stores to resynthesize over 95%, allowing you to lift heavier volume compared to short 30-second rests.",
+    takeaway: "Use the built-in +60s rest button on heavy compound days.",
+    source: "Journal of Strength and Conditioning Research"
+  }
+];
+
+let currentTipIndex = Math.floor(Math.random() * DAILY_TIPS.length);
+
+function renderDailyTip() {
+  const tip = DAILY_TIPS[currentTipIndex % DAILY_TIPS.length];
+  if (!tip) return;
+  if ($('#dailyTipCategory')) $('#dailyTipCategory').textContent = tip.category;
+  if ($('#dailyTipTitle')) $('#dailyTipTitle').textContent = tip.title;
+  if ($('#dailyTipContent')) $('#dailyTipContent').textContent = tip.content;
+  if ($('#dailyTipKeyTakeaway')) $('#dailyTipKeyTakeaway').innerHTML = `<b>Key takeaway:</b> ${escapeHtml(tip.takeaway)}`;
+  if ($('#dailyTipSource')) $('#dailyTipSource').textContent = tip.source;
+}
+
+function cycleDailyTip() {
+  currentTipIndex = (currentTipIndex + 1) % DAILY_TIPS.length;
+  renderDailyTip();
+  if (M && M.animate) {
+    const p = $('#dailyTipPanel');
+    if (p) M.animate(p, { scale: [0.98, 1], opacity: [0.85, 1] }, { duration: 0.2 });
+  }
+}
+
+if ($('#nextDailyTipBtn')) {
+  $('#nextDailyTipBtn').onclick = cycleDailyTip;
+}
+
+/* ================= WEB AUDIO SYNTHESIZER (3-2-1 BEEP GENERATOR) ================= */
+let audioCtx = null;
+function playAudioChime(freq = 440, type = 'sine', duration = 0.14) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
+/* ================= CHALLENGE SETUP & AI ENGINE ================= */
+let setupMotive = 'Burn Fat & Lean Out';
+let setupDuration = 15;
+
+function initChallengeSetupListeners() {
+  // Motive Selection Cards
+  $$('#motiveOptionsList .setup-choice-card').forEach(card => {
+    card.onclick = () => {
+      $$('#motiveOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      setupMotive = card.dataset.motive || 'Burn Fat & Lean Out';
+    };
+  });
+
+  // Step 1 -> Step 2
+  if ($('#proceedToDurationBtn')) {
+    $('#proceedToDurationBtn').onclick = () => {
+      closeModal('#challengeMotiveModal');
+      if ($('#challengeMetricsPreview')) {
+        const w = profile.wKg || 70;
+        const h = profile.hCm || 175;
+        const u = profile.units || 'Metric';
+        const d = profile.days || 4;
+        $('#challengeMetricsPreview').textContent = `${w} ${u === 'Metric' ? 'kg' : 'lbs'} · ${h} cm · ${d} Workouts/Wk · Goal: ${setupMotive}`;
+      }
+      setTimeout(() => openModal('#challengeDurationModal'), 100);
+    };
+  }
+
+  // Step 2 -> Back to Step 1
+  if ($('#backToMotiveBtn')) {
+    $('#backToMotiveBtn').onclick = () => {
+      closeModal('#challengeDurationModal');
+      setTimeout(() => openModal('#challengeMotiveModal'), 100);
+    };
+  }
+
+  // Duration Selection Cards
+  $$('#durationOptionsList .setup-choice-card').forEach(card => {
+    card.onclick = () => {
+      $$('#durationOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      setupDuration = Number(card.dataset.days) || 15;
+    };
+  });
+
+  // Generate AI Plan
+  if ($('#generateChallengePlanBtn')) {
+    $('#generateChallengePlanBtn').onclick = () => generateAIChallengePlan(setupMotive, setupDuration);
+  }
+
+  // Start New Challenge button on challenge intro
+  if ($('#createChallengeBtn')) {
+    $('#createChallengeBtn').onclick = () => {
+      openModal('#challengeMotiveModal');
+    };
+  }
+}
+initChallengeSetupListeners();
+
+// Helper: Day-by-day routines generator factoring in user bodyweight, height & motive
+function buildDayByDayRoutines(motive, durationDays, w, h) {
+  const isFat = motive.includes('Fat');
+  const isStrength = motive.includes('Strength');
+  const defaultReps = isFat ? '14-16 reps' : (isStrength ? '5-6 heavy reps' : '10-12 reps');
+  const defaultDuration = isFat ? 35 : (isStrength ? 50 : 45);
+  const defaultRest = isStrength ? 90 : (isFat ? 45 : 60);
+
+  const splitTemplates = [
+    { title: 'Chest & Triceps Hypertrophy', focus: 'Upper & Mid Chest · Triceps', muscleGroup: 'Chest' },
+    { title: 'Back & Biceps Engine', focus: 'Lats · Upper Back · Biceps', muscleGroup: 'Back' },
+    { title: 'Quads & Lower Body Power', focus: 'Quads · Hamstrings · Calves', muscleGroup: 'Legs' },
+    { title: 'Shoulders & Core Stability', focus: 'Deltoids · Abs · Obliques', muscleGroup: 'Shoulders' },
+    { title: 'Glutes, Posterior & Cardio Shred', focus: 'Posterior Chain · Glutes · Conditioning', muscleGroup: 'Legs' },
+    { title: 'Full-Body Athletic Conditioning', focus: 'Compound Movements · Metcon', muscleGroup: 'Chest' },
+    { title: 'Active Recovery & Core Armor', focus: 'Mobility · Deep Core · Balance', muscleGroup: 'Abs / Core' }
+  ];
+
+  const days = [];
+  for (let i = 1; i <= durationDays; i++) {
+    const template = splitTemplates[(i - 1) % splitTemplates.length];
+    const category = template.muscleGroup === 'Abs / Core' ? 'Chest' : template.muscleGroup;
+    const libraryMatches = EXERCISES_LIBRARY.filter(e => e.category.toLowerCase().includes(category.toLowerCase()));
+    const selectedExercises = (libraryMatches.length >= 4 ? libraryMatches.slice(0, 4) : EXERCISES_LIBRARY.slice(0, 4)).map((ex, idx) => ({
+      name: ex.name,
+      subMuscle: ex.sub || ex.category,
+      category: ex.category,
+      sets: 3,
+      reps: defaultReps,
+      durationSec: defaultDuration,
+      restSec: defaultRest,
+      tip: ex.steps || ex.rxWhy || 'Maintain tight core, chest up, smooth cadence.'
+    }));
+
+    days.push({
+      dayNumber: i,
+      title: `Day ${i}: ${template.title}`,
+      focus: template.focus,
+      intensity: (i % 3 === 0) ? 'Peak High' : 'Targeted',
+      estDuration: `${selectedExercises.length * 9} min`,
+      completed: false,
+      completedAt: null,
+      exercises: selectedExercises
+    });
+  }
+  return days;
+}
+
+async function generateAIChallengePlan(motive, durationDays) {
+  const btn = $('#generateChallengePlanBtn');
+  const origText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Engineering AI Plan...'; }
+  toast(`🤖 AI is personalizing your ${durationDays}-Day ${motive} Challenge...`);
+
+  const w = profile.wKg || 70;
+  const h = profile.hCm || 175;
+
+  const planDays = buildDayByDayRoutines(motive, durationDays, w, h);
+
+  const newChallenge = {
+    id: 'chall_' + Date.now(),
+    motive: motive,
+    durationDays: Number(durationDays),
+    createdAt: Date.now(),
+    startDate: today(),
+    currentDayIndex: 0,
+    completedCount: 0,
+    userWeight: w,
+    userHeight: h,
+    days: planDays
+  };
+
+  // Safe storage: NEVER deleted unless user explicitly selects Exit Challenge or finishes
+  activeChallengePlan = newChallenge;
+  store.set('activeChallengePlan', activeChallengePlan);
+  if (FF.online && FF.user) {
+    FF.patch({ activeChallenge: activeChallengePlan });
+  }
+
+  closeModal('#challengeDurationModal');
+  if (btn) { btn.disabled = false; btn.textContent = origText; }
+
+  switchView('challenge');
+  renderChallengeView();
+  renderTrackingView();
+  toast(`🔥 ${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
+}
+
+/* ================= CHALLENGE VIEW RENDERING ================= */
+let swapTargetDayIdx = 0;
+let swapTargetExIdx = 0;
+
+function renderChallengeView() {
+  const container = $('#challengeViewContainer');
+  if (!container) return;
+
+  if (!activeChallengePlan || !activeChallengePlan.days || !activeChallengePlan.days.length) {
+    // Empty state: invite user to start a challenge
+    container.innerHTML = `
+      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:18px;padding:36px 24px;text-align:center;box-shadow:0 4px 18px rgba(32,59,41,0.05);max-width:680px;margin:20px auto;">
+        <div style="width:68px;height:68px;border-radius:20px;background:#eef6e9;color:#203b29;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          🎯
+        </div>
+        <h3 style="font-size:1.4rem;color:#1e3424;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
+        <p style="color:#637367;font-size:.92rem;line-height:1.55;max-width:500px;margin:0 auto 24px;">
+          Ready to transform? Choose your goal (Burn Fat, Build Muscle, Maintain Weight) and duration (10, 15, 25, 30 days) to have our AI generate your personalized roadmap.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;text-align:left;">
+          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
+            <b style="color:#203b29;font-size:.88rem;display:block;">⚡ AI Engineered</b>
+            <small style="color:#637367;">Personalized to your height, weight &amp; strength targets.</small>
+          </div>
+          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
+            <b style="color:#203b29;font-size:.88rem;display:block;">⏱️ Built-in Timers</b>
+            <small style="color:#637367;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
+          </div>
+          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
+            <b style="color:#203b29;font-size:.88rem;display:block;">🔄 Swap Any Workout</b>
+            <small style="color:#637367;">Change or replace any exercise with 1 click.</small>
+          </div>
+        </div>
+        <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#203b29;padding:12px 28px;font-size:1rem;font-weight:700;">
+          🚀 Start Your Challenge Now
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Active Challenge Dashboard
+  const p = activeChallengePlan;
+  const currentIdx = Math.min(p.days.length - 1, p.currentDayIndex || 0);
+  const currentDay = p.days[currentIdx];
+  const pct = Math.min(100, Math.round(((p.completedCount || 0) / p.durationDays) * 100));
+  const remaining = Math.max(0, p.durationDays - (p.completedCount || 0));
+
+  container.innerHTML = `
+    <!-- CHALLENGE HERO BANNER -->
+    <div style="background:linear-gradient(135deg, #203b29 0%, #172c1e 100%);color:#f0f5ee;border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:0 6px 24px rgba(32,59,41,0.18);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="background:rgba(180,219,121,0.2);color:#c9f582;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
+            <span style="font-size:.8rem;color:#b8cebe;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
+          </div>
+          <h2 style="margin:0;font-size:1.45rem;color:#ffffff;font-weight:800;">${escapeHtml(p.motive)} Challenge</h2>
+          <p style="margin:4px 0 0;color:#ccdccf;font-size:.88rem;">Personalized for ${p.userWeight} kg · ${p.userHeight} cm · Target Goal Active</p>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-size:.74rem;color:#a3baa9;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
+          <strong style="font-size:1.6rem;color:#b4db79;font-weight:800;">${pct}%</strong>
+        </div>
+      </div>
+
+      <!-- Animated Progress Track -->
+      <div style="background:rgba(255,255,255,0.12);height:9px;border-radius:99px;overflow:hidden;margin-bottom:18px;">
+        <div style="background:#b4db79;height:100%;width:${pct}%;border-radius:99px;transition:width .35s ease;"></div>
+      </div>
+
+      <!-- Action Button Controls -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#b4db79;color:#182e1f;font-weight:800;padding:10px 22px;border:none;">
+          ▶ Start Today's Workout (${escapeHtml(currentDay.title)})
+        </button>
+        <button type="button" class="outline-button" id="refreshTodayRoutineBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
+          ⟳ Refresh Day Plan
+        </button>
+        <button type="button" class="outline-button" id="resetChallengePlanBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
+          🔄 Reset to Day 1
+        </button>
+        <button type="button" class="outline-button" id="exitChallengePlanBtn" style="border-color:#feb2b2;color:#feb2b2;background:rgba(229,62,62,0.1);font-size:.84rem;margin-left:auto;">
+          ⚠️ Exit Challenge
+        </button>
+      </div>
+    </div>
+
+    <!-- TODAY'S ROUTINE CARD -->
+    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span class="section-kicker" style="color:#456b32;font-weight:800;">TODAY'S SCHEDULED ROUTINE</span>
+          <h3 style="margin:2px 0 0;font-size:1.2rem;color:#1e3424;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
+          <p style="margin:2px 0 0;font-size:.86rem;color:#637367;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
+        </div>
+        <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#e6f4da' : '#f4f6f2'};color:${currentDay.completed ? '#2d581e' : '#556658'};">
+          ${currentDay.completed ? '✓ COMPLETED' : '⚡ READY TO TRAIN'}
+        </span>
+      </div>
+
+      <!-- Exercise List with Swap Buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${currentDay.exercises.map((ex, idx) => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #eef3eb;background:#fbfdfa;border-radius:12px;gap:12px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="width:28px;height:28px;border-radius:8px;background:#e5f0dc;color:#203b29;font-weight:800;font-size:.84rem;display:flex;align-items:center;justify-content:center;">
+                ${idx + 1}
+              </span>
+              <div>
+                <b style="color:#203b29;font-size:.94rem;display:block;">${escapeHtml(ex.name)}</b>
+                <small style="color:#637367;font-size:.82rem;">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</small>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#203b29;border-color:#c8dac1;padding:5px 12px;background:#ffffff;">
+                ⇄ Swap Workout
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- FULL CHALLENGE ROADMAP TIMELINE -->
+    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span class="section-kicker">ALL DAYS OVERVIEW</span>
+          <h3 style="margin:2px 0 0;font-size:1.15rem;color:#1e3424;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
+        </div>
+        <span style="font-size:.84rem;color:#637367;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;">
+        ${p.days.map((d, dIdx) => {
+          const isCurrent = dIdx === currentIdx;
+          const bg = d.completed ? '#f3f9ed' : (isCurrent ? '#fdfefb' : '#fafbfa');
+          const border = isCurrent ? '2px solid #203b29' : (d.completed ? '1px solid #b4db79' : '1px solid #edf0ea');
+          return `
+            <div style="padding:12px 14px;border-radius:12px;background:${bg};border:${border};display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <b style="font-size:.88rem;color:#203b29;">Day ${d.dayNumber}</b>
+                <span style="font-size:.72rem;font-weight:700;color:${d.completed ? '#2e5a1e' : (isCurrent ? '#203b29' : '#88988d')};">
+                  ${d.completed ? '✓ Done' : (isCurrent ? '⚡ Current' : 'Upcoming')}
+                </span>
+              </div>
+              <span style="font-size:.82rem;color:#45594b;font-weight:600;">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
+              <small style="font-size:.74rem;color:#788b7e;">${d.exercises.length} moves · ${d.estDuration}</small>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  // Wire Action Buttons
+  if ($('#startActiveSessionBtn')) {
+    $('#startActiveSessionBtn').onclick = () => startWorkoutSession(currentDay);
+  }
+
+  if ($('#exitChallengePlanBtn')) {
+    $('#exitChallengePlanBtn').onclick = () => {
+      const ok = confirm('⚠️ Are you sure you want to exit and abandon this challenge?\n\nThis will remove your active plan. Only do this if you wish to exit or start a completely new challenge.');
+      if (ok) {
+        activeChallengePlan = null;
+        store.del('activeChallengePlan');
+        if (FF.online && FF.user) FF.patch({ activeChallenge: null });
+        renderChallengeView();
+        renderTrackingView();
+        toast('Challenge plan exited.');
+      }
+    };
+  }
+
+  if ($('#resetChallengePlanBtn')) {
+    $('#resetChallengePlanBtn').onclick = () => {
+      const ok = confirm('🔄 Reset your active challenge back to Day 1? All workout structures will be preserved.');
+      if (ok) {
+        activeChallengePlan.currentDayIndex = 0;
+        activeChallengePlan.completedCount = 0;
+        activeChallengePlan.days.forEach(d => { d.completed = false; d.completedAt = null; });
+        store.set('activeChallengePlan', activeChallengePlan);
+        if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
+        renderChallengeView();
+        renderTrackingView();
+        toast('Challenge reset to Day 1! Ready to crush it.');
+      }
+    };
+  }
+
+  if ($('#refreshTodayRoutineBtn')) {
+    $('#refreshTodayRoutineBtn').onclick = () => {
+      const freshExercises = buildDayByDayRoutines(activeChallengePlan.motive, 1, activeChallengePlan.userWeight, activeChallengePlan.userHeight)[0].exercises;
+      activeChallengePlan.days[currentIdx].exercises = freshExercises;
+      store.set('activeChallengePlan', activeChallengePlan);
+      if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
+      renderChallengeView();
+      toast('Refreshed today’s exercises with new movements!');
+    };
+  }
+
+  // Wire Swap Workout Triggers
+  $$('.swap-ex-trigger').forEach(btn => {
+    btn.onclick = () => {
+      const exIdx = Number(btn.dataset.exIdx) || 0;
+      openSwapExerciseModal(currentIdx, exIdx);
+    };
+  });
+}
+
+/* ================= WORKOUT SWAP MODAL ================= */
+function openSwapExerciseModal(dayIdx, exIdx) {
+  swapTargetDayIdx = dayIdx;
+  swapTargetExIdx = exIdx;
+  const currentEx = activeChallengePlan.days[dayIdx].exercises[exIdx];
+  if ($('#swapTargetExName')) $('#swapTargetExName').textContent = currentEx.name;
+
+  const renderAlternatives = (filterQuery = '') => {
+    const list = $('#swapAlternativesList');
+    if (!list) return;
+    const q = filterQuery.toLowerCase().trim();
+    const matches = EXERCISES_LIBRARY.filter(e => {
+      if (e.name.toLowerCase() === currentEx.name.toLowerCase()) return false;
+      if (q) return e.name.toLowerCase().includes(q) || (e.sub && e.sub.toLowerCase().includes(q));
+      return (e.category && currentEx.category && e.category.toLowerCase() === currentEx.category.toLowerCase()) || true;
+    }).slice(0, 20);
+
+    list.innerHTML = matches.map(ex => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #edf2e8;border-radius:10px;background:#ffffff;gap:10px;">
+        <div>
+          <b style="color:#203b29;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
+          <small style="color:#637367;font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
+        </div>
+        <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#203b29;font-size:.78rem;white-space:nowrap;">
+          Select &amp; Replace
+        </button>
+      </div>
+    `).join('');
+
+    $$('.replace-ex-btn').forEach(b => {
+      b.onclick = () => {
+        const chosenName = b.dataset.exName;
+        const chosenObj = EXERCISES_LIBRARY.find(e => e.name === chosenName) || { name: chosenName, sub: 'Targeted', category: 'Chest' };
+        activeChallengePlan.days[swapTargetDayIdx].exercises[swapTargetExIdx] = {
+          name: chosenObj.name,
+          subMuscle: chosenObj.sub || chosenObj.category,
+          category: chosenObj.category,
+          sets: 3,
+          reps: currentEx.reps || '12 reps',
+          durationSec: currentEx.durationSec || 45,
+          restSec: currentEx.restSec || 60,
+          tip: chosenObj.steps || chosenObj.rxWhy || 'Maintain tight posture and controlled cadence.'
+        };
+        store.set('activeChallengePlan', activeChallengePlan);
+        if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
+        closeModal('#swapExerciseModal');
+        renderChallengeView();
+        toast(`Swapped to "${chosenObj.name}"!`);
+      };
+    });
+  };
+
+  renderAlternatives();
+  if ($('#swapSearchInput')) {
+    $('#swapSearchInput').value = '';
+    $('#swapSearchInput').oninput = (e) => renderAlternatives(e.target.value);
+  }
+  openModal('#swapExerciseModal');
+}
+
+/* ================= INTERACTIVE WORKOUT SESSION PLAYER & TIMERS ================= */
+let sessionDay = null;
+let sessionExIdx = 0;
+let sessionSetIdx = 1;
+let sessionPhase = 'active'; // 'active' or 'rest'
+let sessionTimerSec = 45;
+let sessionTimerInterval = null;
+let sessionIsPaused = false;
+
+function formatTimerMMSS(totalSeconds) {
+  const m = Math.floor(Math.max(0, totalSeconds) / 60);
+  const s = Math.max(0, totalSeconds) % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function updateTimerClockDisplay() {
+  if ($('#timerClockDigits')) {
+    $('#timerClockDigits').textContent = formatTimerMMSS(sessionTimerSec);
+  }
+}
+
+function startWorkoutSession(dayData) {
+  if (!dayData || !dayData.exercises || !dayData.exercises.length) return;
+  sessionDay = dayData;
+  sessionExIdx = 0;
+  sessionSetIdx = 1;
+  sessionPhase = 'active';
+  sessionIsPaused = false;
+  sessionTimerSec = sessionDay.exercises[0].durationSec || 45;
+
+  openModal('#workoutSessionModal');
+  renderSessionStepUI();
+  startActiveSetTimer();
+}
+
+function renderSessionStepUI() {
+  if (!sessionDay || !sessionDay.exercises[sessionExIdx]) return;
+  const ex = sessionDay.exercises[sessionExIdx];
+
+  if ($('#sessionDayKicker')) $('#sessionDayKicker').textContent = `CHALLENGE DAY ${sessionDay.dayNumber} · ACTIVE SESSION`;
+  if ($('#sessionExTitle')) $('#sessionExTitle').textContent = ex.name;
+  if ($('#sessionProgressBadge')) $('#sessionProgressBadge').textContent = `Exercise ${sessionExIdx + 1} of ${sessionDay.exercises.length}`;
+  if ($('#sessionSetBadge')) $('#sessionSetBadge').textContent = `Set ${sessionSetIdx} of ${ex.sets || 3} · ${ex.reps}`;
+  if ($('#sessionBioTip')) $('#sessionBioTip').innerHTML = `<b>Form Tip:</b> ${escapeHtml(ex.tip || 'Maintain controlled breathing and strict tempo.')}`;
+
+  if (sessionPhase === 'active') {
+    if ($('#timerPhaseBadge')) {
+      $('#timerPhaseBadge').textContent = 'ACTIVE SET';
+      $('#timerPhaseBadge').className = 'timer-phase-badge';
+    }
+    if ($('#timerInstruction')) $('#timerInstruction').textContent = 'Execute repetitions with strict form and full range of motion.';
+    if ($('#activeSetControls')) $('#activeSetControls').style.display = 'flex';
+    if ($('#restControls')) $('#restControls').style.display = 'none';
+  } else {
+    if ($('#timerPhaseBadge')) {
+      $('#timerPhaseBadge').textContent = 'REST INTERVAL';
+      $('#timerPhaseBadge').className = 'timer-phase-badge rest';
+    }
+    if ($('#timerInstruction')) $('#timerInstruction').textContent = 'Breathe deeply, hydrate, and recover before your next set.';
+    if ($('#activeSetControls')) $('#activeSetControls').style.display = 'none';
+    if ($('#restControls')) $('#restControls').style.display = 'flex';
+  }
+  updateTimerClockDisplay();
+}
+
+function startActiveSetTimer() {
+  clearInterval(sessionTimerInterval);
+  sessionIsPaused = false;
+  if ($('#timerPlayPauseBtn')) $('#timerPlayPauseBtn').textContent = '⏸ Pause';
+
+  sessionTimerInterval = setInterval(() => {
+    if (sessionIsPaused) return;
+    if (sessionTimerSec > 0) {
+      sessionTimerSec--;
+      updateTimerClockDisplay();
+      if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
+        playAudioChime(440, 'sine', 0.08);
+      }
+    } else {
+      clearInterval(sessionTimerInterval);
+      playAudioChime(660, 'sine', 0.2);
+      transitionToRestPhase();
+    }
+  }, 1000);
+}
+
+function transitionToRestPhase() {
+  clearInterval(sessionTimerInterval);
+  sessionPhase = 'rest';
+  const ex = sessionDay.exercises[sessionExIdx];
+  sessionTimerSec = ex.restSec || 60;
+  renderSessionStepUI();
+
+  sessionTimerInterval = setInterval(() => {
+    if (sessionTimerSec > 0) {
+      sessionTimerSec--;
+      updateTimerClockDisplay();
+      if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
+        playAudioChime(440, 'sine', 0.08);
+      }
+    } else {
+      clearInterval(sessionTimerInterval);
+      trigger321CountdownAndAdvance();
+    }
+  }, 1000);
+}
+
+function trigger321CountdownAndAdvance() {
+  clearInterval(sessionTimerInterval);
+  const overlay = $('#sessionCountdownOverlay');
+  const num = $('#countdownNumber');
+  const sub = $('#countdownSubtext');
+  if (!overlay || !num || !sub) {
+    advanceToNextSetOrExercise();
+    return;
+  }
+
+  overlay.style.display = 'flex';
+  num.textContent = '3';
+  sub.textContent = 'GET READY!';
+  playAudioChime(440, 'sine', 0.14);
+
+  setTimeout(() => {
+    num.textContent = '2';
+    playAudioChime(440, 'sine', 0.14);
+    setTimeout(() => {
+      num.textContent = '1';
+      playAudioChime(440, 'sine', 0.14);
+      setTimeout(() => {
+        num.textContent = 'GO! 🔥';
+        sub.textContent = 'CRUSH THIS SET!';
+        playAudioChime(880, 'triangle', 0.35);
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          advanceToNextSetOrExercise();
+        }, 650);
+      }, 850);
+    }, 850);
+  }, 850);
+}
+
+function advanceToNextSetOrExercise() {
+  const currentEx = sessionDay.exercises[sessionExIdx];
+  if (sessionSetIdx < (currentEx.sets || 3)) {
+    // Next set of current exercise
+    sessionSetIdx++;
+    sessionPhase = 'active';
+    sessionTimerSec = currentEx.durationSec || 45;
+    renderSessionStepUI();
+    startActiveSetTimer();
+  } else {
+    // Current exercise complete! Check if more exercises
+    if (sessionExIdx + 1 < sessionDay.exercises.length) {
+      sessionExIdx++;
+      sessionSetIdx = 1;
+      sessionPhase = 'active';
+      sessionTimerSec = sessionDay.exercises[sessionExIdx].durationSec || 45;
+      renderSessionStepUI();
+      startActiveSetTimer();
+      toast(`Next movement: ${sessionDay.exercises[sessionExIdx].name}!`);
+    } else {
+      // Entire workout day finished!
+      finishCurrentWorkoutSession();
+    }
+  }
+}
+
+function finishCurrentWorkoutSession() {
+  clearInterval(sessionTimerInterval);
+  sessionDay.completed = true;
+  sessionDay.completedAt = Date.now();
+  if (activeChallengePlan) {
+    activeChallengePlan.completedCount = (activeChallengePlan.completedCount || 0) + 1;
+    if (activeChallengePlan.currentDayIndex + 1 < activeChallengePlan.durationDays) {
+      activeChallengePlan.currentDayIndex++;
+    }
+    store.set('activeChallengePlan', activeChallengePlan);
+    if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
+  }
+
+  workoutsDone.push({
+    name: `${sessionDay.title}`,
+    date: today(),
+    at: Date.now()
+  });
+  store.set('workoutsDone', workoutsDone);
+  recordDailyActivity('challenge_workout');
+
+  closeModal('#workoutSessionModal');
+  renderChallengeView();
+  renderTrackingView();
+  renderDashboard();
+  toast(`🎉 Outstanding! You crushed Day ${sessionDay.dayNumber} of your challenge!`);
+}
+
+// Wire Session Player Buttons
+if ($('#sessionCompleteSetBtn')) {
+  $('#sessionCompleteSetBtn').onclick = () => {
+    transitionToRestPhase();
+  };
+}
+
+if ($('#timerMinusTenBtn')) {
+  $('#timerMinusTenBtn').onclick = () => {
+    sessionTimerSec = Math.max(5, sessionTimerSec - 10);
+    updateTimerClockDisplay();
+  };
+}
+
+if ($('#timerPlusTenBtn')) {
+  $('#timerPlusTenBtn').onclick = () => {
+    sessionTimerSec += 10;
+    updateTimerClockDisplay();
+  };
+}
+
+if ($('#timerPlayPauseBtn')) {
+  $('#timerPlayPauseBtn').onclick = () => {
+    sessionIsPaused = !sessionIsPaused;
+    $('#timerPlayPauseBtn').textContent = sessionIsPaused ? '▶ Resume' : '⏸ Pause';
+  };
+}
+
+if ($('#restPlusSixtyBtn')) {
+  $('#restPlusSixtyBtn').onclick = () => {
+    sessionTimerSec += 60;
+    updateTimerClockDisplay();
+    toast('Added +60s rest time');
+  };
+}
+
+if ($('#restPlusFifteenBtn')) {
+  $('#restPlusFifteenBtn').onclick = () => {
+    sessionTimerSec += 15;
+    updateTimerClockDisplay();
+  };
+}
+
+if ($('#restMinusFifteenBtn')) {
+  $('#restMinusFifteenBtn').onclick = () => {
+    sessionTimerSec = Math.max(1, sessionTimerSec - 15);
+    updateTimerClockDisplay();
+  };
+}
+
+if ($('#restSkipBtn')) {
+  $('#restSkipBtn').onclick = () => {
+    sessionTimerSec = 0;
+    updateTimerClockDisplay();
+    trigger321CountdownAndAdvance();
+  };
+}
+
+if ($('#startNextSetNowBtn')) {
+  $('#startNextSetNowBtn').onclick = () => {
+    trigger321CountdownAndAdvance();
+  };
+}
+
+if ($('#sessionQuitBtn')) {
+  $('#sessionQuitBtn').onclick = () => {
+    if (confirm('Quit active workout session? Any uncompleted sets for this day will not be saved.')) {
+      clearInterval(sessionTimerInterval);
+      closeModal('#workoutSessionModal');
+    }
+  };
+}
+
+/* ================= TRACKING VIEW RENDERING ================= */
+function renderTrackingView() {
+  const container = $('#trackingViewContainer');
+  if (!container) return;
+
+  const curStreak = evaluateStreakStatus();
+  const streakDays = curStreak.currentStreak || 0;
+  const totalWorkouts = workoutsDone.length || 0;
+  const entries = getTodayLog();
+  const todayKcal = Math.round(entries.reduce((a, b) => a + (Number(b.k) || Number(b.calories) || 0), 0));
+  const goalKcal = profile.cal || 2100;
+  const todayP = Math.round(entries.reduce((a, b) => a + (Number(b.p) || Number(b.protein) || 0), 0));
+  const goalP = profile.p || 165;
+  const waterMl = (water && water.date === today()) ? (water.ml || 0) : 0;
+  const waterGoal = profile.waterGoal || calcWaterFromWeight(profile.wKg, profile.units, profile.creatine, profile.days);
+
+  // Active Challenge status box
+  let challengeBlock = '';
+  if (activeChallengePlan) {
+    const cp = activeChallengePlan;
+    const completedDays = cp.completedCount || 0;
+    const pct = Math.min(100, Math.round((completedDays / cp.durationDays) * 100));
+    challengeBlock = `
+      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+          <div>
+            <span class="section-kicker" style="color:#3e632b;font-weight:800;">ACTIVE PLAN TRACKER</span>
+            <h3 style="margin:2px 0 0;font-size:1.25rem;color:#1e3424;font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
+            <p style="margin:2px 0 0;font-size:.86rem;color:#637367;">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
+          </div>
+          <button type="button" class="solid-button small" onclick="switchView('challenge')" style="background:#203b29;">
+            Open Challenge Engine →
+          </button>
+        </div>
+
+        <div style="background:#eaf2e5;height:8px;border-radius:99px;overflow:hidden;margin-bottom:16px;">
+          <div style="background:#82aa52;height:100%;width:${pct}%;border-radius:99px;"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(36px, 1fr));gap:6px;">
+          ${cp.days.map((d, idx) => {
+            const isDone = d.completed;
+            const isCurrent = idx === (cp.currentDayIndex || 0);
+            const bg = isDone ? '#82aa52' : (isCurrent ? '#203b29' : '#e2ebd9');
+            const color = (isDone || isCurrent) ? '#ffffff' : '#637367';
+            return `
+              <div style="height:36px;border-radius:8px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;" title="Day ${d.dayNumber}: ${d.title} (${isDone ? 'Completed' : (isCurrent ? 'Current' : 'Pending')})">
+                ${isDone ? '✓' : d.dayNumber}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    challengeBlock = `
+      <div style="background:#fcfdfa;border:1px dashed #d5e2d0;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
+        <span style="font-size:28px;">🎯</span>
+        <b style="color:#203b29;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
+        <p style="color:#637367;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
+        <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#203b29;">
+          🚀 Start Challenge
+        </button>
+      </div>
+    `;
+  }
+
+  // Recent Workouts List
+  const recentWorkoutsHtml = (workoutsDone && workoutsDone.length) ? (
+    workoutsDone.slice(-8).reverse().map(w => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #edf2e8;">
+        <div>
+          <b style="color:#203b29;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
+          <small style="color:#788b7e;font-size:.78rem;">${w.date || today()}</small>
+        </div>
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eef6e9;color:#2c561e;font-weight:700;">
+          ✓ Logged
+        </span>
+      </div>
+    `).join('')
+  ) : `
+    <div style="padding:20px;text-align:center;color:#637367;font-size:.85rem;">
+      No workouts completed yet. Mark exercises complete or start a challenge routine!
+    </div>
+  `;
+
+  container.innerHTML = `
+    ${challengeBlock}
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:16px;">
+      <!-- STREAK & CONSISTENCY -->
+      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+        <span class="section-kicker">HABIT CONSISTENCY</span>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e3424;font-weight:800;">Workout &amp; Streak Metrics</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+            <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">CURRENT STREAK</span>
+            <b style="font-size:1.4rem;color:#203b29;">🔥 ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
+          </div>
+          <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+            <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">TOTAL WORKOUTS</span>
+            <b style="font-size:1.4rem;color:#203b29;">💪 ${totalWorkouts}</b>
+          </div>
+        </div>
+        <p style="font-size:.84rem;color:#556658;margin:0;line-height:1.45;">
+          ${curStreak.streakBroken ? '⚠️ Streak broken due to 2+ inactive days. Rebuild your streak today!' : 'Keep training consistently to lock in permanent muscle and metabolic adaptations.'}
+        </p>
+      </div>
+
+      <!-- NUTRITION & HYDRATION COMPLIANCE -->
+      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+        <span class="section-kicker">TODAY'S FUELING</span>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e3424;font-weight:800;">Nutrition &amp; Water Compliance</h4>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
+              <span style="color:#556658;font-weight:600;">Calories Intake</span>
+              <b>${todayKcal} / ${goalKcal} kcal</b>
+            </div>
+            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+              <div style="background:#82aa52;height:100%;width:${Math.min(100, Math.round((todayKcal/goalKcal)*100))}%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
+              <span style="color:#556658;font-weight:600;">Protein Target</span>
+              <b>${todayP} / ${goalP} g</b>
+            </div>
+            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+              <div style="background:#82aa52;height:100%;width:${Math.min(100, Math.round((todayP/goalP)*100))}%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
+              <span style="color:#556658;font-weight:600;">Hydration</span>
+              <b>${(waterMl/1000).toFixed(1)} / ${waterGoal} L</b>
+            </div>
+            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+              <div style="background:#63a1d9;height:100%;width:${Math.min(100, Math.round((waterMl/(Number(waterGoal)*1000))*100))}%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKOUT VOLUME HISTORY -->
+    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;margin-top:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <span class="section-kicker">COMPLETION LOG</span>
+          <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e3424;font-weight:800;">Recent Completed Workouts</h4>
+        </div>
+        <span style="font-size:.82rem;color:#637367;">Total: ${totalWorkouts} sessions</span>
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        ${recentWorkoutsHtml}
+      </div>
+    </div>
+  `;
+}
+
+if ($('#trackingCheckInBtn')) {
+  $('#trackingCheckInBtn').onclick = () => {
+    recordDailyActivity('manual_checkin');
+    renderTrackingView();
+    renderDashboard();
+    toast('⚡ Daily check-in logged to tracking!');
+  };
+}
+
 async function bootApp() {
   initMotionEffects();
   renderProfileView();
   renderDashboard();
+  renderDailyTip();
   renderFoodLog();
   renderWorkouts();
   renderExerciseLibrary();
   renderMyFoods();
+  renderChallengeView();
+  renderTrackingView();
 
   try {
     const res = await FF.boot();
@@ -3458,9 +4441,13 @@ async function bootApp() {
       if (st.log && Object.keys(st.log).length) { log = st.log; store.set('log', log); }
       if (st.custom && st.custom.length) { custom = st.custom; store.set('custom', custom); }
       if (st.workouts) { workoutsDone = st.workouts; store.set('workoutsDone', workoutsDone); }
+      if (st.activeChallenge) { activeChallengePlan = st.activeChallenge; store.set('activeChallengePlan', activeChallengePlan); }
       updateSyncStatus('Cloud database synced');
       renderProfileView();
       renderDashboard();
+      renderDailyTip();
+      renderChallengeView();
+      renderTrackingView();
     } else {
       updateSyncStatus('Preview session · Sign in to save');
     }

@@ -675,3 +675,140 @@
   display: block;
 }
 
+/* ===== Workout Session Player & Timers ===== */
+.workout-session-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+.timer-display-box {
+  background: #192b1e;
+  color: #c9f582;
+  border-radius: 16px;
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(25, 43, 30, 0.25);
+}
+.timer-clock-digits {
+  font-family: var(--font-mono, monospace);
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin: 10px 0;
+}
+.timer-phase-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(201, 245, 130, 0.15);
+  color: #c9f582;
+}
+.timer-phase-badge.rest {
+  background: rgba(254, 215, 215, 0.2);
+  color: #feb2b2;
+}
+.timer-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.timer-ctrl-btn {
+  background: #233b2a;
+  color: #ffffff;
+  border: 1px solid #375640;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.timer-ctrl-btn:hover {
+  background: #2f4e38;
+  border-color: #82aa52;
+}
+
+/* 3-2-1 Countdown Overlay */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 32, 22, 0.94);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  animation: fadeIn 0.2s ease;
+}
+.countdown-num {
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: #b4db79;
+  line-height: 1;
+  animation: countPulse 0.9s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.countdown-sub {
+  color: #e2ead9;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+@keyframes countPulse {
+  0% { transform: scale(0.6); opacity: 0.2; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* Selection Cards (Motive & Duration) */
+.setup-choice-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1.5px solid #e2ebd9;
+  background: #ffffff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+  width: 100%;
+}
+.setup-choice-card:hover {
+  border-color: #b4db79;
+  background: #f8fbf5;
+  transform: translateY(-1px);
+}
+.setup-choice-card.selected {
+  border-color: #203b29;
+  background: #f1f8eb;
+  box-shadow: 0 0 0 1px #203b29;
+}
+.setup-choice-icon {
+  font-size: 26px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f6eb;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.setup-choice-card.selected .setup-choice-icon {
+  background: #203b29;
+  color: #fff;
+}
+

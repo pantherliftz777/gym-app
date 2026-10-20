@@ -63,6 +63,20 @@
         <span>My foods</span>
       </button>
 
+      <button class="nav-link" data-view="challenge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+        </svg>
+        <span>Challenge 🔥</span>
+      </button>
+
+      <button class="nav-link" data-view="tracking">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>
+        </svg>
+        <span>Tracking 📊</span>
+      </button>
+
       <button class="nav-link" data-view="profile">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle>
@@ -401,6 +415,32 @@
             </div>
           </article>
         </div>
+
+        <!-- DAILY TIP & HABIT SCIENCE SECTION -->
+        <article class="panel daily-tip-panel" id="dailyTipPanel" style="margin-top:16px;background:linear-gradient(135deg, #f7faf4 0%, #edf5e6 100%);border:1px solid #d8e5d2;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(32,59,41,0.04);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:#e2eed9;display:flex;align-items:center;justify-content:center;font-size:20px;">
+                💡
+              </div>
+              <div>
+                <span class="section-kicker" id="dailyTipCategory" style="color:#3e632b;font-weight:800;letter-spacing:0.06em;">DAILY NUTRITION &amp; MUSCLE SCIENCE</span>
+                <h3 style="margin:2px 0 0;font-size:1.1rem;color:#1e3424;font-weight:700;" id="dailyTipTitle">Target 1.6g to 2.2g Protein per kg Bodyweight</h3>
+              </div>
+            </div>
+            <button type="button" class="text-button" id="nextDailyTipBtn" style="font-size:.82rem;font-weight:700;color:#2a5033;display:inline-flex;align-items:center;gap:5px;background:#e5f0dc;padding:6px 12px;border-radius:8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+              Next Tip ⟳
+            </button>
+          </div>
+          <p id="dailyTipContent" style="color:#415447;font-size:.9rem;line-height:1.55;margin:0 0 14px;">
+            Consuming adequate protein throughout the day distributes leucine spikes to trigger muscle protein synthesis (MPS). Distribute your daily intake evenly over 3 to 4 meals to maximize recovery.
+          </p>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:#617567;padding-top:10px;border-top:1px solid #e0ebd9;">
+            <span id="dailyTipKeyTakeaway"><b>Key takeaway:</b> Aim for ~25-40g protein per meal.</span>
+            <span id="dailyTipSource" style="font-style:italic;">Evidence-Based Sports Nutrition</span>
+          </div>
+        </article>
 
         <div class="bottom-note">
           <span>
@@ -742,6 +782,48 @@
               </div>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 7: CHALLENGE ================= -->
+      <section class="view" id="view-challenge">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">YOUR SPACE · TARGETED ROADMAP</span>
+            <h2>Challenge Engine 🔥</h2>
+            <p>Structured, day-by-day workout progression tailored to your physique goals and personal metrics.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="solid-button" id="createChallengeBtn" style="background:#203b29;">
+              🚀 Start New Challenge
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Challenge Dashboard Container -->
+        <div id="challengeViewContainer">
+          <!-- Populated dynamically by renderChallengeView() -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 8: TRACKING ================= -->
+      <section class="view" id="view-tracking">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">YOUR SPACE · COMPREHENSIVE ANALYTICS</span>
+            <h2>Activity &amp; Habit Tracking 📊</h2>
+            <p>Accurate monitoring of your workout frequency, challenge milestones, daily consistency, and nutrition targets.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="outline-button" id="trackingCheckInBtn" style="border-color:#b4db79;background:#f3f9ed;font-weight:700;color:#203b29;">
+              ⚡ Quick Daily Check-In
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Tracking Dashboard Grid -->
+        <div id="trackingViewContainer">
+          <!-- Populated dynamically by renderTrackingView() -->
         </div>
       </section>
     </div>
@@ -1466,6 +1548,235 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- MOTIVATIONAL QUOTE POPUP MODAL (ON LOGIN / SIGNUP) -->
+<div class="modal-backdrop" id="motivationModal">
+  <div class="modal-card" style="max-width:440px;text-align:center;padding:28px 24px;">
+    <div style="width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg, #203b29 0%, #2f5439 100%);color:#b4db79;font-size:30px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(32,59,41,0.22);">
+      🔥
+    </div>
+    <span class="section-kicker" style="color:#4a6e35;letter-spacing:1px;font-weight:800;">DAILY MOTIVATION &amp; FOCUS</span>
+    <h3 style="font-size:1.25rem;color:#1e3424;font-weight:800;margin:8px 0 12px;line-height:1.45;" id="motivationQuoteText">
+      "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion."
+    </h3>
+    <p style="color:#637367;font-size:.92rem;font-weight:700;margin:0 0 16px;" id="motivationQuoteAuthor">
+      — Arnold Schwarzenegger
+    </p>
+    <div style="background:#f4f9ef;border:1px solid #dce8d4;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:.84rem;color:#395040;line-height:1.45;">
+      Welcome to FitFuel! Every rep, every healthy meal, and every glass of water builds your ultimate strength. Let’s make today exceptional!
+    </div>
+    <button type="button" class="solid-button full" id="dismissMotivationBtn" style="background:#203b29;padding:12px;font-size:.95rem;font-weight:700;width:100%;">
+      Let's Crush It Today! 🚀
+    </button>
+  </div>
+</div>
+
+<!-- CHALLENGE SETUP STEP 1: MOTIVE MODAL -->
+<div class="modal-backdrop" id="challengeMotiveModal">
+  <div class="modal-card" style="max-width:520px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">CHALLENGE WIZARD · STEP 1 OF 2</span>
+        <h2>What is your primary motive?</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <p style="color:#637367;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
+      Select the primary focus of your training plan. Our AI will align your exercise selection, volume, and rest intervals accordingly.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px;" id="motiveOptionsList">
+      <div class="setup-choice-card selected" data-motive="Burn Fat &amp; Lean Out">
+        <div class="setup-choice-icon">🔥</div>
+        <div>
+          <b style="color:#203b29;font-size:.95rem;display:block;">Burn Fat &amp; Lean Out</b>
+          <small style="color:#637367;font-size:.82rem;">High metabolic density, compound supersets, and elevated caloric burn.</small>
+        </div>
+      </div>
+      <div class="setup-choice-card" data-motive="Build Muscle &amp; Hypertrophy">
+        <div class="setup-choice-icon">💪</div>
+        <div>
+          <b style="color:#203b29;font-size:.95rem;display:block;">Build Muscle &amp; Hypertrophy</b>
+          <small style="color:#637367;font-size:.82rem;">Hypertrophy rep ranges (8-12 reps), time under tension, and progressive overload.</small>
+        </div>
+      </div>
+      <div class="setup-choice-card" data-motive="Maintain Weight &amp; Tone">
+        <div class="setup-choice-icon">⚖️</div>
+        <div>
+          <b style="color:#203b29;font-size:.95rem;display:block;">Maintain Weight &amp; Athletic Tone</b>
+          <small style="color:#637367;font-size:.82rem;">Balanced functional strength, postural stamina, and core stability.</small>
+        </div>
+      </div>
+      <div class="setup-choice-card" data-motive="Raw Strength &amp; Power">
+        <div class="setup-choice-icon">⚡</div>
+        <div>
+          <b style="color:#203b29;font-size:.95rem;display:block;">Raw Strength &amp; Heavy Power</b>
+          <small style="color:#637367;font-size:.82rem;">Heavy compound lifts, 4-6 rep strength schemes, and neuromuscular adaptation.</small>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
+      <button type="button" class="outline-button" data-close>Cancel</button>
+      <button type="button" class="solid-button" id="proceedToDurationBtn" style="background:#203b29;">
+        Next: Select Duration →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE SETUP STEP 2: DURATION MODAL -->
+<div class="modal-backdrop" id="challengeDurationModal">
+  <div class="modal-card" style="max-width:540px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">CHALLENGE WIZARD · STEP 2 OF 2</span>
+        <h2>Select Challenge Duration</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <p style="color:#637367;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
+      Choose your commitment window. The AI will engineer a complete day-by-day plan based on your recorded bodyweight, height, and target goals.
+    </p>
+
+    <!-- User Metrics Confirmation Banner -->
+    <div style="background:#f4f9ee;border:1px solid #dbead2;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div>
+        <span style="font-size:.72rem;font-weight:800;color:#3b6426;text-transform:uppercase;letter-spacing:.05em;">YOUR REGISTERED METRICS</span>
+        <div style="font-size:.88rem;color:#1e3424;font-weight:700;margin-top:2px;" id="challengeMetricsPreview">
+          70 kg · 175 cm · 4 Days / Week · Maintain Weight
+        </div>
+      </div>
+      <button type="button" class="text-button" onclick="closeModal('#challengeDurationModal');switchView('profile');" style="font-size:.78rem;color:#203b29;font-weight:700;">Edit Profile ✎</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="durationOptionsList">
+      <div class="setup-choice-card" data-days="10" style="flex-direction:column;align-items:flex-start;padding:16px;">
+        <span style="font-size:24px;">⚡</span>
+        <b style="font-size:1.05rem;color:#203b29;margin:6px 0 2px;">10 Days Blitz</b>
+        <small style="color:#637367;font-size:.8rem;">Rapid habit acceleration &amp; high intensity momentum.</small>
+      </div>
+      <div class="setup-choice-card selected" data-days="15" style="flex-direction:column;align-items:flex-start;padding:16px;">
+        <span style="font-size:24px;">🚀</span>
+        <b style="font-size:1.05rem;color:#203b29;margin:6px 0 2px;">15 Days Kickstart</b>
+        <small style="color:#637367;font-size:.8rem;">Visible physical adaptation &amp; core discipline booster.</small>
+      </div>
+      <div class="setup-choice-card" data-days="25" style="flex-direction:column;align-items:flex-start;padding:16px;">
+        <span style="font-size:24px;">🏆</span>
+        <b style="font-size:1.05rem;color:#203b29;margin:6px 0 2px;">25 Days Transformation</b>
+        <small style="color:#637367;font-size:.8rem;">Substantial hypertrophy, body composition, &amp; conditioning.</small>
+      </div>
+      <div class="setup-choice-card" data-days="30" style="flex-direction:column;align-items:flex-start;padding:16px;">
+        <span style="font-size:24px;">👑</span>
+        <b style="font-size:1.05rem;color:#203b29;margin:6px 0 2px;">30 Days Mastery</b>
+        <small style="color:#637367;font-size:.8rem;">Full body transformation, endurance, &amp; elite habit lock-in.</small>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
+      <button type="button" class="outline-button" id="backToMotiveBtn">← Back</button>
+      <button type="button" class="solid-button" id="generateChallengePlanBtn" style="background:#203b29;">
+        ✨ Generate AI Plan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE SWAP MODAL -->
+<div class="modal-backdrop" id="swapExerciseModal">
+  <div class="modal-card" style="max-width:540px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">WORKOUT CUSTOMIZATION</span>
+        <h2>Swap Exercise</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <div style="background:#fcfdfa;border:1px solid #edf2e8;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.88rem;color:#334438;">
+      Replacing: <b id="swapTargetExName" style="color:#203b29;">Incline Dumbbell Press</b>
+    </div>
+    <div style="margin-bottom:12px;">
+      <input type="text" id="swapSearchInput" class="form-input" placeholder="Search alternative exercises..." style="width:100%;padding:8px 12px;border:1px solid #dbe4d6;border-radius:8px;font-size:.88rem;" />
+    </div>
+    <div id="swapAlternativesList" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
+      <!-- Populated dynamically with exercises from the library -->
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <button type="button" class="outline-button" data-close>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTERACTIVE WORKOUT SESSION PLAYER MODAL -->
+<div class="modal-backdrop" id="workoutSessionModal">
+  <div class="modal-card" style="max-width:540px;position:relative;">
+    <!-- 3-2-1 Countdown Overlay -->
+    <div class="countdown-overlay" id="sessionCountdownOverlay" style="display:none;">
+      <div class="countdown-num" id="countdownNumber">3</div>
+      <div class="countdown-sub" id="countdownSubtext">GET READY!</div>
+    </div>
+
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker" id="sessionDayKicker">CHALLENGE DAY 1 · ACTIVE SESSION</span>
+        <h2 id="sessionExTitle">Goblet Squat</h2>
+      </div>
+      <button class="close-btn" id="sessionQuitBtn" title="Exit Workout">&times;</button>
+    </div>
+
+    <div class="workout-session-container">
+      <!-- Exercise & Set Info Badge -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f7faf4;border:1px solid #e2ebd9;border-radius:12px;padding:10px 16px;">
+        <span style="font-size:.88rem;font-weight:700;color:#203b29;" id="sessionProgressBadge">Exercise 1 of 4</span>
+        <span style="font-size:.88rem;font-weight:800;color:#3d6728;background:#e5f2dc;padding:3px 10px;border-radius:99px;" id="sessionSetBadge">Set 1 of 3 · 12 Reps</span>
+      </div>
+
+      <!-- Digital Timer Display Box -->
+      <div class="timer-display-box" id="timerBox">
+        <span class="timer-phase-badge" id="timerPhaseBadge">ACTIVE SET</span>
+        <div class="timer-clock-digits" id="timerClockDigits">00:45</div>
+        <p style="margin:0;font-size:.84rem;color:#b0c7b3;" id="timerInstruction">Focus on form and tempo. Complete your reps!</p>
+      </div>
+
+      <!-- Controls for Active Set Mode -->
+      <div id="activeSetControls" style="display:flex;flex-direction:column;gap:10px;">
+        <div class="timer-controls-row">
+          <button type="button" class="timer-ctrl-btn" id="timerMinusTenBtn">-10s</button>
+          <button type="button" class="timer-ctrl-btn" id="timerPlayPauseBtn" style="background:#b4db79;color:#182e1f;border-color:#b4db79;font-weight:800;min-width:100px;">
+            ⏸ Pause
+          </button>
+          <button type="button" class="timer-ctrl-btn" id="timerPlusTenBtn">+10s</button>
+        </div>
+        <button type="button" class="solid-button" id="sessionCompleteSetBtn" style="background:#203b29;padding:12px;font-size:1rem;font-weight:700;">
+          ✓ Complete Set (Start Rest)
+        </button>
+      </div>
+
+      <!-- Controls for Rest Mode (Hidden during active set) -->
+      <div id="restControls" style="display:none;flex-direction:column;gap:12px;">
+        <div style="font-size:.85rem;color:#637367;font-weight:600;">
+          Adjust your rest interval:
+        </div>
+        <div class="timer-controls-row">
+          <button type="button" class="timer-ctrl-btn" id="restPlusSixtyBtn" style="background:#eef5eb;color:#203b29;border-color:#b4db79;">
+            +60s (+1 min)
+          </button>
+          <button type="button" class="timer-ctrl-btn" id="restPlusFifteenBtn">+15s</button>
+          <button type="button" class="timer-ctrl-btn" id="restMinusFifteenBtn">-15s</button>
+          <button type="button" class="timer-ctrl-btn" id="restSkipBtn" style="background:#fff2f2;color:#c53030;border-color:#feb2b2;">
+            Skip Rest (0s) ⏭
+          </button>
+        </div>
+        <button type="button" class="solid-button" id="startNextSetNowBtn" style="background:#203b29;padding:12px;font-size:1rem;font-weight:700;">
+          ⚡ Ready! Start Next Set (3, 2, 1)
+        </button>
+      </div>
+
+      <!-- Current Exercise Biomechanics Cue -->
+      <div style="background:#fcfdfa;border:1px solid #edf0e9;border-radius:10px;padding:10px 14px;text-align:left;font-size:.82rem;color:#556658;" id="sessionBioTip">
+        <b>Form Tip:</b> Keep chest tall, brace core throughout the movement, and maintain smooth cadence.
+      </div>
+    </div>
   </div>
 </div>
 
