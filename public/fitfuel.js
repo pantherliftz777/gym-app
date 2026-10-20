@@ -1090,9 +1090,10 @@ let currentRecipeTotals = { k: 0, p: 0, c: 0, f: 0, weight: 0 };
 
 function openRecipeBuilder() {
   if ($('#recipeDishName')) $('#recipeDishName').value = 'Fried Rice (Custom)';
-  if ($('#recipeCategory')) $('#recipeCategory').value = 'Lunch';
+  const mealSel = $('#recipeMealSelect') || $('#recipeCategory');
+  if (mealSel) mealSel.value = 'Lunch';
 
-  const container = $('#recipeIngredientsContainer');
+  const container = $('#recipeIngredientsContainer') || $('#ingredientRowsContainer');
   if (container) {
     container.innerHTML = '';
     // Add default initial ingredients matching user request (Rice + Onion + Tomato + Jeera + Paneer + Ghee)
@@ -1109,7 +1110,7 @@ function openRecipeBuilder() {
 }
 
 function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, initialQty = 50) {
-  const container = $('#recipeIngredientsContainer');
+  const container = $('#recipeIngredientsContainer') || $('#ingredientRowsContainer');
   if (!container) return;
 
   const row = document.createElement('div');
@@ -1178,7 +1179,7 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
 }
 
 function calcRecipeNutrients() {
-  const container = $('#recipeIngredientsContainer');
+  const container = $('#recipeIngredientsContainer') || $('#ingredientRowsContainer');
   if (!container) return;
 
   const rows = container.querySelectorAll('.ingredient-row');
@@ -1218,13 +1219,40 @@ function calcRecipeNutrients() {
 if ($('#openRecipeBuilderBtn')) $('#openRecipeBuilderBtn').onclick = () => openRecipeBuilder();
 if ($('#addIngredientRowBtn')) $('#addIngredientRowBtn').onclick = () => addIngredientRow();
 
+if ($('#aiSuggestRecipeBtn')) {
+  $('#aiSuggestRecipeBtn').onclick = () => {
+    const tipEl = $('#recipeAiTipText');
+    if (!tipEl) return;
+    tipEl.style.display = 'block';
+
+    const p = currentRecipeTotals.p;
+    const c = currentRecipeTotals.c;
+    const f = currentRecipeTotals.f;
+    const k = currentRecipeTotals.k;
+    const dish = ($('#recipeDishName') ? $('#recipeDishName').value.trim() : '') || 'Custom Dish';
+
+    let tip = `💡 For ${dish} (${k} kcal, ${p}g P / ${c}g C / ${f}g F): `;
+    if (p < 25) {
+      tip += `Protein is currently low (${p}g). Consider adding 60g paneer, 2 egg whites, or 80g tofu to reach 25-30g protein for muscle repair and high satiety.`;
+    } else if (f > 25) {
+      tip += `Fats are on the higher side (${f}g). Lowering cooking ghee/oil by 5g will reduce ~45 kcal without compromising taste.`;
+    } else if (c > 75) {
+      tip += `Carbs are dominant (${c}g). Great as a high-energy post-workout meal, or reduce grain portion slightly if aiming for fat loss.`;
+    } else {
+      tip += `Superb macronutrient distribution (${p}g P, ${c}g C, ${f}g F)! High satiety index and balanced energy release.`;
+    }
+    tipEl.textContent = tip;
+  };
+}
+
 if ($('#logRecipeToTodayBtn')) {
   $('#logRecipeToTodayBtn').onclick = () => {
     const dishName = ($('#recipeDishName') ? $('#recipeDishName').value.trim() : '') || 'Custom Recipe';
-    const targetMeal = ($('#recipeCategory') ? $('#recipeCategory').value : 'Lunch');
+    const mealEl = $('#recipeMealSelect') || $('#recipeCategory');
+    const targetMeal = mealEl ? mealEl.value : 'Lunch';
 
     // Compile list of ingredients
-    const container = $('#recipeIngredientsContainer');
+    const container = $('#recipeIngredientsContainer') || $('#ingredientRowsContainer');
     const parts = [];
     if (container) {
       container.querySelectorAll('.ingredient-row').forEach(row => {
@@ -2057,6 +2085,30 @@ $('#forceSyncBtn').onclick = async () => {
   toast('Database synced with Turso cloud');
 };
 
+if ($('#viewAllUsersBtn')) {
+  $('#viewAllUsersBtn').onclick = async () => {
+    const list = $('#adminUsersList');
+    if (list) list.innerHTML = '<span style="color:#637367;">Loading registered users...</span>';
+    try {
+      const users = await FF.adminUsers();
+      if (!users || !users.length) {
+        if (list) list.innerHTML = '<span style="color:#637367;font-size:.85rem;">No registered users found.</span>';
+        return;
+      }
+      if (list) {
+        list.innerHTML = users.map(u => `
+          <div style="padding:6px 0;border-bottom:1px solid #eef3eb;display:flex;justify-content:space-between;align-items:center;">
+            <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#777;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
+            <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eef5eb;color:#203b29;">${escapeHtml(u.role || 'user')}</span>
+          </div>
+        `).join('');
+      }
+    } catch (e) {
+      if (list) list.innerHTML = `<span style="color:#b23;font-size:.82rem;">${escapeHtml(e.message || 'Admin access required')}</span>`;
+    }
+  };
+}
+
 // Logout handler
 async function handleLogout() {
   closeModal('#settingsModal');
@@ -2166,27 +2218,93 @@ $('#authSubmitBtn').onclick = submitAuth;
 /* ---------- Global Enter Key Navigation on Inputs ---------- */
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
-    // If inside auth modal
-    if ($('#authModal').classList.contains('open')) {
+    const active = document.activeElement;
+
+    // 1. Auth Modal
+    if ($('#authModal') && $('#authModal').classList.contains('open')) {
       e.preventDefault();
-      submitAuth();
+      if (active && active.id === 'authNameInput') {
+        const next = $('#authEmailInput');
+        if (next) next.focus();
+      } else if (active && active.id === 'authEmailInput') {
+        const next = $('#authPasswordInput');
+        if (next) next.focus();
+      } else {
+        submitAuth();
+      }
       return;
     }
-    // If inside food modal
-    if ($('#foodModal').classList.contains('open')) {
+
+    // 2. Food Modal
+    if ($('#foodModal') && $('#foodModal').classList.contains('open')) {
       e.preventDefault();
+      if (active && active.id === 'foodSearchInput') {
+        const portionInp = $('#foodPortionInput');
+        if (portionInp) {
+          portionInp.focus();
+          portionInp.select();
+          return;
+        }
+      }
       confirmAddFood();
       return;
     }
-    // If inside custom food modal
-    if ($('#customFoodModal').classList.contains('open')) {
+
+    // 3. Custom Food Modal
+    if ($('#customFoodModal') && $('#customFoodModal').classList.contains('open')) {
       e.preventDefault();
-      $('#saveCustomFoodBtn').click();
+      const sequence = ['customFoodName', 'customFoodCal', 'customFoodP', 'customFoodC', 'customFoodF'];
+      const curIdx = active ? sequence.indexOf(active.id) : -1;
+      if (curIdx !== -1 && curIdx < sequence.length - 1) {
+        const nextEl = $('#' + sequence[curIdx + 1]);
+        if (nextEl) { nextEl.focus(); if (nextEl.select) nextEl.select(); return; }
+      }
+      if ($('#saveCustomFoodBtn')) $('#saveCustomFoodBtn').click();
       return;
     }
-    // If inside profile inputs
-    if (activeView === 'profile' && document.activeElement && document.activeElement.tagName === 'INPUT') {
+
+    // 4. Edit Food Modal
+    if ($('#editFoodModal') && $('#editFoodModal').classList.contains('open')) {
       e.preventDefault();
+      const sequence = ['editFoodName', 'editFoodPortion', 'editFoodCal', 'editFoodP', 'editFoodC', 'editFoodF'];
+      const curIdx = active ? sequence.indexOf(active.id) : -1;
+      if (curIdx !== -1 && curIdx < sequence.length - 1) {
+        const nextEl = $('#' + sequence[curIdx + 1]);
+        if (nextEl) { nextEl.focus(); if (nextEl.select) nextEl.select(); return; }
+      }
+      if ($('#saveEditFoodBtn')) $('#saveEditFoodBtn').click();
+      return;
+    }
+
+    // 5. Recipe Builder Modal
+    if ($('#recipeBuilderModal') && $('#recipeBuilderModal').classList.contains('open')) {
+      e.preventDefault();
+      if (active && active.id === 'recipeDishName') {
+        const firstQty = $('#recipeIngredientsContainer .recipe-qty-input');
+        if (firstQty) { firstQty.focus(); firstQty.select(); return; }
+      }
+      if ($('#logRecipeToTodayBtn')) $('#logRecipeToTodayBtn').click();
+      return;
+    }
+
+    // 6. Camera Modal
+    if ($('#cameraModal') && $('#cameraModal').classList.contains('open')) {
+      if ($('#camConfirmAddBtn') && !$('#camConfirmAddBtn').disabled) {
+        e.preventDefault();
+        $('#camConfirmAddBtn').click();
+        return;
+      }
+    }
+
+    // 7. Profile Inputs
+    if (activeView === 'profile' && active && active.tagName === 'INPUT') {
+      e.preventDefault();
+      const seq = ['pfHeightInput', 'pfWeightInput', 'pfCalorieInput'];
+      const curIdx = seq.indexOf(active.id);
+      if (curIdx !== -1 && curIdx < seq.length - 1) {
+        const nextEl = $('#' + seq[curIdx + 1]);
+        if (nextEl) { nextEl.focus(); if (nextEl.select) nextEl.select(); return; }
+      }
       saveProfileData();
       return;
     }
@@ -2453,6 +2571,17 @@ if ($('#aiChatClearBtn')) {
 
 if ($('#aiChatForm')) {
   $('#aiChatForm').onsubmit = (e) => {
+    e.preventDefault();
+    const inp = $('#aiChatInput');
+    if (!inp) return;
+    const val = inp.value;
+    inp.value = '';
+    handleUserAiQuery(val);
+  };
+}
+
+if ($('#aiChatSendBtn')) {
+  $('#aiChatSendBtn').onclick = (e) => {
     e.preventDefault();
     const inp = $('#aiChatInput');
     if (!inp) return;

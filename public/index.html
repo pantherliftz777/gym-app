@@ -940,6 +940,7 @@
     </div>
 
     <form id="editFoodForm" onsubmit="return false;">
+      <input type="hidden" id="editFoodIndex" value="-1">
       <div class="modal-fields" style="display:grid;gap:12px;">
         <label class="full-field">
           Food Name
@@ -1033,7 +1034,7 @@
       </div>
 
       <!-- Ingredient Rows Container -->
-      <div class="recipe-builder-table" id="ingredientRowsContainer">
+      <div class="recipe-builder-table" id="recipeIngredientsContainer">
         <!-- Dynamically rendered rows -->
       </div>
 
