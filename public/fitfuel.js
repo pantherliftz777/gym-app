@@ -8,6 +8,16 @@ const $ = s => typeof document !== 'undefined' ? document.querySelector(s) : nul
 const $$ = s => typeof document !== 'undefined' ? [...document.querySelectorAll(s)] : [];
 const today = () => new Date().toISOString().slice(0, 10);
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /* ---------- Storage & Sync ---------- */
 const store = {
   get: (k, d) => { try { const v = localStorage.getItem('ff_' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
@@ -44,6 +54,13 @@ let log = store.get('log', {});
 let custom = store.get('custom', []);
 let water = store.get('water', { date: today(), ml: 1000 });
 let workoutsDone = store.get('workoutsDone', []);
+let streakTracker = store.get('streakTracker', {
+  currentStreak: 0,
+  lastActiveDate: null,
+  streakBroken: false,
+  brokenStreakCount: 0,
+  history: []
+});
 let session = store.get('session', null);
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
@@ -580,21 +597,43 @@ const EXERCISES_LIBRARY = [
   }
 ];
 
-/* ---------- Toast Notice ---------- */
-let toastTimeout;
+/* ---------- Toast Notice (Self-hiding & Click-to-dismiss) ---------- */
+let toastTimeout = null;
+function hideToast() {
+  const t = $('#toastNotice');
+  if (!t) return;
+  clearTimeout(toastTimeout);
+  if (M && M.animate) {
+    try {
+      M.animate(t, { opacity: [1, 0], y: [0, 30] }, { duration: 0.18 });
+    } catch (e) {}
+  }
+  setTimeout(() => {
+    t.classList.remove('show');
+    t.style.opacity = '';
+    t.style.transform = '';
+    t.style.pointerEvents = 'none';
+  }, 180);
+}
+
 function toast(msg) {
   const t = $('#toastNotice');
   const txt = $('#toastMsg');
   if (!t) return;
   if (txt) txt.textContent = msg;
-  t.classList.add('show');
   clearTimeout(toastTimeout);
+  t.style.pointerEvents = 'auto';
+  t.classList.add('show');
+  t.onclick = hideToast;
+  const closeBtn = t.querySelector('.toast-close');
+  if (closeBtn) closeBtn.onclick = (e) => { e.stopPropagation(); hideToast(); };
+
   if (M && M.animate) {
-    M.animate(t, { opacity: [0, 1], y: [40, 0] }, { duration: 0.28, easing: M.spring({ stiffness: 380, damping: 24 }) });
+    try {
+      M.animate(t, { opacity: [0, 1], y: [40, 0] }, { duration: 0.28, easing: M.spring({ stiffness: 380, damping: 24 }) });
+    } catch (e) {}
   }
-  toastTimeout = setTimeout(() => {
-    t.classList.remove('show');
-  }, 2700);
+  toastTimeout = setTimeout(hideToast, 3500);
 }
 
 /* ---------- Modal Management (Guaranteed zero pointer-blocking) ---------- */
@@ -760,14 +799,89 @@ function updateSyncStatus(text) {
   }
 }
 
+/* ---------- Accurate Streak & Habit Tracking System ---------- */
+function recordDailyActivity(source = 'general') {
+  const d = today();
+  if (!streakTracker.history) streakTracker.history = [];
+
+  if (streakTracker.lastActiveDate && streakTracker.lastActiveDate !== d) {
+    const last = new Date(streakTracker.lastActiveDate);
+    const curr = new Date(d);
+    const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
+    if (diffDays >= 2) {
+      // User was inactive for 2 or more consecutive days -> Streak breaks!
+      streakTracker.streakBroken = true;
+      streakTracker.brokenStreakCount = streakTracker.currentStreak || 1;
+      streakTracker.currentStreak = 1; // Restarting at Day 1
+    } else if (diffDays === 1) {
+      // Consecutive day!
+      streakTracker.currentStreak = (streakTracker.currentStreak || 0) + 1;
+      streakTracker.streakBroken = false;
+    }
+  } else if (!streakTracker.lastActiveDate) {
+    streakTracker.currentStreak = 1;
+    streakTracker.streakBroken = false;
+  }
+
+  streakTracker.lastActiveDate = d;
+  if (!streakTracker.history.includes(d)) {
+    streakTracker.history.push(d);
+  }
+  store.set('streakTracker', streakTracker);
+  return streakTracker;
+}
+
+function evaluateStreakStatus() {
+  const d = today();
+  if (!streakTracker.history) streakTracker.history = [];
+
+  // Ingest any active dates recorded in workoutsDone, food log, or water
+  if (Array.isArray(workoutsDone)) {
+    workoutsDone.forEach(w => { if (w.date && !streakTracker.history.includes(w.date)) streakTracker.history.push(w.date); });
+  }
+  if (log) {
+    Object.keys(log).forEach(k => { if (Array.isArray(log[k]) && log[k].length > 0 && !streakTracker.history.includes(k)) streakTracker.history.push(k); });
+  }
+
+  const activeToday = (workoutsDone && workoutsDone.some(w => w.date === d)) ||
+                      (log && log[d] && log[d].length > 0) ||
+                      (water && water.date === d && water.ml > 0);
+
+  if (activeToday) {
+    recordDailyActivity('action_logged');
+  } else if (streakTracker.lastActiveDate && streakTracker.lastActiveDate !== d) {
+    const last = new Date(streakTracker.lastActiveDate);
+    const curr = new Date(d);
+    const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
+    if (diffDays >= 2) {
+      if (!streakTracker.streakBroken && (streakTracker.currentStreak || 0) > 0) {
+        streakTracker.streakBroken = true;
+        streakTracker.brokenStreakCount = streakTracker.currentStreak;
+        streakTracker.currentStreak = 0;
+        store.set('streakTracker', streakTracker);
+      }
+    }
+  }
+
+  return streakTracker;
+}
+
+function getCheerupMessage(streakDays, weeklyGoalMet, remainingDays) {
+  if (streakDays <= 0) return 'Start your daily streak today! Log a meal, workout, or water intake.';
+  if (streakDays === 1) return '🌱 Day 1 started! A great journey begins with a single step. Keep going!';
+  if (streakDays === 2) return '⚡ 2 Days in a row! Momentum is building—keep the flame alive!';
+  if (streakDays === 3) return '🔥 3-Day streak! Halfway through the work week, solid consistency!';
+  if (streakDays === 4) return '🚀 4 Days strong! One more day to hit your weekly goal.';
+  if (streakDays === 5) return '⭐ 5-Day milestone! You crushed your weekly workout goal!';
+  if (streakDays === 6) return '🏆 6 Days! Elite dedication. You are performing at peak level!';
+  return `👑 ${streakDays}-Day Legendary Streak! Master of discipline. Incredible consistency!`;
+}
+
 /* ---------- Dashboard Rendering ---------- */
 function getTodayLog() {
   const d = today();
-  if (!log[d] || log[d].length === 0) {
-    // If no user entries logged yet today, supply preview items
-    return DEFAULT_PREVIEW_MEALS;
-  }
-  return log[d];
+  // Return user's actual food entries for today. Empty array if nothing logged.
+  return (log && Array.isArray(log[d])) ? log[d] : [];
 }
 
 function renderDashboard() {
@@ -781,7 +895,7 @@ function renderDashboard() {
   const leftKcal = Math.max(0, goalKcal - totalKcal);
   const pct = Math.min(100, Math.round((totalKcal / goalKcal) * 100));
 
-  // Calories Ring & Numbers
+  // Calories Ring & Numbers (Zero when nothing is logged)
   if ($('#dashCalConsumed')) $('#dashCalConsumed').textContent = totalKcal.toLocaleString();
   if ($('#dashCalGoal')) $('#dashCalGoal').textContent = goalKcal.toLocaleString();
   if ($('#dashCalLeft')) $('#dashCalLeft').textContent = leftKcal.toLocaleString();
@@ -793,7 +907,7 @@ function renderDashboard() {
     $('#dashCalRing').style.background = `conic-gradient(#b4db79 ${deg}deg, #ecefe8 0deg)`;
   }
 
-  // Macros
+  // Macros (Strict 0 when no foods logged)
   if ($('#dashP')) $('#dashP').textContent = totalP;
   if ($('#dashC')) $('#dashC').textContent = totalC;
   if ($('#dashF')) $('#dashF').textContent = totalF;
@@ -825,6 +939,7 @@ function renderDashboard() {
         }
         water.date = today();
         store.set('water', water);
+        recordDailyActivity('water');
         renderDashboard();
         toast(`Hydration updated: ${(water.ml / 1000).toFixed(1)} L`);
       };
@@ -832,25 +947,41 @@ function renderDashboard() {
     }
   }
 
-  // Meals & Snacks List
+  // Meals & Snacks List (Clear zero-state when empty)
   const mealList = $('#dashMealList');
   if (mealList) {
-    mealList.innerHTML = entries.map(item => {
-      const img = item.image ? `<img src="${item.image}" alt="${item.name}"/>` : `<span><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path></svg></span>`;
-      const kcal = item.k || item.calories || 0;
-      return `<div class="meal-row">
-        <div class="food-thumb img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image || ''}" title="Click to view full image">${img}</div>
-        <div class="meal-info">
-          <span>${item.meal || 'Meal'}</span>
-          <b>${item.name}</b>
-          <small>${item.detail || (item.p ? `${item.p}g P · ${item.c}g C · ${item.f}g F` : 'Custom portion')}</small>
+    if (entries.length === 0) {
+      mealList.innerHTML = `
+        <div style="padding: 24px 16px; text-align: center; color: #637367; background: #f9fbf8; border: 1px dashed #dbe6d6; border-radius: 14px;">
+          <div style="font-size: 28px; margin-bottom: 6px;">🥗</div>
+          <b style="color: #203b29; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
+          <p style="font-size: 12px; margin: 0 0 12px; color: #637367; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
+          <button type="button" class="solid-button small" id="emptyDashAddMealBtn" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+            Log Food Now
+          </button>
         </div>
-        <div class="meal-kcal">
-          <b>${kcal}</b>
-          <span>kcal</span>
-        </div>
-      </div>`;
-    }).join('');
+      `;
+      const btn = $('#emptyDashAddMealBtn');
+      if (btn) btn.onclick = () => { switchView('food-log'); setTimeout(openFoodModal, 100); };
+    } else {
+      mealList.innerHTML = entries.map(item => {
+        const img = item.image ? `<img src="${item.image}" alt="${item.name}"/>` : `<span><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path></svg></span>`;
+        const kcal = item.k || item.calories || 0;
+        return `<div class="meal-row">
+          <div class="food-thumb img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image || ''}" title="Click to view full image">${img}</div>
+          <div class="meal-info">
+            <span>${escapeHtml(item.meal || 'Meal')}</span>
+            <b>${escapeHtml(item.name)}</b>
+            <small>${escapeHtml(item.detail || (item.p ? `${item.p}g P · ${item.c}g C · ${item.f}g F` : 'Custom portion'))}</small>
+          </div>
+          <div class="meal-kcal">
+            <b>${kcal}</b>
+            <span>kcal</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
   }
 
   // Active Workout preview
@@ -859,11 +990,119 @@ function renderDashboard() {
   if ($('#dashWorkoutFocus')) $('#dashWorkoutFocus').textContent = wo.focus.toUpperCase();
   if ($('#dashWorkoutDuration')) $('#dashWorkoutDuration').textContent = wo.duration;
 
-  // Streak update
-  const streakCount = Math.min(5, Math.max(1, (workoutsDone.length % 5) + 3));
-  if ($('#streakCount')) $('#streakCount').textContent = `${streakCount} / 5`;
+  /* ---------- Accurate Streak Calculation & 7-Day Weekly Bars ---------- */
+  const curStreakInfo = evaluateStreakStatus();
+  const streakCount = curStreakInfo.currentStreak || 0;
+  const targetDays = profile.days || 5;
+
+  // Compute Monday through Sunday of current week
+  const now = new Date();
+  const dayIdx = (now.getDay() + 6) % 7; // 0=Mon, ..., 6=Sun
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - dayIdx);
+
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const dayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  let weekCompletedCount = 0;
+  const weeklyDayData = [];
+
+  for (let i = 0; i < 7; i++) {
+    const dObj = new Date(monday);
+    dObj.setDate(monday.getDate() + i);
+    const dateStr = dObj.toISOString().slice(0, 10);
+    const isToday = (dateStr === today());
+    const isPast = (dObj < now && !isToday);
+    const isFuture = (dObj > now && !isToday);
+
+    const isActive = (curStreakInfo.history && curStreakInfo.history.includes(dateStr)) ||
+                     (workoutsDone && workoutsDone.some(w => w.date === dateStr)) ||
+                     (log && log[dateStr] && log[dateStr].length > 0) ||
+                     (water && water.date === dateStr && water.ml > 0);
+
+    if (isActive) weekCompletedCount++;
+    weeklyDayData.push({ letter: dayLetters[i], name: dayLabels[i], dateStr, isActive, isToday, isFuture, isPast });
+  }
+
+  // Update Top Banner Stats
   if ($('#dayStreakDisplay')) $('#dayStreakDisplay').innerHTML = `${streakCount} <small>days</small>`;
-  if ($('#weeklyGoalDisplay')) $('#weeklyGoalDisplay').innerHTML = `${Math.round((streakCount / 5) * 100)}<small>%</small>`;
+  const weekPct = Math.min(100, Math.round((weekCompletedCount / targetDays) * 100));
+  if ($('#weeklyGoalDisplay')) $('#weeklyGoalDisplay').innerHTML = `${weekPct}<small>%</small>`;
+
+  // Update Sidebar Weekly Streak
+  if ($('#streakCount')) $('#streakCount').textContent = `${weekCompletedCount} / ${targetDays}`;
+  const sidebarBars = $('#streakBars');
+  if (sidebarBars) {
+    sidebarBars.innerHTML = weeklyDayData.map(d => `<i class="${d.isActive ? '' : 'muted'}" title="${d.name}: ${d.isActive ? 'Active' : 'Rest/Pending'}"></i>`).join('');
+  }
+  const remDays = Math.max(0, targetDays - weekCompletedCount);
+  const cheerMsg = getCheerupMessage(streakCount, weekCompletedCount >= targetDays, remDays);
+  if ($('#streakText')) $('#streakText').textContent = (curStreakInfo.streakBroken ? '⚠️ Streak broken. Restart Day 1!' : (remDays > 0 ? `${remDays} more day${remDays > 1 ? 's' : ''} to hit your goal.` : 'Goal reached! Incredible effort! 🔥'));
+
+  // Update Dedicated Dashboard Streak Card (Image 2)
+  if ($('#dashStreakFraction')) $('#dashStreakFraction').textContent = `${weekCompletedCount} / ${targetDays}`;
+  if ($('#streakBadgePill')) $('#streakBadgePill').innerHTML = `🔥 ${streakCount} Day${streakCount === 1 ? '' : 's'}`;
+  if ($('#streakCongratsHeadline')) {
+    $('#streakCongratsHeadline').textContent = curStreakInfo.streakBroken
+      ? 'Mission Failed: Streak Broken'
+      : (streakCount >= targetDays ? 'Weekly Target Smashed! 🎉' : (streakCount > 0 ? `${streakCount}-Day Streak in Action!` : 'Start Your Streak Today'));
+  }
+  if ($('#dashStreakCheerMsg')) {
+    $('#dashStreakCheerMsg').textContent = curStreakInfo.streakBroken
+      ? 'You missed 2 or more consecutive days. Don’t get discouraged—champions restart! Begin Day 1 today.'
+      : cheerMsg;
+  }
+
+  // Render 7-day pill bar graph on Dashboard matching Image 2
+  const barGraph = $('#dashStreakBarGraph');
+  if (barGraph) {
+    barGraph.innerHTML = weeklyDayData.map(d => {
+      const activeColor = d.isActive ? '#82aa52' : '#e2ead9';
+      const borderStyle = d.isToday ? 'border: 2px solid #203b29;' : 'border: 1px solid rgba(0,0,0,0.04);';
+      const labelWeight = d.isToday ? 'font-weight: 800; color: #203b29;' : 'font-weight: 600; color: #788b7e;';
+      const statusIcon = d.isActive ? '✓' : (d.isToday ? '•' : '');
+      return `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+          <span style="font-size:.72rem; ${labelWeight}">${d.name}</span>
+          <div style="width:100%; height:14px; background:${activeColor}; border-radius:99px; ${borderStyle} transition:background .2s; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;" title="${d.name} (${d.dateStr}): ${d.isActive ? 'Active' : (d.isToday ? 'Today' : 'Rest/Pending')}">
+            ${statusIcon}
+          </div>
+          <small style="font-size:.65rem; color:${d.isActive ? '#4b6e2f' : '#a2b1a5'}; font-weight:700;">${d.letter}</small>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Mission Failed Alert Box
+  const failBox = $('#missionFailedAlert');
+  if (failBox) {
+    if (curStreakInfo.streakBroken) {
+      failBox.style.display = 'flex';
+      const restartBtn = $('#restartStreakBtn');
+      if (restartBtn) {
+        restartBtn.onclick = () => {
+          recordDailyActivity('manual_restart');
+          curStreakInfo.streakBroken = false;
+          store.set('streakTracker', curStreakInfo);
+          failBox.style.display = 'none';
+          renderDashboard();
+          toast('🔥 Day 1 Streak Started! Welcome back champion.');
+        };
+      }
+    } else {
+      failBox.style.display = 'none';
+    }
+  }
+
+  // Quick Check-in Button
+  const checkInBtn = $('#quickCheckInBtn');
+  if (checkInBtn) {
+    checkInBtn.onclick = () => {
+      recordDailyActivity('manual_checkin');
+      renderDashboard();
+      toast('⚡ Daily Check-In recorded! Streak updated.');
+    };
+  }
+
   updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 }
 
@@ -1294,6 +1533,7 @@ if ($('#logRecipeToTodayBtn')) {
     });
 
     store.set('log', log);
+    recordDailyActivity('meal');
     closeModal('#recipeBuilderModal');
     renderFoodLog();
     renderDashboard();
@@ -1521,6 +1761,7 @@ if ($('#camConfirmAddBtn')) {
     });
 
     store.set('log', log);
+    recordDailyActivity('meal');
     closeModal('#cameraModal');
     renderFoodLog();
     renderDashboard();
@@ -1780,6 +2021,7 @@ function confirmAddFood() {
   log[d] = log[d] || [];
   log[d].push({ meal, name, detail: `${g} g portion`, k, p, c, f });
   store.set('log', log);
+  recordDailyActivity('meal');
   closeModal('#foodModal');
   renderFoodLog();
   renderDashboard();
@@ -2004,6 +2246,7 @@ function openExerciseDetailModal(exerciseName) {
     $('#exModalLogDoneBtn').onclick = () => {
       workoutsDone.push({ name: ex.name, date: today(), at: Date.now() });
       store.set('workoutsDone', workoutsDone);
+      recordDailyActivity('workout');
       closeModal('#exerciseDetailModal');
       renderDashboard();
       toast(`✓ Completed set logged for "${ex.name}"!`);
@@ -2073,6 +2316,7 @@ $('#markWorkoutDoneBtn').onclick = () => {
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
   workoutsDone.push({ name: wo.name, date: today(), at: Date.now() });
   store.set('workoutsDone', workoutsDone);
+  recordDailyActivity('workout');
   renderDashboard();
   toast(`🎉 Great job! Completed ${wo.name}`);
 };
@@ -2174,6 +2418,7 @@ window.selectSubMuscle = function(sub) {
 window.logExerciseCompleted = function(name) {
   workoutsDone.push({ name, date: today(), at: Date.now() });
   store.set('workoutsDone', workoutsDone);
+  recordDailyActivity('workout');
   renderDashboard();
   toast(`Great job! Completed "${name}"`);
 };
@@ -2463,6 +2708,121 @@ if ($('#viewAllUsersBtn')) {
   };
 }
 
+if ($('#viewAllComplaintsBtn')) {
+  $('#viewAllComplaintsBtn').onclick = async () => {
+    const list = $('#adminComplaintsList');
+    if (!list) return;
+    list.style.display = 'block';
+    list.innerHTML = '<span style="color:#637367;">Loading complaints & suggestions...</span>';
+    try {
+      const complaints = await FF.adminComplaints();
+      if (!complaints || !complaints.length) {
+        list.innerHTML = '<div style="padding:10px;text-align:center;color:#637367;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! 🎉</div>';
+        return;
+      }
+      list.innerHTML = complaints.map(c => {
+        const dateStr = c.created ? new Date(c.created).toLocaleString() : '';
+        const files = Array.isArray(c.files) ? c.files : [];
+        const filesHtml = files.length ? `
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            ${files.map(f => {
+              if (f.data && f.data.startsWith('data:image')) {
+                return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #dbe2d6;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
+              }
+              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#334438;">📎 ${escapeHtml(f.name)}</span>`;
+            }).join('')}
+          </div>` : '';
+        return `
+          <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #e2ebd9;border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <b style="color:#203b29;font-size:.88rem;">${escapeHtml(c.name)}</b>
+              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eef5eb;color:#2a5033;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
+            </div>
+            <p style="margin:0;color:#34483a;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
+            ${filesHtml}
+            <small style="display:block;margin-top:4px;color:#859288;font-size:.72rem;">${dateStr}</small>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      list.innerHTML = `<span style="color:#b23;font-size:.82rem;">${escapeHtml(e.message || 'Admin access required')}</span>`;
+    }
+  };
+}
+
+/* ---------- Complaint / Feedback Form Submission ---------- */
+let cmpTypeVal = 'complaint';
+
+function initComplaintSystem() {
+  const typeBtns = $$('.cmp-type-btn');
+  typeBtns.forEach(btn => {
+    btn.onclick = () => {
+      typeBtns.forEach(b => {
+        b.classList.remove('active');
+        b.style.borderColor = '#e2ebd9';
+        b.style.background = '#ffffff';
+        b.style.fontWeight = '600';
+        b.style.color = '#55665b';
+      });
+      btn.classList.add('active');
+      btn.style.borderColor = '#b4db79';
+      btn.style.background = '#f3f9ed';
+      btn.style.fontWeight = '700';
+      btn.style.color = '#203b29';
+      cmpTypeVal = btn.dataset.type || 'complaint';
+    };
+  });
+
+  const openFormBtns = [$('#openComplaintModalBtn'), $('#profileComplaintBtn')].filter(Boolean);
+  openFormBtns.forEach(btn => {
+    btn.onclick = () => {
+      if ($('#cmpNameInput') && profile && profile.name) {
+        $('#cmpNameInput').value = profile.name;
+      }
+      openModal('#complaintModal');
+    };
+  });
+
+  const form = $('#complaintForm');
+  if (form) {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const name = ($('#cmpNameInput')?.value || '').trim();
+      const text = ($('#cmpTextInput')?.value || '').trim();
+      if (name.length < 2) return toast('Please enter your name');
+      if (text.length < 5) return toast('Please describe your issue or suggestion');
+
+      const submitBtn = $('#cmpSubmitBtn');
+      const origText = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+
+      const fileInput = $('#cmpFileInput');
+      const files = [...(fileInput?.files || [])].slice(0, 3);
+      const readAll = files.map(f => new Promise(res => {
+        if (f.size > 900000) return res({ name: f.name, type: f.type, data: '' });
+        const fr = new FileReader();
+        fr.onload = () => res({ name: f.name, type: f.type, data: fr.result });
+        fr.onerror = () => res({ name: f.name, type: f.type, data: '' });
+        fr.readAsDataURL(f);
+      }));
+      const safeFiles = await Promise.all(readAll);
+
+      try {
+        await FF.sendComplaint(name, cmpTypeVal, text, safeFiles);
+        toast('✅ Feedback received! Admin team has been notified.');
+        closeModal('#complaintModal');
+        if ($('#cmpTextInput')) $('#cmpTextInput').value = '';
+        if (fileInput) fileInput.value = '';
+      } catch (err) {
+        toast('⚠️ Error sending complaint: ' + (err.message || 'Please retry'));
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = origText; }
+      }
+    };
+  }
+}
+initComplaintSystem();
+
 // Logout handler
 async function handleLogout() {
   closeModal('#settingsModal');
@@ -2498,6 +2858,8 @@ async function handleEraseData() {
     store.del('weights');
     workoutsDone = [];
     store.del('workouts');
+    streakTracker = { currentStreak: 0, lastActiveDate: null, streakBroken: false, brokenStreakCount: 0, history: [] };
+    store.del('streakTracker');
     waterMl = 0;
     waterHistory = {};
     store.del('water');
@@ -2536,6 +2898,8 @@ async function handleDeleteAccount() {
     plan = null;
     weightLog = [];
     workoutsDone = [];
+    streakTracker = { currentStreak: 0, lastActiveDate: null, streakBroken: false, brokenStreakCount: 0, history: [] };
+    store.del('streakTracker');
     waterMl = 0;
     waterHistory = {};
 

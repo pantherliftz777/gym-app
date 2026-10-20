@@ -26,12 +26,13 @@
 /* Toast */
 .toast-notice{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:#233629;color:#f0f5ee;padding:12px 20px;border-radius:12px;font-weight:600;font-size:.88rem;
-  z-index:999;box-shadow:0 12px 30px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;
+  background:#203b29;color:#f0f5ee;padding:12px 20px;border-radius:12px;font-weight:600;font-size:.88rem;
+  z-index:9999;box-shadow:0 12px 30px rgba(0,0,0,0.3);display:none;align-items:center;gap:10px;
   opacity:0;pointer-events:none;transition:transform .25s ease, opacity .25s ease;
+  cursor:pointer;border:1px solid #37533f;user-select:none;
 }
 .toast-notice.show{
-  transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;
+  display:flex;transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;
 }
 
 /* Views toggling */

@@ -169,6 +169,65 @@
           </button>
         </div>
 
+        <!-- DEDICATED STREAK & HABIT TRACKING SYSTEM -->
+        <div class="streak-dashboard-card" id="streakDashboardCard" style="margin-bottom:16px;">
+          <!-- Mission Failed / Streak Broken Alert (Shown if inactive >= 2 days) -->
+          <div id="missionFailedAlert" style="display:none;background:#fff5f5;border:1px solid #feb2b2;border-radius:14px;padding:14px 18px;margin-bottom:14px;align-items:center;gap:14px;box-shadow:0 4px 14px rgba(229,62,62,0.08);">
+            <div style="font-size:28px;line-height:1;">⚠️</div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <b style="color:#c53030;font-size:.95rem;">Mission Failed: Streak Broken!</b>
+                <span style="background:#fed7d7;color:#9b2c2c;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;">2+ Days Inactivity</span>
+              </div>
+              <p style="color:#742a2a;font-size:.84rem;margin:4px 0 0;line-height:1.45;">
+                You were inactive for 2 or more consecutive days and your workout/nutrition streak was broken. Don't worry—setbacks are proof you're trying! Restart at <b>Day 1</b> today and rebuild your momentum.
+              </p>
+            </div>
+            <button type="button" class="solid-button small" id="restartStreakBtn" style="background:#c53030;color:#fff;border:none;white-space:nowrap;padding:8px 16px;">
+              Restart Day 1 🔥
+            </button>
+          </div>
+
+          <!-- Weekly Streak Visual Card matching Formwise UI -->
+          <div class="streak-card-inner" style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:18px 22px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:42px;height:42px;border-radius:12px;background:#eef6e9;display:flex;align-items:center;justify-content:center;font-size:22px;">
+                  🔥
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:.76rem;font-weight:800;letter-spacing:0.06em;color:#5c7062;text-transform:uppercase;">Weekly Streak &amp; Tracking</span>
+                    <span id="streakBadgePill" style="font-size:.72rem;font-weight:700;background:#e8f4dd;color:#2e5a1e;padding:2px 9px;border-radius:99px;">🔥 4 Days</span>
+                  </div>
+                  <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e3324;font-weight:700;" id="streakCongratsHeadline">A little progress adds up!</h4>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:.72rem;font-weight:700;color:#788b7e;text-transform:uppercase;letter-spacing:.05em;">THIS WEEK</span>
+                <strong id="dashStreakFraction" style="font-size:1.35rem;color:#203b29;font-weight:800;display:block;line-height:1.1;">4 / 5</strong>
+              </div>
+            </div>
+
+            <!-- 7-Day Weekly Bar Graph (Mon to Sun) -->
+            <div style="margin-top:16px;">
+              <div id="dashStreakBarGraph" style="display:grid;grid-template-columns:repeat(7, 1fr);gap:10px;">
+                <!-- Populated dynamically with segmented pills -->
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #f0f4ec;flex-wrap:wrap;gap:10px;">
+              <p id="dashStreakCheerMsg" style="margin:0;font-size:.86rem;color:#435748;font-weight:500;">
+                One more day to hit your weekly goal. Keep your focus on the next good choice!
+              </p>
+              <button type="button" class="text-button" id="quickCheckInBtn" style="font-size:.82rem;font-weight:700;color:#2a5033;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                ⚡ Quick Daily Check-In
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="dashboard-grid">
           <!-- CALORIES PANEL -->
           <article class="panel calories-panel">
@@ -669,6 +728,9 @@
             <h3 style="font-size:1.1rem;color:#34483a;margin:6px 0;">Consistency beats perfection</h3>
             <p style="color:#637367;font-size:.88rem;line-height:1.5;">Targets are guides, not strict rules. Hitting close to your protein and calorie target over time is what builds sustainable strength.</p>
             <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+              <button class="outline-button full" id="profileComplaintBtn" style="width:100%;font-size:.85rem;color:#203b29;border-color:#b4db79;background:#f8fbf6;font-weight:600;">
+                📮 Report Issue / Suggestion
+              </button>
               <button class="outline-button full" id="adminPortalShortcutBtn" style="width:100%;">Admin &amp; Database Tools</button>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;">
                 <button type="button" class="outline-button small" id="profileEraseDataBtn" style="color:#c05621;border-color:#fbd38d;background:#fffaf0;font-size:.82rem;font-weight:600;">
@@ -881,11 +943,26 @@
         <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database ⟳</button>
       </div>
 
+      <!-- Feedback & Complaint Box -->
+      <div style="border:1px solid #e2ebd9;background:#fcfefb;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <b style="color:#203b29;font-size:.92rem;display:block;">📮 Feedback &amp; Complaints</b>
+          <p style="color:#637367;font-size:.82rem;margin:2px 0 0;">Report bugs, suggest features, or ask for new exercises and foods.</p>
+        </div>
+        <button type="button" class="solid-button small" id="openComplaintModalBtn" style="white-space:nowrap;">
+          Send Feedback
+        </button>
+      </div>
+
       <div id="adminSection" style="display:none;border:1px solid #e2ebd9;background:#f9fcf7;border-radius:12px;padding:14px;">
         <b style="color:#203b29;font-size:.95rem;">👑 Admin Controls</b>
-        <p style="color:#637367;font-size:.85rem;margin:4px 0 10px;">Manage registered accounts and database records.</p>
-        <button type="button" class="solid-button small" id="viewAllUsersBtn">View Registered Users</button>
-        <div id="adminUsersList" style="margin-top:10px;font-size:.85rem;max-height:140px;overflow-y:auto;"></div>
+        <p style="color:#637367;font-size:.85rem;margin:4px 0 10px;">Manage registered accounts, inspect user complaints and database records.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="solid-button small" id="viewAllUsersBtn">View Users</button>
+          <button type="button" class="outline-button small" id="viewAllComplaintsBtn">View Complaints &amp; Suggestions</button>
+        </div>
+        <div id="adminUsersList" style="margin-top:10px;font-size:.85rem;max-height:160px;overflow-y:auto;"></div>
+        <div id="adminComplaintsList" style="margin-top:10px;font-size:.85rem;max-height:220px;overflow-y:auto;display:none;"></div>
       </div>
 
       <!-- Data Management & Danger Zone -->
@@ -1333,9 +1410,69 @@
   </div>
 </div>
 
+<!-- COMPLAINT / SUGGESTION MODAL -->
+<div class="modal-backdrop" id="complaintModal">
+  <div class="modal-card" style="max-width:520px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">FEEDBACK &amp; SUPPORT</span>
+        <h2>Submit Complaint or Suggestion</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <form id="complaintForm" style="display:flex;flex-direction:column;gap:14px;padding:8px 0 0;">
+      <p style="color:#637367;font-size:.85rem;margin:0;line-height:1.45;">
+        Facing a glitch, need a specific food/workout added, or have an idea to make FitFuel better? Send your thoughts directly to the admin team.
+      </p>
+
+      <div>
+        <label style="display:block;font-size:.82rem;font-weight:700;color:#34483a;margin-bottom:6px;">Feedback Category</label>
+        <div id="cmpTypeSelector" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+          <button type="button" class="cmp-type-btn active" data-type="complaint" style="padding:9px 12px;border:1px solid #b4db79;background:#f3f9ed;border-radius:10px;font-size:.84rem;font-weight:700;cursor:pointer;color:#203b29;text-align:left;transition:all .15s;">
+            😞 Complaint / Issue
+          </button>
+          <button type="button" class="cmp-type-btn" data-type="bug" style="padding:9px 12px;border:1px solid #e2ebd9;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#55665b;text-align:left;transition:all .15s;">
+            🐛 Bug Report
+          </button>
+          <button type="button" class="cmp-type-btn" data-type="suggestion" style="padding:9px 12px;border:1px solid #e2ebd9;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#55665b;text-align:left;transition:all .15s;">
+            💡 Feature Suggestion
+          </button>
+          <button type="button" class="cmp-type-btn" data-type="food_workout" style="padding:9px 12px;border:1px solid #e2ebd9;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#55665b;text-align:left;transition:all .15s;">
+            🥗 Food / Workout Request
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label for="cmpNameInput" style="display:block;font-size:.82rem;font-weight:700;color:#34483a;margin-bottom:6px;">Your Name</label>
+        <input type="text" id="cmpNameInput" class="form-input" placeholder="e.g. Jordan Davis" required style="width:100%;padding:10px 12px;border:1px solid #dbe2d6;border-radius:8px;font-size:.9rem;outline:none;" />
+      </div>
+
+      <div>
+        <label for="cmpTextInput" style="display:block;font-size:.82rem;font-weight:700;color:#34483a;margin-bottom:6px;">Details / Message</label>
+        <textarea id="cmpTextInput" class="form-input" rows="4" placeholder="Describe the problem, steps to reproduce, or feature idea..." required style="width:100%;padding:10px 12px;border:1px solid #dbe2d6;border-radius:8px;font-size:.9rem;outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <div>
+        <label for="cmpFileInput" style="display:block;font-size:.82rem;font-weight:700;color:#34483a;margin-bottom:6px;">Attach Screenshots or Files (optional, up to 3)</label>
+        <input type="file" id="cmpFileInput" multiple accept="image/*,.pdf,.txt" style="font-size:.85rem;color:#55665b;width:100%;" />
+        <small style="display:block;color:#859288;font-size:.74rem;margin-top:4px;">Supports PNG, JPG, WebP under 900 KB</small>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+        <button type="button" class="outline-button" data-close>Cancel</button>
+        <button type="submit" class="solid-button" id="cmpSubmitBtn" style="background:#203b29;padding:9px 18px;">
+          Submit Feedback 🚀
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- TOAST -->
-<div class="toast-notice" id="toastNotice">
+<div class="toast-notice" id="toastNotice" title="Click to dismiss">
   <span id="toastMsg">Action completed</span>
+  <span style="font-size:1.15rem;margin-left:8px;opacity:0.8;line-height:1;" aria-label="Dismiss">&times;</span>
 </div>
 
 <script src="data.js"></script>
