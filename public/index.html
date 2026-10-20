@@ -568,10 +568,24 @@
         <div class="profile-layout">
           <div class="panel profile-card">
             <div class="profile-card-head">
-              <div class="large-avatar" id="pfLargeAvatar">JD</div>
-              <div>
+              <div style="position:relative;display:inline-block;flex-shrink:0;">
+                <div class="large-avatar" id="pfLargeAvatar" style="overflow:hidden;position:relative;cursor:pointer;" title="Click to upload/change photo">JD</div>
+                <label for="pfAvatarUploadInput" title="Upload custom photo" style="position:absolute;bottom:-2px;right:-2px;width:28px;height:28px;border-radius:50%;background:#203b29;color:#b4db79;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.22);font-size:.85rem;">
+                  📷
+                </label>
+                <input type="file" id="pfAvatarUploadInput" accept="image/*" style="display:none;">
+              </div>
+              <div style="flex:1;">
                 <h3 id="pfDisplayName">Jordan Davis</h3>
                 <p id="pfEmailDisplay">jordan.davis@example.com</p>
+                <div style="display:flex;gap:10px;align-items:center;margin-top:6px;">
+                  <label for="pfAvatarUploadInput" style="font-size:.76rem;color:#203b29;background:#edf4e8;padding:3px 8px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+                    📷 Upload Photo
+                  </label>
+                  <button type="button" id="removeAvatarBtn" style="display:none;background:none;border:none;color:#c53030;font-size:.76rem;cursor:pointer;padding:0;text-decoration:underline;">
+                    Remove Photo
+                  </button>
+                </div>
               </div>
               <div class="unit-switch" id="unitSwitch">
                 <button type="button" class="active" data-unit="Metric">Metric</button>

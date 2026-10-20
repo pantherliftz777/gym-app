@@ -1083,6 +1083,20 @@ const INGREDIENT_CATALOG = {
     { name: 'Butter', p: 0.9, c: 0.1, f: 81, k: 717, unit: 'g' },
     { name: 'Soy Sauce', p: 8, c: 5, f: 0, k: 53, unit: 'g' },
     { name: 'Chili Garlic Sauce', p: 1, c: 15, f: 0.5, k: 70, unit: 'g' }
+  ],
+  'Dry Fruits & Seeds': [
+    { name: 'Almonds (Badam)', p: 21.2, c: 21.6, f: 49.9, k: 579, unit: 'g' },
+    { name: 'Walnuts (Akhrot)', p: 15.2, c: 13.7, f: 65.2, k: 654, unit: 'g' },
+    { name: 'Cashews (Kaju)', p: 18.2, c: 30.2, f: 43.8, k: 553, unit: 'g' },
+    { name: 'Pistachios (Pista)', p: 20.2, c: 27.2, f: 45.3, k: 562, unit: 'g' },
+    { name: 'Raisins (Kismis)', p: 3.1, c: 79.2, f: 0.5, k: 299, unit: 'g' },
+    { name: 'Dates (Khajoor)', p: 1.8, c: 75.0, f: 0.2, k: 277, unit: 'g' },
+    { name: 'Chia Seeds', p: 16.5, c: 42.1, f: 30.7, k: 486, unit: 'g' },
+    { name: 'Flax Seeds (Alsi)', p: 18.3, c: 28.9, f: 42.2, k: 534, unit: 'g' },
+    { name: 'Pumpkin Seeds', p: 30.2, c: 10.7, f: 49.1, k: 559, unit: 'g' },
+    { name: 'Sunflower Seeds', p: 20.8, c: 20.0, f: 51.5, k: 584, unit: 'g' },
+    { name: 'Sesame Seeds (Til)', p: 17.7, c: 23.4, f: 49.7, k: 573, unit: 'g' },
+    { name: 'Roasted Makhana', p: 9.7, c: 76.9, f: 0.1, k: 347, unit: 'g' }
   ]
 };
 
@@ -1617,12 +1631,43 @@ const COMMON_FOODS = [
   { name: 'Cucumber (Fresh with peel, 100g)', p: 0.7, c: 3.6, f: 0.1, k: 15, icon: '🥒', cat: 'Veggies', micros: 'Silica, Potassium, 96% Water' },
   { name: 'Carrot (Raw, 100g)', p: 0.9, c: 9.6, f: 0.2, k: 41, icon: '🥕', cat: 'Veggies', micros: 'Beta-Carotene (Vit A 835mcg), Lutein, Vit K' },
 
-  // --- NUTS, SEEDS & HEALTHY FATS ---
-  { name: 'Almonds (Raw, 1 fistful ~28g / 23 nuts)', p: 6.0, c: 6.0, f: 14.0, k: 164, icon: '🥜', cat: 'Nuts', micros: 'Vitamin E (50% RDA), Magnesium, Manganese' },
-  { name: 'Walnuts (Akhrot, 28g ~7 whole nuts)', p: 4.3, c: 3.9, f: 18.5, k: 185, icon: '🥜', cat: 'Nuts', micros: 'Plant Omega-3 (ALA 2.5g), Polyphenols' },
-  { name: 'Peanut Butter (1 tbsp ~16g)', p: 4.0, c: 3.5, f: 8.0, k: 95, icon: '🥜', cat: 'Nuts', micros: 'Niacin, Biotin, Monounsaturated fats' },
-  { name: 'Chia Seeds (1 tbsp ~12g)', p: 2.0, c: 5.0, f: 3.8, k: 60, icon: '🌱', cat: 'Nuts', micros: 'Omega-3 ALA, Soluble Fiber, Calcium (75mg)' },
-  { name: 'Desi Ghee (1 tsp ~5g)', p: 0.0, c: 0.0, f: 5.0, k: 45, icon: '🧈', cat: 'Nuts', micros: 'Butyric acid (gut lining), Vit A, Vit D, Vit E' }
+  // --- NUTS, DRY FRUITS & SEEDS ---
+  { name: 'Almonds / Badam (Raw, 100g)', p: 21.2, c: 21.6, f: 49.9, k: 579, icon: '🥜', cat: 'Dry Fruits', micros: 'Vitamin E (170% RDA), Magnesium, Manganese, Riboflavin' },
+  { name: 'Almonds / Badam (1 fistful ~28g / 23 nuts)', p: 6.0, c: 6.0, f: 14.0, k: 164, icon: '🥜', cat: 'Dry Fruits', micros: 'Vitamin E (50% RDA), Magnesium, Dietary Fiber' },
+  { name: 'Walnuts / Akhrot (Raw Halves, 100g)', p: 15.2, c: 13.7, f: 65.2, k: 654, icon: '🥜', cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 9.1g), Neuroprotective Polyphenols' },
+  { name: 'Walnuts / Akhrot (28g ~7 whole nuts)', p: 4.3, c: 3.9, f: 18.5, k: 185, icon: '🥜', cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 2.5g), Copper, Manganese' },
+  { name: 'Cashews / Kaju (Raw, 100g)', p: 18.2, c: 30.2, f: 43.8, k: 553, icon: '🥜', cat: 'Dry Fruits', micros: 'Zinc (5.8mg), Magnesium (292mg), Copper, Iron' },
+  { name: 'Cashews / Kaju (1 serving ~28g / 18 nuts)', p: 5.1, c: 8.5, f: 12.3, k: 155, icon: '🥜', cat: 'Dry Fruits', micros: 'Magnesium, Phosphorus, Monounsaturated oleic acid' },
+  { name: 'Pistachios / Pista (Shelled, 100g)', p: 20.2, c: 27.2, f: 45.3, k: 562, icon: '🥜', cat: 'Dry Fruits', micros: 'Potassium (1025mg), Vitamin B6 (1.7mg), Lutein' },
+  { name: 'Pistachios / Pista (1 serving ~28g / 45 kernels)', p: 5.7, c: 7.7, f: 12.8, k: 159, icon: '🥜', cat: 'Dry Fruits', micros: 'Eye health carotenoids, Fiber, Vitamin B6' },
+  { name: 'Raisins / Kismis (100g)', p: 3.1, c: 79.2, f: 0.5, k: 299, icon: '🍇', cat: 'Dry Fruits', micros: 'Iron (1.9mg), Potassium (749mg), Boron for bone health' },
+  { name: 'Raisins / Kismis (1 small handful ~30g)', p: 0.9, c: 23.8, f: 0.1, k: 90, icon: '🍇', cat: 'Dry Fruits', micros: 'Rapid glycogen replenish, Electrolyte potassium' },
+  { name: 'Dates / Khajoor (Medjool / Kimia, 100g)', p: 1.8, c: 75.0, f: 0.2, k: 277, icon: '🌴', cat: 'Dry Fruits', micros: 'Potassium (696mg), Magnesium, Polyphenols, Fiber' },
+  { name: 'Dates / Khajoor (2 whole dates ~48g)', p: 0.9, c: 36.0, f: 0.1, k: 133, icon: '🌴', cat: 'Dry Fruits', micros: 'Pre-workout natural burst energy, Copper, Vit B6' },
+  { name: 'Dried Figs / Anjeer (100g)', p: 3.3, c: 63.9, f: 0.9, k: 249, icon: '🌰', cat: 'Dry Fruits', micros: 'High Calcium (162mg), Iron (2.0mg), Potassium, Fiber 9.8g' },
+  { name: 'Dried Figs / Anjeer (2 whole soaked figs ~40g)', p: 1.3, c: 25.6, f: 0.4, k: 100, icon: '🌰', cat: 'Dry Fruits', micros: 'Digestive enzymes, Calcium, Soluble prebiotic fiber' },
+  { name: 'Dried Apricots / Khubani (100g)', p: 3.4, c: 62.6, f: 0.5, k: 241, icon: '🍑', cat: 'Dry Fruits', micros: 'Beta-Carotene (Vit A 180mcg), Potassium (1160mg), Iron' },
+  { name: 'Dried Cranberries (100g)', p: 0.5, c: 82.0, f: 1.4, k: 308, icon: '🍒', cat: 'Dry Fruits', micros: 'Proanthocyanidins (urinary tract health), Vit C' },
+  { name: 'Dried Prunes / Munakka (100g)', p: 2.2, c: 63.9, f: 0.4, k: 240, icon: '🍇', cat: 'Dry Fruits', micros: 'Sorbitol (gut motility), Vit K (60mcg), Boron, Iron' },
+  { name: 'Chia Seeds (Raw, 100g)', p: 16.5, c: 42.1, f: 30.7, k: 486, icon: '🌱', cat: 'Seeds', micros: 'Calcium (631mg = 63% RDA), Omega-3 (17.8g), Fiber 34g' },
+  { name: 'Chia Seeds (1 tbsp ~12g)', p: 2.0, c: 5.0, f: 3.8, k: 60, icon: '🌱', cat: 'Seeds', micros: 'Soluble mucilage fiber, Plant Omega-3 ALA, Calcium' },
+  { name: 'Flax Seeds / Alsi (Raw/Roasted, 100g)', p: 18.3, c: 28.9, f: 42.2, k: 534, icon: '🌱', cat: 'Seeds', micros: 'Omega-3 ALA (22.8g), Lignans (antioxidant), Magnesium' },
+  { name: 'Flax Seeds / Alsi (Ground, 1 tbsp ~10g)', p: 1.8, c: 2.9, f: 4.2, k: 53, icon: '🌱', cat: 'Seeds', micros: 'High bioavailability ALA, Prebiotic soluble fiber' },
+  { name: 'Pumpkin Seeds / Kaddu ke Beej (100g)', p: 30.2, c: 10.7, f: 49.1, k: 559, icon: '🎃', cat: 'Seeds', micros: 'Zinc (7.8mg = 70% RDA), Magnesium (592mg = 148% RDA)' },
+  { name: 'Pumpkin Seeds / Kaddu ke Beej (1 tbsp ~15g)', p: 4.5, c: 1.6, f: 7.4, k: 84, icon: '🎃', cat: 'Seeds', micros: 'High natural Zinc for testosterone & immunity, Tryptophan' },
+  { name: 'Sunflower Seeds / Surajmukhi Beej (100g)', p: 20.8, c: 20.0, f: 51.5, k: 584, icon: '🌻', cat: 'Seeds', micros: 'Vitamin E (35mg = 234% RDA), Selenium (53mcg), Folate' },
+  { name: 'Sunflower Seeds (1 tbsp ~15g)', p: 3.1, c: 3.0, f: 7.7, k: 88, icon: '🌻', cat: 'Seeds', micros: 'Cellular protection Vit E, Magnesium, Copper' },
+  { name: 'Sesame Seeds / White or Black Til (100g)', p: 17.7, c: 23.4, f: 49.7, k: 573, icon: '⚪', cat: 'Seeds', micros: 'Mega Calcium (975mg = 98% RDA), Iron, Copper, Sesamin' },
+  { name: 'Sesame Seeds / Til (1 tbsp ~10g)', p: 1.8, c: 2.3, f: 5.0, k: 57, icon: '⚪', cat: 'Seeds', micros: 'Highest non-dairy calcium source, Zinc, Vitamin B1' },
+  { name: 'Watermelon Seeds / Magaz (100g)', p: 28.3, c: 15.3, f: 47.4, k: 557, icon: '🍉', cat: 'Seeds', micros: 'Iron (7.3mg), Magnesium (515mg), Zinc, Essential aminos' },
+  { name: 'Hemp Seeds (Shelled Hearts, 100g)', p: 31.6, c: 8.7, f: 48.8, k: 553, icon: '🌿', cat: 'Seeds', micros: 'Complete 9 Aminos Plant Protein, GLA, Perfect 3:1 Omega' },
+  { name: 'Pine Nuts / Chilgoza (100g)', p: 13.7, c: 13.1, f: 68.4, k: 673, icon: '🌲', cat: 'Dry Fruits', micros: 'Pinolenic acid (appetite satiety), Vitamin E, Vit K' },
+  { name: 'Brazil Nuts (100g)', p: 14.3, c: 12.3, f: 66.4, k: 656, icon: '🌰', cat: 'Dry Fruits', micros: 'Extreme Selenium (1917mcg = 3485% RDA - eat 2 nuts/day)' },
+  { name: 'Roasted Fox Nuts / Makhana (100g)', p: 9.7, c: 76.9, f: 0.1, k: 347, icon: '⚪', cat: 'Dry Fruits', micros: 'Flavonoid antioxidants, Low Sodium, High Magnesium' },
+  { name: 'Roasted Fox Nuts / Makhana in Ghee (30g bowl)', p: 3.0, c: 23.0, f: 3.5, k: 135, icon: '⚪', cat: 'Dry Fruits', micros: 'Light snacking, Kidney support, Easy digestion' },
+  { name: 'Mixed Dry Fruits & Seeds Trail Mix (30g handful)', p: 4.8, c: 12.5, f: 11.2, k: 165, icon: '🥜', cat: 'Dry Fruits', micros: 'Complete balance of Omega-3s, Vit E, Zinc & Iron' },
+  { name: 'Peanut Butter (1 tbsp ~16g)', p: 4.0, c: 3.5, f: 8.0, k: 95, icon: '🥜', cat: 'Dry Fruits', micros: 'Niacin, Biotin, Monounsaturated healthy fats' },
+  { name: 'Desi Ghee (1 tsp ~5g)', p: 0.0, c: 0.0, f: 5.0, k: 45, icon: '🧈', cat: 'Homemade', micros: 'Butyric acid (gut lining), Vit A, Vit D, Vit E' }
 ];
 let selectedBaseFood = COMMON_FOODS[0];
 
@@ -2213,9 +2258,23 @@ function renderProfileView() {
   // Update Avatars & Names across UI
   if ($('#pfDisplayName')) $('#pfDisplayName').textContent = name;
   if ($('#pfEmailDisplay')) $('#pfEmailDisplay').textContent = email;
-  if ($('#pfLargeAvatar')) $('#pfLargeAvatar').textContent = initials;
-  if ($('#topAvatar')) $('#topAvatar').textContent = initials;
-  if ($('#sidebarAvatar')) $('#sidebarAvatar').textContent = initials;
+
+  const updateAvatarEl = (el) => {
+    if (!el) return;
+    if (profile.avatarUrl) {
+      el.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="${escapeHtml(name)}">`;
+    } else {
+      el.textContent = initials;
+    }
+  };
+  updateAvatarEl($('#pfLargeAvatar'));
+  updateAvatarEl($('#topAvatar'));
+  updateAvatarEl($('#sidebarAvatar'));
+
+  if ($('#removeAvatarBtn')) {
+    $('#removeAvatarBtn').style.display = profile.avatarUrl ? 'inline-block' : 'none';
+  }
+
   if ($('#sidebarName')) $('#sidebarName').textContent = name;
   if ($('#sidebarPlan')) $('#sidebarPlan').textContent = profile.goal || 'Personal plan';
 
@@ -2299,6 +2358,56 @@ if ($('#pfCalorieInput')) {
     const cal = Number($('#pfCalorieInput').value) || 2100;
     const w = Number($('#pfWeightInput')?.value) || profile.wKg || 68;
     profile.cal = cal;
+  };
+}
+
+/* Profile Picture Upload & Remove Listeners */
+if ($('#pfAvatarUploadInput')) {
+  $('#pfAvatarUploadInput').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast('Please choose a valid image file (PNG, JPG, WebP)');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (re) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 256;
+        let w = img.width;
+        let h = img.height;
+        if (w > h) {
+          if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        } else {
+          if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+        profile.avatarUrl = dataUrl;
+        store.set('profile', profile);
+        if (FF.patch) FF.patch({ profile });
+        renderProfileView();
+        toast('🎉 Profile picture updated successfully!');
+      };
+      img.src = re.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+}
+
+if ($('#removeAvatarBtn')) {
+  $('#removeAvatarBtn').onclick = () => {
+    delete profile.avatarUrl;
+    store.set('profile', profile);
+    if (FF.patch) FF.patch({ profile });
+    renderProfileView();
+    toast('Profile photo removed');
   };
 }
 
@@ -2525,8 +2634,15 @@ async function submitAuth() {
   try {
     let user;
     if (authMode === 'register') {
-      user = await FF.register(name, email, '', pass);
-      toast('Account created successfully 🎉');
+      user = await FF.register(name, email, '', pass, false);
+      // Do NOT log the user in directly! Switch to login and require manual sign-in
+      setAuthMode('login');
+      $('#authEmailInput').value = email;
+      $('#authPasswordInput').value = '';
+      $('#authPasswordInput').focus();
+      if ($('#authSubtitle')) $('#authSubtitle').textContent = 'ACCOUNT CREATED — PLEASE SIGN IN';
+      toast('🎉 Account created! Please enter your password to sign in.');
+      return;
     } else {
       user = await FF.login(email, pass);
       toast('Signed in successfully ✓');

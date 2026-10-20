@@ -72,10 +72,15 @@ const FF = {
     }
   },
 
-  async register(name, email, contact, password) {
+  async register(name, email, contact, password, autoLogin = false) {
     const r = await this.req('POST', '/api/auth/register', { name, email, contact, password });
-    this.token = r.token; this.user = r.user; this.online = true;
-    localStorage.setItem('ff_token', r.token);
+    if (autoLogin) {
+      this.token = r.token; this.user = r.user; this.online = true;
+      localStorage.setItem('ff_token', r.token);
+    } else {
+      this.token = null; this.user = null;
+      localStorage.removeItem('ff_token');
+    }
     return r.user;
   },
   async login(email, password) {
