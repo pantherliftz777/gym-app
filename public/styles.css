@@ -624,3 +624,53 @@
   100% { opacity: 1; transform: scale(1); }
 }
 
+/* ===== Workouts Section Move Hover & Interactive Cards ===== */
+.workout-move-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid #edf0e9;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  background: #fbfcfa;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.workout-move-item:hover {
+  background: #f4f8f1;
+  border-color: #b4db79;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(32, 59, 41, 0.09);
+}
+.move-hover-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #203b29;
+  background: #e1edd8;
+  padding: 3px 8px;
+  border-radius: 999px;
+  opacity: 0.85;
+  transition: opacity .15s, background .15s;
+}
+.workout-move-item:hover .move-hover-cta {
+  opacity: 1;
+  background: #b4db79;
+  color: #172b1e;
+}
+.move-hover-details {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #dbe6d6;
+  font-size: .83rem;
+  color: #4a5c50;
+}
+.workout-move-item:hover .move-hover-details {
+  display: block;
+}
+

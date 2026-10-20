@@ -1256,6 +1256,69 @@
   </div>
 </div>
 
+<!-- EXERCISE DETAIL & VISUAL DEMONSTRATION MODAL -->
+<div class="modal-backdrop" id="exerciseDetailModal">
+  <div class="modal-card" style="max-width:680px;max-height:90vh;overflow-y:auto;padding:20px;border-radius:18px;">
+    <div class="modal-head" style="margin-bottom:14px;">
+      <div>
+        <span class="section-kicker" id="exModalSubBadge">CHEST · UPPER CHEST</span>
+        <h2 id="exModalTitle" style="font-size:1.45rem;color:#203125;margin:4px 0;">Exercise Name</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <!-- Visual Demonstration / Anatomy Graphic -->
+    <div id="exModalVisualContainer" style="background:#0f1712;border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,0.18);">
+      <!-- Rendered SVG / Visual Graphic -->
+    </div>
+
+    <!-- Scientific Prescription Pill Grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div style="background:#f4f8f2;border:1px solid #dce8d5;padding:12px;border-radius:12px;">
+        <span style="font-size:.75rem;color:#557c60;font-weight:700;display:block;text-transform:uppercase;">Prescribed Sets &amp; Reps</span>
+        <b id="exModalSetsReps" style="font-size:1.02rem;color:#203125;">3-4 sets × 8-10 reps</b>
+      </div>
+      <div style="background:#f4f8f2;border:1px solid #dce8d5;padding:12px;border-radius:12px;">
+        <span style="font-size:.75rem;color:#557c60;font-weight:700;display:block;text-transform:uppercase;">Rep Tempo &amp; Rest</span>
+        <b id="exModalTempo" style="font-size:1.02rem;color:#203125;">Tempo: 2-1-1 · 90s rest</b>
+      </div>
+    </div>
+
+    <!-- Biomechanics & Execution Guide -->
+    <div style="background:#fcfdfb;border:1px solid #edf0e9;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <b style="color:#203125;font-size:.95rem;display:block;margin-bottom:6px;">🧬 Why This Exercise Works:</b>
+      <p id="exModalWhy" style="color:#4a5c50;font-size:.88rem;line-height:1.45;margin-bottom:12px;"></p>
+
+      <b style="color:#203125;font-size:.95rem;display:block;margin-bottom:6px;">📋 Step-by-Step Execution:</b>
+      <p id="exModalSteps" style="color:#556658;font-size:.88rem;line-height:1.45;margin:0;"></p>
+    </div>
+
+    <!-- AI Form Coach Live Generator -->
+    <div style="border:1px solid #cbe0c5;background:linear-gradient(135deg, #f3f7f0 0%, #e9f3e4 100%);border-radius:12px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <b style="color:#203b29;font-size:.95rem;display:block;">🤖 Formwise AI Coach</b>
+          <span style="font-size:.8rem;color:#55725d;">Get customized form cues, modifications &amp; biomechanics</span>
+        </div>
+        <button type="button" class="solid-button small" id="exModalAiCoachBtn" style="font-size:.8rem;padding:6px 14px;background:#203b29;white-space:nowrap;">
+          ✨ AI Form Analysis
+        </button>
+      </div>
+      <div id="exModalAiAdvice" style="display:none;font-size:.86rem;color:#203125;line-height:1.45;background:#ffffff;padding:12px;border-radius:8px;border:1px solid #d4e2d0;margin-top:10px;">
+        <!-- AI feedback rendered here -->
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button type="button" class="outline-button" data-close style="flex:1;">Close</button>
+      <button type="button" class="solid-button" id="exModalLogDoneBtn" style="flex:1.5;background:#203b29;">
+        ✓ Mark Completed
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-notice" id="toastNotice">
   <span id="toastMsg">Action completed</span>

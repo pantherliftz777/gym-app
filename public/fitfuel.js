@@ -1743,6 +1743,231 @@ function confirmAddFood() {
 
 $('#confirmAddFoodBtn').onclick = confirmAddFood;
 
+/* ---------- Exercise Biomechanics, Visuals & Modal Guide ---------- */
+function findExerciseInfo(name) {
+  if (!name) return null;
+  const n = name.toLowerCase().trim();
+
+  // 1. Exact match in library
+  let found = EXERCISES_LIBRARY.find(e => e.name.toLowerCase() === n);
+  if (found) return found;
+
+  // 2. Fuzzy match
+  found = EXERCISES_LIBRARY.find(e => {
+    const en = e.name.toLowerCase();
+    return n.includes(en) || en.includes(n) ||
+           (n.includes('rdl') && en.includes('rdl')) ||
+           (n.includes('deadlift') && en.includes('deadlift')) ||
+           (n.includes('squat') && en.includes('squat')) ||
+           (n.includes('row') && en.includes('row')) ||
+           (n.includes('press') && en.includes('press')) ||
+           (n.includes('lunge') && en.includes('lunge')) ||
+           (n.includes('fly') && en.includes('fly')) ||
+           (n.includes('curl') && en.includes('curl'));
+  });
+  if (found) return found;
+
+  // 3. Fallback inference
+  let category = 'Full Body';
+  let sub = 'Core & Stabilizers';
+  if (n.includes('chest') || n.includes('bench') || n.includes('push-up') || n.includes('dip')) {
+    category = 'Chest'; sub = 'Pectoralis Major';
+  } else if (n.includes('back') || n.includes('row') || n.includes('pull') || n.includes('lat')) {
+    category = 'Back'; sub = 'Lats & Rhomboids';
+  } else if (n.includes('squat') || n.includes('leg') || n.includes('quad') || n.includes('lunge')) {
+    category = 'Legs'; sub = 'Quads & Glutes';
+  } else if (n.includes('shoulder') || n.includes('press') || n.includes('raise') || n.includes('delt')) {
+    category = 'Shoulders'; sub = 'Deltoid complex';
+  } else if (n.includes('bicep') || n.includes('curl') || n.includes('tricep')) {
+    category = 'Arms'; sub = 'Upper arm flexors/extensors';
+  }
+
+  return {
+    name: name,
+    category: category,
+    sub: sub,
+    type: 'COMPOUND / ISOLATION',
+    rxSetsReps: '3-4 sets × 8-12 reps · 90s rest',
+    rxTempo: 'Tempo: 2-1-1 (Controlled negative, explosive drive)',
+    rxWhy: 'High mechanical tension and progressive overload capacity targeting prime movers.',
+    benefit: 'Develops strength, hypertrophy, and functional motor stability.',
+    steps: 'Brace your core 360°, maintain neutral spine alignment, and control the eccentric stretch.'
+  };
+}
+
+function getExerciseVisualSvg(category, name) {
+  const n = (name || '').toLowerCase();
+  const titleBadge = (category || 'EXERCISE').toUpperCase();
+
+  let exerciseGraphic = '';
+
+  if (n.includes('deadlift') || n.includes('rdl') || n.includes('hinge') || n.includes('bridge')) {
+    exerciseGraphic = `
+      <path d="M 120 180 Q 150 140 180 130 T 230 110" fill="none" stroke="#3d5a45" stroke-width="4" stroke-dasharray="6,4"/>
+      <circle cx="230" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="230" y1="110" x2="180" y2="135" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="135" x2="185" y2="185" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="185" y1="185" x2="180" y2="230" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="220" y1="120" x2="195" y2="175" stroke="#cbd5e0" stroke-width="5" stroke-linecap="round"/>
+      <rect x="180" y="170" width="30" height="12" rx="4" fill="#b4db79"/>
+      <ellipse cx="180" cy="155" rx="14" ry="22" fill="#b4db79" opacity="0.45"/>
+      <path d="M 195 210 L 195 150" stroke="#b4db79" stroke-width="2.5" marker-end="url(#arrow)"/>
+      <text x="250" y="145" fill="#b4db79" font-size="11" font-weight="700">POSTERIOR CHAIN HINGE</text>
+      <text x="250" y="165" fill="#a0aec0" font-size="10">Hamstrings &amp; Glute Max</text>
+      <text x="250" y="185" fill="#718096" font-size="9.5">Spine Neutral · Hips Push Back</text>
+    `;
+  } else if (n.includes('squat') || n.includes('lunge') || n.includes('leg') || n.includes('calf')) {
+    exerciseGraphic = `
+      <line x1="140" y1="80" x2="140" y2="210" stroke="#2d4233" stroke-width="2" stroke-dasharray="4,4"/>
+      <circle cx="170" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="170" y1="110" x2="175" y2="155" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="175" y1="155" x2="225" y2="160" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="225" y1="160" x2="215" y2="225" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="140" y1="112" x2="200" y2="112" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <rect x="135" y="104" width="8" height="16" rx="2" fill="#e2e8f0"/>
+      <rect x="197" y="104" width="8" height="16" rx="2" fill="#e2e8f0"/>
+      <ellipse cx="200" cy="158" rx="22" ry="10" fill="#b4db79" opacity="0.5"/>
+      <text x="250" y="145" fill="#b4db79" font-size="11" font-weight="700">PARALLEL SQUAT DEPTH (90°)</text>
+      <text x="250" y="165" fill="#a0aec0" font-size="10">Quadriceps &amp; Adductor Magnus</text>
+      <text x="250" y="185" fill="#718096" font-size="9.5">Knees Track over 2nd Toe</text>
+    `;
+  } else if (n.includes('press') || n.includes('bench') || n.includes('push') || n.includes('dip')) {
+    exerciseGraphic = `
+      <line x1="110" y1="170" x2="250" y2="170" stroke="#334a3a" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="135" cy="155" r="13" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="145" y1="162" x2="220" y2="162" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="175" y1="162" x2="175" y2="105" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <line x1="150" y1="105" x2="200" y2="105" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="150" cy="105" r="7" fill="#e2e8f0"/>
+      <circle cx="200" cy="105" r="7" fill="#e2e8f0"/>
+      <ellipse cx="175" cy="155" rx="16" ry="11" fill="#b4db79" opacity="0.55"/>
+      <path d="M 175 140 L 175 95" stroke="#b4db79" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="240" y="110" fill="#b4db79" font-size="11" font-weight="700">HORIZONTAL PRESSING VECTOR</text>
+      <text x="240" y="130" fill="#a0aec0" font-size="10">Pectoralis Major &amp; Anterior Delts</text>
+      <text x="240" y="150" fill="#718096" font-size="9.5">Scapula Retracted &amp; Depressed</text>
+    `;
+  } else if (n.includes('row') || n.includes('pull') || n.includes('lat') || n.includes('shrug')) {
+    exerciseGraphic = `
+      <circle cx="190" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="190" y1="110" x2="160" y2="155" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="160" y1="155" x2="165" y2="220" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="120" x2="150" y2="140" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <rect x="140" y="132" width="18" height="15" rx="3" fill="#b4db79"/>
+      <ellipse cx="170" cy="130" rx="14" ry="18" fill="#b4db79" opacity="0.55"/>
+      <path d="M 130 155 L 165 135" stroke="#b4db79" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="230" y="125" fill="#b4db79" font-size="11" font-weight="700">LAT &amp; RHOMBOID RETRACTION</text>
+      <text x="230" y="145" fill="#a0aec0" font-size="10">Latissimus Dorsi &amp; Mid Traps</text>
+      <text x="230" y="165" fill="#718096" font-size="9.5">Drive Elbows Towards Hips</text>
+    `;
+  } else if (n.includes('raise') || n.includes('curl') || n.includes('extension') || n.includes('arm')) {
+    exerciseGraphic = `
+      <circle cx="180" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="180" y1="110" x2="180" y2="175" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="175" x2="180" y2="230" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="120" x2="180" y2="150" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <line x1="180" y1="150" x2="155" y2="125" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="155" cy="125" r="8" fill="#e2e8f0"/>
+      <circle cx="172" cy="138" r="12" fill="#b4db79" opacity="0.6"/>
+      <path d="M 180 160 Q 155 160 155 138" fill="none" stroke="#b4db79" stroke-width="2" stroke-dasharray="3,3"/>
+      <text x="220" y="120" fill="#b4db79" font-size="11" font-weight="700">ISOLATION CONTRACTION ARC</text>
+      <text x="220" y="140" fill="#a0aec0" font-size="10">Peak Tension at Mid-Range</text>
+      <text x="220" y="160" fill="#718096" font-size="9.5">Lock Elbow as Pivot Axis</text>
+    `;
+  } else {
+    exerciseGraphic = `
+      <circle cx="140" cy="120" r="13" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <line x1="150" y1="125" x2="220" y2="125" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line x1="155" y1="125" x2="135" y2="165" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <line x1="215" y1="125" x2="245" y2="95" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="185" cy="125" rx="24" ry="14" fill="#b4db79" opacity="0.5"/>
+      <text x="210" y="155" fill="#b4db79" font-size="11" font-weight="700">CORE ANTI-ROTATION &amp; BRACE</text>
+      <text x="210" y="175" fill="#a0aec0" font-size="10">Transverse Abdominis &amp; Obliques</text>
+      <text x="210" y="195" fill="#718096" font-size="9.5">Maintain Posterior Pelvic Tilt</text>
+    `;
+  }
+
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" style="width:100%;height:auto;max-height:260px;display:block;background:linear-gradient(135deg, #132218 0%, #0d1711 100%);">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#b4db79"/>
+        </marker>
+        <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1d2f23" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="460" height="250" fill="url(#gridPattern)" />
+      <rect x="18" y="18" width="105" height="22" rx="11" fill="#203b29" stroke="#375540"/>
+      <text x="70" y="33" fill="#b4db79" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.5">${titleBadge}</text>
+      <line x1="30" y1="230" x2="430" y2="230" stroke="#223628" stroke-width="2"/>
+      ${exerciseGraphic}
+      <text x="20" y="240" fill="#718e7b" font-size="9.5" font-family="sans-serif">${escapeHtml(name.toUpperCase())}</text>
+    </svg>
+  `;
+}
+
+function openExerciseDetailModal(exerciseName) {
+  const ex = findExerciseInfo(exerciseName);
+  if (!ex) return;
+
+  if ($('#exModalTitle')) $('#exModalTitle').textContent = ex.name;
+  if ($('#exModalSubBadge')) $('#exModalSubBadge').textContent = `${(ex.category || 'WORKOUT').toUpperCase()} · ${(ex.sub || '').toUpperCase()}`;
+  if ($('#exModalSetsReps')) $('#exModalSetsReps').textContent = ex.rxSetsReps || '3-4 sets × 8-10 reps';
+  if ($('#exModalTempo')) $('#exModalTempo').textContent = `${ex.rxTempo || 'Tempo: 2-1-1'}`;
+  if ($('#exModalWhy')) $('#exModalWhy').textContent = ex.rxWhy || ex.benefit;
+  if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.steps;
+
+  // Render SVG Visual Demonstration
+  const visualContainer = $('#exModalVisualContainer');
+  if (visualContainer) {
+    visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
+  }
+
+  // Reset AI Advice container
+  const adviceEl = $('#exModalAiAdvice');
+  if (adviceEl) {
+    adviceEl.style.display = 'none';
+    adviceEl.innerHTML = '';
+  }
+
+  // Wire AI Form Coach Button
+  if ($('#exModalAiCoachBtn')) {
+    $('#exModalAiCoachBtn').onclick = async () => {
+      if (!adviceEl) return;
+      adviceEl.style.display = 'block';
+      adviceEl.innerHTML = '<span style="color:#557c60;">🤖 Formwise AI is analyzing biomechanics &amp; customized cues...</span>';
+
+      const prompt = `As an elite strength & biomechanics coach, give a direct, impactful breakdown for "${ex.name}" targeting ${ex.sub || ex.category}:
+1. The #1 Mind-Muscle Connection Cue
+2. Common Fatal Form Mistake to Avoid
+3. Optimal Hypertrophy Intensification Technique (e.g. paused stretch, tempo control)`;
+
+      try {
+        const reply = await FF.callAI(prompt, 'You are an elite strength coach. Give concise, highly practical coaching points in clean markdown formatting.');
+        adviceEl.innerHTML = markedInline(reply);
+      } catch (err) {
+        adviceEl.innerHTML = `
+          <b>💡 Formwise AI Core Biomechanics Tip:</b>
+          <p style="margin:4px 0 0;">Focus on a strict 2-3 second eccentric stretch. Keep your core braced 360° and avoid momentum. For <b>${escapeHtml(ex.name)}</b>, pause for 1 second at maximum stretch to trigger maximal tension on the ${escapeHtml(ex.sub || 'target muscles')}.</p>
+        `;
+      }
+    };
+  }
+
+  // Wire Mark Completed Button
+  if ($('#exModalLogDoneBtn')) {
+    $('#exModalLogDoneBtn').onclick = () => {
+      workoutsDone.push({ name: ex.name, date: today(), at: Date.now() });
+      store.set('workoutsDone', workoutsDone);
+      closeModal('#exerciseDetailModal');
+      renderDashboard();
+      toast(`✓ Completed set logged for "${ex.name}"!`);
+    };
+  }
+
+  openModal('#exerciseDetailModal');
+}
+
 /* ---------- Workouts View Rendering ---------- */
 function renderWorkouts() {
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
@@ -1759,18 +1984,36 @@ function renderWorkouts() {
 
   const list = $('#planMoveList');
   if (list) {
-    list.innerHTML = wo.moves.map((m, i) => `
-      <div style="display:flex;align-items:flex-start;gap:14px;padding:14px;border:1px solid #edf0e9;border-radius:12px;margin-bottom:10px;background:#fbfcfa;">
-        <span style="width:28px;height:28px;border-radius:50%;background:#e3eee4;color:#203b29;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;">${i + 1}</span>
-        <div style="flex:1;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <b style="color:#203125;font-size:1.02rem;">${m.name}</b>
-            <span style="font-weight:600;color:#556658;font-size:.88rem;">${m.sets}</span>
+    list.innerHTML = wo.moves.map((m, i) => {
+      const ex = findExerciseInfo(m.name);
+      return `
+        <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
+          <span style="width:30px;height:30px;border-radius:50%;background:#e3eee4;color:#203b29;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;">${i + 1}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <b style="color:#203125;font-size:1.02rem;">${m.name}</b>
+                <span style="font-size:.72rem;background:#eef5eb;color:#203b29;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub || 'COMPOUND'}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-weight:600;color:#556658;font-size:.88rem;">${m.sets}</span>
+                <span class="move-hover-cta">👁️ View Visual</span>
+              </div>
+            </div>
+            <p style="color:#637367;font-size:.86rem;margin-top:4px;">💡 ${m.tip}</p>
+            
+            <!-- Hover details strip (visible on hover) -->
+            <div class="move-hover-details">
+              <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
+                <span>🎯 <b>Target:</b> ${ex.sub || ex.category}</span>
+                <span>⏱️ <b>${ex.rxTempo || 'Tempo: 2-1-1'}</b></span>
+              </div>
+              <p style="margin:2px 0 0;font-size:.8rem;color:#556658;">🧬 ${ex.rxWhy || ex.benefit}</p>
+            </div>
           </div>
-          <p style="color:#78887c;font-size:.85rem;margin-top:4px;">💡 ${m.tip}</p>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
 
@@ -1842,10 +2085,12 @@ function renderExerciseLibrary() {
             <span class="exercise-type">${ex.type}</span>
             <span style="font-size:.76rem;background:#eef5eb;color:#203b29;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
           </div>
-          <h4 style="margin:4px 0 8px;color:#203125;font-size:1.15rem;">${ex.name}</h4>
+          <h4 style="margin:4px 0 8px;color:#203125;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
+            ${ex.name} <span style="font-size:.76rem;color:#557c60;vertical-align:middle;">👁️</span>
+          </h4>
           
           <!-- Scientific Prescription Box -->
-          <div class="exercise-prescription-box">
+          <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
             <div class="rx-header">
               <span class="rx-sets-reps">🎯 ${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
               <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
@@ -1857,11 +2102,11 @@ function renderExerciseLibrary() {
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
-          <button type="button" class="outline-button small" style="flex:1;font-size:.82rem;padding:7px;border-color:#b4db79;" onclick="logExerciseCompleted('${ex.name.replace(/'/g, "\\'")}')">
-            ✓ Log Done
+          <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#b4db79;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
+            👁️ Visual Guide
           </button>
-          <button type="button" class="solid-button small" style="flex:1;font-size:.82rem;padding:7px;background:#203b29;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
-            🤖 AI Coach Tip
+          <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#203b29;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+            🤖 AI Coach
           </button>
         </div>
       </article>
