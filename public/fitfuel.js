@@ -243,31 +243,153 @@ const soundFX = {
 
 /* ================= WEATHER TEMPERATURE STATE & ENGINE ================= */
 let weatherState = store.get('weatherState', {
-  tempC: 29,
-  label: 'Warm (Summer)',
-  icon: '☀️'
+  tempC: 28,
+  label: 'Warm',
+  icon: '☀️',
+  city: 'Auto Location',
+  autoSynced: false
 });
 
 function updateWeatherUI() {
   const t = weatherState.tempC;
   const label = weatherState.label;
   const icon = weatherState.icon;
+  const city = weatherState.city ? ` · ${weatherState.city}` : '';
 
   if ($('#headerWeatherTemp')) $('#headerWeatherTemp').textContent = `${t}°C`;
   if ($('#headerWeatherLabel')) $('#headerWeatherLabel').textContent = label;
   if ($('#headerWeatherIcon')) $('#headerWeatherIcon').textContent = icon;
+  if ($('#headerWeatherBtn')) {
+    $('#headerWeatherBtn').title = `Live Weather: ${t}°C, ${label}${city} (Click to refresh or adjust)`;
+  }
 
   if ($('#frontWeatherTemp')) $('#frontWeatherTemp').textContent = `${t}°C`;
-  if ($('#frontWeatherLabel')) $('#frontWeatherLabel').textContent = label;
+  if ($('#frontWeatherLabel')) $('#frontWeatherLabel').textContent = `${label}${city}`;
   if ($('#frontWeatherIcon')) $('#frontWeatherIcon').textContent = icon;
+
+  if ($('#autoWeatherStatusText')) {
+    $('#autoWeatherStatusText').textContent = weatherState.autoSynced ? `Active (${weatherState.tempC}°C)` : 'Manual / Preset';
+  }
+  if ($('#autoWeatherCityNote')) {
+    $('#autoWeatherCityNote').textContent = weatherState.city ? `Detected: ${weatherState.city}` : 'Live location sync';
+  }
+}
+
+function wmoCodeToCondition(code, tempC) {
+  if (code === 0) return { label: 'Clear Sky', icon: '☀️' };
+  if (code >= 1 && code <= 3) return { label: 'Partly Cloudy', icon: '🌤️' };
+  if (code === 45 || code === 48) return { label: 'Foggy', icon: '🌫️' };
+  if (code >= 51 && code <= 55) return { label: 'Light Drizzle', icon: '🌦️' };
+  if (code >= 61 && code <= 65) return { label: 'Rainy', icon: '🌧️' };
+  if (code >= 71 && code <= 77) return { label: 'Snowy', icon: '🌨️' };
+  if (code >= 80 && code <= 82) return { label: 'Showers', icon: '🌧️' };
+  if (code >= 95) return { label: 'Thunderstorm', icon: '⛈️' };
+  if (tempC >= 32) return { label: 'Hot Peak', icon: '🔥' };
+  if (tempC >= 25) return { label: 'Warm', icon: '☀️' };
+  if (tempC >= 18) return { label: 'Mild', icon: '🌤️' };
+  if (tempC >= 10) return { label: 'Cool', icon: '⛅' };
+  return { label: 'Cold', icon: '❄️' };
+}
+
+let isWeatherSyncing = false;
+async function autoSyncWeather(manualTrigger = false) {
+  if (isWeatherSyncing) return;
+  isWeatherSyncing = true;
+  if (manualTrigger) toast('Syncing real-time weather & temperature...');
+  try {
+    let lat = null, lon = null, cityName = '';
+
+    // 1. Try browser Geolocation first with tight timeout
+    const getBrowserCoords = () => new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => resolve(null),
+        { timeout: 4000, maximumAge: 300000 }
+      );
+    });
+
+    const coords = await getBrowserCoords();
+    if (coords) {
+      lat = coords.lat;
+      lon = coords.lon;
+    }
+
+    // 2. Fallback to free IP geolocation if browser denied or timed out
+    if (!lat || !lon) {
+      try {
+        const ipRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+        if (ipRes.ok) {
+          const ipData = await ipRes.json();
+          if (ipData && ipData.latitude && ipData.longitude) {
+            lat = parseFloat(ipData.latitude);
+            lon = parseFloat(ipData.longitude);
+            cityName = ipData.city || ipData.country || '';
+          }
+        }
+      } catch (e) {
+        try {
+          const ipRes2 = await fetch('https://ipwho.is/');
+          if (ipRes2.ok) {
+            const ipData2 = await ipRes2.json();
+            if (ipData2 && ipData2.latitude && ipData2.longitude) {
+              lat = ipData2.latitude;
+              lon = ipData2.longitude;
+              cityName = ipData2.city || '';
+            }
+          }
+        } catch (e2) {}
+      }
+    }
+
+    // Default reference if offline / unreachable
+    if (!lat || !lon) {
+      lat = 28.6139;
+      lon = 77.2090;
+      if (!cityName) cityName = 'New Delhi';
+    }
+
+    // 3. Query Open-Meteo free API
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${Number(lat).toFixed(4)}&longitude=${Number(lon).toFixed(4)}&current=temperature_2m,weather_code`;
+    const res = await fetch(weatherUrl);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.current && typeof data.current.temperature_2m === 'number') {
+        const tempC = Math.round(data.current.temperature_2m);
+        const wCode = data.current.weather_code || 0;
+        const condition = wmoCodeToCondition(wCode, tempC);
+        weatherState = {
+          tempC,
+          label: condition.label,
+          icon: condition.icon,
+          city: cityName || 'Local',
+          autoSynced: true,
+          syncedAt: new Date().toISOString()
+        };
+        store.set('weatherState', weatherState);
+        updateWeatherUI();
+        if (typeof updateLiveWaterEstimate === 'function') {
+          updateLiveWaterEstimate();
+        }
+        if (manualTrigger) {
+          toast(`Weather synced: ${weatherState.tempC}°C ${weatherState.icon} (${weatherState.label})`);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Weather auto sync:', err);
+    if (manualTrigger) toast('Could not reach weather service. Keeping current temperature.');
+  } finally {
+    isWeatherSyncing = false;
+  }
 }
 
 function setWeatherTemp(tempC, label) {
-  tempC = Number(tempC) || 29;
+  tempC = Number(tempC) || 28;
   let icon = '☀️';
   if (!label) {
     if (tempC >= 32) { label = 'Hot Peak'; icon = '🔥'; }
-    else if (tempC >= 26) { label = 'Warm (Summer)'; icon = '☀️'; }
+    else if (tempC >= 26) { label = 'Warm'; icon = '☀️'; }
     else if (tempC >= 21) { label = 'Mild'; icon = '🌤️'; }
     else { label = 'Cool'; icon = '⛅'; }
   } else {
@@ -276,29 +398,63 @@ function setWeatherTemp(tempC, label) {
     else if (tempC >= 21) icon = '🌤️';
     else icon = '⛅';
   }
-  weatherState = { tempC, label, icon };
+  weatherState = { tempC, label, icon, city: weatherState.city || 'Custom', autoSynced: false };
   store.set('weatherState', weatherState);
   updateWeatherUI();
-  updateLiveWaterEstimate();
+  if (typeof updateLiveWaterEstimate === 'function') {
+    updateLiveWaterEstimate();
+  }
 }
 
-/* ================= LIVE TIME & DATE TICKER ================= */
+// Initial automatic weather sync
+autoSyncWeather();
+// Periodic sync every 20 minutes
+setInterval(() => autoSyncWeather(), 20 * 60 * 1000);
+
+/* ================= LIVE TIME & DATE TICKER (SINGLE UNIFIED, NO FLICKER) ================= */
 function updateLiveDateTime() {
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  }).toUpperCase();
-  const timeStr = now.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-  });
-  if ($('#eyebrowDate')) $('#eyebrowDate').textContent = dateStr;
-  if ($('#liveClockTime')) $('#liveClockTime').textContent = timeStr;
+  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+  const dayName = days[now.getDay()];
+  const monthName = months[now.getMonth()];
+  const dateNum = now.getDate();
+  const year = now.getFullYear();
+
+  // ONLY Day and Date - NEVER append time here to prevent duplicates & jitter!
+  const dateOnlyStr = `${dayName}, ${monthName} ${dateNum}, ${year}`;
+  const eyebrowEl = $('#eyebrowDate');
+  if (eyebrowEl && eyebrowEl.textContent !== dateOnlyStr) {
+    eyebrowEl.textContent = dateOnlyStr;
+  }
+
+  // Exact Clock Time with tabular numerals
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  const timeStr = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+  const clockEl = $('#liveClockTime');
+  if (clockEl && clockEl.textContent !== timeStr) {
+    clockEl.textContent = timeStr;
+  }
+
+  // Overline check-in
+  const overline = $('#welcomeOverline');
+  if (overline) {
+    const span = overline.querySelector('span');
+    if (span) span.textContent = `YOUR ${dayName} CHECK-IN`;
+  }
+
+  // User greeting
+  const greetingEl = $('#userGreeting');
+  if (greetingEl) {
+    const rawHours = now.getHours();
+    const period = rawHours < 12 ? 'Good morning' : rawHours < 17 ? 'Good afternoon' : 'Good evening';
+    const userName = (typeof session !== 'undefined' && session && session.name) ? session.name.split(' ')[0] : (typeof profile !== 'undefined' && profile && profile.name ? profile.name.split(' ')[0] : 'Jordan');
+    greetingEl.textContent = `${period}, ${userName}`;
+  }
 }
 setInterval(updateLiveDateTime, 1000);
 updateLiveDateTime();
@@ -1045,41 +1201,10 @@ $('#mobileMenuBtn').onclick = () => {
   $('#sidebar').classList.toggle('mobile-open');
 };
 
-/* ---------- Live Date and Clock ---------- */
+/* ---------- Live Date and Clock (Delegates to unified ticker) ---------- */
 function updateClock() {
-  const now = new Date();
-  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-  const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-  const dayName = days[now.getDay()];
-  const monthName = months[now.getMonth()];
-  const dateNum = now.getDate();
-  const year = now.getFullYear();
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-
-  const dateStr = `${dayName}, ${monthName} ${dateNum}, ${year} · ${hours}:${minutes}:${seconds} ${ampm}`;
-  const el = $('#eyebrowDate');
-  if (el) el.textContent = dateStr;
-
-  const overline = $('#welcomeOverline');
-  if (overline) {
-    const span = overline.querySelector('span');
-    if (span) span.textContent = `YOUR ${dayName} CHECK-IN`;
-  }
-
-  const greetingEl = $('#userGreeting');
-  if (greetingEl) {
-    const rawHours = now.getHours();
-    const period = rawHours < 12 ? 'Good morning' : rawHours < 17 ? 'Good afternoon' : 'Good evening';
-    const userName = (session && session.name) ? session.name.split(' ')[0] : (profile && profile.name ? profile.name.split(' ')[0] : 'Jordan');
-    greetingEl.textContent = `${period}, ${userName}`;
-  }
+  if (typeof updateLiveDateTime === 'function') updateLiveDateTime();
 }
-setInterval(updateClock, 1000);
-updateClock();
 
 /* ---------- Database Sync Indicator ---------- */
 function updateSyncStatus(text) {
@@ -1450,6 +1575,9 @@ if ($('#headerWeatherBtn')) {
 if ($('#frontWeatherBadgeBtn')) {
   $('#frontWeatherBadgeBtn').onclick = () => openModal('#weatherTempModal');
 }
+if ($('#triggerAutoWeatherSyncBtn')) {
+  $('#triggerAutoWeatherSyncBtn').onclick = () => autoSyncWeather(true);
+}
 
 $$('#weatherTempPresets .setup-choice-card').forEach(btn => {
   btn.onclick = () => {
@@ -1472,6 +1600,75 @@ if ($('#saveWeatherTempBtn')) {
     toast(`Local temperature set to ${val}°C`);
   };
 }
+
+/* ================= VISUAL THEME ENGINE (LIGHT / DARK / SYSTEM) ================= */
+function getActiveThemeSetting() {
+  return localStorage.getItem('fitfuel_theme') || 'system';
+}
+
+function applyTheme(themeChoice) {
+  if (!themeChoice) themeChoice = getActiveThemeSetting();
+  localStorage.setItem('fitfuel_theme', themeChoice);
+
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const effectiveTheme = themeChoice === 'system' ? (prefersDark ? 'dark' : 'light') : themeChoice;
+
+  if (effectiveTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (document.body) document.body.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.setAttribute('data-theme', 'light');
+    if (document.body) document.body.classList.remove('dark');
+  }
+
+  // Sync Topbar theme selector
+  const sel = $('#themeSelector');
+  if (sel && sel.value !== themeChoice) {
+    sel.value = themeChoice;
+  }
+
+  // Sync Settings modal choice buttons
+  $$('.theme-choice-btn').forEach(btn => {
+    if (btn.dataset.themeVal === themeChoice) {
+      btn.classList.add('selected');
+    } else {
+      btn.classList.remove('selected');
+    }
+  });
+}
+
+function initThemeEngine() {
+  const currentTheme = getActiveThemeSetting();
+  applyTheme(currentTheme);
+
+  const sel = $('#themeSelector');
+  if (sel) {
+    sel.value = currentTheme;
+    sel.onchange = (e) => {
+      applyTheme(e.target.value);
+      toast(`Theme set to ${e.target.value === 'system' ? 'System Default' : e.target.value.toUpperCase()}`);
+    };
+  }
+
+  $$('.theme-choice-btn').forEach(btn => {
+    btn.onclick = () => {
+      const val = btn.dataset.themeVal;
+      applyTheme(val);
+      toast(`Theme set to ${val === 'system' ? 'System Default' : val.toUpperCase()}`);
+    };
+  });
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (getActiveThemeSetting() === 'system') {
+        applyTheme('system');
+      }
+    });
+  }
+}
+initThemeEngine();
 
 // Interactive Creatine Grams Input on Front Screen
 if ($('#frontCreatineGramsInput')) {

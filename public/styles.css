@@ -856,6 +856,19 @@
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(32, 59, 41, 0.04);
 }
+#liveClockTime {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 95px;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+#eyebrowDate {
+  white-space: nowrap;
+  user-select: none;
+}
 .header-weather-temp {
   display: inline-flex;
   align-items: center;
@@ -1009,5 +1022,372 @@
 .sound-toggle-btn:hover {
   background: #e3eedc;
 }
+
+/* ================= VISUAL THEME SELECTOR ================= */
+.theme-select-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+.theme-select-pill {
+  background: #f1f6ec;
+  border: 1px solid #d4e2cf;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2b4c34;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  appearance: auto;
+}
+.theme-select-pill:hover {
+  background: #e3eedc;
+  border-color: #bad3b2;
+}
+
+.theme-choice-btn {
+  cursor: pointer;
+  border: 1.5px solid #dce8d6;
+  border-radius: 12px;
+  background: #ffffff;
+  transition: all 0.16s ease;
+}
+.theme-choice-btn:hover {
+  border-color: #a7cc98;
+  background: #f8fbf5;
+}
+.theme-choice-btn.selected {
+  border-color: #203b29;
+  background: #eff6e9;
+  box-shadow: 0 0 0 1px #203b29;
+}
+
+/* ================= DARK THEME STYLESHEET ================= */
+html.dark, [data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html.dark body, [data-theme="dark"] body {
+  background-color: #101813 !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .app-shell, [data-theme="dark"] .app-shell {
+  background: #101813 !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .topbar, [data-theme="dark"] .topbar {
+  background: #142118 !important;
+  border-bottom: 1px solid #233527 !important;
+}
+
+html.dark .topbar h1, [data-theme="dark"] .topbar h1 {
+  color: #ebf5ee !important;
+}
+
+html.dark .sidebar, [data-theme="dark"] .sidebar {
+  background: #121c15 !important;
+  border-right: 1px solid #203023 !important;
+}
+
+html.dark .sidebar-label, [data-theme="dark"] .sidebar-label {
+  color: #8da493 !important;
+}
+
+html.dark .brand span, [data-theme="dark"] .brand span {
+  color: #ebf5ee !important;
+}
+
+html.dark .nav-link, [data-theme="dark"] .nav-link {
+  color: #9cb1a1 !important;
+}
+
+html.dark .nav-link:hover, [data-theme="dark"] .nav-link:hover {
+  background: #1a2a1e !important;
+  color: #d1ead6 !important;
+}
+
+html.dark .nav-link.selected, [data-theme="dark"] .nav-link.selected {
+  background: #233b2a !important;
+  color: #c9f582 !important;
+}
+
+html.dark .panel, [data-theme="dark"] .panel {
+  background: #17261d !important;
+  border: 1px solid #263a2b !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28) !important;
+}
+
+html.dark .panel h3, [data-theme="dark"] .panel h3 {
+  color: #e2ede5 !important;
+}
+
+html.dark .header-weather-badge, [data-theme="dark"] .header-weather-badge {
+  background: #18271e !important;
+  border-color: #273b2d !important;
+  color: #d8eadc !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+html.dark .header-weather-temp, [data-theme="dark"] .header-weather-temp {
+  background: #203527 !important;
+  border-color: #314d3a !important;
+  color: #c9f582 !important;
+}
+
+html.dark .theme-select-pill, [data-theme="dark"] .theme-select-pill {
+  background: #1a2c1f !important;
+  border-color: #2b4433 !important;
+  color: #d5e6d9 !important;
+}
+
+html.dark .sound-toggle-btn, [data-theme="dark"] .sound-toggle-btn {
+  background: #1a2c1f !important;
+  border-color: #2b4433 !important;
+  color: #d5e6d9 !important;
+}
+
+html.dark .sync-note, [data-theme="dark"] .sync-note {
+  background: #1a2c1f !important;
+  color: #9cb1a1 !important;
+  border: 1px solid #2b4433 !important;
+}
+
+html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card {
+  background: #152219 !important;
+  border-color: #25392a !important;
+}
+
+html.dark .front-water-pill, [data-theme="dark"] .front-water-pill {
+  background: #1a2a1f !important;
+  border-color: #273c2c !important;
+  color: #9eb5a5 !important;
+}
+
+html.dark .front-water-pill b, [data-theme="dark"] .front-water-pill b {
+  color: #e1efe5 !important;
+}
+
+html.dark .meal-group-block, [data-theme="dark"] .meal-group-block {
+  background: #17261d !important;
+  border-color: #263a2b !important;
+}
+
+html.dark .meal-group-header, [data-theme="dark"] .meal-group-header {
+  border-bottom-color: #233527 !important;
+}
+
+html.dark .meal-item-card, [data-theme="dark"] .meal-item-card {
+  background: #1a2b1f !important;
+  border-color: #293e2f !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .meal-item-card:hover, [data-theme="dark"] .meal-item-card:hover {
+  border-color: #3b5742 !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2) !important;
+}
+
+html.dark .macro-target-card, [data-theme="dark"] .macro-target-card {
+  background: #17261d !important;
+  border-color: #263a2b !important;
+}
+
+html.dark .filter-pill, [data-theme="dark"] .filter-pill {
+  background: #18271e !important;
+  border-color: #2a3d2e !important;
+  color: #cfe2d5 !important;
+}
+
+html.dark .filter-pill:hover, [data-theme="dark"] .filter-pill:hover {
+  background: #213627 !important;
+  border-color: #3c5e44 !important;
+  color: #f1f8f3 !important;
+}
+
+html.dark .filter-pill.active, [data-theme="dark"] .filter-pill.active {
+  background: #2e5939 !important;
+  border-color: #437d53 !important;
+  color: #ffffff !important;
+}
+
+html.dark .setup-choice-card, [data-theme="dark"] .setup-choice-card {
+  background: #18271e !important;
+  border-color: #293d2f !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .setup-choice-card:hover, [data-theme="dark"] .setup-choice-card:hover {
+  background: #203427 !important;
+  border-color: #426b4c !important;
+}
+
+html.dark .setup-choice-card.selected, [data-theme="dark"] .setup-choice-card.selected {
+  background: #233c2a !important;
+  border-color: #c9f582 !important;
+  box-shadow: 0 0 0 1px #c9f582 !important;
+}
+
+html.dark .setup-choice-icon, [data-theme="dark"] .setup-choice-icon {
+  background: #203427 !important;
+  color: #c9f582 !important;
+}
+
+html.dark .theme-choice-btn, [data-theme="dark"] .theme-choice-btn {
+  background: #18271e !important;
+  border-color: #293d2f !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .theme-choice-btn.selected, [data-theme="dark"] .theme-choice-btn.selected {
+  background: #233c2a !important;
+  border-color: #c9f582 !important;
+  box-shadow: 0 0 0 1px #c9f582 !important;
+}
+
+html.dark .modal-card, [data-theme="dark"] .modal-card {
+  background: #15241b !important;
+  border-color: #273c2c !important;
+  color: #e2ede5 !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .modal-head, [data-theme="dark"] .modal-head {
+  border-bottom-color: #243829 !important;
+}
+
+html.dark .modal-head h2, [data-theme="dark"] .modal-head h2 {
+  color: #e2ede5 !important;
+}
+
+html.dark .close-btn, [data-theme="dark"] .close-btn {
+  color: #94aa9a !important;
+}
+
+html.dark .close-btn:hover, [data-theme="dark"] .close-btn:hover {
+  color: #f0f7f2 !important;
+  background: #223527 !important;
+}
+
+html.dark input, html.dark select, html.dark textarea,
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+  background: #121c15 !important;
+  border-color: #273b2d !important;
+  color: #e2ede5 !important;
+}
+
+html.dark input:focus, html.dark select:focus, html.dark textarea:focus,
+[data-theme="dark"] input:focus, [data-theme="dark"] select:focus, [data-theme="dark"] textarea:focus {
+  border-color: #4a7d57 !important;
+}
+
+html.dark .solid-button, [data-theme="dark"] .solid-button {
+  background: #275234 !important;
+  color: #ffffff !important;
+}
+
+html.dark .solid-button:hover, [data-theme="dark"] .solid-button:hover {
+  background: #316842 !important;
+}
+
+html.dark .outline-button, [data-theme="dark"] .outline-button {
+  background: transparent !important;
+  border-color: #2c4232 !important;
+  color: #d1ead6 !important;
+}
+
+html.dark .outline-button:hover, [data-theme="dark"] .outline-button:hover {
+  background: #1b2c20 !important;
+}
+
+html.dark .ai-chat-drawer, [data-theme="dark"] .ai-chat-drawer {
+  background: #15241b !important;
+  border-color: #273c2c !important;
+}
+
+html.dark .ai-chat-body, [data-theme="dark"] .ai-chat-body {
+  background: #111a14 !important;
+}
+
+html.dark .ai-chat-chips, [data-theme="dark"] .ai-chat-chips {
+  background: #142018 !important;
+  border-top-color: #213326 !important;
+}
+
+html.dark .ai-chip, [data-theme="dark"] .ai-chip {
+  background: #1a2b1f !important;
+  border-color: #2a4131 !important;
+  color: #cfe2d5 !important;
+}
+
+html.dark .ai-chat-footer, [data-theme="dark"] .ai-chat-footer {
+  background: #15241b !important;
+  border-top-color: #213326 !important;
+}
+
+html.dark .ai-chat-input, [data-theme="dark"] .ai-chat-input {
+  background: #111a14 !important;
+  border-color: #273b2d !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .ai-msg.bot, [data-theme="dark"] .ai-msg.bot {
+  background: #19291e !important;
+  border-color: #283d2e !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .ingredient-row, [data-theme="dark"] .ingredient-row {
+  background: #142118 !important;
+  border-color: #243729 !important;
+}
+
+html.dark .ingredient-row select, html.dark .ingredient-row input,
+[data-theme="dark"] .ingredient-row select, [data-theme="dark"] .ingredient-row input {
+  background: #18271e !important;
+  border-color: #2b4030 !important;
+  color: #e2ede5 !important;
+}
+
+html.dark .recipe-summary-box, [data-theme="dark"] .recipe-summary-box {
+  background: #16241b !important;
+  border-color: #263a2b !important;
+}
+
+html.dark .recipe-macro-stat, [data-theme="dark"] .recipe-macro-stat {
+  background: #1a2b1f !important;
+  border-color: #293e2f !important;
+}
+
+html.dark .recipe-macro-stat b, [data-theme="dark"] .recipe-macro-stat b {
+  color: #e2ede5 !important;
+}
+
+html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card {
+  background: linear-gradient(135deg, #15241b 0%, #1a3022 100%) !important;
+  border-color: #283e2e !important;
+}
+
+html.dark .ai-verify-text b, [data-theme="dark"] .ai-verify-text b {
+  color: #e2ede5 !important;
+}
+
+html.dark .ai-verify-text p, [data-theme="dark"] .ai-verify-text p {
+  color: #9cb1a1 !important;
+}
+
+html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box {
+  background: #16241b !important;
+  border-color: #263a2b !important;
+}
+
+html.dark .toast-notice, [data-theme="dark"] .toast-notice {
+  background: #192b1e !important;
+  border-color: #2f4735 !important;
+  color: #e8f5ec !important;
+}
+
 
 

@@ -6,6 +6,21 @@
   <meta name="theme-color" content="#f5f5ef">
   <meta name="description" content="Formwise — your daily personal nutrition and training health dashboard.">
   <title>Formwise — Daily Health & Nutrition Dashboard</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('fitfuel_theme') || 'system';
+        var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -133,6 +148,15 @@
       </div>
 
       <div class="top-actions">
+        <!-- Theme Switcher (System / Light / Dark) -->
+        <div class="theme-select-wrap" title="Visual Theme (System Default / Light / Dark)">
+          <select id="themeSelector" class="theme-select-pill" aria-label="Visual Theme">
+            <option value="system">💻 System</option>
+            <option value="light">☀️ Light</option>
+            <option value="dark">🌙 Dark</option>
+          </select>
+        </div>
+
         <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
           <span id="soundToggleIcon">🔊</span> <span id="soundToggleText">Audio On</span>
         </button>
@@ -1159,6 +1183,23 @@
         <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database ⟳</button>
       </div>
 
+      <!-- Visual Theme & Mode Selector -->
+      <div style="border:1px solid #edf0e9;border-radius:12px;padding:14px;background:#fbfdfa;" id="settingsThemeBox">
+        <b style="color:#243628;font-size:.95rem;display:block;">🎨 Theme &amp; Visual Style</b>
+        <p style="color:#637367;font-size:.84rem;margin:3px 0 10px;">Select light, dark, or automatic system default mode.</p>
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;" id="settingsThemeButtonGroup">
+          <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="light" style="padding:10px 8px;justify-content:center;text-align:center;">
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">☀️</span><b style="font-size:.85rem;">Light</b></div>
+          </button>
+          <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="dark" style="padding:10px 8px;justify-content:center;text-align:center;">
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">🌙</span><b style="font-size:.85rem;">Dark</b></div>
+          </button>
+          <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="system" style="padding:10px 8px;justify-content:center;text-align:center;">
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">💻</span><b style="font-size:.85rem;">System</b></div>
+          </button>
+        </div>
+      </div>
+
       <!-- Feedback & Complaint Box -->
       <div style="border:1px solid #e2ebd9;background:#fcfefb;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <div>
@@ -1954,9 +1995,24 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <p style="color:#637367;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
-      Set your local temperature so our AI accurately calculates sweat loss and daily minimum water requirements.
+    <p style="color:#637367;font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
+      Temperature is automatically synced using real-time weather data and device location. You can also manually choose a preset below.
     </p>
+
+    <!-- Auto Sync Status Card -->
+    <div style="background:#f1f8ed;border:1px solid #cce4c4;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div>
+        <b style="color:#1e3c25;font-size:.88rem;display:flex;align-items:center;gap:6px;">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span>
+          Auto-Sync Active: <span id="autoWeatherStatusText">Real-Time Weather</span>
+        </b>
+        <span style="font-size:.78rem;color:#55785d;display:block;margin-top:2px;" id="autoWeatherCityNote">Location-based weather</span>
+      </div>
+      <button type="button" class="solid-button small" id="triggerAutoWeatherSyncBtn" style="background:#203b29;padding:6px 12px;font-size:.78rem;white-space:nowrap;">
+        Sync Now ⟳
+      </button>
+    </div>
+
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="weatherTempPresets">
       <button type="button" class="setup-choice-card" data-temp="18" data-label="Cool">
         <span style="font-size:22px;">⛅</span>
