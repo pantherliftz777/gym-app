@@ -842,19 +842,80 @@
   margin-bottom: 12px;
 }
 
-/* ================= LIVE TIME & WEATHER TEMPERATURE BADGE ================= */
+/* ================= TOPBAR STRAIGHT ROW ALIGNMENT & SPACING ================= */
+.topbar {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  height: auto !important;
+  min-height: 104px !important;
+  padding: 18px 48px 18px !important;
+  gap: 0 !important;
+  border-bottom: 1px solid #e9ece6;
+  background: #fbfcf9;
+}
+@media (max-width: 900px) {
+  .topbar {
+    padding: 14px 18px 16px !important;
+  }
+}
+@media (max-width: 640px) {
+  .topbar {
+    padding: 12px 14px 14px !important;
+  }
+  .header-weather-badge {
+    font-size: 0.74rem !important;
+    padding: 0 10px !important;
+  }
+  .top-actions {
+    gap: 6px !important;
+  }
+  .topbar-greeting-row h1,
+  #userGreeting {
+    font-size: 1.35rem !important;
+    margin-top: 10px !important;
+  }
+}
+
+.topbar-controls-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+}
+
+.topbar-left-controls {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.top-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-left: auto !important;
+  flex-wrap: wrap !important;
+}
+
 .header-weather-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  height: 38px;
   background: #ffffff;
   border: 1px solid #e1ebdc;
-  padding: 5px 12px;
+  padding: 0 14px;
   border-radius: 999px;
   font-size: 0.8rem;
   color: #2e4735;
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(32, 59, 41, 0.04);
+  vertical-align: middle;
 }
 #liveClockTime {
   font-variant-numeric: tabular-nums;
@@ -873,18 +934,125 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  height: 26px;
   background: #f0f7ec;
   color: #234729;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 0 9px;
   border-radius: 99px;
   cursor: pointer;
   border: 1px solid #d2e4cb;
   transition: all 0.15s ease;
+  font-size: 0.78rem;
 }
 .header-weather-temp:hover {
   background: #e2f0d9;
   border-color: #b5d8a8;
+}
+
+.theme-select-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  background: #f1f6ec;
+  border: 1px solid #d4e2cf;
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2b4c34;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  appearance: auto;
+  vertical-align: middle;
+}
+.theme-select-pill:hover {
+  background: #e3eedc;
+  border-color: #bad3b2;
+}
+
+.sound-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  background: #f1f6ec;
+  border: 1px solid #d4e2cf;
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2b4c34;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  vertical-align: middle;
+}
+.sound-toggle-btn:hover {
+  background: #e3eedc;
+}
+
+.sync-note {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: 38px !important;
+  background: #f1f6ec;
+  border: 1px solid #d4e2cf;
+  border-radius: 999px;
+  padding: 0 14px !important;
+  font-size: 0.78rem;
+  color: #55705d;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.topbar .text-button {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.topbar .icon-button {
+  width: 38px !important;
+  height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+}
+
+.top-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Row 2: Greeting with generous breathing room and space */
+.topbar-greeting-row {
+  margin-top: 14px !important;
+  padding: 2px 0 0 2px !important;
+}
+
+.topbar-greeting-row h1,
+#userGreeting {
+  margin: 0 !important;
+  font-size: 1.62rem !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.4px !important;
+  color: #1e3324 !important;
+  line-height: 1.25 !important;
+}
+
+.badge-dot {
+  color: #c0d0c3;
+  margin: 0 2px;
+  user-select: none;
 }
 
 /* ================= WELCOME CHECK-IN STRIP (BLUE THEME) ================= */
@@ -1181,8 +1349,13 @@ html.dark .topbar, [data-theme="dark"] .topbar {
   border-bottom: 1px solid #1a253a !important;
 }
 
-html.dark .topbar h1, [data-theme="dark"] .topbar h1 {
+html.dark .topbar h1, [data-theme="dark"] .topbar h1,
+html.dark #userGreeting, [data-theme="dark"] #userGreeting {
   color: #f8fafc !important;
+}
+
+html.dark .badge-dot, [data-theme="dark"] .badge-dot {
+  color: #475569 !important;
 }
 
 html.dark .sidebar, [data-theme="dark"] .sidebar {
