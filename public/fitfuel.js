@@ -1328,7 +1328,7 @@ function renderDashboard() {
 
   const deg = Math.round((pct / 100) * 360);
   if ($('#dashCalRing')) {
-    $('#dashCalRing').style.background = `conic-gradient(#b4db79 ${deg}deg, #ecefe8 0deg)`;
+    $('#dashCalRing').style.background = `conic-gradient(#38bdf8 ${deg}deg, #ecefe8 0deg)`;
   }
 
   // Macros (Strict 0 when no foods logged)
@@ -1378,7 +1378,7 @@ function renderDashboard() {
       mealList.innerHTML = `
         <div style="padding: 24px 16px; text-align: center; color: #637367; background: #f9fbf8; border: 1px dashed #dbe6d6; border-radius: 14px;">
           <div style="font-size: 28px; margin-bottom: 6px;">🥗</div>
-          <b style="color: #203b29; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
+          <b style="color: #2563eb; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
           <p style="font-size: 12px; margin: 0 0 12px; color: #637367; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
           <button type="button" class="solid-button small" id="emptyDashAddMealBtn" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
@@ -1480,9 +1480,9 @@ function renderDashboard() {
   const barGraph = $('#dashStreakBarGraph');
   if (barGraph) {
     barGraph.innerHTML = weeklyDayData.map(d => {
-      const activeColor = d.isActive ? '#82aa52' : '#e2ead9';
-      const borderStyle = d.isToday ? 'border: 2px solid #203b29;' : 'border: 1px solid rgba(0,0,0,0.04);';
-      const labelWeight = d.isToday ? 'font-weight: 800; color: #203b29;' : 'font-weight: 600; color: #788b7e;';
+      const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
+      const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
+      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color: #788b7e;';
       const statusIcon = d.isActive ? '✓' : (d.isToday ? '•' : '');
       return `
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
@@ -1707,7 +1707,7 @@ function renderFoodLog() {
         <div class="meal-group-header">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
-            <b style="color:#203b29;font-size:1.08rem;font-weight:700;">${mealType}</b>
+            <b style="color:#2563eb;font-size:1.08rem;font-weight:700;">${mealType}</b>
           </div>
           <span style="color:#2f5338;font-size:.88rem;font-weight:700;background:#edf5e8;padding:3px 12px;border-radius:99px;border:1px solid #dcebd4;">
             ${subKcal} kcal
@@ -1955,7 +1955,7 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
       <input type="number" class="recipe-qty-input" value="${initialQty}" min="1" max="5000" style="width:100%;border:none;outline:none;font-size:.85rem;font-weight:600;">
       <span style="font-size:.78rem;color:#78887c;margin-left:4px;">g</span>
     </div>
-    <div class="recipe-row-cal" style="font-size:.82rem;font-weight:700;color:#203b29;text-align:right;">
+    <div class="recipe-row-cal" style="font-size:.82rem;font-weight:700;color:#2563eb;text-align:right;">
       0 kcal
     </div>
     <button type="button" class="close-btn delete-ing-row" style="color:#dc2626;cursor:pointer;background:none;border:none;font-size:1.1rem;display:flex;align-items:center;justify-content:center;" title="Remove ingredient">&times;</button>
@@ -2662,83 +2662,83 @@ function getExerciseVisualSvg(category, name) {
   if (n.includes('deadlift') || n.includes('rdl') || n.includes('hinge') || n.includes('bridge')) {
     exerciseGraphic = `
       <path d="M 120 180 Q 150 140 180 130 T 230 110" fill="none" stroke="#3d5a45" stroke-width="4" stroke-dasharray="6,4"/>
-      <circle cx="230" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="230" cy="95" r="14" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="230" y1="110" x2="180" y2="135" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="180" y1="135" x2="185" y2="185" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="185" y1="185" x2="180" y2="230" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="220" y1="120" x2="195" y2="175" stroke="#cbd5e0" stroke-width="5" stroke-linecap="round"/>
-      <rect x="180" y="170" width="30" height="12" rx="4" fill="#b4db79"/>
-      <ellipse cx="180" cy="155" rx="14" ry="22" fill="#b4db79" opacity="0.45"/>
-      <path d="M 195 210 L 195 150" stroke="#b4db79" stroke-width="2.5" marker-end="url(#arrow)"/>
-      <text x="250" y="145" fill="#b4db79" font-size="11" font-weight="700">POSTERIOR CHAIN HINGE</text>
+      <rect x="180" y="170" width="30" height="12" rx="4" fill="#38bdf8"/>
+      <ellipse cx="180" cy="155" rx="14" ry="22" fill="#38bdf8" opacity="0.45"/>
+      <path d="M 195 210 L 195 150" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)"/>
+      <text x="250" y="145" fill="#38bdf8" font-size="11" font-weight="700">POSTERIOR CHAIN HINGE</text>
       <text x="250" y="165" fill="#a0aec0" font-size="10">Hamstrings &amp; Glute Max</text>
       <text x="250" y="185" fill="#718096" font-size="9.5">Spine Neutral · Hips Push Back</text>
     `;
   } else if (n.includes('squat') || n.includes('lunge') || n.includes('leg') || n.includes('calf')) {
     exerciseGraphic = `
       <line x1="140" y1="80" x2="140" y2="210" stroke="#2d4233" stroke-width="2" stroke-dasharray="4,4"/>
-      <circle cx="170" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="170" cy="95" r="14" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="170" y1="110" x2="175" y2="155" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="175" y1="155" x2="225" y2="160" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="225" y1="160" x2="215" y2="225" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
-      <line x1="140" y1="112" x2="200" y2="112" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <line x1="140" y1="112" x2="200" y2="112" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
       <rect x="135" y="104" width="8" height="16" rx="2" fill="#e2e8f0"/>
       <rect x="197" y="104" width="8" height="16" rx="2" fill="#e2e8f0"/>
-      <ellipse cx="200" cy="158" rx="22" ry="10" fill="#b4db79" opacity="0.5"/>
-      <text x="250" y="145" fill="#b4db79" font-size="11" font-weight="700">PARALLEL SQUAT DEPTH (90°)</text>
+      <ellipse cx="200" cy="158" rx="22" ry="10" fill="#38bdf8" opacity="0.5"/>
+      <text x="250" y="145" fill="#38bdf8" font-size="11" font-weight="700">PARALLEL SQUAT DEPTH (90°)</text>
       <text x="250" y="165" fill="#a0aec0" font-size="10">Quadriceps &amp; Adductor Magnus</text>
       <text x="250" y="185" fill="#718096" font-size="9.5">Knees Track over 2nd Toe</text>
     `;
   } else if (n.includes('press') || n.includes('bench') || n.includes('push') || n.includes('dip')) {
     exerciseGraphic = `
       <line x1="110" y1="170" x2="250" y2="170" stroke="#334a3a" stroke-width="10" stroke-linecap="round"/>
-      <circle cx="135" cy="155" r="13" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="135" cy="155" r="13" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="145" y1="162" x2="220" y2="162" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="175" y1="162" x2="175" y2="105" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
-      <line x1="150" y1="105" x2="200" y2="105" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <line x1="150" y1="105" x2="200" y2="105" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
       <circle cx="150" cy="105" r="7" fill="#e2e8f0"/>
       <circle cx="200" cy="105" r="7" fill="#e2e8f0"/>
-      <ellipse cx="175" cy="155" rx="16" ry="11" fill="#b4db79" opacity="0.55"/>
-      <path d="M 175 140 L 175 95" stroke="#b4db79" stroke-width="2" marker-end="url(#arrow)"/>
-      <text x="240" y="110" fill="#b4db79" font-size="11" font-weight="700">HORIZONTAL PRESSING VECTOR</text>
+      <ellipse cx="175" cy="155" rx="16" ry="11" fill="#38bdf8" opacity="0.55"/>
+      <path d="M 175 140 L 175 95" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="240" y="110" fill="#38bdf8" font-size="11" font-weight="700">HORIZONTAL PRESSING VECTOR</text>
       <text x="240" y="130" fill="#a0aec0" font-size="10">Pectoralis Major &amp; Anterior Delts</text>
       <text x="240" y="150" fill="#718096" font-size="9.5">Scapula Retracted &amp; Depressed</text>
     `;
   } else if (n.includes('row') || n.includes('pull') || n.includes('lat') || n.includes('shrug')) {
     exerciseGraphic = `
-      <circle cx="190" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="190" cy="95" r="14" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="190" y1="110" x2="160" y2="155" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="160" y1="155" x2="165" y2="220" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="180" y1="120" x2="150" y2="140" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
-      <rect x="140" y="132" width="18" height="15" rx="3" fill="#b4db79"/>
-      <ellipse cx="170" cy="130" rx="14" ry="18" fill="#b4db79" opacity="0.55"/>
-      <path d="M 130 155 L 165 135" stroke="#b4db79" stroke-width="2" marker-end="url(#arrow)"/>
-      <text x="230" y="125" fill="#b4db79" font-size="11" font-weight="700">LAT &amp; RHOMBOID RETRACTION</text>
+      <rect x="140" y="132" width="18" height="15" rx="3" fill="#38bdf8"/>
+      <ellipse cx="170" cy="130" rx="14" ry="18" fill="#38bdf8" opacity="0.55"/>
+      <path d="M 130 155 L 165 135" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="230" y="125" fill="#38bdf8" font-size="11" font-weight="700">LAT &amp; RHOMBOID RETRACTION</text>
       <text x="230" y="145" fill="#a0aec0" font-size="10">Latissimus Dorsi &amp; Mid Traps</text>
       <text x="230" y="165" fill="#718096" font-size="9.5">Drive Elbows Towards Hips</text>
     `;
   } else if (n.includes('raise') || n.includes('curl') || n.includes('extension') || n.includes('arm')) {
     exerciseGraphic = `
-      <circle cx="180" cy="95" r="14" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="180" cy="95" r="14" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="180" y1="110" x2="180" y2="175" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="180" y1="175" x2="180" y2="230" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="180" y1="120" x2="180" y2="150" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
-      <line x1="180" y1="150" x2="155" y2="125" stroke="#b4db79" stroke-width="6" stroke-linecap="round"/>
+      <line x1="180" y1="150" x2="155" y2="125" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
       <circle cx="155" cy="125" r="8" fill="#e2e8f0"/>
-      <circle cx="172" cy="138" r="12" fill="#b4db79" opacity="0.6"/>
-      <path d="M 180 160 Q 155 160 155 138" fill="none" stroke="#b4db79" stroke-width="2" stroke-dasharray="3,3"/>
-      <text x="220" y="120" fill="#b4db79" font-size="11" font-weight="700">ISOLATION CONTRACTION ARC</text>
+      <circle cx="172" cy="138" r="12" fill="#38bdf8" opacity="0.6"/>
+      <path d="M 180 160 Q 155 160 155 138" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3,3"/>
+      <text x="220" y="120" fill="#38bdf8" font-size="11" font-weight="700">ISOLATION CONTRACTION ARC</text>
       <text x="220" y="140" fill="#a0aec0" font-size="10">Peak Tension at Mid-Range</text>
       <text x="220" y="160" fill="#718096" font-size="9.5">Lock Elbow as Pivot Axis</text>
     `;
   } else {
     exerciseGraphic = `
-      <circle cx="140" cy="120" r="13" fill="#ffffff" stroke="#b4db79" stroke-width="3"/>
+      <circle cx="140" cy="120" r="13" fill="#ffffff" stroke="#38bdf8" stroke-width="3"/>
       <line x1="150" y1="125" x2="220" y2="125" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
       <line x1="155" y1="125" x2="135" y2="165" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
       <line x1="215" y1="125" x2="245" y2="95" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
-      <ellipse cx="185" cy="125" rx="24" ry="14" fill="#b4db79" opacity="0.5"/>
-      <text x="210" y="155" fill="#b4db79" font-size="11" font-weight="700">CORE ANTI-ROTATION &amp; BRACE</text>
+      <ellipse cx="185" cy="125" rx="24" ry="14" fill="#38bdf8" opacity="0.5"/>
+      <text x="210" y="155" fill="#38bdf8" font-size="11" font-weight="700">CORE ANTI-ROTATION &amp; BRACE</text>
       <text x="210" y="175" fill="#a0aec0" font-size="10">Transverse Abdominis &amp; Obliques</text>
       <text x="210" y="195" fill="#718096" font-size="9.5">Maintain Posterior Pelvic Tilt</text>
     `;
@@ -2748,15 +2748,15 @@ function getExerciseVisualSvg(category, name) {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" style="width:100%;height:auto;max-height:260px;display:block;background:linear-gradient(135deg, #132218 0%, #0d1711 100%);">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#b4db79"/>
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
         </marker>
         <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
           <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1d2f23" stroke-width="1"/>
         </pattern>
       </defs>
       <rect width="460" height="250" fill="url(#gridPattern)" />
-      <rect x="18" y="18" width="105" height="22" rx="11" fill="#203b29" stroke="#375540"/>
-      <text x="70" y="33" fill="#b4db79" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.5">${titleBadge}</text>
+      <rect x="18" y="18" width="105" height="22" rx="11" fill="#2563eb" stroke="#1e40af"/>
+      <text x="70" y="33" fill="#38bdf8" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.5">${titleBadge}</text>
       <line x1="30" y1="230" x2="430" y2="230" stroke="#223628" stroke-width="2"/>
       ${exerciseGraphic}
       <text x="20" y="240" fill="#718e7b" font-size="9.5" font-family="sans-serif">${escapeHtml(name.toUpperCase())}</text>
@@ -2833,7 +2833,7 @@ function renderWorkouts() {
   const isCustomAi = plan && plan.workout && (wo.name === plan.workout.name);
   if ($('#planWorkoutTitle')) {
     if (isCustomAi) {
-      $('#planWorkoutTitle').innerHTML = `✨ ${wo.name} <span style="font-size:.72rem;background:#203b29;color:#b4db79;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px;">AI GENERATED</span>`;
+      $('#planWorkoutTitle').innerHTML = `✨ ${wo.name} <span style="font-size:.72rem;background:#2563eb;color:#38bdf8;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px;">AI GENERATED</span>`;
     } else {
       $('#planWorkoutTitle').textContent = wo.name;
     }
@@ -2847,12 +2847,12 @@ function renderWorkouts() {
       const ex = findExerciseInfo(m.name);
       return `
         <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
-          <span style="width:30px;height:30px;border-radius:50%;background:#e3eee4;color:#203b29;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;">${i + 1}</span>
+          <span style="width:30px;height:30px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;">${i + 1}</span>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
                 <b style="color:#203125;font-size:1.02rem;">${m.name}</b>
-                <span style="font-size:.72rem;background:#eef5eb;color:#203b29;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub || 'COMPOUND'}</span>
+                <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub || 'COMPOUND'}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-weight:600;color:#556658;font-size:.88rem;">${m.sets}</span>
@@ -2945,7 +2945,7 @@ function renderExerciseLibrary() {
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
             <span class="exercise-type">${ex.type}</span>
-            <span style="font-size:.76rem;background:#eef5eb;color:#203b29;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
+            <span style="font-size:.76rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
           </div>
           <h4 style="margin:4px 0 8px;color:#203125;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
             ${ex.name} <span style="font-size:.76rem;color:#557c60;vertical-align:middle;">👁️</span>
@@ -2964,10 +2964,10 @@ function renderExerciseLibrary() {
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
-          <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#b4db79;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
+          <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#38bdf8;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
             👁️ Visual Guide
           </button>
-          <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#203b29;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+          <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#2563eb;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
             🤖 AI Coach
           </button>
         </div>
@@ -3215,7 +3215,7 @@ function openAvatarOptionsModal() {
     if (uploadBtn) uploadBtn.textContent = '📷 Upload New Photo';
   } else {
     const initials = uName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'FF';
-    if (box) box.innerHTML = `<span style="font-size:2.4rem;font-weight:800;color:#203b29;">${initials}</span>`;
+    if (box) box.innerHTML = `<span style="font-size:2.4rem;font-weight:800;color:#2563eb;">${initials}</span>`;
     if (statusText) statusText.textContent = 'No photo uploaded yet (using initials)';
     if (seePicBtn) seePicBtn.style.display = 'none';
     if (removeBtn) removeBtn.style.display = 'none';
@@ -3338,7 +3338,7 @@ if ($('#viewAllUsersBtn')) {
         list.innerHTML = users.map(u => `
           <div style="padding:6px 0;border-bottom:1px solid #eef3eb;display:flex;justify-content:space-between;align-items:center;">
             <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#777;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
-            <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eef5eb;color:#203b29;">${escapeHtml(u.role || 'user')}</span>
+            <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eff6ff;color:#2563eb;">${escapeHtml(u.role || 'user')}</span>
           </div>
         `).join('');
       }
@@ -3373,10 +3373,10 @@ if ($('#viewAllComplaintsBtn')) {
             }).join('')}
           </div>` : '';
         return `
-          <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #e2ebd9;border-radius:10px;">
+          <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #dbeafe;border-radius:10px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <b style="color:#203b29;font-size:.88rem;">${escapeHtml(c.name)}</b>
-              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eef5eb;color:#2a5033;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
+              <b style="color:#2563eb;font-size:.88rem;">${escapeHtml(c.name)}</b>
+              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eff6ff;color:#2a5033;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
             </div>
             <p style="margin:0;color:#34483a;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
             ${filesHtml}
@@ -3399,16 +3399,16 @@ function initComplaintSystem() {
     btn.onclick = () => {
       typeBtns.forEach(b => {
         b.classList.remove('active');
-        b.style.borderColor = '#e2ebd9';
+        b.style.borderColor = '#dbeafe';
         b.style.background = '#ffffff';
         b.style.fontWeight = '600';
         b.style.color = '#55665b';
       });
       btn.classList.add('active');
-      btn.style.borderColor = '#b4db79';
+      btn.style.borderColor = '#38bdf8';
       btn.style.background = '#f3f9ed';
       btn.style.fontWeight = '700';
-      btn.style.color = '#203b29';
+      btn.style.color = '#2563eb';
       cmpTypeVal = btn.dataset.type || 'complaint';
     };
   });
@@ -3603,7 +3603,7 @@ function setAuthMode(m) {
     $('#authSubmitBtn').textContent = 'Sign In';
     $('#authNameField').style.display = 'none';
     $('#authTabLoginBtn').style.background = '#edf4e8';
-    $('#authTabLoginBtn').style.borderColor = '#b4db79';
+    $('#authTabLoginBtn').style.borderColor = '#38bdf8';
     $('#authTabRegisterBtn').style.background = 'transparent';
     $('#authTabRegisterBtn').style.borderColor = '#edf0eb';
   } else {
@@ -3612,7 +3612,7 @@ function setAuthMode(m) {
     $('#authSubmitBtn').textContent = 'Create Account';
     $('#authNameField').style.display = 'block';
     $('#authTabRegisterBtn').style.background = '#edf4e8';
-    $('#authTabRegisterBtn').style.borderColor = '#b4db79';
+    $('#authTabRegisterBtn').style.borderColor = '#38bdf8';
     $('#authTabLoginBtn').style.background = 'transparent';
     $('#authTabLoginBtn').style.borderColor = '#edf0eb';
   }
@@ -4505,7 +4505,7 @@ function renderCustomWorkoutExplorer() {
     const cleanName = escapeHtml(ex.name);
     const safeName = cleanName.replace(/'/g, "\\'");
     return `
-      <div class="exercise-custom-card" style="background:#ffffff;border:1px solid #e2ebd9;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
+      <div class="exercise-custom-card" style="background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
             <span style="font-size:.72rem;font-weight:800;color:#39612a;background:#edf5e8;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
@@ -4513,7 +4513,7 @@ function renderCustomWorkoutExplorer() {
             </span>
             <span style="font-size:.74rem;color:#78887c;font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
           </div>
-          <b style="color:#203b29;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
+          <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
           <p style="color:#637367;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
           <div style="background:#f7faf4;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:.78rem;font-weight:700;color:#2e4e34;">🎯 ${escapeHtml(rxSets)}</span>
@@ -4521,7 +4521,7 @@ function renderCustomWorkoutExplorer() {
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:auto;">
-          <button type="button" class="solid-button small" style="flex:1;background:#203b29;justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
+          <button type="button" class="solid-button small" style="flex:1;background:#2563eb;justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
             ▶ Start Set
           </button>
           <button type="button" class="outline-button small" style="justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="addExerciseToDailyRoutine('${safeName}', '${escapeHtml(rxSets)}')">
@@ -4664,7 +4664,7 @@ function renderChallengeView() {
     // Empty state: invite user to start a challenge
     container.innerHTML = `
       <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:18px;padding:36px 24px;text-align:center;box-shadow:0 4px 18px rgba(32,59,41,0.05);max-width:680px;margin:20px auto;">
-        <div style="width:68px;height:68px;border-radius:20px;background:#eef6e9;color:#203b29;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <div style="width:68px;height:68px;border-radius:20px;background:#eff6ff;color:#2563eb;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
           🎯
         </div>
         <h3 style="font-size:1.4rem;color:#1e3424;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
@@ -4672,20 +4672,20 @@ function renderChallengeView() {
           Ready to transform? Choose your goal (Burn Fat, Build Muscle, Maintain Weight) and duration (10, 15, 25, 30 days) to have our AI generate your personalized roadmap.
         </p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;text-align:left;">
-          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
-            <b style="color:#203b29;font-size:.88rem;display:block;">⚡ AI Engineered</b>
+          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+            <b style="color:#2563eb;font-size:.88rem;display:block;">⚡ AI Engineered</b>
             <small style="color:#637367;">Personalized to your height, weight &amp; strength targets.</small>
           </div>
-          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
-            <b style="color:#203b29;font-size:.88rem;display:block;">⏱️ Built-in Timers</b>
+          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+            <b style="color:#2563eb;font-size:.88rem;display:block;">⏱️ Built-in Timers</b>
             <small style="color:#637367;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
           </div>
-          <div style="background:#f9fcf8;border:1px solid #e2ebd9;border-radius:12px;padding:12px 14px;">
-            <b style="color:#203b29;font-size:.88rem;display:block;">🔄 Swap Any Workout</b>
+          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+            <b style="color:#2563eb;font-size:.88rem;display:block;">🔄 Swap Any Workout</b>
             <small style="color:#637367;">Change or replace any exercise with 1 click.</small>
           </div>
         </div>
-        <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#203b29;padding:12px 28px;font-size:1rem;font-weight:700;">
+        <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#2563eb;padding:12px 28px;font-size:1rem;font-weight:700;">
           🚀 Start Your Challenge Now
         </button>
       </div>
@@ -4702,11 +4702,11 @@ function renderChallengeView() {
 
   container.innerHTML = `
     <!-- CHALLENGE HERO BANNER -->
-    <div style="background:linear-gradient(135deg, #203b29 0%, #172c1e 100%);color:#f0f5ee;border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:0 6px 24px rgba(32,59,41,0.18);">
+    <div style="background:linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);color:#f0f5ee;border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:0 6px 24px rgba(32,59,41,0.18);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;">
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="background:rgba(180,219,121,0.2);color:#c9f582;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
+            <span style="background:rgba(180,219,121,0.2);color:#38bdf8;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
             <span style="font-size:.8rem;color:#b8cebe;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
           </div>
           <h2 style="margin:0;font-size:1.45rem;color:#ffffff;font-weight:800;">${escapeHtml(p.motive)} Challenge</h2>
@@ -4714,18 +4714,18 @@ function renderChallengeView() {
         </div>
         <div style="text-align:right;">
           <span style="font-size:.74rem;color:#a3baa9;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
-          <strong style="font-size:1.6rem;color:#b4db79;font-weight:800;">${pct}%</strong>
+          <strong style="font-size:1.6rem;color:#38bdf8;font-weight:800;">${pct}%</strong>
         </div>
       </div>
 
       <!-- Animated Progress Track -->
       <div style="background:rgba(255,255,255,0.12);height:9px;border-radius:99px;overflow:hidden;margin-bottom:18px;">
-        <div style="background:#b4db79;height:100%;width:${pct}%;border-radius:99px;transition:width .35s ease;"></div>
+        <div style="background:#38bdf8;height:100%;width:${pct}%;border-radius:99px;transition:width .35s ease;"></div>
       </div>
 
       <!-- Action Button Controls -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#b4db79;color:#182e1f;font-weight:800;padding:10px 22px;border:none;">
+        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:#182e1f;font-weight:800;padding:10px 22px;border:none;">
           ▶ Start Today's Workout (${escapeHtml(currentDay.title)})
         </button>
         <button type="button" class="outline-button" id="refreshTodayRoutineBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
@@ -4758,16 +4758,16 @@ function renderChallengeView() {
         ${currentDay.exercises.map((ex, idx) => `
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #eef3eb;background:#fbfdfa;border-radius:12px;gap:12px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:12px;">
-              <span style="width:28px;height:28px;border-radius:8px;background:#e5f0dc;color:#203b29;font-weight:800;font-size:.84rem;display:flex;align-items:center;justify-content:center;">
+              <span style="width:28px;height:28px;border-radius:8px;background:#eff6ff;color:#2563eb;font-weight:800;font-size:.84rem;display:flex;align-items:center;justify-content:center;">
                 ${idx + 1}
               </span>
               <div>
-                <b style="color:#203b29;font-size:.94rem;display:block;">${escapeHtml(ex.name)}</b>
+                <b style="color:#2563eb;font-size:.94rem;display:block;">${escapeHtml(ex.name)}</b>
                 <small style="color:#637367;font-size:.82rem;">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</small>
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#203b29;border-color:#c8dac1;padding:5px 12px;background:#ffffff;">
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#c8dac1;padding:5px 12px;background:#ffffff;">
                 ⇄ Swap Workout
               </button>
             </div>
@@ -4790,12 +4790,12 @@ function renderChallengeView() {
         ${p.days.map((d, dIdx) => {
           const isCurrent = dIdx === currentIdx;
           const bg = d.completed ? '#f3f9ed' : (isCurrent ? '#fdfefb' : '#fafbfa');
-          const border = isCurrent ? '2px solid #203b29' : (d.completed ? '1px solid #b4db79' : '1px solid #edf0ea');
+          const border = isCurrent ? '2px solid #2563eb' : (d.completed ? '1px solid #38bdf8' : '1px solid #edf0ea');
           return `
             <div style="padding:12px 14px;border-radius:12px;background:${bg};border:${border};display:flex;flex-direction:column;gap:4px;">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <b style="font-size:.88rem;color:#203b29;">Day ${d.dayNumber}</b>
-                <span style="font-size:.72rem;font-weight:700;color:${d.completed ? '#2e5a1e' : (isCurrent ? '#203b29' : '#88988d')};">
+                <b style="font-size:.88rem;color:#2563eb;">Day ${d.dayNumber}</b>
+                <span style="font-size:.72rem;font-weight:700;color:${d.completed ? '#2563eb' : (isCurrent ? '#2563eb' : '#88988d')};">
                   ${d.completed ? '✓ Done' : (isCurrent ? '⚡ Current' : 'Upcoming')}
                 </span>
               </div>
@@ -4883,10 +4883,10 @@ function openSwapExerciseModal(dayIdx, exIdx) {
     list.innerHTML = matches.map(ex => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #edf2e8;border-radius:10px;background:#ffffff;gap:10px;">
         <div>
-          <b style="color:#203b29;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
+          <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
           <small style="color:#637367;font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
         </div>
-        <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#203b29;font-size:.78rem;white-space:nowrap;">
+        <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#2563eb;font-size:.78rem;white-space:nowrap;">
           Select &amp; Replace
         </button>
       </div>
@@ -5222,20 +5222,20 @@ function renderTrackingView() {
             <h3 style="margin:2px 0 0;font-size:1.25rem;color:#1e3424;font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
             <p style="margin:2px 0 0;font-size:.86rem;color:#637367;">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
           </div>
-          <button type="button" class="solid-button small" onclick="switchView('challenge')" style="background:#203b29;">
+          <button type="button" class="solid-button small" onclick="switchView('challenge')" style="background:#2563eb;">
             Open Challenge Engine →
           </button>
         </div>
 
         <div style="background:#eaf2e5;height:8px;border-radius:99px;overflow:hidden;margin-bottom:16px;">
-          <div style="background:#82aa52;height:100%;width:${pct}%;border-radius:99px;"></div>
+          <div style="background:#3b82f6;height:100%;width:${pct}%;border-radius:99px;"></div>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(36px, 1fr));gap:6px;">
           ${cp.days.map((d, idx) => {
             const isDone = d.completed;
             const isCurrent = idx === (cp.currentDayIndex || 0);
-            const bg = isDone ? '#82aa52' : (isCurrent ? '#203b29' : '#e2ebd9');
+            const bg = isDone ? '#3b82f6' : (isCurrent ? '#2563eb' : '#dbeafe');
             const color = (isDone || isCurrent) ? '#ffffff' : '#637367';
             return `
               <div style="height:36px;border-radius:8px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;" title="Day ${d.dayNumber}: ${d.title} (${isDone ? 'Completed' : (isCurrent ? 'Current' : 'Pending')})">
@@ -5250,9 +5250,9 @@ function renderTrackingView() {
     challengeBlock = `
       <div style="background:#fcfdfa;border:1px dashed #d5e2d0;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
         <span style="font-size:28px;">🎯</span>
-        <b style="color:#203b29;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
+        <b style="color:#2563eb;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
         <p style="color:#637367;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
-        <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#203b29;">
+        <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#2563eb;">
           🚀 Start Challenge
         </button>
       </div>
@@ -5264,10 +5264,10 @@ function renderTrackingView() {
     workoutsDone.slice(-8).reverse().map(w => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #edf2e8;">
         <div>
-          <b style="color:#203b29;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
+          <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
           <small style="color:#788b7e;font-size:.78rem;">${w.date || today()}</small>
         </div>
-        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eef6e9;color:#2c561e;font-weight:700;">
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:#2c561e;font-weight:700;">
           ✓ Logged
         </span>
       </div>
@@ -5289,11 +5289,11 @@ function renderTrackingView() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
           <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
             <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">CURRENT STREAK</span>
-            <b style="font-size:1.4rem;color:#203b29;">🔥 ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
+            <b style="font-size:1.4rem;color:#2563eb;">🔥 ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
           <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
             <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">TOTAL WORKOUTS</span>
-            <b style="font-size:1.4rem;color:#203b29;">💪 ${totalWorkouts}</b>
+            <b style="font-size:1.4rem;color:#2563eb;">💪 ${totalWorkouts}</b>
           </div>
         </div>
         <p style="font-size:.84rem;color:#556658;margin:0;line-height:1.45;">
@@ -5312,7 +5312,7 @@ function renderTrackingView() {
               <b>${todayKcal} / ${goalKcal} kcal</b>
             </div>
             <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
-              <div style="background:#82aa52;height:100%;width:${Math.min(100, Math.round((todayKcal/goalKcal)*100))}%;"></div>
+              <div style="background:#3b82f6;height:100%;width:${Math.min(100, Math.round((todayKcal/goalKcal)*100))}%;"></div>
             </div>
           </div>
 
@@ -5322,7 +5322,7 @@ function renderTrackingView() {
               <b>${todayP} / ${goalP} g</b>
             </div>
             <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
-              <div style="background:#82aa52;height:100%;width:${Math.min(100, Math.round((todayP/goalP)*100))}%;"></div>
+              <div style="background:#3b82f6;height:100%;width:${Math.min(100, Math.round((todayP/goalP)*100))}%;"></div>
             </div>
           </div>
 
