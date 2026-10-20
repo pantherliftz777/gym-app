@@ -1,741 +1,817 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FitFuel — Calorie &amp; Workout Tracker</title>
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5ef">
+  <meta name="description" content="Formwise — your daily personal nutrition and training health dashboard.">
+  <title>Formwise — Daily Health & Nutrition Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<header class="topbar">
-  <div class="brand">🔥 Fit<span>Fuel</span></div>
-  <nav class="nav" id="mainNav">
-    <button class="nav-btn active" data-page="dashboard">Dashboard</button>
-    <button class="nav-btn" data-page="diet">Diet</button>
-    <button class="nav-btn" data-page="tracking">Tracking</button>
-    <button class="nav-btn" data-page="workouts">Workouts</button>
-    <button class="nav-btn" data-page="search">Search Exercise</button>
-    <button class="nav-btn" data-page="plan">Plan</button>
-    <button class="nav-btn" data-page="library">Library</button>
-    <button class="nav-btn" data-page="about">About</button>
-  </nav>
-  <span class="db-badge" id="dbBadge" title="Database status">💾 …</span>
-  <button class="user-chip" id="userChip" title="Account">👤 <span>Account</span></button>
-  <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
-</header>
-
-<!-- ============ AUTH / LOGIN ============ -->
-<div class="auth-back open" id="authScreen">
-  <div class="auth-card">
-    <div class="auth-left">
-      <div class="brand" style="margin-bottom:20px">🔥 Fit<span>Fuel</span></div>
-      <h1 style="font-size:2.6rem">Transform.<br>Track.<br>Grow.</h1>
-      <p class="muted" style="margin-top:14px">Clean, smart fitness tracker for beginners and pros.</p>
-    </div>
-    <div class="auth-right">
-      <div class="auth-brand">Welcome to FitFuel</div>
-      <div class="seg wide" id="authTabs" style="margin:14px 0 16px">
-        <button class="active" data-auth="login">🔑 Login</button>
-        <button data-auth="register">✨ Create account</button>
-      </div>
-
-      <div id="authLogin">
-        <h2>Sign In</h2>
-        <p class="muted">Enter your details to access dashboard</p>
-        <label class="field">Email
-          <input type="email" id="loginEmail" class="input" placeholder="you@example.com" autocomplete="email" />
-        </label>
-        <label class="field">Password
-          <input type="password" id="loginPass" class="input" placeholder="Your password" autocomplete="current-password" />
-        </label>
-        <button class="btn primary full big" id="loginBtn">Login →</button>
-        <p class="muted tiny" style="margin-top:12px;text-align:center">New here? <button class="mini-btn" id="gotoRegister">✨ Create account</button></p>
-      </div>
-
-      <div id="authRegister" hidden>
-        <h2>Create Account</h2>
-        <p class="muted">Build your fitness profile in 30 seconds</p>
-        <label class="field">Full name
-          <input type="text" id="regName" class="input" placeholder="e.g. Rahul Sharma" autocomplete="name" />
-        </label>
-        <label class="field">Email <span class="muted tiny">(valid email with .com/.in etc)</span>
-          <input type="email" id="regEmail" class="input" placeholder="you@example.com" autocomplete="email" />
-        </label>
-        <label class="field">Contact no <span class="muted tiny">(10 digits)</span>
-          <input type="tel" id="regContact" class="input" placeholder="10-digit mobile number" autocomplete="tel" maxlength="10" />
-        </label>
-        <label class="field">Password
-          <input type="password" id="regPass" class="input" placeholder="Create a password" autocomplete="new-password" />
-        </label>
-        <ul class="pass-rules" id="passRules">
-          <li data-rule="len">At least 6 characters</li>
-          <li data-rule="cap">At least ONE capital letter (A–Z)</li>
-          <li data-rule="sp">At least ONE special character (!@#$%&*?)</li>
-        </ul>
-        <button class="btn primary full big" id="regBtn">Create account →</button>
-        <p class="muted tiny" style="margin-top:10px;text-align:center">Already registered? <button class="mini-btn" id="gotoLogin">🔑 Login</button></p>
-      </div>
-      <p class="muted tiny" style="margin-top:16px;text-align:center">Your data stays safe in SQLite database</p>
-    </div>
-  </div>
-</div>
-
-<!-- ============ DASHBOARD ============ -->
-<main id="page-dashboard" class="page active">
-  <section class="hero">
-    <div>
-      <h1 id="greeting">Welcome 👋</h1>
-      <p class="muted">Track food, crush workouts, hit your goals.</p>
-    </div>
-    <button class="btn primary big" id="openCalorieBtn">🎯 Set Calorie Goal</button>
-  </section>
-
-  <div class="grid stats-grid">
-    <div class="card stat">
-      <div class="stat-ring" id="calRing"><span id="calConsumed">0</span><small>/ <span id="calGoal">0</span> kcal</small></div>
-      <p class="stat-label">Calories today</p>
-    </div>
-    <div class="card stat">
-      <div class="macro-bars" id="dashMacros">
-        <div class="macro-row"><label>Protein <b id="dashP">0</b>/<span id="dashPg">0</span> g</label><div class="bar"><i id="barP"></i></div></div>
-        <div class="macro-row"><label>Carbs <b id="dashC">0</b>/<span id="dashCg">0</span> g</label><div class="bar"><i id="barC" class="carbs"></i></div></div>
-        <div class="macro-row"><label>Fats <b id="dashF">0</b>/<span id="dashFg">0</span> g</label><div class="bar"><i id="barF" class="fat"></i></div></div>
-      </div>
-      <p class="stat-label">Macros</p>
-    </div>
-    <div class="card stat">
-      <div class="water-tank"><div class="water-fill" id="waterFill"></div><span id="waterText">0 / 0 ml</span></div>
-      <p class="stat-label">Water 💧 <button class="mini-btn" id="addWaterBtn">+250ml</button><button class="mini-btn" id="resetWaterBtn">↺</button></p>
-    </div>
-    <div class="card stat">
-      <div class="bmi-box"><b id="bmiVal">—</b><small id="bmiTag">Set your stats</small></div>
-      <p class="stat-label">BMI</p>
-    </div>
-  </div>
-
-  <section class="card">
-    <h2>Today's Log</h2>
-    <div id="dashLog" class="log-list"></div>
-    <button class="btn ghost" data-goto="diet">+ Add food</button>
-  </section>
-
-  <section class="card">
-    <div class="row between"><h2>Quick Tips</h2><button class="mini-btn" id="refreshTipsBtn">🔄 New tips</button></div>
-    <ul class="tips" id="tipsList"></ul>
-  </section>
-</main>
-
-<!-- ============ DIET ============ -->
-<main id="page-diet" class="page">
-  <section class="hero small">
-    <div>
-      <h1>Diet Tracker 🍽️</h1>
-      <p class="muted">Veg, non-veg, healthy, oily, junk — everything in one place.</p>
-    </div>
-    <div class="hero-actions">
-      <button class="btn cam" id="openCameraBtn">📷 Camera / Upload</button>
-      <button class="btn primary" id="openCalorieBtn2">🎯 Calorie Goal</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="macro-strip" id="dietMacros">
-      <div><small>Kcal</small><b id="dCal">0</b><span id="dCalG">/ 0</span></div>
-      <div><small>Protein</small><b id="dP">0g</b><span id="dPg">/ 0g</span></div>
-      <div><small>Carbs</small><b id="dC">0g</b><span id="dCg">/ 0g</span></div>
-      <div><small>Fats</small><b id="dF">0g</b><span id="dFg">/ 0g</span></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="row gap">
-      <input type="search" id="foodSearch" class="input" placeholder="Search food… (egg, roti, paneer, pizza, banana)" />
-      <button class="btn ghost" id="clearSearch">✕</button>
-    </div>
-    <div class="food-type-filters" id="foodTypeFilters">
-      <button class="chip active" data-cat="all">🍽️ All foods</button>
-      <button class="chip" data-cat="veg">🥗 Veg only</button>
-      <button class="chip" data-cat="nonveg">🍗 Non-veg</button>
-      <button class="chip" data-cat="healthy">💪 Healthy</button>
-      <button class="chip" data-cat="oily">🍳 Oily / Fried</button>
-      <button class="chip" data-cat="junk">🍔 Junk</button>
-      <button class="chip" data-cat="protein">🥩 High Protein</button>
-      <button class="chip" data-cat="snack">🥨 Snacks</button>
-      <button class="chip" data-cat="fruit">🍎 Fruits</button>
-      <button class="chip" data-cat="drink">🥤 Drinks</button>
-      <button class="chip" data-cat="dairy">🥛 Dairy</button>
-      <button class="chip" data-cat="grain">🌾 Grains &amp; Roti</button>
-      <button class="chip" data-cat="dessert">🍨 Desserts</button>
-      <button class="chip" data-cat="main">🍛 Full Meals</button>
-    </div>
-    <div class="meal-tabs" id="mealTabs">
-      <button class="chip active" data-meal="Breakfast">🌅 Breakfast</button>
-      <button class="chip" data-meal="Lunch">☀️ Lunch</button>
-      <button class="chip" data-meal="Snack">🍎 Snack</button>
-      <button class="chip" data-meal="Dinner">🌙 Dinner</button>
-    </div>
-    <div id="foodResults" class="food-grid"></div>
-  </section>
-
-  <section class="card">
-    <div class="row between">
-      <h2>Nutrients You Got Today 🔬</h2>
-      <button class="btn ghost small-btn" id="nutrientsToggle">Show details ▾</button>
-    </div>
-    <p class="muted tiny">Everything you logged today — vitamins, minerals, omega, fibre and more.</p>
-    <div id="nutrientList" class="nutrient-list" hidden></div>
-    <div class="disclaimer" id="nutrientDisclaimer"></div>
-  </section>
-
-  <section class="card">
-    <div class="row between">
-      <h2>Logged Meals</h2>
-      <button class="btn warn small-btn" id="clearLogBtn">Clear day</button>
-    </div>
-    <div id="dietLog" class="log-list"></div>
-  </section>
-
-  <section class="card">
-    <h2>🤖 Nutrition Bot — poochho, jawab milega</h2>
-    <p class="muted tiny">Example: “100g paneer me kitna protein”, “iron rich foods”, “banana me kitni sugar”, “2 roti ke calories”</p>
-    <div class="row gap">
-      <input type="text" id="botQ" class="input" placeholder="Apna sawaal likho…" />
-      <button class="btn primary" id="botAskBtn">Ask</button>
-    </div>
-    <div id="botA" class="preview-box" hidden></div>
-  </section>
-</main>
-
-<!-- ============ TRACKING ============ -->
-<main id="page-tracking" class="page">
-  <section class="hero small">
-    <div>
-      <h1>Tracking &amp; Progress 📈</h1>
-      <p class="muted">Consistency dikhata hai progress — roz thoda, lambe race ka winner.</p>
-    </div>
-  </section>
-
-  <div class="grid stats-grid">
-    <div class="card stat">
-      <div class="bmi-box"><b id="trackStreak">0</b><small>day streak 🔥</small></div>
-      <p class="stat-label">Current consistency</p>
-    </div>
-    <div class="card stat">
-      <div class="bmi-box"><b id="trackConsistency">0%</b><small>last 30 days</small></div>
-      <p class="stat-label">Logging consistency</p>
-    </div>
-    <div class="card stat">
-      <div class="bmi-box"><b id="trackWorkouts">0</b><small>workouts done</small></div>
-      <p class="stat-label">Last 30 days</p>
-    </div>
-    <div class="card stat">
-      <div class="bmi-box"><b id="trackAvgKcal">0</b><small>kcal avg / day</small></div>
-      <p class="stat-label">Last 7 logged days</p>
-    </div>
-  </div>
-
-  <section class="card">
-    <h2>Last 7 Days 📅</h2>
-    <div class="week-chart" id="trackWeek"></div>
-  </section>
-
-  <section class="card">
-    <h2>Weight Log ⚖️</h2>
-    <div class="row gap align-c">
-      <input type="number" id="weightLogInput" class="input" placeholder="Today's weight (kg)" step="0.1" min="20" max="400" />
-      <button class="btn primary" id="logWeightBtn">Log weight ✓</button>
-    </div>
-    <div id="weightTrend" class="trend-note"></div>
-    <div id="weightList" class="log-list"></div>
-  </section>
-
-  <section class="card">
-    <h2>Workouts You Completed 🏆</h2>
-    <p class="muted tiny">Open any exercise in Workouts and tap “I did this ✓” to track it here.</p>
-    <div id="trackWorkoutList" class="log-list"></div>
-  </section>
-</main>
-
-<!-- ============ WORKOUTS ============ -->
-<main id="page-workouts" class="page">
-  <section class="hero small">
-    <div>
-      <h1>Workout Library 🏋️</h1>
-      <p class="muted">Gym &amp; home workouts — steps, benefits &amp; form guide.</p>
-    </div>
-    <div class="hero-actions">
-      <button class="btn refresh" id="refreshWorkoutsBtn">⟳ Refresh</button>
-      <button class="btn ghost" id="resetWorkoutsBtn">↺ Reset filters</button>
-    </div>
-  </section>
-
-  <section class="filters">
-    <div class="filter-group" id="typeFilters">
-      <button class="chip active" data-type="all">All</button>
-      <button class="chip" data-type="gym">🏋️ Gym</button>
-      <button class="chip" data-type="home">🏠 Home</button>
-      <button class="chip" data-type="cardio">🏃 Cardio</button>
-      <button class="chip" data-type="hiit">⚡ HIIT</button>
-      <button class="chip" data-type="flexibility">🧘 Flexibility</button>
-    </div>
-    <div class="filter-group" id="groupFilters">
-      <button class="chip active" data-group="all">All body parts</button>
-      <button class="chip" data-group="chest">Chest</button>
-      <button class="chip" data-group="back">Back</button>
-      <button class="chip" data-group="legs">Legs</button>
-      <button class="chip" data-group="shoulders">Shoulders</button>
-      <button class="chip" data-group="arms">Arms</button>
-      <button class="chip" data-group="core">Core</button>
-      <button class="chip" data-group="fullbody">Full Body</button>
-    </div>
-  </section>
-
-  <div class="row between align-c">
-    <p class="muted" id="workoutCount"></p>
-    <p class="muted" id="refreshHint">Hit ⟳ Refresh for a fresh list of exercises</p>
-  </div>
-  <div id="workoutGrid" class="workout-grid"></div>
-</main>
-
-<!-- ============ SEARCH EXERCISE ============ -->
-<main id="page-search" class="page">
-  <section class="hero small">
-    <div>
-      <h1>Search Exercise 🔍</h1>
-      <p class="muted">Exercise ka naam likho — ya bolo 🎤 — hum relevant exercises dhoondh denge.</p>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="row gap">
-      <input type="search" id="exName" class="input" placeholder="e.g. bench press, running, plank, dumbbell chest…" />
-      <button class="btn primary" id="exSearchBtn">Search</button>
-    </div>
-    <div class="search-chips" id="quickChips">
-      <button class="chip" data-q="chest">Chest</button>
-      <button class="chip" data-q="abs">Abs / Core</button>
-      <button class="chip" data-q="legs">Legs</button>
-      <button class="chip" data-q="back">Back</button>
-      <button class="chip" data-q="shoulders">Shoulders</button>
-      <button class="chip" data-q="cardio">Cardio</button>
-      <button class="chip" data-q="fat burn">Fat burn</button>
-      <button class="chip" data-q="stretch">Stretching</button>
+<div class="app-shell">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
+          <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
+        </svg>
+      </span>
+      <span>formwise<span class="brand-period">.</span></span>
     </div>
 
-    <div class="fail-panel" id="failPanel" hidden>
-      <h3>😕 Search failed — koi exact match nahi mila</h3>
-      <p class="muted">Koi baat nahi! Neeche apne shabd likho ya mic 🎤 se bolo — hum guess karke relevant exercises dhoondhenge.</p>
-      <textarea id="exDesc" class="input" rows="3" placeholder="e.g. main apne chest ki exercise dhundh raha hoon jisme dumbbell use ho…"></textarea>
-      <div class="row gap" style="margin-top:10px">
-        <button class="btn cam" id="speakBtn">🎤 Speak</button>
-        <button class="btn primary grow" id="descSearchBtn">Search with description</button>
-      </div>
-      <p class="muted tiny" id="speakStatus"></p>
-    </div>
+    <div class="sidebar-label">YOUR SPACE</div>
 
-    <div class="row between align-c" id="resultsHead" style="margin-top:14px" hidden>
-      <h3 id="resultsInfo"></h3>
-      <button class="btn ghost small-btn" id="showAllBtn" hidden>Show all exercises</button>
-    </div>
-  </section>
+    <nav class="primary-nav" aria-label="Main navigation">
+      <button class="nav-link selected" data-view="today">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>
+        </svg>
+        <span>Today</span>
+        <span class="nav-active-dot"></span>
+      </button>
 
-  <div id="searchGrid" class="workout-grid"></div>
-</main>
+      <button class="nav-link" data-view="food-log">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+        </svg>
+        <span>Food log</span>
+      </button>
 
-<!-- ============ PLAN ============ -->
-<main id="page-plan" class="page">
-  <section class="hero small">
-    <div>
-      <h1>Workout Planner 📋</h1>
-      <p class="muted">Personalised split + water target built from your inputs.</p>
-    </div>
-    <div class="hero-actions">
-      <button class="btn ghost" id="refreshPlanBtn">⟳ New workouts</button>
-      <button class="btn ghost" id="resetPlanBtn">↺ Reset</button>
-      <button class="btn primary big" id="createPlanBtn">🚀 Create Workout Plan</button>
-    </div>
-  </section>
-  <div id="planOutput"></div>
+      <button class="nav-link" data-view="workouts">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
+          <path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path>
+          <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path>
+          <path d="m9.6 14.4 4.8-4.8"></path>
+        </svg>
+        <span>Workouts</span>
+      </button>
 
-  <section class="card" style="margin-top:14px">
-    <div class="row between align-c">
-      <h2>🗂 All Saved Plans</h2>
-      <button class="btn warn small-btn" id="clearAllPlansBtn">Delete all</button>
-    </div>
-    <p class="muted tiny">Har plan yahan save hota hai — fat loss ho ya muscle gain, sab ek jagah.</p>
-    <div id="savedPlansList" class="log-list"></div>
-  </section>
-</main>
+      <button class="nav-link" data-view="exercise-library">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+        </svg>
+        <span>Exercise library</span>
+      </button>
 
-<!-- ============ LIBRARY ============ -->
-<main id="page-library" class="page">
-  <section class="hero small">
-    <div>
-      <h1>My Food Library 📚</h1>
-      <p class="muted">Custom foods you created — saved with photos &amp; full nutrition.</p>
-    </div>
-    <button class="btn primary" id="openCustomFoodBtn">➕ Create Custom Food</button>
-  </section>
-  <div id="libraryGrid" class="food-grid"></div>
-</main>
+      <button class="nav-link" data-view="my-foods">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path>
+        </svg>
+        <span>My foods</span>
+      </button>
 
-<!-- ============ ABOUT & CONTACT ============ -->
-<main id="page-about" class="page">
-  <section class="hero small">
-    <div>
-      <h1>About FitFuel 🔥</h1>
-      <p class="muted">Calorie tracking + workout planning — simple, honest, free.</p>
-    </div>
-  </section>
+      <button class="nav-link" data-view="profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle>
+        </svg>
+        <span>Profile</span>
+      </button>
+    </nav>
 
-  <section class="card">
-    <h2>What is FitFuel?</h2>
-    <p class="muted" style="line-height:1.8">
-      FitFuel ek calorie aur workout tracker hai jahan aap apni daily food log kar sakte hain (veg, non-veg, healthy, junk — sab),
-      nutrients (vitamins, minerals, omega aur bahut kuch) dekh sakte hain, workout library se exercise seekh sakte hain,
-      apna personalised workout plan bana sakte hain, aur progress tracking page par consistency dekh sakte hain.
-      Aapka data ek real database me save hota hai — login karne ke baad dubara details bharne ki zaroorat nahi.
-    </p>
-    <p class="muted tiny" style="margin-top:8px">Nutrition values rough estimates hain — doctor/dietitian se baat karke hi diet badlein.</p>
-  </section>
-
-  <section class="card">
-    <h2>📮 Complaint / Suggestion</h2>
-    <p class="muted tiny">Koi dikkat ya idea hai? Bhejo — humare paas website par aur email par dono jagah aayega.</p>
-    <label class="field">Your name
-      <input type="text" id="cmpName" class="input" placeholder="Your name" />
-    </label>
-    <label class="field">Type
-      <div class="seg wide" id="cmpType">
-        <button class="active" data-t="complaint">😞 Complaint</button>
-        <button data-t="suggestion">💡 Suggestion</button>
-        <button data-t="feedback">⭐ Feedback</button>
-      </div>
-    </label>
-    <label class="field">Your problem / suggestion
-      <textarea id="cmpText" class="input" rows="4" placeholder="Poori detail likho…"></textarea>
-    </label>
-    <label class="field">Attach photos / documents <span class="muted tiny">(optional, max 3 files)</span>
-      <input type="file" id="cmpFiles" class="input" multiple accept="image/*,.pdf,.doc,.docx,.txt" />
-    </label>
-    <div class="row gap">
-      <button class="btn primary grow" id="cmpSubmitBtn">Submit ✓</button>
-      <a class="btn ghost" id="cmpMailLink" href="mailto:fun.123learn@gmail.com">✉️ Email directly</a>
-    </div>
-    <div class="disclaimer" style="margin-top:10px">Submit karne par ye website ke admin panel me chala jaata hai aur aapke mail app me pre-filled email khul jaata hai (fun.123learn@gmail.com) — wahan Send dabana hoga. Attachments sirf website panel me jaate hain.</div>
-  </section>
-
-  <section class="card">
-    <h2>📬 Contact</h2>
-    <p style="line-height:1.9">
-      📧 Email: <b><a href="mailto:fun.123learn@gmail.com" style="color:var(--acc)">fun.123learn@gmail.com</a></b><br>
-      🕐 Reply time: usually within 24–48 hours<br>
-      💡 Suggestions always welcome — aapka feedback hi app ko behtar banata hai!
-    </p>
-  </section>
-</main>
-
-<!-- ============ MODAL: CALORIE GOAL ============ -->
-<div class="modal-back" id="calorieModal">
-  <div class="modal">
-    <button class="modal-x" data-close>✕</button>
-
-    <div id="calStep1">
-      <h2>📊 Your Stats</h2>
-      <p class="muted">Enter your details to auto-calculate macro requirements.</p>
-
-      <label class="field">Height
-        <div class="row gap">
-          <input type="number" id="heightInput" class="input" placeholder="170" min="50" max="260" />
-          <div class="seg" id="heightUnit">
-            <button class="active" data-unit="cm">cm</button>
-            <button data-unit="in">inch</button>
-          </div>
+    <div class="sidebar-bottom">
+      <div class="weekly-mini">
+        <div class="week-mini-top">
+          <span>WEEKLY STREAK</span>
+          <span id="streakCount">4 / 5</span>
         </div>
-      </label>
-
-      <label class="field">Weight
-        <div class="row gap">
-          <input type="number" id="weightInput" class="input" placeholder="70" min="20" max="300" step="0.1" />
-          <div class="seg" id="weightUnit">
-            <button class="active" data-unit="kg">kg</button>
-            <button data-unit="lb">pound</button>
-          </div>
+        <div class="streak-bars" id="streakBars">
+          <i></i><i></i><i></i><i></i><i class="muted"></i><i class="muted"></i><i class="muted"></i>
         </div>
-      </label>
-
-      <label class="field">Gender
-        <div class="seg wide" id="genderSeg">
-          <button data-g="male">Male</button>
-          <button data-g="female">Female</button>
-          <button data-g="other">Other</button>
-        </div>
-      </label>
-
-      <button class="btn primary full" id="calNextBtn">Next →</button>
-    </div>
-
-    <div id="calStep2" hidden>
-      <h2>🎯 Daily Calorie Intake</h2>
-      <p class="muted">Calories auto-fill ho gaye hain — apne hisaab se badal sakte ho.</p>
-
-      <div class="suggest-row" id="calSuggestions"></div>
-
-      <label class="field">Calories (kcal / day)
-        <input type="number" id="calorieInput" class="input" placeholder="e.g. 2200" min="800" max="6000" />
-      </label>
-
-      <div class="preview-box" id="macroPreview"></div>
-
-      <div class="row gap">
-        <button class="btn ghost" id="calBackBtn">← Back</button>
-        <button class="btn primary grow" id="calSaveBtn">Save Goal ✓</button>
-      </div>
-    </div>
-
-    <div id="calStep3" hidden>
-      <h2>✅ Goal Saved!</h2>
-      <div class="result-card" id="calResult"></div>
-      <button class="btn primary full" data-close>Done</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL: CAMERA / FOOD ANALYSIS ============ -->
-<div class="modal-back" id="cameraModal">
-  <div class="modal wide">
-    <button class="modal-x" data-close>✕</button>
-    <h2>📷 Food Recognition</h2>
-
-    <div id="camStep1">
-      <p class="muted">Click a photo or upload an image of your meal.</p>
-      <div class="cam-drop" id="camDrop">
-        <input type="file" id="camInput" accept="image/*" capture="environment" hidden />
-        <div class="cam-icons">
-          <button class="cam-btn" id="camTakeBtn">📸<small>Take photo</small></button>
-          <button class="cam-btn" id="camUploadBtn">🖼️<small>Upload image</small></button>
-        </div>
-      </div>
-      <img id="camPreview" class="cam-preview" hidden alt="preview" />
-      <button class="btn primary full" id="analyzeBtn" hidden>🤖 Analyse Food</button>
-    </div>
-
-    <div id="camStep2" hidden>
-      <div class="loader"><div class="spin"></div><p id="analyzeMsg">Analysing your food…</p></div>
-    </div>
-
-    <div id="camStep3" hidden>
-      <h3>We found these options — pick the right one:</h3>
-      <div id="analysisResults" class="detect-list"></div>
-      <p class="muted tiny">Demo AI estimate — pick the closest match, then confirm weight.</p>
-    </div>
-
-    <div id="camStep4" hidden>
-      <div class="row gap align-c">
-        <img id="selThumb" class="thumb" alt="" />
-        <div>
-          <h3 id="selName">—</h3>
-          <p class="muted" id="selMacros">—</p>
-        </div>
+        <p id="streakText">One more day to hit your goal.</p>
       </div>
 
-      <h4>Food weight 🤚</h4>
-      <div class="seg wide" id="weightModeSeg">
-        <button class="active" data-mode="auto">⚡ Auto (estimated)</button>
-        <button data-mode="manual">✍️ Manual enter</button>
-      </div>
-      <label class="field">Weight (grams)
-        <input type="number" id="foodWeightInput" class="input" min="1" max="3000" />
-      </label>
-
-      <div class="preview-box" id="weightCalc"></div>
-
-      <label class="field">Add to meal
-        <div class="seg wide" id="camMealSeg">
-          <button data-m="Breakfast">Breakfast</button>
-          <button class="active" data-m="Lunch">Lunch</button>
-          <button data-m="Snack">Snack</button>
-          <button data-m="Dinner">Dinner</button>
-        </div>
-      </label>
-
-      <div class="row gap">
-        <button class="btn ghost" id="camRestartBtn">← Start over</button>
-        <button class="btn primary grow" id="camAddBtn">Add to log ✓</button>
-      </div>
+      <button class="profile-shortcut" id="sidebarProfileBtn">
+        <span class="avatar" id="sidebarAvatar">JD</span>
+        <span>
+          <b id="sidebarName">Jordan Davis</b>
+          <small id="sidebarPlan">Personal plan</small>
+        </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"></path>
+        </svg>
+      </button>
     </div>
-  </div>
-</div>
+  </aside>
 
-<!-- ============ MODAL: FOOD PORTION ============ -->
-<div class="modal-back" id="portionModal">
-  <div class="modal">
-    <button class="modal-x" data-close>✕</button>
-    <div id="portionBody"></div>
-  </div>
-</div>
+  <!-- ================= MAIN AREA ================= -->
+  <main class="main-area">
+    <header class="topbar">
+      <button aria-label="Open navigation" class="mobile-menu icon-button" id="mobileMenuBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
+        </svg>
+      </button>
 
-<!-- ============ MODAL: WORKOUT DETAIL ============ -->
-<div class="modal-back" id="workoutModal">
-  <div class="modal wide">
-    <button class="modal-x" data-close>✕</button>
-    <div id="workoutDetail"></div>
-  </div>
-</div>
-
-<!-- ============ MODAL: PLAN WIZARD ============ -->
-<div class="modal-back" id="planModal">
-  <div class="modal">
-    <button class="modal-x" data-close>✕</button>
-
-    <div id="planStep1">
-      <h2>1️⃣ What is your purpose?</h2>
-      <div class="choice-2">
-        <button class="choice" data-purpose="fatloss">🔥 Fat Loss<br /><small>Shred &amp; get lean</small></button>
-        <button class="choice" data-purpose="muscle">💪 Muscle Building<br /><small>Bulk &amp; gain strength</small></button>
-      </div>
-    </div>
-
-    <div id="planStep2" hidden>
-      <h2>2️⃣ How many days per week?</h2>
-      <div class="choice-3">
-        <button class="choice" data-days="4">4 days<small>a week</small></button>
-        <button class="choice" data-days="5">5 days<small>a week</small></button>
-        <button class="choice" data-days="6">6 days<small>a week</small></button>
-      </div>
-      <button class="btn ghost" id="planBack1">← Back</button>
-    </div>
-
-    <div id="planStep3" hidden>
-      <h2>3️⃣ Do you take Creatine?</h2>
-      <div class="choice-2">
-        <button class="choice" data-creatine="yes">✅ Yes</button>
-        <button class="choice" data-creatine="no">❌ No</button>
-      </div>
-      <button class="btn ghost" id="planBack2">← Back</button>
-    </div>
-
-    <div id="planStep4" hidden>
-      <h2>4️⃣ What is your target weight?</h2>
-      <p class="muted">Apni target weight batao — isse hum aapko safe pace aur personalized tips denge.</p>
-      <div class="row gap">
-        <input type="number" id="targetWeight" class="input grow" placeholder="e.g. 65" min="20" max="400" step="0.1" />
-        <div class="seg" id="targetUnit">
-          <button class="active" data-unit="kg">kg</button>
-          <button data-unit="lb">pound</button>
-        </div>
-      </div>
-      <div class="row gap" style="margin-top:12px">
-        <button class="btn ghost" id="planBack3">← Back</button>
-        <button class="btn primary grow" id="planTargetNext">Build my plan →</button>
-      </div>
-    </div>
-
-    <div id="planStep5" hidden>
-      <h2>🎉 Your Plan is Ready</h2>
-      <div id="planResult"></div>
-      <button class="btn primary full" id="savePlanBtn">Save Plan 💾</button>
-      <button class="btn ghost full" id="planRestart">↺ Start over</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL: CUSTOM FOOD ============ -->
-<div class="modal-back" id="customModal">
-  <div class="modal wide">
-    <button class="modal-x" data-close>✕</button>
-    <h2>🧪 Create Custom Food</h2>
-    <p class="muted">Write the name, add ingredients with grams — we calculate all calories &amp; nutrients.</p>
-
-    <div class="row gap align-c">
-      <div class="img-pick" id="customImgPick">
-        <input type="file" id="customImgInput" accept="image/*" capture="environment" hidden />
-        <span>📷<small>Add photo</small></span>
-      </div>
-      <label class="field grow">Food name
-        <input type="text" id="customName" class="input" placeholder="e.g. Mom's Paneer Bhurji" />
-      </label>
-    </div>
-
-    <h4>Ingredients</h4>
-    <div id="ingredientRows"></div>
-    <div class="row gap">
-      <input list="ingredientList" id="ingName" class="input grow" placeholder="Ingredient (type or pick)" />
-      <datalist id="ingredientList"></datalist>
-      <input type="number" id="ingGrams" class="input w80" placeholder="g" min="1" />
-      <button class="btn primary" id="addIngBtn">+ Add</button>
-    </div>
-    <p class="muted tiny">Unknown ingredient? It will be added as 0 kcal — tap it in the row to type macros manually.</p>
-
-    <div class="preview-box" id="customTotals"></div>
-
-    <div class="row gap">
-      <button class="btn ghost" id="customClearBtn">Clear</button>
-      <button class="btn primary grow" id="customSaveBtn">Save to Library 💾</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL: SETTINGS ============ -->
-<div class="modal-back" id="settingsModal">
-  <div class="modal">
-    <button class="modal-x" data-close>✕</button>
-    <h2>⚙️ Settings</h2>
-    <div class="acct-box" id="acctInfo"></div>
-    <div id="adminSection" hidden>
-      <button class="btn primary full" id="adminPanelBtn">👑 Admin Panel (users &amp; complaints)</button>
-    </div>
-    <div id="claimAdminBox" style="margin-top:10px">
-      <label class="field tiny">Admin secret <span class="muted">(admin banne ke liye)</span>
-        <div class="row gap">
-          <input type="password" id="adminSecret" class="input grow" placeholder="Admin secret…" />
-          <button class="btn ghost" id="claimAdminBtn">Claim</button>
-        </div>
-      </label>
-    </div>
-    <button class="btn primary full" id="saveSettingsBtn">Save</button>
-    <button class="btn ghost full" id="logoutBtn">🚪 Logout</button>
-    <button class="btn warn full" id="wipeDataBtn">🗑 Wipe all data</button>
-  </div>
-</div>
-
-<!-- ============ MODAL: ADMIN PANEL ============ -->
-<div class="modal-back" id="adminModal">
-  <div class="modal wide">
-    <button class="modal-x" data-close>✕</button>
-    <h2>👑 Admin Panel</h2>
-    <h4>Users</h4>
-    <div id="adminUsers" class="log-list"></div>
-    <h4>Complaints / Suggestions</h4>
-    <div id="adminComplaints" class="log-list"></div>
-  </div>
-</div>
-
-<div class="modal-back" id="profileModal">
-  <div class="modal">
-    <button class="modal-x" data-close>✕</button>
-    <h2>👤 My Profile</h2>
-    <div class="profile-header">
-      <div class="avatar">🔥</div>
       <div>
-        <h3 id="pfName">Name</h3>
-        <p class="muted" id="pfEmail">email</p>
+        <div class="eyebrow" id="eyebrowDate">MONDAY, OCTOBER 20, 2026 · 03:25 PM</div>
+        <h1 id="userGreeting">Good afternoon, Jordan</h1>
       </div>
+
+      <div class="top-actions">
+        <span class="sync-note" id="syncNote">
+          <span class="status-dot"></span>
+          <span id="syncStatus">Cloud database synced</span>
+        </span>
+        <button class="text-button" id="topAuthBtn">Sign in</button>
+        <button class="icon-button" id="topSettingsBtn" title="Settings & Admin" aria-label="Settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+        <button class="top-avatar" id="topAvatar" aria-label="Open profile">JD</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- ================= VIEW 1: TODAY ================= -->
+      <section class="view active" id="view-today">
+        <div class="welcome-strip">
+          <div>
+            <div class="welcome-overline" id="welcomeOverline">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                <path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle>
+              </svg>
+              <span>YOUR TODAY CHECK-IN</span>
+            </div>
+            <h2>A little progress adds up.</h2>
+            <p>You’ve got this. Keep your focus on the next good choice.</p>
+          </div>
+          <div class="strip-stats">
+            <div>
+              <span>DAY STREAK</span>
+              <b id="dayStreakDisplay">4 <small>days</small></b>
+            </div>
+            <div>
+              <span>WEEKLY GOAL</span>
+              <b id="weeklyGoalDisplay">80<small>%</small></b>
+            </div>
+          </div>
+          <div class="strip-orbit orbit-one"></div>
+          <div class="strip-orbit orbit-two"></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- CALORIES PANEL -->
+          <article class="panel calories-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">NUTRITION</span>
+                <h3>Calories today</h3>
+              </div>
+              <button class="text-button" id="goToFoodLogFromDash">
+                Food log
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="calories-content">
+              <div class="calorie-ring" id="dashCalRing" style="background:conic-gradient(#b4db79 188deg, #ecefe8 0deg)">
+                <div class="ring-inner">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"></path>
+                  </svg>
+                  <strong id="dashCalLeft">1,000</strong>
+                  <span>kcal left</span>
+                </div>
+              </div>
+
+              <div class="calories-number">
+                <div>
+                  <strong id="dashCalConsumed">1,100</strong>
+                  <span> / <span id="dashCalGoal">2,100</span> kcal</span>
+                </div>
+                <p>
+                  <span class="positive">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                    </svg>
+                    <span id="dashPctNum">52%</span>
+                  </span>
+                  of your daily nutrition target
+                </p>
+                <div class="calorie-meter">
+                  <i id="dashCalMeterBar" style="width:52%"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="macro-summary">
+              <div class="macro-line">
+                <span class="macro-dot protein-dot"></span>
+                <span>Protein</span>
+                <b><span id="dashP">93</span>g</b>
+              </div>
+              <div class="macro-line">
+                <span class="macro-dot carbs-dot"></span>
+                <span>Carbs</span>
+                <b><span id="dashC">106</span>g</b>
+              </div>
+              <div class="macro-line">
+                <span class="macro-dot fat-dot"></span>
+                <span>Fat</span>
+                <b><span id="dashF">32</span>g</b>
+              </div>
+            </div>
+          </article>
+
+          <!-- WATER PANEL -->
+          <article class="panel water-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">HYDRATION</span>
+                <h3>Water intake</h3>
+              </div>
+              <button class="quiet-icon" aria-label="Reset water intake" id="resetWaterBtn" title="Reset water">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="water-readout">
+              <strong id="waterDisplay">1.0<small> L</small></strong>
+              <span>of <span id="waterGoalDisplay">2.5</span> L goal</span>
+            </div>
+
+            <!-- 12 Interactive Water Glasses -->
+            <div class="water-cups" id="waterCups">
+              <!-- Dynamically populated 12 cups with glass SVG -->
+            </div>
+
+            <div class="water-foot">
+              <span>Personal estimate (250 ml / glass)</span>
+              <button id="adjustWaterBtn">
+                Adjust
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- MEALS & SNACKS PANEL -->
+          <article class="panel meals-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">TODAY’S FUEL</span>
+                <h3>Meals &amp; snacks</h3>
+              </div>
+              <button class="solid-button small" id="dashAddFoodBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path><path d="M12 5v14"></path>
+                </svg>
+                Add food
+              </button>
+            </div>
+
+            <div class="meal-list" id="dashMealList">
+              <!-- Populated dynamically with photo cards or user entries -->
+            </div>
+
+            <button class="list-link" id="viewAllFoodEntriesBtn">
+              View all food entries
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </button>
+          </article>
+
+          <!-- WORKOUT PANEL -->
+          <article class="panel workout-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">TODAY’S MOVEMENT</span>
+                <h3>Your next workout</h3>
+              </div>
+              <button class="quiet-icon" aria-label="Refresh workout" id="dashRefreshWorkoutBtn" title="Next workout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="workout-feature">
+              <img src="images/workout-rdl.jpg" alt="Athlete training" id="dashWorkoutImg">
+              <div class="workout-overlay">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 6v6h4"></path><circle cx="12" cy="12" r="10"></circle>
+                  </svg>
+                  <span id="dashWorkoutDuration">42 min</span>
+                </span>
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
+                  </svg>
+                  Gym + home
+                </span>
+              </div>
+            </div>
+
+            <div class="workout-desc">
+              <div>
+                <span class="section-kicker" id="dashWorkoutFocus">STRENGTH · GLUTES · BACK · CORE</span>
+                <h4 id="dashWorkoutName">Full-body strength</h4>
+              </div>
+              <button class="round-arrow" aria-label="View workout" id="dashStartWorkoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 7h10v10"></path><path d="M7 17 17 7"></path>
+                </svg>
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <div class="bottom-note">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
+            </svg>
+            SMALL WINS, STRONG HABITS
+          </span>
+          <p>Consistency beats perfection. You’re building something good.</p>
+          <button id="insightsShortcutBtn">
+            Your weekly insights
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 2: FOOD LOG ================= -->
+      <section class="view" id="view-food-log">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker" id="foodLogDateTag">TODAY</span>
+            <h2>Food log</h2>
+            <p>A clear picture of what’s fueling you today.</p>
+          </div>
+          <button class="solid-button" id="foodLogAddBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path><path d="M12 5v14"></path>
+            </svg>
+            Log food
+          </button>
+        </div>
+
+        <div class="food-log-layout">
+          <div class="panel food-log-main">
+            <!-- Meal categories breakdown -->
+            <div id="foodLogMealsContainer">
+              <!-- Dynamically populated with Breakfast, Lunch, Dinner, Snack items -->
+            </div>
+          </div>
+
+          <aside class="panel food-log-sidebar">
+            <span class="section-kicker">TODAY'S MACRO TARGETS</span>
+            <div class="macro-readout-grid" style="margin:16px 0;">
+              <div class="readout-box">
+                <span>Calories</span>
+                <b id="logSidebarKcal">0 / 2,100</b>
+              </div>
+              <div class="readout-box">
+                <span>Protein</span>
+                <b id="logSidebarP">0 / 140g</b>
+              </div>
+              <div class="readout-box">
+                <span>Carbs</span>
+                <b id="logSidebarC">0 / 210g</b>
+              </div>
+              <div class="readout-box">
+                <span>Fat</span>
+                <b id="logSidebarF">0 / 65g</b>
+              </div>
+            </div>
+            <button class="outline-button full" id="clearDayLogBtn" style="width:100%;margin-top:12px;">Clear today's log</button>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 3: WORKOUTS ================= -->
+      <section class="view" id="view-workouts">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">TRAINING PLAN</span>
+            <h2>Move with purpose.</h2>
+            <p>A plan shaped around your goals, schedule and equipment.</p>
+          </div>
+          <button class="outline-button" id="switchWorkoutPlanBtn">Show another workout</button>
+        </div>
+
+        <div class="workout-plan-grid">
+          <article class="panel workout-card-full">
+            <div class="workout-card-hero">
+              <img src="images/workout-rdl.jpg" alt="Dumbbell training" id="planWorkoutImg" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
+                <div>
+                  <span class="section-kicker" id="planFocusBadge">GLUTES · BACK · CORE</span>
+                  <h3 id="planWorkoutTitle" style="font-size:1.4rem;color:#34483a;margin:4px 0;">Full-body strength</h3>
+                  <p id="planBenefitText" style="color:#637367;font-size:.92rem;">Build strength with compound movements that train your posterior chain and core together.</p>
+                </div>
+                <button class="solid-button" id="markWorkoutDoneBtn">Mark completed ✓</button>
+              </div>
+            </div>
+
+            <div class="exercise-step-list" id="planMoveList" style="margin-top:22px;">
+              <!-- Populated dynamically with movements -->
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 4: EXERCISE LIBRARY ================= -->
+      <section class="view" id="view-exercise-library">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">MOVEMENT LIBRARY</span>
+            <h2>Find your next move.</h2>
+            <p>Explore gym and at-home exercises by muscle group.</p>
+          </div>
+          <div class="search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input type="text" id="exerciseSearchInput" placeholder="Search exercises...">
+          </div>
+        </div>
+
+        <div class="muscle-tabs" id="muscleTabs">
+          <!-- Muscle tabs: Chest, Back, Shoulders, Arms, Core, Legs -->
+        </div>
+
+        <div class="muscle-tags" id="muscleSubTags">
+          <!-- Sub-tags -->
+        </div>
+
+        <div class="library-heading" style="margin:20px 0 12px;display:flex;justify-content:space-between;">
+          <div>
+            <span class="section-kicker" id="libFilterHeader">LEGS · QUADS / HAMSTRINGS / GLUTES</span>
+            <h3 style="font-size:1.15rem;color:#34483a;">Exercises for you</h3>
+          </div>
+          <span class="result-count" id="libResultCount">Filtered results</span>
+        </div>
+
+        <div class="exercise-cards" id="exerciseCardsContainer">
+          <!-- Populated dynamically with movement cards -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 5: MY FOODS ================= -->
+      <section class="view" id="view-my-foods">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">YOUR PERSONAL COLLECTION</span>
+            <h2>My foods</h2>
+            <p>Your go-to meals, recipes and custom creations.</p>
+          </div>
+          <button class="solid-button" id="createCustomFoodBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path><path d="M12 5v14"></path>
+            </svg>
+            Create custom food
+          </button>
+        </div>
+
+        <div class="saved-foods-grid" id="savedFoodsGrid">
+          <!-- Populated dynamically with custom / saved foods -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 6: PROFILE ================= -->
+      <section class="view" id="view-profile">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker">YOUR BASELINE</span>
+            <h2>Personalize your plan.</h2>
+            <p>A few details help us make your daily targets more accurate and useful.</p>
+          </div>
+          <button class="solid-button small" id="saveProfileBtn">
+            Save profile
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="profile-layout">
+          <div class="panel profile-card">
+            <div class="profile-card-head">
+              <div class="large-avatar" id="pfLargeAvatar">JD</div>
+              <div>
+                <h3 id="pfDisplayName">Jordan Davis</h3>
+                <p id="pfEmailDisplay">jordan.davis@example.com</p>
+              </div>
+              <div class="unit-switch" id="unitSwitch">
+                <button type="button" class="active" data-unit="Metric">Metric</button>
+                <button type="button" data-unit="Imperial">Imperial</button>
+              </div>
+            </div>
+
+            <div class="profile-fields" style="margin-top:20px;">
+              <label>
+                Height
+                <div class="input-unit">
+                  <input type="number" id="pfHeightInput" value="175" placeholder="175">
+                  <span id="pfHeightUnit">cm</span>
+                </div>
+              </label>
+
+              <label>
+                Weight
+                <div class="input-unit">
+                  <input type="number" id="pfWeightInput" value="70" placeholder="70">
+                  <span id="pfWeightUnit">kg</span>
+                </div>
+              </label>
+
+              <label class="full-field">
+                Target Calorie Goal
+                <div class="input-unit">
+                  <input type="number" id="pfCalorieInput" value="2100" placeholder="2100">
+                  <span>kcal / day</span>
+                </div>
+              </label>
+
+              <label class="full-field">
+                Primary Goal
+                <select id="pfGoalSelect">
+                  <option value="Fat loss">Fat loss</option>
+                  <option value="Maintain weight" selected>Maintain weight</option>
+                  <option value="Build muscle">Build muscle</option>
+                  <option value="Improve fitness">Improve fitness</option>
+                </select>
+              </label>
+
+              <label>
+                Training Days / Week
+                <select id="pfDaysSelect">
+                  <option value="3">3 days</option>
+                  <option value="4" selected>4 days</option>
+                  <option value="5">5 days</option>
+                  <option value="6">6 days</option>
+                </select>
+              </label>
+
+              <label>
+                Creatine Preference
+                <select id="pfCreatineSelect">
+                  <option value="yes" selected>Daily 5g creatine</option>
+                  <option value="no">No creatine</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="preference-row">
+              <div class="pref-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z"></path>
+                </svg>
+              </div>
+              <div>
+                <b>Daily water estimate</b>
+                <p><span id="pfWaterCalculated">2.5</span> L / day target based on bodyweight</p>
+              </div>
+              <span class="pref-badge">PERSONALIZED</span>
+            </div>
+          </div>
+
+          <aside class="panel profile-tip">
+            <div class="tip-mark">💡</div>
+            <span class="section-kicker">A NOTE ON YOUR TARGETS</span>
+            <h3 style="font-size:1.1rem;color:#34483a;margin:6px 0;">Consistency beats perfection</h3>
+            <p style="color:#637367;font-size:.88rem;line-height:1.5;">Targets are guides, not strict rules. Hitting close to your protein and calorie target over time is what builds sustainable strength.</p>
+            <div style="margin-top:16px;">
+              <button class="outline-button full" id="adminPortalShortcutBtn" style="width:100%;">Admin & Database Tools</button>
+            </div>
+          </aside>
+        </div>
+      </section>
     </div>
-    <div class="acct-box" style="margin:10px 0 12px">
-      <div class="stats-row"><span>Goal</span><b id="pfGoal">—</b></div>
-      <div class="stats-row"><span>Calorie</span><b id="pfCal">—</b></div>
-      <div class="stats-row"><span>Protein/Carbs/Fat</span><b id="pfPcf">—</b></div>
-      <div class="stats-row"><span>Height/Weight/BMI</span><b id="pfHwb">—</b></div>
+
+    <div class="app-footnote">
+      FORMWISE <span>·</span> A LITTLE BETTER, EVERY DAY
+      <span class="footnote-right" id="footnoteSyncStatus">Cloud Database Connected · Turso</span>
     </div>
-    <button class="btn primary full" data-goto="dashboard" data-close>📊 Go to Dashboard</button>
-    <button class="btn ghost full" data-goto="plan" data-close>🎯 My Workout Plan</button>
-    <button class="btn ghost full" id="openSettingsFromProfile">⚙️ Settings &amp; Admin</button>
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- AUTH MODAL -->
+<div class="modal-backdrop" id="authModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker" id="authSubtitle">ACCOUNT ACCESS</span>
+        <h2 id="authTitle">Sign in to Formwise</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button type="button" class="outline-button small" id="authTabLoginBtn" style="flex:1;background:#edf4e8;border-color:#b4db79;">Sign In</button>
+      <button type="button" class="outline-button small" id="authTabRegisterBtn" style="flex:1;">Create Account</button>
+    </div>
+
+    <form id="authForm" onsubmit="return false;">
+      <div class="modal-fields" style="display:grid;gap:12px;">
+        <label class="full-field" id="authNameField" style="display:none;">
+          Full Name
+          <input type="text" id="authNameInput" placeholder="Jordan Davis" autocomplete="name">
+        </label>
+
+        <label class="full-field">
+          Email address
+          <input type="email" id="authEmailInput" placeholder="your@email.com" required autocomplete="email">
+        </label>
+
+        <label class="full-field">
+          Password
+          <input type="password" id="authPasswordInput" placeholder="••••••••" required autocomplete="current-password">
+        </label>
+      </div>
+
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+        <button type="button" class="solid-button full" id="authSubmitBtn" style="width:100%;height:42px;">Sign In</button>
+        <p class="muted" style="font-size:.78rem;text-align:center;color:#7e8b80;">
+          Data is synced in real-time to Turso cloud database across all your devices.
+        </p>
+      </div>
+    </form>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- LOG FOOD MODAL -->
+<div class="modal-backdrop" id="foodModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">ADD NUTRITION</span>
+        <h2>Log a food item</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <form id="foodLogForm" onsubmit="return false;">
+      <div class="modal-fields" style="display:grid;gap:12px;">
+        <label class="full-field">
+          Meal
+          <select id="foodMealSelect">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack" selected>Snack</option>
+          </select>
+        </label>
+
+        <label class="full-field">
+          Search food library
+          <input type="text" id="foodSearchInput" placeholder="e.g. Oatmeal, Chicken breast, Banana, Greek yogurt...">
+        </label>
+
+        <div id="foodSearchResults" style="max-height:180px;overflow-y:auto;border:1px solid #edf0e9;border-radius:8px;padding:6px;display:none;">
+          <!-- Quick search options -->
+        </div>
+
+        <label>
+          Portion (grams / ml)
+          <div class="input-unit">
+            <input type="number" id="foodPortionInput" value="100">
+            <span>g</span>
+          </div>
+        </label>
+
+        <label>
+          Calories (kcal)
+          <input type="number" id="foodCalInput" value="150" readonly style="background:#f4f7f2;">
+        </label>
+
+        <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <label>
+            Protein (g)
+            <input type="number" id="foodPInput" value="10" readonly style="background:#f4f7f2;">
+          </label>
+          <label>
+            Carbs (g)
+            <input type="number" id="foodCInput" value="15" readonly style="background:#f4f7f2;">
+          </label>
+          <label>
+            Fat (g)
+            <input type="number" id="foodFInput" value="4" readonly style="background:#f4f7f2;">
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button type="button" class="solid-button full" id="confirmAddFoodBtn" style="width:100%;height:42px;">Add to Food Log</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CUSTOM FOOD MODAL -->
+<div class="modal-backdrop" id="customFoodModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">MY FOODS</span>
+        <h2>Create custom recipe</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <form id="customFoodForm" onsubmit="return false;">
+      <div class="modal-fields" style="display:grid;gap:12px;">
+        <label class="full-field">
+          Food Name
+          <input type="text" id="customFoodName" placeholder="e.g. Homemade Protein Bar" required>
+        </label>
+        <label class="full-field">
+          Serving detail
+          <input type="text" id="customFoodServing" placeholder="e.g. 1 bar (60g)" required>
+        </label>
+        <label>
+          Calories (kcal)
+          <input type="number" id="customFoodCal" placeholder="220" required>
+        </label>
+        <label>
+          Protein (g)
+          <input type="number" id="customFoodP" placeholder="20" required>
+        </label>
+        <label>
+          Carbs (g)
+          <input type="number" id="customFoodC" placeholder="18" required>
+        </label>
+        <label>
+          Fat (g)
+          <input type="number" id="customFoodF" placeholder="6" required>
+        </label>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button type="button" class="solid-button full" id="saveCustomFoodBtn" style="width:100%;height:42px;">Save to My Foods</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SETTINGS & ADMIN MODAL -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">SETTINGS &amp; ADMIN</span>
+        <h2>Account &amp; Database</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#f4f7f2;border:1px solid #edf0e9;border-radius:12px;padding:14px;" id="settingsAccountInfo">
+        <b id="settingsUserName">Jordan Davis</b>
+        <p id="settingsUserEmail" style="color:#637367;font-size:.88rem;margin-top:3px;">jordan.davis@example.com</p>
+        <span class="pref-badge" id="settingsRoleBadge" style="margin-top:8px;display:inline-block;">USER</span>
+      </div>
+
+      <div style="border:1px solid #edf0e9;border-radius:12px;padding:14px;">
+        <b style="color:#34483a;font-size:.95rem;">Database Sync Status</b>
+        <p style="color:#637367;font-size:.85rem;margin:4px 0 10px;">
+          Connected to Turso Cloud SQLite in Mumbai region. All changes are encrypted and backed up.
+        </p>
+        <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database ⟳</button>
+      </div>
+
+      <div id="adminSection" style="display:none;border:1px solid #e2ebd9;background:#f9fcf7;border-radius:12px;padding:14px;">
+        <b style="color:#203b29;font-size:.95rem;">👑 Admin Controls</b>
+        <p style="color:#637367;font-size:.85rem;margin:4px 0 10px;">Manage registered accounts and database records.</p>
+        <button type="button" class="solid-button small" id="viewAllUsersBtn">View Registered Users</button>
+        <div id="adminUsersList" style="margin-top:10px;font-size:.85rem;max-height:140px;overflow-y:auto;"></div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <button type="button" class="outline-button full" id="logoutBtn" style="color:#c53030;border-color:#feb2b2;width:100%;">
+          🚪 Log Out
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-notice" id="toastNotice">
+  <span id="toastMsg">Action completed</span>
+</div>
+
 <script src="data.js"></script>
 <script src="motion.min.js"></script>
 <script src="api.js"></script>
