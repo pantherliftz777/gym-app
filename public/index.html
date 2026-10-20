@@ -354,12 +354,20 @@
             <h2>Food log</h2>
             <p>A clear picture of what’s fueling you today.</p>
           </div>
-          <button class="solid-button" id="foodLogAddBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14"></path><path d="M12 5v14"></path>
-            </svg>
-            Log food
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button class="outline-button" id="openCameraBtn" style="border-color:#b4db79;background:#f3f8ee;">
+              📷 Scan Food Photo
+            </button>
+            <button class="outline-button" id="openRecipeBuilderBtn" style="border-color:#b4db79;background:#f3f8ee;">
+              🍳 Custom Recipe Builder
+            </button>
+            <button class="solid-button" id="foodLogAddBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path><path d="M12 5v14"></path>
+              </svg>
+              Log food
+            </button>
+          </div>
         </div>
 
         <div class="food-log-layout">
@@ -370,27 +378,56 @@
             </div>
           </div>
 
-          <aside class="panel food-log-sidebar">
-            <span class="section-kicker">TODAY'S MACRO TARGETS</span>
-            <div class="macro-readout-grid" style="margin:16px 0;">
-              <div class="readout-box">
-                <span>Calories</span>
-                <b id="logSidebarKcal">0 / 2,100</b>
+          <aside class="panel food-log-sidebar macro-target-card">
+            <span class="section-kicker" style="letter-spacing:1px;font-size:.78rem;color:#78887c;margin-bottom:14px;display:block;">TODAY'S MACRO TARGETS</span>
+            
+            <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
+              <!-- Calories -->
+              <div class="macro-target-row">
+                <div class="macro-target-labels">
+                  <span class="macro-target-name">🔥 Calories</span>
+                  <span class="macro-target-values"><b id="sideKcalCurrent">0</b> <small style="color:#78887c;">/ <span id="sideKcalGoal">2,000</span> kcal</small></span>
+                </div>
+                <div class="macro-meter-track">
+                  <div class="macro-meter-fill cal" id="meterCal" style="width:0%;"></div>
+                </div>
               </div>
-              <div class="readout-box">
-                <span>Protein</span>
-                <b id="logSidebarP">0 / 140g</b>
+
+              <!-- Protein -->
+              <div class="macro-target-row">
+                <div class="macro-target-labels">
+                  <span class="macro-target-name">🍗 Protein</span>
+                  <span class="macro-target-values"><b id="sidePCurrent">0</b> <small style="color:#78887c;">/ <span id="sidePGoal">165</span>g</small></span>
+                </div>
+                <div class="macro-meter-track">
+                  <div class="macro-meter-fill pro" id="meterP" style="width:0%;"></div>
+                </div>
               </div>
-              <div class="readout-box">
-                <span>Carbs</span>
-                <b id="logSidebarC">0 / 210g</b>
+
+              <!-- Carbs -->
+              <div class="macro-target-row">
+                <div class="macro-target-labels">
+                  <span class="macro-target-name">🍚 Carbs</span>
+                  <span class="macro-target-values"><b id="sideCCurrent">0</b> <small style="color:#78887c;">/ <span id="sideCGoal">139</span>g</small></span>
+                </div>
+                <div class="macro-meter-track">
+                  <div class="macro-meter-fill carb" id="meterC" style="width:0%;"></div>
+                </div>
               </div>
-              <div class="readout-box">
-                <span>Fat</span>
-                <b id="logSidebarF">0 / 65g</b>
+
+              <!-- Fat -->
+              <div class="macro-target-row">
+                <div class="macro-target-labels">
+                  <span class="macro-target-name">🥑 Fat</span>
+                  <span class="macro-target-values"><b id="sideFCurrent">0</b> <small style="color:#78887c;">/ <span id="sideFGoal">87</span>g</small></span>
+                </div>
+                <div class="macro-meter-track">
+                  <div class="macro-meter-fill fat" id="meterF" style="width:0%;"></div>
+                </div>
               </div>
             </div>
-            <button class="outline-button full" id="clearDayLogBtn" style="width:100%;margin-top:12px;">Clear today's log</button>
+
+            <button class="outline-button full" id="clearDayLogBtn" style="width:100%;font-size:.85rem;color:#78887c;border-color:#e4e9e1;">Clear today's log</button>
           </aside>
         </div>
       </section>
@@ -871,6 +908,244 @@
         <p style="color:#637367;font-size:.8rem;margin-top:4px;">Connecting to OpenRouter free models with automatic failover</p>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: EDIT FOOD ITEM ============ -->
+<div class="modal-backdrop" id="editFoodModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">UPDATE FOOD ENTRY</span>
+        <h2 id="editFoodTitle">Edit Food Item</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <form id="editFoodForm" onsubmit="return false;">
+      <div class="modal-fields" style="display:grid;gap:12px;">
+        <label class="full-field">
+          Food Name
+          <input type="text" id="editFoodName" required>
+        </label>
+
+        <label>
+          Meal Category
+          <select id="editFoodMeal">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </label>
+
+        <label>
+          Portion (grams / ml)
+          <div class="input-unit">
+            <input type="number" id="editFoodPortion" value="100">
+            <span>g</span>
+          </div>
+        </label>
+
+        <label class="full-field">
+          Calories (kcal)
+          <input type="number" id="editFoodCal" required>
+        </label>
+
+        <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <label>
+            Protein (g)
+            <input type="number" id="editFoodP" required>
+          </label>
+          <label>
+            Carbs (g)
+            <input type="number" id="editFoodC" required>
+          </label>
+          <label>
+            Fat (g)
+            <input type="number" id="editFoodF" required>
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button type="button" class="outline-button" data-close style="flex:1;">Cancel</button>
+        <button type="button" class="solid-button" id="saveEditFoodBtn" style="flex:2;">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: CUSTOM INGREDIENT RECIPE BUILDER ============ -->
+<div class="modal-backdrop" id="recipeBuilderModal">
+  <div class="modal-card" style="max-width:620px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">CUSTOM MEAL BUILDER</span>
+        <h2>Build Your Custom Dish from Ingredients</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <form id="recipeBuilderForm" onsubmit="return false;">
+      <p style="color:#637367;font-size:.86rem;margin-bottom:12px;line-height:1.4;">
+        Add your ingredients step-by-step (e.g. Rice + Vegetables + Spices + Paneer/Egg/Chicken). Nutrients calculate automatically!
+      </p>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:14px;">
+        <label>
+          Dish Name
+          <input type="text" id="recipeDishName" placeholder="e.g. Homemade Fried Rice" value="Fried Rice" required>
+        </label>
+        <label>
+          Meal
+          <select id="recipeMealSelect">
+            <option value="Lunch" selected>Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0e9;padding-bottom:6px;">
+        <b style="color:#34483a;font-size:.9rem;">Ingredients List</b>
+        <button type="button" class="outline-button small" id="addIngredientRowBtn" style="font-size:.8rem;padding:4px 10px;">
+          + Add Ingredient
+        </button>
+      </div>
+
+      <!-- Ingredient Rows Container -->
+      <div class="recipe-builder-table" id="ingredientRowsContainer">
+        <!-- Dynamically rendered rows -->
+      </div>
+
+      <!-- Live Nutrition Summary Box -->
+      <div class="recipe-summary-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <b style="color:#203b29;font-size:.92rem;">Total Dish Nutrition</b>
+          <button type="button" class="text-button" id="aiSuggestRecipeBtn" style="font-size:.82rem;color:#203b29;font-weight:700;">
+            ✨ AI Macro Tip
+          </button>
+        </div>
+        <div class="recipe-macro-grid">
+          <div class="recipe-macro-stat">
+            <span>Calories</span>
+            <b id="recipeTotKcal">0</b>
+          </div>
+          <div class="recipe-macro-stat">
+            <span>Protein</span>
+            <b id="recipeTotP">0g</b>
+          </div>
+          <div class="recipe-macro-stat">
+            <span>Carbs</span>
+            <b id="recipeTotC">0g</b>
+          </div>
+          <div class="recipe-macro-stat">
+            <span>Fat</span>
+            <b id="recipeTotF">0g</b>
+          </div>
+        </div>
+        <p id="recipeAiTipText" style="color:#576b5d;font-size:.8rem;margin-top:8px;display:none;"></p>
+      </div>
+
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button type="button" class="outline-button" id="saveRecipeToMyFoodsBtn" style="flex:1;">
+          Save to My Foods
+        </button>
+        <button type="button" class="solid-button" id="logRecipeToTodayBtn" style="flex:1;">
+          Add to Food Log ✓
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: CAMERA / PHOTO FOOD RECOGNITION ============ -->
+<div class="modal-backdrop" id="cameraModal">
+  <div class="modal-card" style="max-width:480px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">AI FOOD SCANNER</span>
+        <h2>Scan Meal with Camera</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+
+    <!-- Step 1: Capture / Upload -->
+    <div id="camStep1">
+      <p style="color:#637367;font-size:.88rem;margin-bottom:14px;">
+        Take a picture or upload a photo of your food plate. AI will analyze the dish and calculate calories and macros.
+      </p>
+
+      <div class="cam-dropzone" id="camDrop">
+        <input type="file" id="camFileInput" accept="image/*" capture="environment" style="display:none;" />
+        <div style="font-size:2.4rem;margin-bottom:8px;">📸</div>
+        <b style="color:#203125;font-size:1rem;display:block;">Capture or Drag &amp; Drop Photo</b>
+        <p style="color:#78887c;font-size:.82rem;margin-top:4px;">Supports JPG, PNG, WebP up to 10MB</p>
+
+        <div class="cam-action-buttons">
+          <button type="button" class="cam-big-btn" id="camClickTakeBtn">
+            <span>📷</span>
+            <span>Take Photo</span>
+          </button>
+          <button type="button" class="cam-big-btn" id="camClickUploadBtn">
+            <span>🖼️</span>
+            <span>Upload Image</span>
+          </button>
+        </div>
+      </div>
+
+      <img id="camImagePreview" class="cam-preview-image" style="display:none;" alt="Meal photo preview">
+
+      <div style="margin-top:16px;">
+        <button type="button" class="solid-button full" id="startCamAnalyzeBtn" style="display:none;width:100%;height:42px;background:#203b29;">
+          🤖 Analyze Food with AI
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Loading State -->
+    <div id="camStep2" style="display:none;text-align:center;padding:30px 10px;">
+      <div style="font-size:2.2rem;animation:pulse 1s infinite;">🔍</div>
+      <b style="color:#203125;font-size:1.05rem;display:block;margin-top:10px;" id="camAnalyzeStatusText">Detecting food visual...</b>
+      <p style="color:#78887c;font-size:.85rem;margin-top:4px;">Estimating portion size and nutrient breakdown</p>
+    </div>
+
+    <!-- Step 3: Result & Confirm -->
+    <div id="camStep3" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f5f8f3;border:1px solid #dce8d5;border-radius:12px;margin-bottom:14px;">
+        <img id="camResultThumb" style="width:55px;height:55px;border-radius:10px;object-fit:cover;" alt="Food">
+        <div>
+          <b style="color:#203125;font-size:1.05rem;" id="camResultName">Food Detected</b>
+          <p style="color:#637367;font-size:.82rem;margin-top:2px;" id="camResultMacros">0 kcal · 0g P · 0g C · 0g F</p>
+        </div>
+      </div>
+
+      <div class="modal-fields" style="display:grid;gap:11px;">
+        <label>
+          Portion (grams)
+          <div class="input-unit">
+            <input type="number" id="camPortionGrams" value="250">
+            <span>g</span>
+          </div>
+        </label>
+        <label>
+          Meal
+          <select id="camTargetMeal">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch" selected>Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button type="button" class="outline-button" id="camRetakeBtn" style="flex:1;">Retake</button>
+        <button type="button" class="solid-button" id="camConfirmAddBtn" style="flex:2;">Add to Food Log ✓</button>
+      </div>
+    </div>
   </div>
 </div>
 

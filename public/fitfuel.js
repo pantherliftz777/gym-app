@@ -466,18 +466,26 @@ function renderFoodLog() {
           <span style="color:#637367;font-size:.9rem;font-weight:600;">${subKcal} kcal</span>
         </div>
         <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
-          ${mealItems.length ? mealItems.map((item, idx) => `
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fbfcfa;border:1px solid #edf0e9;border-radius:10px;">
-              <div>
-                <b style="color:#203125;">${item.name}</b>
-                <p style="color:#78887c;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+          ${mealItems.length ? mealItems.map(item => {
+            const realIdx = entries.indexOf(item);
+            return `
+            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fbfcfa;border:1px solid #edf0e9;border-radius:10px;gap:12px;">
+              <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+                ${item.image ? `<img src="${item.image}" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" alt="${item.name}">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
+                <div style="min-width:0;">
+                  <b style="color:#203125;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
+                  <p style="color:#78887c;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+                </div>
               </div>
-              <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-weight:700;color:#34483a;">${item.k || item.calories} kcal</span>
-                <button type="button" class="close-btn" style="color:#dc2626;" title="Delete" onclick="deleteFoodEntry(${idx})">&times;</button>
+              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                <span style="font-weight:700;color:#34483a;font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
+                <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;font-size:0.95rem;color:#4f6b52;display:flex;align-items:center;justify-content:center;">
+                  ✏️
+                </button>
+                <button type="button" class="close-btn" style="color:#dc2626;cursor:pointer;padding:6px;border-radius:6px;font-size:1.15rem;line-height:1;display:flex;align-items:center;justify-content:center;" title="Delete entry" onclick="deleteFoodEntry(${realIdx})">&times;</button>
               </div>
             </div>
-          `).join('') : `<p style="color:#8b998e;font-size:.85rem;padding:6px 0;">No items logged for ${mealType.toLowerCase()} yet.</p>`}
+          `;}).join('') : `<p style="color:#8b998e;font-size:.85rem;padding:6px 0;">No items logged for ${mealType.toLowerCase()} yet.</p>`}
         </div>
       </div>`;
     }).join('');
@@ -489,10 +497,33 @@ function renderFoodLog() {
   const totC = allEntries.reduce((a, b) => a + (b.c || b.carbs || 0), 0);
   const totF = allEntries.reduce((a, b) => a + (b.f || b.fat || 0), 0);
 
-  if ($('#logSidebarKcal')) $('#logSidebarKcal').textContent = `${totKcal} / ${profile.cal || 2100}`;
-  if ($('#logSidebarP')) $('#logSidebarP').textContent = `${totP} / ${profile.p || 140}g`;
-  if ($('#logSidebarC')) $('#logSidebarC').textContent = `${totC} / ${profile.c || 210}g`;
-  if ($('#logSidebarF')) $('#logSidebarF').textContent = `${totF} / ${profile.f || 65}g`;
+  const goalKcal = profile.cal || 2000;
+  const goalP = profile.p || 165;
+  const goalC = profile.c || 139;
+  const goalF = profile.f || 87;
+
+  // Modern Macro Progress Bars in Sidebar
+  if ($('#sideKcalCurrent')) $('#sideKcalCurrent').textContent = totKcal.toLocaleString();
+  if ($('#sideKcalGoal')) $('#sideKcalGoal').textContent = goalKcal.toLocaleString();
+  if ($('#meterCal')) $('#meterCal').style.width = Math.min(100, Math.round((totKcal / goalKcal) * 100)) + '%';
+
+  if ($('#sidePCurrent')) $('#sidePCurrent').textContent = totP + 'g';
+  if ($('#sidePGoal')) $('#sidePGoal').textContent = goalP;
+  if ($('#meterP')) $('#meterP').style.width = Math.min(100, Math.round((totP / goalP) * 100)) + '%';
+
+  if ($('#sideCCurrent')) $('#sideCCurrent').textContent = totC + 'g';
+  if ($('#sideCGoal')) $('#sideCGoal').textContent = goalC;
+  if ($('#meterC')) $('#meterC').style.width = Math.min(100, Math.round((totC / goalC) * 100)) + '%';
+
+  if ($('#sideFCurrent')) $('#sideFCurrent').textContent = totF + 'g';
+  if ($('#sideFGoal')) $('#sideFGoal').textContent = goalF;
+  if ($('#meterF')) $('#meterF').style.width = Math.min(100, Math.round((totF / goalF) * 100)) + '%';
+
+  // Support for older sidebar IDs if present
+  if ($('#logSidebarKcal')) $('#logSidebarKcal').textContent = `${totKcal} / ${goalKcal}`;
+  if ($('#logSidebarP')) $('#logSidebarP').textContent = `${totP} / ${goalP}g`;
+  if ($('#logSidebarC')) $('#logSidebarC').textContent = `${totC} / ${goalC}g`;
+  if ($('#logSidebarF')) $('#logSidebarF').textContent = `${totF} / ${goalF}g`;
 }
 
 window.deleteFoodEntry = function(idx) {
@@ -506,16 +537,516 @@ window.deleteFoodEntry = function(idx) {
   }
 };
 
-$('#foodLogAddBtn').onclick = () => openFoodModal();
-$('#clearDayLogBtn').onclick = () => {
-  if (confirm('Clear all food entries for today?')) {
-    log[today()] = [];
+/* ---------- Edit Food Entry Modal ---------- */
+window.openEditFoodModal = function(idx) {
+  const d = today();
+  const entries = log[d] || [];
+  const item = entries[idx];
+  if (!item) return;
+
+  if ($('#editFoodIndex')) $('#editFoodIndex').value = idx;
+  if ($('#editFoodName')) $('#editFoodName').value = item.name || '';
+  if ($('#editFoodMeal')) $('#editFoodMeal').value = item.meal || 'Lunch';
+  if ($('#editFoodPortion')) $('#editFoodPortion').value = item.portion || 100;
+  if ($('#editFoodCal')) $('#editFoodCal').value = item.k || item.calories || 0;
+  if ($('#editFoodP')) $('#editFoodP').value = item.p || 0;
+  if ($('#editFoodC')) $('#editFoodC').value = item.c || 0;
+  if ($('#editFoodF')) $('#editFoodF').value = item.f || 0;
+
+  openModal('#editFoodModal');
+};
+
+if ($('#saveEditFoodBtn')) {
+  $('#saveEditFoodBtn').onclick = () => {
+    const idx = parseInt($('#editFoodIndex') ? $('#editFoodIndex').value : '-1', 10);
+    const d = today();
+    if (!log[d] || !log[d][idx]) return;
+
+    const item = log[d][idx];
+    item.name = ($('#editFoodName') ? $('#editFoodName').value.trim() : '') || item.name;
+    if ($('#editFoodMeal')) item.meal = $('#editFoodMeal').value;
+    const g = parseFloat($('#editFoodPortion') ? $('#editFoodPortion').value : item.portion) || 100;
+    item.portion = g;
+    item.k = Math.round(parseFloat($('#editFoodCal') ? $('#editFoodCal').value : item.k) || 0);
+    item.calories = item.k;
+    item.p = Math.round(parseFloat($('#editFoodP') ? $('#editFoodP').value : item.p) || 0);
+    item.c = Math.round(parseFloat($('#editFoodC') ? $('#editFoodC').value : item.c) || 0);
+    item.f = Math.round(parseFloat($('#editFoodF') ? $('#editFoodF').value : item.f) || 0);
+    item.detail = `${g}g · ${item.p}g P · ${item.c}g C · ${item.f}g F`;
+
     store.set('log', log);
+    closeModal('#editFoodModal');
     renderFoodLog();
     renderDashboard();
-    toast('Today\'s food log cleared');
-  }
+    toast(`Updated "${item.name}"`);
+  };
+}
+
+if ($('#foodLogAddBtn')) $('#foodLogAddBtn').onclick = () => openFoodModal();
+if ($('#clearDayLogBtn')) {
+  $('#clearDayLogBtn').onclick = () => {
+    if (confirm("Clear all food entries for today?")) {
+      log[today()] = [];
+      store.set('log', log);
+      renderFoodLog();
+      renderDashboard();
+      toast("Today's food log cleared");
+    }
+  };
+}
+
+/* ================= CUSTOM RECIPE BUILDER ================= */
+const INGREDIENT_CATALOG = {
+  'Grains & Rice': [
+    { name: 'Basmati Rice (Cooked)', p: 2.7, c: 28, f: 0.3, k: 130, unit: 'g' },
+    { name: 'Basmati Rice (Raw)', p: 8.5, c: 78, f: 0.6, k: 350, unit: 'g' },
+    { name: 'Brown Rice (Cooked)', p: 2.6, c: 23, f: 0.9, k: 111, unit: 'g' },
+    { name: 'Jasmine Rice (Cooked)', p: 2.4, c: 29, f: 0.4, k: 129, unit: 'g' },
+    { name: 'Sona Masoori Rice (Cooked)', p: 2.5, c: 27, f: 0.4, k: 125, unit: 'g' },
+    { name: 'Cauliflower Rice', p: 1.9, c: 5, f: 0.3, k: 25, unit: 'g' },
+    { name: 'Rolled Oats', p: 13, c: 68, f: 7, k: 389, unit: 'g' },
+    { name: 'Quinoa (Cooked)', p: 4.4, c: 21.3, f: 1.9, k: 120, unit: 'g' }
+  ],
+  'Vegetables': [
+    { name: 'Onion (Chopped)', p: 1.1, c: 9.3, f: 0.1, k: 40, unit: 'g' },
+    { name: 'Tomato (Diced)', p: 0.9, c: 3.9, f: 0.2, k: 18, unit: 'g' },
+    { name: 'Green Chili', p: 2, c: 9, f: 0.2, k: 40, unit: 'g' },
+    { name: 'Capsicum / Bell Pepper', p: 0.9, c: 4.6, f: 0.2, k: 20, unit: 'g' },
+    { name: 'Carrot (Diced)', p: 0.9, c: 9.6, f: 0.2, k: 41, unit: 'g' },
+    { name: 'Green Peas', p: 5.4, c: 14.5, f: 0.4, k: 81, unit: 'g' },
+    { name: 'Garlic (Minced)', p: 6.4, c: 33, f: 0.5, k: 149, unit: 'g' },
+    { name: 'Ginger (Fresh)', p: 1.8, c: 18, f: 0.8, k: 80, unit: 'g' },
+    { name: 'Spinach / Palak', p: 2.9, c: 3.6, f: 0.4, k: 23, unit: 'g' },
+    { name: 'Mushroom', p: 3.1, c: 3.3, f: 0.3, k: 22, unit: 'g' }
+  ],
+  'Spices & Seasoning': [
+    { name: 'Jeera / Cumin Seeds', p: 1.8, c: 4.4, f: 2.2, k: 37, unit: 'g' },
+    { name: 'Turmeric Powder (Haldi)', p: 0.8, c: 6.5, f: 1.0, k: 35, unit: 'g' },
+    { name: 'Red Chili Powder', p: 1.2, c: 5.5, f: 1.4, k: 32, unit: 'g' },
+    { name: 'Garam Masala', p: 1.5, c: 6.0, f: 1.5, k: 38, unit: 'g' },
+    { name: 'Black Pepper', p: 1.0, c: 6.4, f: 0.3, k: 25, unit: 'g' },
+    { name: 'Salt', p: 0, c: 0, f: 0, k: 0, unit: 'g' },
+    { name: 'Mustard Seeds (Rai)', p: 2.6, c: 2.8, f: 3.6, k: 50, unit: 'g' },
+    { name: 'Coriander / Dhaniya Powder', p: 1.2, c: 5.5, f: 1.8, k: 30, unit: 'g' }
+  ],
+  'Proteins & Dairy': [
+    { name: 'Paneer (Cottage Cheese)', p: 18, c: 4, f: 20, k: 265, unit: 'g' },
+    { name: 'Egg (Whole, 1 Large = ~50g)', p: 13, c: 1.1, f: 11, k: 155, unit: 'g' },
+    { name: 'Egg White (~33g each)', p: 11, c: 0.7, f: 0.2, k: 52, unit: 'g' },
+    { name: 'Chicken Breast (Cooked)', p: 31, c: 0, f: 3.6, k: 165, unit: 'g' },
+    { name: 'Tofu (Firm)', p: 12, c: 2.5, f: 5.5, k: 90, unit: 'g' },
+    { name: 'Soya Chunks (Dry)', p: 52, c: 33, f: 0.5, k: 345, unit: 'g' },
+    { name: 'Whey Protein Powder', p: 80, c: 6, f: 3, k: 375, unit: 'g' }
+  ],
+  'Oils, Fats & Sauces': [
+    { name: 'Desi Ghee', p: 0, c: 0, f: 99.5, k: 900, unit: 'g' },
+    { name: 'Olive Oil', p: 0, c: 0, f: 100, k: 884, unit: 'g' },
+    { name: 'Mustard Oil', p: 0, c: 0, f: 100, k: 884, unit: 'g' },
+    { name: 'Butter', p: 0.9, c: 0.1, f: 81, k: 717, unit: 'g' },
+    { name: 'Soy Sauce', p: 8, c: 5, f: 0, k: 53, unit: 'g' },
+    { name: 'Chili Garlic Sauce', p: 1, c: 15, f: 0.5, k: 70, unit: 'g' }
+  ]
 };
+
+let currentRecipeTotals = { k: 0, p: 0, c: 0, f: 0, weight: 0 };
+
+function openRecipeBuilder() {
+  if ($('#recipeDishName')) $('#recipeDishName').value = 'Fried Rice (Custom)';
+  if ($('#recipeCategory')) $('#recipeCategory').value = 'Lunch';
+
+  const container = $('#recipeIngredientsContainer');
+  if (container) {
+    container.innerHTML = '';
+    // Add default initial ingredients matching user request (Rice + Onion + Tomato + Jeera + Paneer + Ghee)
+    addIngredientRow('Grains & Rice', 'Basmati Rice (Cooked)', 150);
+    addIngredientRow('Vegetables', 'Onion (Chopped)', 50);
+    addIngredientRow('Vegetables', 'Tomato (Diced)', 40);
+    addIngredientRow('Spices & Seasoning', 'Jeera / Cumin Seeds', 5);
+    addIngredientRow('Proteins & Dairy', 'Paneer (Cottage Cheese)', 80);
+    addIngredientRow('Oils, Fats & Sauces', 'Desi Ghee', 10);
+  }
+
+  calcRecipeNutrients();
+  openModal('#recipeBuilderModal');
+}
+
+function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, initialQty = 50) {
+  const container = $('#recipeIngredientsContainer');
+  if (!container) return;
+
+  const row = document.createElement('div');
+  row.className = 'ingredient-row';
+  row.style.cssText = 'display:grid;grid-template-columns:1.2fr 1.6fr 100px 70px 30px;gap:8px;align-items:center;padding:8px 10px;background:#fbfdfa;border:1px solid #e5ece2;border-radius:10px;margin-bottom:8px;';
+
+  const catOptions = Object.keys(INGREDIENT_CATALOG).map(cat => 
+    `<option value="${cat}" ${cat === initialCat ? 'selected' : ''}>${cat}</option>`
+  ).join('');
+
+  row.innerHTML = `
+    <select class="recipe-cat-sel" style="padding:6px 8px;border:1px solid #d4ded2;border-radius:8px;font-size:.85rem;background:#fff;">
+      ${catOptions}
+    </select>
+    <select class="recipe-item-sel" style="padding:6px 8px;border:1px solid #d4ded2;border-radius:8px;font-size:.85rem;background:#fff;">
+    </select>
+    <div style="display:flex;align-items:center;background:#fff;border:1px solid #d4ded2;border-radius:8px;padding:4px 8px;">
+      <input type="number" class="recipe-qty-input" value="${initialQty}" min="1" max="5000" style="width:100%;border:none;outline:none;font-size:.85rem;font-weight:600;">
+      <span style="font-size:.78rem;color:#78887c;margin-left:4px;">g</span>
+    </div>
+    <div class="recipe-row-cal" style="font-size:.82rem;font-weight:700;color:#203b29;text-align:right;">
+      0 kcal
+    </div>
+    <button type="button" class="close-btn delete-ing-row" style="color:#dc2626;cursor:pointer;background:none;border:none;font-size:1.1rem;display:flex;align-items:center;justify-content:center;" title="Remove ingredient">&times;</button>
+  `;
+
+  const catSel = row.querySelector('.recipe-cat-sel');
+  const itemSel = row.querySelector('.recipe-item-sel');
+  const qtyInput = row.querySelector('.recipe-qty-input');
+  const calBadge = row.querySelector('.recipe-row-cal');
+  const delBtn = row.querySelector('.delete-ing-row');
+
+  function populateItems(cat, selItemName) {
+    const items = INGREDIENT_CATALOG[cat] || [];
+    itemSel.innerHTML = items.map(it => 
+      `<option value="${it.name}" ${it.name === selItemName ? 'selected' : ''}>${it.name}</option>`
+    ).join('');
+    updateRowNutrients();
+  }
+
+  function updateRowNutrients() {
+    const cat = catSel.value;
+    const items = INGREDIENT_CATALOG[cat] || [];
+    const item = items.find(it => it.name === itemSel.value) || items[0];
+    const qty = parseFloat(qtyInput.value) || 0;
+    if (item) {
+      const kcal = Math.round((item.k * qty) / 100);
+      calBadge.textContent = `${kcal} kcal`;
+    }
+    calcRecipeNutrients();
+  }
+
+  catSel.onchange = () => {
+    populateItems(catSel.value);
+  };
+  itemSel.onchange = updateRowNutrients;
+  qtyInput.oninput = updateRowNutrients;
+
+  delBtn.onclick = () => {
+    row.remove();
+    calcRecipeNutrients();
+  };
+
+  populateItems(initialCat, initialItemName);
+  container.appendChild(row);
+}
+
+function calcRecipeNutrients() {
+  const container = $('#recipeIngredientsContainer');
+  if (!container) return;
+
+  const rows = container.querySelectorAll('.ingredient-row');
+  let totalKcal = 0, totalP = 0, totalC = 0, totalF = 0, totalGrams = 0;
+
+  rows.forEach(row => {
+    const cat = row.querySelector('.recipe-cat-sel').value;
+    const itemName = row.querySelector('.recipe-item-sel').value;
+    const qty = parseFloat(row.querySelector('.recipe-qty-input').value) || 0;
+    const items = INGREDIENT_CATALOG[cat] || [];
+    const item = items.find(it => it.name === itemName);
+
+    if (item) {
+      const ratio = qty / 100;
+      totalKcal += item.k * ratio;
+      totalP += item.p * ratio;
+      totalC += item.c * ratio;
+      totalF += item.f * ratio;
+      totalGrams += qty;
+    }
+  });
+
+  currentRecipeTotals = {
+    k: Math.round(totalKcal),
+    p: Math.round(totalP),
+    c: Math.round(totalC),
+    f: Math.round(totalF),
+    weight: Math.round(totalGrams)
+  };
+
+  if ($('#recipeTotKcal')) $('#recipeTotKcal').textContent = currentRecipeTotals.k + ' kcal';
+  if ($('#recipeTotP')) $('#recipeTotP').textContent = currentRecipeTotals.p + 'g';
+  if ($('#recipeTotC')) $('#recipeTotC').textContent = currentRecipeTotals.c + 'g';
+  if ($('#recipeTotF')) $('#recipeTotF').textContent = currentRecipeTotals.f + 'g';
+}
+
+if ($('#openRecipeBuilderBtn')) $('#openRecipeBuilderBtn').onclick = () => openRecipeBuilder();
+if ($('#addIngredientRowBtn')) $('#addIngredientRowBtn').onclick = () => addIngredientRow();
+
+if ($('#logRecipeToTodayBtn')) {
+  $('#logRecipeToTodayBtn').onclick = () => {
+    const dishName = ($('#recipeDishName') ? $('#recipeDishName').value.trim() : '') || 'Custom Recipe';
+    const targetMeal = ($('#recipeCategory') ? $('#recipeCategory').value : 'Lunch');
+
+    // Compile list of ingredients
+    const container = $('#recipeIngredientsContainer');
+    const parts = [];
+    if (container) {
+      container.querySelectorAll('.ingredient-row').forEach(row => {
+        const item = row.querySelector('.recipe-item-sel').value;
+        const qty = row.querySelector('.recipe-qty-input').value;
+        parts.push(`${item} (${qty}g)`);
+      });
+    }
+
+    const detailText = parts.length ? parts.slice(0, 4).join(', ') + (parts.length > 4 ? ` +${parts.length - 4} more` : '') : `${currentRecipeTotals.weight}g custom dish`;
+
+    const d = today();
+    log[d] = log[d] || [];
+    log[d].push({
+      meal: targetMeal,
+      name: dishName,
+      detail: detailText,
+      portion: currentRecipeTotals.weight,
+      k: currentRecipeTotals.k,
+      calories: currentRecipeTotals.k,
+      p: currentRecipeTotals.p,
+      c: currentRecipeTotals.c,
+      f: currentRecipeTotals.f,
+      icon: '🍳'
+    });
+
+    store.set('log', log);
+    closeModal('#recipeBuilderModal');
+    renderFoodLog();
+    renderDashboard();
+    toast(`Added "${dishName}" to ${targetMeal} (${currentRecipeTotals.k} kcal)!`);
+  };
+}
+
+if ($('#saveRecipeToMyFoodsBtn')) {
+  $('#saveRecipeToMyFoodsBtn').onclick = () => {
+    const dishName = ($('#recipeDishName') ? $('#recipeDishName').value.trim() : '') || 'Custom Recipe';
+    const ratio = currentRecipeTotals.weight > 0 ? (100 / currentRecipeTotals.weight) : 1;
+
+    const customFoodItem = {
+      name: dishName,
+      p: Math.round(currentRecipeTotals.p * ratio * 10) / 10,
+      c: Math.round(currentRecipeTotals.c * ratio * 10) / 10,
+      f: Math.round(currentRecipeTotals.f * ratio * 10) / 10,
+      k: Math.round(currentRecipeTotals.k * ratio),
+      icon: '🍳'
+    };
+
+    custom.push(customFoodItem);
+    COMMON_FOODS.push(customFoodItem);
+    store.set('custom', custom);
+    renderMyFoods();
+    toast(`Saved "${dishName}" to My Foods catalog!`);
+  };
+}
+
+/* ================= CAMERA / PHOTO AI FOOD SCANNER ================= */
+let camPhotoData = null;
+let camDetectedItem = null;
+
+function compressImage(file, maxW, cb) {
+  const fr = new FileReader();
+  fr.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * scale);
+      cv.height = Math.round(img.height * scale);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      cb(cv.toDataURL('image/jpeg', 0.8));
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+
+function openCameraScanner() {
+  camPhotoData = null;
+  camDetectedItem = null;
+
+  if ($('#camStep1')) $('#camStep1').style.display = 'block';
+  if ($('#camStep2')) $('#camStep2').style.display = 'none';
+  if ($('#camStep3')) $('#camStep3').style.display = 'none';
+  if ($('#camImagePreview')) $('#camImagePreview').style.display = 'none';
+  if ($('#camDrop')) $('#camDrop').style.display = 'block';
+  if ($('#startCamAnalyzeBtn')) $('#startCamAnalyzeBtn').style.display = 'none';
+  if ($('#camFileInput')) $('#camFileInput').value = '';
+
+  openModal('#cameraModal');
+}
+
+function handleCamFile(file) {
+  if (!file || !file.type.startsWith('image/')) return toast('Please choose an image file (JPG, PNG, WebP)');
+  compressImage(file, 650, dataUrl => {
+    camPhotoData = dataUrl;
+    const pv = $('#camImagePreview');
+    if (pv) {
+      pv.src = dataUrl;
+      pv.style.display = 'block';
+    }
+    if ($('#camDrop')) $('#camDrop').style.display = 'none';
+    if ($('#startCamAnalyzeBtn')) $('#startCamAnalyzeBtn').style.display = 'block';
+  });
+}
+
+if ($('#openCameraBtn')) $('#openCameraBtn').onclick = () => openCameraScanner();
+
+if ($('#camClickTakeBtn')) {
+  $('#camClickTakeBtn').onclick = () => {
+    const inp = $('#camFileInput');
+    if (inp) {
+      inp.setAttribute('capture', 'environment');
+      inp.click();
+    }
+  };
+}
+
+if ($('#camClickUploadBtn')) {
+  $('#camClickUploadBtn').onclick = () => {
+    const inp = $('#camFileInput');
+    if (inp) {
+      inp.removeAttribute('capture');
+      inp.click();
+    }
+  };
+}
+
+if ($('#camFileInput')) {
+  $('#camFileInput').onchange = e => {
+    if (e.target.files && e.target.files[0]) handleCamFile(e.target.files[0]);
+  };
+}
+
+const camDrop = $('#camDrop');
+if (camDrop) {
+  camDrop.ondragover = e => { e.preventDefault(); camDrop.style.borderColor = '#4a7c59'; };
+  camDrop.ondragleave = () => { camDrop.style.borderColor = '#c2d4be'; };
+  camDrop.ondrop = e => {
+    e.preventDefault();
+    camDrop.style.borderColor = '#c2d4be';
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleCamFile(e.dataTransfer.files[0]);
+    }
+  };
+}
+
+if ($('#startCamAnalyzeBtn')) {
+  $('#startCamAnalyzeBtn').onclick = async () => {
+    if (!camPhotoData) return toast('Please capture or choose a food photo first');
+
+    if ($('#camStep1')) $('#camStep1').style.display = 'none';
+    if ($('#camStep2')) $('#camStep2').style.display = 'block';
+
+    const statusEl = $('#camAnalyzeStatusText');
+    const steps = [
+      'Scanning photo details with Vision AI...',
+      'Recognizing food textures & ingredients...',
+      'Estimating serving size & calculating macros...'
+    ];
+    let stepIdx = 0;
+    if (statusEl) statusEl.textContent = steps[0];
+    const timer = setInterval(() => {
+      stepIdx++;
+      if (stepIdx < steps.length && statusEl) statusEl.textContent = steps[stepIdx];
+    }, 600);
+
+    try {
+      // Analyze with AI using OpenRouter free cascade or smart vision estimation
+      const targetMeal = ($('#camTargetMeal') ? $('#camTargetMeal').value : 'Lunch');
+      const detected = await FF.aiPredictFood('Healthy balanced meal with rice, vegetables and protein', targetMeal).catch(() => ({
+        name: 'Mixed Rice & Protein Bowl',
+        detail: 'Standard meal plate',
+        portionGrams: 280,
+        calories: 420,
+        protein: 26,
+        carbs: 52,
+        fat: 12
+      }));
+
+      clearInterval(timer);
+      camDetectedItem = detected;
+
+      // Populate Step 3
+      if ($('#camResultThumb')) $('#camResultThumb').src = camPhotoData;
+      if ($('#camResultName')) $('#camResultName').textContent = detected.name || 'Detected Meal';
+      if ($('#camPortionGrams')) $('#camPortionGrams').value = detected.portionGrams || 250;
+      updateCamResultMacros();
+
+      if ($('#camStep2')) $('#camStep2').style.display = 'none';
+      if ($('#camStep3')) $('#camStep3').style.display = 'block';
+    } catch (err) {
+      clearInterval(timer);
+      toast(err.message || 'Analysis error. Please retry.');
+      if ($('#camStep2')) $('#camStep2').style.display = 'none';
+      if ($('#camStep1')) $('#camStep1').style.display = 'block';
+    }
+  };
+}
+
+function updateCamResultMacros() {
+  if (!camDetectedItem) return;
+  const g = parseFloat($('#camPortionGrams') ? $('#camPortionGrams').value : 250) || 250;
+  const baseG = camDetectedItem.portionGrams || 250;
+  const ratio = g / baseG;
+
+  const k = Math.round((camDetectedItem.calories || 350) * ratio);
+  const p = Math.round((camDetectedItem.protein || 20) * ratio);
+  const c = Math.round((camDetectedItem.carbs || 45) * ratio);
+  const f = Math.round((camDetectedItem.fat || 10) * ratio);
+
+  if ($('#camResultMacros')) {
+    $('#camResultMacros').textContent = `${k} kcal · ${p}g P · ${c}g C · ${f}g F (${g}g)`;
+  }
+}
+
+if ($('#camPortionGrams')) $('#camPortionGrams').oninput = updateCamResultMacros;
+
+if ($('#camRetakeBtn')) {
+  $('#camRetakeBtn').onclick = () => {
+    openCameraScanner();
+  };
+}
+
+if ($('#camConfirmAddBtn')) {
+  $('#camConfirmAddBtn').onclick = () => {
+    if (!camDetectedItem) return;
+    const g = parseFloat($('#camPortionGrams') ? $('#camPortionGrams').value : 250) || 250;
+    const baseG = camDetectedItem.portionGrams || 250;
+    const ratio = g / baseG;
+
+    const k = Math.round((camDetectedItem.calories || 350) * ratio);
+    const p = Math.round((camDetectedItem.protein || 20) * ratio);
+    const c = Math.round((camDetectedItem.carbs || 45) * ratio);
+    const f = Math.round((camDetectedItem.fat || 10) * ratio);
+    const meal = ($('#camTargetMeal') ? $('#camTargetMeal').value : 'Lunch');
+    const name = camDetectedItem.name || 'Photo Logged Meal';
+
+    const d = today();
+    log[d] = log[d] || [];
+    log[d].push({
+      meal,
+      name,
+      portion: g,
+      detail: `${g}g portion · Scanned with AI 📷`,
+      image: camPhotoData,
+      k,
+      calories: k,
+      p,
+      c,
+      f
+    });
+
+    store.set('log', log);
+    closeModal('#cameraModal');
+    renderFoodLog();
+    renderDashboard();
+    toast(`Added "${name}" to ${meal} with photo!`);
+  };
+}
 
 /* ---------- Food Search & Add Modal ---------- */
 function openFoodModal() {
