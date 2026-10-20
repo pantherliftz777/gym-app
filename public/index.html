@@ -130,57 +130,65 @@
   <!-- ================= MAIN AREA ================= -->
   <main class="main-area">
     <header class="topbar">
-      <!-- ROW 1: Controls Row - ALL in one straight horizontal line -->
+      <!-- ROW 1: Date/Clock/Temp -> Theme -> Audio -> Sign in/out -> Setting -> Profile Pic -->
       <div class="topbar-controls-row">
-        <div class="topbar-left-controls">
-          <button aria-label="Open navigation" class="mobile-menu icon-button" id="mobileMenuBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
-            </svg>
-          </button>
+        <button aria-label="Open navigation" class="mobile-menu icon-button" id="mobileMenuBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
+          </svg>
+        </button>
 
-          <div class="header-weather-badge" id="topbarLiveBadge">
-            <span id="eyebrowDate">MONDAY, OCTOBER 20, 2026</span>
-            <span class="badge-dot">•</span>
-            <span id="liveClockTime" style="font-variant-numeric:tabular-nums;font-weight:700;">03:25:12 PM</span>
-            <span class="badge-dot">•</span>
-            <button type="button" class="header-weather-temp" id="headerWeatherBtn" title="Click to change temperature">
-              <span id="headerWeatherIcon">☀️</span> <span id="headerWeatherTemp">29°C</span> <small id="headerWeatherLabel">Warm</small>
-            </button>
-          </div>
+        <!-- 1. Date, Time & Temperature -->
+        <div class="header-weather-badge" id="topbarLiveBadge">
+          <span id="eyebrowDate">WEDNESDAY, OCTOBER 21, 2026</span>
+          <span class="badge-dot">•</span>
+          <span id="liveClockTime" style="font-variant-numeric:tabular-nums;font-weight:700;">05:09:50 AM</span>
+          <span class="badge-dot">•</span>
+          <button type="button" class="header-weather-temp" id="headerWeatherBtn" title="Click to change temperature">
+            <span id="headerWeatherIcon">☀️</span> <span id="headerWeatherTemp">20°C</span> <small id="headerWeatherLabel">Clear Sky</small>
+          </button>
         </div>
 
-        <div class="top-actions">
-          <!-- Theme Switcher (System / Light / Dark) -->
-          <div class="theme-select-wrap" title="Visual Theme (System Default / Light / Dark)">
+        <div class="topbar-right-actions">
+          <!-- 2. Theme Light / Dark / System Selector -->
+          <div class="theme-select-wrap" title="Visual Theme (Light / Dark / System)">
             <select id="themeSelector" class="theme-select-pill" aria-label="Visual Theme">
-              <option value="system">💻 System</option>
               <option value="light">☀️ Light</option>
               <option value="dark">🌙 Dark</option>
+              <option value="system">💻 System</option>
             </select>
           </div>
 
+          <!-- 3. Audio On / Off -->
           <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
             <span id="soundToggleIcon">🔊</span> <span id="soundToggleText">Audio On</span>
           </button>
-          <span class="sync-note" id="syncNote">
-            <span class="status-dot"></span>
-            <span id="syncStatus">Cloud database synced</span>
-          </span>
+
+          <!-- 4. Sign in / Sign out -->
           <button class="text-button" id="topAuthBtn">Sign in</button>
+
+          <!-- 5. Settings Button -->
           <button class="icon-button" id="topSettingsBtn" title="Settings & Admin" aria-label="Settings">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
+
+          <!-- 6. Profile Pic Avatar -->
           <button class="top-avatar" id="topAvatar" aria-label="Open profile">JD</button>
         </div>
       </div>
 
-      <!-- ROW 2: Greeting Row with spacious, comfortable breathing room below -->
+      <!-- ROW 2: Good morning on left, Cloud Database Sync on right directly underneath sign out, setting, profile pic -->
       <div class="topbar-greeting-row">
-        <h1 id="userGreeting">Good afternoon, Jordan</h1>
+        <h1 id="userGreeting">Good morning, Jordan</h1>
+        <div class="topbar-sync-wrapper">
+          <span class="sync-note" id="syncNote">
+            <span class="status-dot"></span>
+            <span id="syncStatus">Cloud database synced</span>
+          </span>
+        </div>
       </div>
     </header>
 
