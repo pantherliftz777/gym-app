@@ -275,6 +275,25 @@ const routes = {
     json(res, 200, { ok: true });
   },
 
+  /* ---------- data erasure & account deletion ---------- */
+  'POST /api/user/erase-data': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const tables = ['log_entries', 'water', 'custom_foods', 'plans', 'weights', 'workouts_done', 'saved_plans'];
+    const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
+    await db.batch(statements);
+    json(res, 200, { ok: true, message: 'All user data erased successfully' });
+  },
+  'POST /api/user/delete-account': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const tables = ['sessions', 'profile', 'log_entries', 'water', 'custom_foods', 'plans', 'settings', 'weights', 'workouts_done', 'saved_plans'];
+    const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
+    statements.push({ sql: 'DELETE FROM users WHERE id=?', args: [u.id] });
+    await db.batch(statements);
+    json(res, 200, { ok: true, message: 'Account permanently deleted' });
+  },
+
   /* ---------- complaints / suggestions ---------- */
   'POST /api/complaint': async (req, res) => {
     const u = await getUser(req);

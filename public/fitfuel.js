@@ -839,7 +839,7 @@ function renderDashboard() {
       const img = item.image ? `<img src="${item.image}" alt="${item.name}"/>` : `<span><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path></svg></span>`;
       const kcal = item.k || item.calories || 0;
       return `<div class="meal-row">
-        <div class="food-thumb">${img}</div>
+        <div class="food-thumb img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image || ''}" title="Click to view full image">${img}</div>
         <div class="meal-info">
           <span>${item.meal || 'Meal'}</span>
           <b>${item.name}</b>
@@ -909,7 +909,7 @@ function renderFoodLog() {
             return `
             <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fbfcfa;border:1px solid #edf0e9;border-radius:10px;gap:12px;">
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
-                ${item.image ? `<img src="${item.image}" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" alt="${item.name}">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
+                ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
                 <div style="min-width:0;">
                   <b style="color:#203125;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
                   <p style="color:#78887c;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
@@ -2122,6 +2122,109 @@ async function handleLogout() {
 }
 
 $('#logoutBtn').onclick = handleLogout;
+
+/* ---------- Data Erasure & Account Deletion Handlers ---------- */
+async function handleEraseData() {
+  const confirmErase = confirm('⚠️ Are you sure you want to erase all your logged data?\n\nThis will clear:\n• All logged food entries & meals\n• All water intake records\n• All custom recipes and custom foods\n• All weight records\n• All completed workout logs\n\nYour account and login credentials will remain active. This cannot be undone.');
+  if (!confirmErase) return;
+
+  try {
+    closeModal('#settingsModal');
+    toast('Erasing all user data...');
+    await FF.eraseData();
+
+    // Reset local in-memory state
+    log = {};
+    store.del('log');
+    custom = [];
+    store.del('custom');
+    plan = null;
+    store.del('plan');
+    weightLog = [];
+    store.del('weights');
+    workoutsDone = [];
+    store.del('workouts');
+    waterMl = 0;
+    waterHistory = {};
+    store.del('water');
+
+    renderDashboard();
+    renderFoodLog();
+    renderWorkouts();
+    renderMyFoods();
+    renderProfileView();
+
+    updateSyncStatus('Data reset · Fresh start');
+    toast('✅ All logged data erased successfully. Starting fresh!');
+  } catch (err) {
+    toast('Error erasing data: ' + (err.message || 'Unknown error'));
+  }
+}
+
+async function handleDeleteAccount() {
+  const response = prompt('🚨 DANGER: PERMANENT ACCOUNT DELETION\n\nThis will permanently delete your account, login credentials, and all records from the cloud database.\n\nType DELETE in uppercase to confirm:');
+  if (response !== 'DELETE') {
+    if (response !== null) {
+      toast('Account deletion cancelled (confirmation did not match).');
+    }
+    return;
+  }
+
+  try {
+    closeModal('#settingsModal');
+    toast('Permanently deleting account from database...');
+    await FF.deleteAccount();
+
+    session = null;
+    profile = { name: 'New User', email: '', cal: 2100, goal: 'Maintain weight', units: 'Metric', hCm: 175, wKg: 70, days: 4, creatine: 'yes' };
+    log = {};
+    custom = [];
+    plan = null;
+    weightLog = [];
+    workoutsDone = [];
+    waterMl = 0;
+    waterHistory = {};
+
+    renderDashboard();
+    renderFoodLog();
+    renderWorkouts();
+    renderMyFoods();
+    renderProfileView();
+
+    updateSyncStatus('Account deleted · Logged out');
+    toast('Your account and all records were permanently deleted.');
+    openModal('#authModal');
+  } catch (err) {
+    toast('Error deleting account: ' + (err.message || 'Unknown error'));
+  }
+}
+
+if ($('#eraseDataBtn')) $('#eraseDataBtn').onclick = handleEraseData;
+if ($('#deleteAccountBtn')) $('#deleteAccountBtn').onclick = handleDeleteAccount;
+if ($('#profileEraseDataBtn')) $('#profileEraseDataBtn').onclick = handleEraseData;
+if ($('#profileDeleteAccountBtn')) $('#profileDeleteAccountBtn').onclick = handleDeleteAccount;
+
+/* ---------- High-Resolution Image Lightbox Modal ---------- */
+function openImageLightbox(src, title = 'High-Res Preview') {
+  const modal = $('#imageLightboxModal');
+  const img = $('#lightboxImage');
+  const titleEl = $('#lightboxTitle');
+  if (!modal || !img) return;
+  img.src = src;
+  if (titleEl) titleEl.textContent = title;
+  openModal('#imageLightboxModal');
+}
+
+// Global click handler to expand any image with full aspect-ratio
+document.addEventListener('click', e => {
+  const trigger = e.target.closest('.img-preview-trigger, #dashWorkoutImg, #planWorkoutImg, .cam-preview-image, #camResultThumb');
+  if (!trigger) return;
+  if (e.target.closest('button, select, input, a')) return;
+  const src = trigger.dataset.src || trigger.src || (trigger.querySelector('img') ? trigger.querySelector('img').src : null);
+  if (!src) return;
+  const title = trigger.dataset.title || trigger.alt || 'High-Res Image';
+  openImageLightbox(src, title);
+});
 
 /* ---------- Auth Modal & Submit ---------- */
 let authMode = 'login';

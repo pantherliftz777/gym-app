@@ -118,6 +118,33 @@ const FF = {
   /* complaints */
   async sendComplaint(name, type, text, files) { await this.req('POST', '/api/complaint', { name, type, text, files }); },
 
+  /* data erasure & account deletion */
+  async eraseData() {
+    if (this.online && this.token) {
+      await this.req('POST', '/api/user/erase-data');
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('ff_log');
+      localStorage.removeItem('ff_water');
+      localStorage.removeItem('ff_custom');
+      localStorage.removeItem('ff_plan');
+      localStorage.removeItem('ff_weights');
+      localStorage.removeItem('ff_workouts');
+    }
+    return true;
+  },
+
+  async deleteAccount() {
+    if (this.online && this.token) {
+      await this.req('POST', '/api/user/delete-account');
+    }
+    await this.logout();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.clear();
+    }
+    return true;
+  },
+
   /* admin */
   async adminUsers() { const r = await this.req('GET', '/api/admin/users'); return r.users; },
   async adminComplaints() { const r = await this.req('GET', '/api/complaints'); return r.complaints; },
