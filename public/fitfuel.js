@@ -68,29 +68,323 @@ let selectedExerciseCategory = 'Legs';
 let selectedSubMuscle = 'All Legs';
 let chatHistory = [];
 
-/* ---------- Hydration Calculation from Bodyweight ---------- */
-function calcWaterFromWeight(w, units, creatine, days) {
-  let wKg = Number(w) || 68;
-  if (units === 'Imperial') {
-    wKg = wKg * 0.45359237;
+/* ================= WEB AUDIO SOUND EFFECTS SYSTEM ================= */
+const soundFX = {
+  ctx: null,
+  enabled: store.get('sound_enabled', true),
+  init() {
+    if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+  },
+  toggle() {
+    this.enabled = !this.enabled;
+    store.set('sound_enabled', this.enabled);
+    this.updateUI();
+    if (this.enabled) this.pop();
+    toast(this.enabled ? 'Audio sound effects enabled 🔊' : 'Audio muted 🔇');
+  },
+  updateUI() {
+    const icon = $('#soundToggleIcon');
+    const text = $('#soundToggleText');
+    if (icon) icon.textContent = this.enabled ? '🔊' : '🔇';
+    if (text) text.textContent = this.enabled ? 'Audio On' : 'Muted';
+  },
+  pop() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      const now = this.ctx.currentTime;
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(580, now + 0.07);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } catch (e) {}
+  },
+  notification() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      [659.25, 987.77].forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.16, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.23);
+      });
+    } catch (e) {}
+  },
+  timerTick() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(750, now);
+      gain.gain.setValueAtTime(0.10, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch (e) {}
+  },
+  timerWarning() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.13);
+    } catch (e) {}
+  },
+  timerGo() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } catch (e) {}
+  },
+  victoryCelebration() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      // 1. Triumphant fanfare arpeggio (C5 -> E5 -> G5 -> C6)
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+        gain.gain.setValueAtTime(0.24, now + idx * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.45);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + idx * 0.12);
+        osc.stop(now + idx * 0.12 + 0.46);
+      });
+
+      // 2. Synthesized enthusiastic clapping / cheer sound burst
+      const bufferSize = this.ctx.sampleRate * 2.2;
+      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = this.ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200;
+      filter.Q.value = 3.0;
+
+      const clapGain = this.ctx.createGain();
+      clapGain.gain.setValueAtTime(0.001, now + 0.4);
+      clapGain.gain.linearRampToValueAtTime(0.28, now + 0.7);
+      for (let t = 0.5; t < 2.0; t += 0.12) {
+        clapGain.gain.setValueAtTime(0.28, now + t);
+        clapGain.gain.exponentialRampToValueAtTime(0.08, now + t + 0.08);
+      }
+      clapGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+      whiteNoise.connect(filter);
+      filter.connect(clapGain);
+      clapGain.connect(this.ctx.destination);
+
+      whiteNoise.start(now + 0.4);
+      whiteNoise.stop(now + 2.3);
+    } catch (e) {}
   }
-  // Base daily requirement: 35 ml per kg of bodyweight
-  let ml = wKg * 35;
-  if (creatine === 'yes') ml += 200;
-  if (Number(days) >= 5) ml += 150;
-  return (Math.max(1200, Math.min(5000, Math.round(ml / 100) * 100)) / 1000).toFixed(1);
+};
+
+/* ================= WEATHER TEMPERATURE STATE & ENGINE ================= */
+let weatherState = store.get('weatherState', {
+  tempC: 29,
+  label: 'Warm (Summer)',
+  icon: '☀️'
+});
+
+function updateWeatherUI() {
+  const t = weatherState.tempC;
+  const label = weatherState.label;
+  const icon = weatherState.icon;
+
+  if ($('#headerWeatherTemp')) $('#headerWeatherTemp').textContent = `${t}°C`;
+  if ($('#headerWeatherLabel')) $('#headerWeatherLabel').textContent = label;
+  if ($('#headerWeatherIcon')) $('#headerWeatherIcon').textContent = icon;
+
+  if ($('#frontWeatherTemp')) $('#frontWeatherTemp').textContent = `${t}°C`;
+  if ($('#frontWeatherLabel')) $('#frontWeatherLabel').textContent = label;
+  if ($('#frontWeatherIcon')) $('#frontWeatherIcon').textContent = icon;
+}
+
+function setWeatherTemp(tempC, label) {
+  tempC = Number(tempC) || 29;
+  let icon = '☀️';
+  if (!label) {
+    if (tempC >= 32) { label = 'Hot Peak'; icon = '🔥'; }
+    else if (tempC >= 26) { label = 'Warm (Summer)'; icon = '☀️'; }
+    else if (tempC >= 21) { label = 'Mild'; icon = '🌤️'; }
+    else { label = 'Cool'; icon = '⛅'; }
+  } else {
+    if (tempC >= 32) icon = '🔥';
+    else if (tempC >= 26) icon = '☀️';
+    else if (tempC >= 21) icon = '🌤️';
+    else icon = '⛅';
+  }
+  weatherState = { tempC, label, icon };
+  store.set('weatherState', weatherState);
+  updateWeatherUI();
+  updateLiveWaterEstimate();
+}
+
+/* ================= LIVE TIME & DATE TICKER ================= */
+function updateLiveDateTime() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }).toUpperCase();
+  const timeStr = now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+  if ($('#eyebrowDate')) $('#eyebrowDate').textContent = dateStr;
+  if ($('#liveClockTime')) $('#liveClockTime').textContent = timeStr;
+}
+setInterval(updateLiveDateTime, 1000);
+updateLiveDateTime();
+
+/* ================= DAILY MOTIVATION QUOTES ENGINE ================= */
+const MOTIVATION_QUOTES = [
+  { text: "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion.", author: "Arnold Schwarzenegger" },
+  { text: "I hated every minute of training, but I said, 'Don't quit. Suffer now and live the rest of your life as a champion.'", author: "Muhammad Ali" },
+  { text: "Discipline is doing what you hate to do, but doing it like you love it.", author: "Mike Tyson" },
+  { text: "The body achieves what the mind believes. Push past the comfort zone; that is where growth begins.", author: "Napoleon Hill" },
+  { text: "Success starts with self-discipline. It starts with you choosing what matters most over what feels easy now.", author: "Dwayne Johnson" },
+  { text: "We don't rise to the level of our expectations, we fall to the level of our training.", author: "Archilochus" },
+  { text: "Strength does not come from winning. Your struggles develop your strengths. When you go through hardships and decide not to surrender, that is strength.", author: "Arnold Schwarzenegger" }
+];
+let currentQuoteIdx = 0;
+function renderDailyMotivation() {
+  const q = MOTIVATION_QUOTES[currentQuoteIdx % MOTIVATION_QUOTES.length];
+  if ($('#dailyMotivationQuoteText')) $('#dailyMotivationQuoteText').textContent = `"${q.text}"`;
+  if ($('#dailyMotivationAuthor')) $('#dailyMotivationAuthor').textContent = `— ${q.author}`;
+}
+
+/* ================= HYDRATION & CREATINE FORMULA ENGINE ================= */
+function calcWaterDetails(w, units, creatineGrams, days, tempC, intensity) {
+  let wKg = Number(w) || 68;
+  if (units === 'Imperial') wKg = wKg * 0.45359237;
+
+  // Base requirement: 35 ml per kg of bodyweight
+  const baseMl = Math.round(wKg * 35);
+
+  // Creatine adjustment: 100 ml per 1g of creatine
+  const cGrams = Number(creatineGrams !== undefined ? creatineGrams : (profile.creatineGrams !== undefined ? profile.creatineGrams : (profile.creatine === 'no' ? 0 : 5)));
+  const creatineMl = Math.round(cGrams * 100);
+
+  // Weather temperature adjustment (sweat loss compensation)
+  const t = Number(tempC !== undefined ? tempC : weatherState.tempC) || 29;
+  let weatherMl = 0;
+  let weatherNote = 'Cool';
+  if (t >= 32) { weatherMl = 500; weatherNote = 'Hot Summer'; }
+  else if (t >= 26) { weatherMl = 250; weatherNote = 'Warm Summer'; }
+  else if (t >= 21) { weatherMl = 100; weatherNote = 'Mild'; }
+  else { weatherMl = 0; weatherNote = 'Cool'; }
+
+  // Workout volume & intensity adjustment
+  let workoutMl = 300;
+  if (intensity === 'Hard' || Number(days) >= 5) workoutMl = 500;
+  else if (intensity === 'Mild') workoutMl = 150;
+
+  const totalMl = baseMl + creatineMl + weatherMl + workoutMl;
+  const targetL = (Math.max(1500, Math.min(6000, Math.round(totalMl / 100) * 100)) / 1000).toFixed(1);
+
+  return {
+    targetL,
+    totalMl,
+    baseMl,
+    baseL: (baseMl / 1000).toFixed(1),
+    creatineGrams: cGrams,
+    creatineMl,
+    weatherMl,
+    weatherNote,
+    workoutMl
+  };
+}
+
+function calcWaterFromWeight(w, units, creatine, days) {
+  const cGrams = typeof creatine === 'number' ? creatine : (creatine === 'no' ? 0 : 5);
+  return calcWaterDetails(w, units, cGrams, days).targetL;
 }
 
 function updateLiveWaterEstimate() {
   const w = Number($('#pfWeightInput') ? $('#pfWeightInput').value : 0) || profile.wKg || 68;
   const units = profile.units || 'Metric';
-  const creatine = $('#pfCreatineSelect') ? $('#pfCreatineSelect').value : (profile.creatine || 'yes');
+  const cInput = $('#frontCreatineGramsInput');
+  const cGrams = cInput ? Number(cInput.value) : (profile.creatineGrams !== undefined ? profile.creatineGrams : (profile.creatine === 'no' ? 0 : 5));
   const days = Number($('#pfDaysSelect') ? $('#pfDaysSelect').value : 4);
-  const targetL = calcWaterFromWeight(w, units, creatine, days);
-  if ($('#pfWaterCalculated')) {
-    $('#pfWaterCalculated').textContent = targetL;
-  }
-  return targetL;
+
+  const details = calcWaterDetails(w, units, cGrams, days, weatherState.tempC);
+
+  if ($('#frontCalculatedWaterL')) $('#frontCalculatedWaterL').textContent = details.targetL;
+  if ($('#waterGoalDisplay')) $('#waterGoalDisplay').textContent = details.targetL;
+  if ($('#pfWaterCalculated')) $('#pfWaterCalculated').textContent = details.targetL;
+  if ($('#waterBreakdownBase')) $('#waterBreakdownBase').textContent = `${details.baseL} L`;
+  if ($('#waterBreakdownCreatine')) $('#waterBreakdownCreatine').textContent = `+${details.creatineMl}`;
+  if ($('#waterBreakdownWeather')) $('#waterBreakdownWeather').textContent = `+${details.weatherMl} ml (${details.weatherNote})`;
+  if ($('#waterBreakdownWorkout')) $('#waterBreakdownWorkout').textContent = `+${details.workoutMl} ml`;
+
+  return details.targetL;
 }
 let activeWorkoutIdx = 0;
 
@@ -623,6 +917,7 @@ function toast(msg) {
   if (!t) return;
   if (txt) txt.textContent = msg;
   clearTimeout(toastTimeout);
+  soundFX.notification();
   t.style.pointerEvents = 'auto';
   t.classList.add('show');
   t.onclick = hideToast;
@@ -641,6 +936,7 @@ function toast(msg) {
 function openModal(selector) {
   const m = typeof selector === 'string' ? $(selector) : selector;
   if (!m) return;
+  soundFX.pop();
   m.classList.add('open');
   m.style.pointerEvents = 'auto';
   if (M && M.animate) {
@@ -1106,6 +1402,10 @@ function renderDashboard() {
     };
   }
 
+  renderDailyMotivation();
+  updateWeatherUI();
+  updateLiveWaterEstimate();
+  soundFX.updateUI();
   updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 }
 
@@ -1129,27 +1429,92 @@ $('#resetWaterBtn').onclick = () => {
   toast('Water reset for today');
 };
 
+// Daily Motivation Next Quote Button
+if ($('#nextMotivationQuoteBtn')) {
+  $('#nextMotivationQuoteBtn').onclick = () => {
+    currentQuoteIdx++;
+    renderDailyMotivation();
+    soundFX.pop();
+  };
+}
+
+// Sound FX Toggle
+if ($('#soundToggleBtn')) {
+  $('#soundToggleBtn').onclick = () => soundFX.toggle();
+}
+
+// Weather / Temperature Buttons & Modal
+if ($('#headerWeatherBtn')) {
+  $('#headerWeatherBtn').onclick = () => openModal('#weatherTempModal');
+}
+if ($('#frontWeatherBadgeBtn')) {
+  $('#frontWeatherBadgeBtn').onclick = () => openModal('#weatherTempModal');
+}
+
+$$('#weatherTempPresets .setup-choice-card').forEach(btn => {
+  btn.onclick = () => {
+    $$('#weatherTempPresets .setup-choice-card').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const temp = Number(btn.dataset.temp) || 29;
+    const label = btn.dataset.label || 'Warm';
+    if ($('#customTempInput')) $('#customTempInput').value = temp;
+    setWeatherTemp(temp, label);
+    closeModal('#weatherTempModal');
+    toast(`Weather temperature updated to ${temp}°C (${label})`);
+  };
+});
+
+if ($('#saveWeatherTempBtn')) {
+  $('#saveWeatherTempBtn').onclick = () => {
+    const val = Number($('#customTempInput') ? $('#customTempInput').value : 29) || 29;
+    setWeatherTemp(val);
+    closeModal('#weatherTempModal');
+    toast(`Local temperature set to ${val}°C`);
+  };
+}
+
+// Interactive Creatine Grams Input on Front Screen
+if ($('#frontCreatineGramsInput')) {
+  $('#frontCreatineGramsInput').oninput = (e) => {
+    const grams = Math.max(0, Math.min(50, Number(e.target.value) || 0));
+    profile.creatineGrams = grams;
+    store.set('profile', profile);
+    if (FF.patch) FF.patch({ profile });
+    updateLiveWaterEstimate();
+  };
+}
+
 /* ---------- Food Log View Rendering ---------- */
 function renderFoodLog() {
   const d = today();
   const entries = log[d] || [];
-  const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+  const meals = [
+    { type: 'Breakfast', icon: '🥞' },
+    { type: 'Lunch', icon: '🥗' },
+    { type: 'Dinner', icon: '🥩' },
+    { type: 'Snack', icon: '🍎' }
+  ];
   const container = $('#foodLogMealsContainer');
 
   if (container) {
-    container.innerHTML = meals.map(mealType => {
+    container.innerHTML = meals.map(({ type: mealType, icon: mealIcon }) => {
       const mealItems = entries.filter(e => (e.meal || '').toLowerCase() === mealType.toLowerCase());
       const subKcal = mealItems.reduce((a, b) => a + (b.k || b.calories || 0), 0);
-      return `<div style="margin-bottom:20px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf0e9;">
-          <b style="color:#34483a;font-size:1.05rem;">${mealType}</b>
-          <span style="color:#637367;font-size:.9rem;font-weight:600;">${subKcal} kcal</span>
+      return `<div class="meal-group-block">
+        <div class="meal-group-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
+            <b style="color:#203b29;font-size:1.08rem;font-weight:700;">${mealType}</b>
+          </div>
+          <span style="color:#2f5338;font-size:.88rem;font-weight:700;background:#edf5e8;padding:3px 12px;border-radius:99px;border:1px solid #dcebd4;">
+            ${subKcal} kcal
+          </span>
         </div>
-        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:4px 2px;">
           ${mealItems.length ? mealItems.map(item => {
             const realIdx = entries.indexOf(item);
             return `
-            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fbfcfa;border:1px solid #edf0e9;border-radius:10px;gap:12px;">
+            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fcfdfa;border:1px solid #e7eee2;border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(32,59,41,0.02);">
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
                 ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
                 <div style="min-width:0;">
@@ -1165,7 +1530,7 @@ function renderFoodLog() {
                 <button type="button" class="close-btn" style="color:#dc2626;cursor:pointer;padding:6px;border-radius:6px;font-size:1.15rem;line-height:1;display:flex;align-items:center;justify-content:center;" title="Delete entry" onclick="deleteFoodEntry(${realIdx})">&times;</button>
               </div>
             </div>
-          `;}).join('') : `<p style="color:#8b998e;font-size:.85rem;padding:6px 0;">No items logged for ${mealType.toLowerCase()} yet.</p>`}
+          `;}).join('') : `<p style="color:#8b998e;font-size:.86rem;padding:8px 6px;margin:0;font-style:italic;">No items logged for ${mealType.toLowerCase()} yet. Click "Add Food" above to log.</p>`}
         </div>
       </div>`;
     }).join('');
@@ -2306,6 +2671,7 @@ function renderWorkouts() {
       `;
     }).join('');
   }
+  renderCustomWorkoutExplorer();
 }
 
 $('#switchWorkoutPlanBtn').onclick = () => {
@@ -2320,6 +2686,7 @@ $('#markWorkoutDoneBtn').onclick = () => {
   workoutsDone.push({ name: wo.name, date: today(), at: Date.now() });
   store.set('workoutsDone', workoutsDone);
   recordDailyActivity('workout');
+  soundFX.victoryCelebration();
   renderDashboard();
   toast(`🎉 Great job! Completed ${wo.name}`);
 };
@@ -2609,6 +2976,73 @@ if ($('#pfCalorieInput')) {
   };
 }
 
+/* ================= PROFILE AVATAR MANAGEMENT MODAL ================= */
+function openAvatarOptionsModal() {
+  const box = $('#avatarModalPreviewBox');
+  const seePicBtn = $('#avatarModalSeePicBtn');
+  const removeBtn = $('#avatarModalRemoveBtn');
+  const uploadBtn = $('#avatarModalUploadNewBtn');
+  const statusText = $('#avatarModalStatusText');
+  const nameEl = $('#avatarModalName');
+
+  const uName = (profile && profile.name) || (session && session.name) || 'Jordan Davis';
+  if (nameEl) nameEl.textContent = uName;
+
+  if (profile && profile.avatarUrl) {
+    if (box) box.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;" alt="Avatar" />`;
+    if (statusText) statusText.textContent = 'Custom photo active';
+    if (seePicBtn) {
+      seePicBtn.style.display = 'inline-flex';
+      seePicBtn.onclick = () => {
+        closeModal('#avatarOptionsModal');
+        openImageLightbox(profile.avatarUrl, `${uName}'s Profile Photo`);
+      };
+    }
+    if (removeBtn) {
+      removeBtn.style.display = 'inline-flex';
+      removeBtn.onclick = () => {
+        delete profile.avatarUrl;
+        store.set('profile', profile);
+        if (FF.patch) FF.patch({ profile });
+        renderProfileView();
+        closeModal('#avatarOptionsModal');
+        toast('Profile photo removed');
+      };
+    }
+    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Photo';
+  } else {
+    const initials = uName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'FF';
+    if (box) box.innerHTML = `<span style="font-size:2.4rem;font-weight:800;color:#203b29;">${initials}</span>`;
+    if (statusText) statusText.textContent = 'No photo uploaded yet (using initials)';
+    if (seePicBtn) seePicBtn.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (uploadBtn) uploadBtn.textContent = '📷 Upload Photo';
+  }
+
+  if (uploadBtn) {
+    uploadBtn.onclick = () => {
+      closeModal('#avatarOptionsModal');
+      const input = $('#pfAvatarUploadInput');
+      if (input) input.click();
+    };
+  }
+
+  openModal('#avatarOptionsModal');
+}
+
+if ($('#pfLargeAvatar')) {
+  $('#pfLargeAvatar').onclick = openAvatarOptionsModal;
+}
+if ($('#topAvatar')) {
+  $('#topAvatar').onclick = openAvatarOptionsModal;
+}
+if ($('#sidebarAvatar')) {
+  $('#sidebarAvatar').onclick = (e) => {
+    e.stopPropagation();
+    openAvatarOptionsModal();
+  };
+}
+
 /* Profile Picture Upload & Remove Listeners */
 if ($('#pfAvatarUploadInput')) {
   $('#pfAvatarUploadInput').onchange = (e) => {
@@ -2857,6 +3291,8 @@ async function handleEraseData() {
     store.del('custom');
     plan = null;
     store.del('plan');
+    activeChallengePlan = null;
+    store.del('activeChallengePlan');
     weightLog = [];
     store.del('weights');
     workoutsDone = [];
@@ -2872,6 +3308,8 @@ async function handleEraseData() {
     renderWorkouts();
     renderMyFoods();
     renderProfileView();
+    renderChallengeView();
+    renderTrackingView();
 
     updateSyncStatus('Data reset · Fresh start');
     toast('✅ All logged data erased successfully. Starting fresh!');
@@ -2899,6 +3337,8 @@ async function handleDeleteAccount() {
     log = {};
     custom = [];
     plan = null;
+    activeChallengePlan = null;
+    store.del('activeChallengePlan');
     weightLog = [];
     workoutsDone = [];
     streakTracker = { currentStreak: 0, lastActiveDate: null, streakBroken: false, brokenStreakCount: 0, history: [] };
@@ -2911,6 +3351,8 @@ async function handleDeleteAccount() {
     renderWorkouts();
     renderMyFoods();
     renderProfileView();
+    renderChallengeView();
+    renderTrackingView();
 
     updateSyncStatus('Account deleted · Logged out');
     toast('Your account and all records were permanently deleted.');
@@ -3445,19 +3887,6 @@ if ($('#aiMicronutrientAuditBtn')) {
 }
 
 /* ================= MOTIVATIONAL QUOTES ON LOGIN / SIGNUP ================= */
-const MOTIVATION_QUOTES = [
-  { text: "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion.", author: "Arnold Schwarzenegger" },
-  { text: "Don't count the days, make the days count.", author: "Muhammad Ali" },
-  { text: "We don't rise to the level of our expectations, we fall to the level of our training.", author: "Archilochus" },
-  { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
-  { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
-  { text: "You don't have to be extreme, just consistent. Small daily wins compound into greatness.", author: "Fitness Discipline" },
-  { text: "The pain of discipline is far less than the pain of regret.", author: "Sarah Bombell" },
-  { text: "Your body can stand almost anything. It's your mind that you have to convince.", author: "Elite Mindset" },
-  { text: "The only bad workout is the one that didn't happen.", author: "Strength Philosophy" },
-  { text: "Energy flows where attention goes. Focus on your reps, your nutrition, and your sleep.", author: "Formwise Coaching" }
-];
-
 function showMotivationalQuotePopup() {
   const quote = MOTIVATION_QUOTES[Math.floor(Math.random() * MOTIVATION_QUOTES.length)];
   if ($('#motivationQuoteText')) $('#motivationQuoteText').textContent = `"${quote.text}"`;
@@ -3562,9 +3991,12 @@ function playAudioChime(freq = 440, type = 'sine', duration = 0.14) {
 /* ================= CHALLENGE SETUP & AI ENGINE ================= */
 let setupMotive = 'Burn Fat & Lean Out';
 let setupDuration = 15;
+let setupMinutes = 45;
+let setupIntensity = 'Moderate';
+let setupTypes = ['Gym'];
 
 function initChallengeSetupListeners() {
-  // Motive Selection Cards
+  // Step 1: Motive Selection Cards
   $$('#motiveOptionsList .setup-choice-card').forEach(card => {
     card.onclick = () => {
       $$('#motiveOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
@@ -3573,30 +4005,75 @@ function initChallengeSetupListeners() {
     };
   });
 
-  // Step 1 -> Step 2
-  if ($('#proceedToDurationBtn')) {
-    $('#proceedToDurationBtn').onclick = () => {
+  // Step 1 -> Step 2 (Preferences)
+  if ($('#proceedToPrefsBtn')) {
+    $('#proceedToPrefsBtn').onclick = () => {
       closeModal('#challengeMotiveModal');
-      if ($('#challengeMetricsPreview')) {
-        const w = profile.wKg || 70;
-        const h = profile.hCm || 175;
-        const u = profile.units || 'Metric';
-        const d = profile.days || 4;
-        $('#challengeMetricsPreview').textContent = `${w} ${u === 'Metric' ? 'kg' : 'lbs'} · ${h} cm · ${d} Workouts/Wk · Goal: ${setupMotive}`;
-      }
-      setTimeout(() => openModal('#challengeDurationModal'), 100);
+      setTimeout(() => openModal('#challengePrefsModal'), 100);
     };
   }
 
   // Step 2 -> Back to Step 1
   if ($('#backToMotiveBtn')) {
     $('#backToMotiveBtn').onclick = () => {
-      closeModal('#challengeDurationModal');
+      closeModal('#challengePrefsModal');
       setTimeout(() => openModal('#challengeMotiveModal'), 100);
     };
   }
 
-  // Duration Selection Cards
+  // Step 2: Types Checkboxes
+  $$('#chTypesOptionsList input[type="checkbox"]').forEach(cb => {
+    cb.onchange = () => {
+      const parent = cb.closest('.setup-choice-card');
+      if (parent) {
+        if (cb.checked) parent.classList.add('selected');
+        else parent.classList.remove('selected');
+      }
+      const checkedBoxes = Array.from($$('#chTypesOptionsList input[type="checkbox"]:checked'));
+      setupTypes = checkedBoxes.map(b => b.value);
+      if (!setupTypes.length) setupTypes = ['Gym'];
+    };
+  });
+
+  // Step 2: Minutes Selection
+  $$('#chTimeOptionsList .setup-choice-card').forEach(card => {
+    card.onclick = () => {
+      $$('#chTimeOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      setupMinutes = Number(card.dataset.minutes) || 45;
+    };
+  });
+
+  // Step 2: Intensity Selection
+  $$('#chIntensityOptionsList .setup-choice-card').forEach(card => {
+    card.onclick = () => {
+      $$('#chIntensityOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      setupIntensity = card.dataset.intensity || 'Moderate';
+    };
+  });
+
+  // Step 2 -> Step 3 (Duration Modal)
+  if ($('#proceedToDurationBtn')) {
+    $('#proceedToDurationBtn').onclick = () => {
+      closeModal('#challengePrefsModal');
+      if ($('#challengeMetricsPreview')) {
+        const typesStr = setupTypes.join(', ');
+        $('#challengeMetricsPreview').textContent = `${setupMinutes} Total Min/Day · ${setupIntensity} Intensity · ${typesStr} · ${setupMotive}`;
+      }
+      setTimeout(() => openModal('#challengeDurationModal'), 100);
+    };
+  }
+
+  // Step 3 -> Back to Step 2
+  if ($('#backToPrefsBtn')) {
+    $('#backToPrefsBtn').onclick = () => {
+      closeModal('#challengeDurationModal');
+      setTimeout(() => openModal('#challengePrefsModal'), 100);
+    };
+  }
+
+  // Step 3: Days Selection Cards
   $$('#durationOptionsList .setup-choice-card').forEach(card => {
     card.onclick = () => {
       $$('#durationOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
@@ -3607,7 +4084,9 @@ function initChallengeSetupListeners() {
 
   // Generate AI Plan
   if ($('#generateChallengePlanBtn')) {
-    $('#generateChallengePlanBtn').onclick = () => generateAIChallengePlan(setupMotive, setupDuration);
+    $('#generateChallengePlanBtn').onclick = () => {
+      generateAIChallengePlan(setupMotive, setupDuration, setupMinutes, setupIntensity, setupTypes);
+    };
   }
 
   // Start New Challenge button on challenge intro
@@ -3620,20 +4099,41 @@ function initChallengeSetupListeners() {
 initChallengeSetupListeners();
 
 // Helper: Day-by-day routines generator factoring in user bodyweight, height & motive
-function buildDayByDayRoutines(motive, durationDays, w, h) {
+function buildDayByDayRoutines(motive, durationDays, w, h, targetMinutes = 45, intensity = 'Moderate', workoutTypes = ['Gym']) {
   const isFat = motive.includes('Fat');
   const isStrength = motive.includes('Strength');
-  const defaultReps = isFat ? '14-16 reps' : (isStrength ? '5-6 heavy reps' : '10-12 reps');
-  const defaultDuration = isFat ? 35 : (isStrength ? 50 : 45);
-  const defaultRest = isStrength ? 90 : (isFat ? 45 : 60);
+
+  let defaultSets = 3;
+  let defaultRest = 60;
+  let repsScheme = '8–12 reps';
+  if (intensity === 'Hard') {
+    defaultSets = 4;
+    defaultRest = isStrength ? 60 : 40;
+    repsScheme = isStrength ? '4–6 heavy reps' : (isFat ? '14–16 reps' : '10–12 reps');
+  } else if (intensity === 'Mild') {
+    defaultSets = 2;
+    defaultRest = 75;
+    repsScheme = '10–12 controlled reps';
+  } else {
+    defaultSets = 3;
+    defaultRest = 50;
+    repsScheme = isStrength ? '6–8 reps' : (isFat ? '12–15 reps' : '8–12 reps');
+  }
+
+  // Determine number of exercises based on selected target minutes
+  let exerciseCount = 5;
+  if (targetMinutes <= 20) exerciseCount = 3;
+  else if (targetMinutes <= 35) exerciseCount = 4;
+  else if (targetMinutes <= 45) exerciseCount = 5;
+  else exerciseCount = 7;
 
   const splitTemplates = [
     { title: 'Chest & Triceps Hypertrophy', focus: 'Upper & Mid Chest · Triceps', muscleGroup: 'Chest' },
-    { title: 'Back & Biceps Engine', focus: 'Lats · Upper Back · Biceps', muscleGroup: 'Back' },
-    { title: 'Quads & Lower Body Power', focus: 'Quads · Hamstrings · Calves', muscleGroup: 'Legs' },
+    { title: 'Back & Lat Power Builder', focus: 'Lats · Upper Back · Biceps', muscleGroup: 'Back' },
+    { title: 'Quads & Lower Body Stamina', focus: 'Quads · Hamstrings · Calves', muscleGroup: 'Legs' },
     { title: 'Shoulders & Core Stability', focus: 'Deltoids · Abs · Obliques', muscleGroup: 'Shoulders' },
     { title: 'Glutes, Posterior & Cardio Shred', focus: 'Posterior Chain · Glutes · Conditioning', muscleGroup: 'Legs' },
-    { title: 'Full-Body Athletic Conditioning', focus: 'Compound Movements · Metcon', muscleGroup: 'Chest' },
+    { title: 'Full-Body Athletic Conditioning', focus: 'Compound Movements · Functional Metcon', muscleGroup: 'Chest' },
     { title: 'Active Recovery & Core Armor', focus: 'Mobility · Deep Core · Balance', muscleGroup: 'Abs / Core' }
   ];
 
@@ -3641,47 +4141,79 @@ function buildDayByDayRoutines(motive, durationDays, w, h) {
   for (let i = 1; i <= durationDays; i++) {
     const template = splitTemplates[(i - 1) % splitTemplates.length];
     const category = template.muscleGroup === 'Abs / Core' ? 'Chest' : template.muscleGroup;
-    const libraryMatches = EXERCISES_LIBRARY.filter(e => e.category.toLowerCase().includes(category.toLowerCase()));
-    const selectedExercises = (libraryMatches.length >= 4 ? libraryMatches.slice(0, 4) : EXERCISES_LIBRARY.slice(0, 4)).map((ex, idx) => ({
-      name: ex.name,
-      subMuscle: ex.sub || ex.category,
-      category: ex.category,
-      sets: 3,
-      reps: defaultReps,
-      durationSec: defaultDuration,
-      restSec: defaultRest,
-      tip: ex.steps || ex.rxWhy || 'Maintain tight core, chest up, smooth cadence.'
-    }));
+    let pool = EXERCISES_LIBRARY.filter(e => e.category.toLowerCase().includes(category.toLowerCase()));
+    if (!pool.length) pool = EXERCISES_LIBRARY;
+
+    // Filter by chosen workout types if applicable
+    const isHome = workoutTypes.includes('Home') && !workoutTypes.includes('Gym');
+    if (isHome) {
+      const homePool = pool.filter(e => (e.type || '').toLowerCase().includes('home') || (e.type || '').toLowerCase().includes('dumbbell') || (e.type || '').toLowerCase().includes('bodyweight'));
+      if (homePool.length >= 2) pool = homePool;
+    }
+
+    const dayExercises = [];
+    const mainCount = workoutTypes.includes('Stretching') ? Math.max(2, exerciseCount - 1) : exerciseCount;
+
+    for (let j = 0; j < mainCount; j++) {
+      const ex = pool[j % pool.length];
+      dayExercises.push({
+        name: ex.name,
+        subMuscle: ex.sub || ex.category,
+        category: ex.category,
+        sets: defaultSets,
+        reps: repsScheme,
+        durationSec: 45,
+        restSec: defaultRest,
+        tip: ex.steps || ex.rxWhy || 'Maintain tight core, chest proud, smooth cadence.'
+      });
+    }
+
+    // Add stretching / cooldown if user selected Stretching
+    if (workoutTypes.includes('Stretching')) {
+      dayExercises.push({
+        name: i % 2 === 0 ? "World's Greatest Stretch & Thoracic Opener" : "Cat-Cow & Deep Hip Flexor Release",
+        subMuscle: "Mobility & Full Body Recovery",
+        category: "Stretching",
+        sets: 2,
+        reps: "45s hold each side",
+        durationSec: 45,
+        restSec: 30,
+        tip: "Breathe deeply into diaphragm, relax shoulders, and ease tension out of worked muscle fibers."
+      });
+    }
 
     days.push({
       dayNumber: i,
       title: `Day ${i}: ${template.title}`,
       focus: template.focus,
-      intensity: (i % 3 === 0) ? 'Peak High' : 'Targeted',
-      estDuration: `${selectedExercises.length * 9} min`,
+      intensity: `${intensity} · ${targetMinutes}m Session`,
+      estDuration: `${targetMinutes} min`,
       completed: false,
       completedAt: null,
-      exercises: selectedExercises
+      exercises: dayExercises
     });
   }
   return days;
 }
 
-async function generateAIChallengePlan(motive, durationDays) {
+async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45, intensity = 'Moderate', types = ['Gym']) {
   const btn = $('#generateChallengePlanBtn');
   const origText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = 'Engineering AI Plan...'; }
-  toast(`🤖 AI is personalizing your ${durationDays}-Day ${motive} Challenge...`);
+  toast(`🤖 AI is personalizing your ${durationDays}-Day ${motive} Challenge (${targetMinutes} min/day)...`);
 
   const w = profile.wKg || 70;
   const h = profile.hCm || 175;
 
-  const planDays = buildDayByDayRoutines(motive, durationDays, w, h);
+  const planDays = buildDayByDayRoutines(motive, durationDays, w, h, targetMinutes, intensity, types);
 
   const newChallenge = {
     id: 'chall_' + Date.now(),
     motive: motive,
     durationDays: Number(durationDays),
+    totalWorkoutMinutes: Number(targetMinutes) || 45,
+    intensity: intensity || 'Moderate',
+    types: types && types.length ? types : ['Gym'],
     createdAt: Date.now(),
     startDate: today(),
     currentDayIndex: 0,
@@ -3704,8 +4236,218 @@ async function generateAIChallengePlan(motive, durationDays) {
   switchView('challenge');
   renderChallengeView();
   renderTrackingView();
+  updateLiveWaterEstimate();
   toast(`🔥 ${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
 }
+
+/* ================= WORKOUT SECTION CUSTOMIZATION & EXPLORER ================= */
+let customWorkoutFilterTypes = ['all'];
+let customWorkoutFilterParts = ['all'];
+let customWorkoutSearchQuery = '';
+
+function renderCustomWorkoutExplorer() {
+  const grid = $('#customWorkoutResultsGrid');
+  if (!grid) return;
+
+  let list = Array.isArray(EXERCISES_LIBRARY) ? [...EXERCISES_LIBRARY] : [];
+
+  // Search Query
+  if (customWorkoutSearchQuery && customWorkoutSearchQuery.trim()) {
+    const q = customWorkoutSearchQuery.trim().toLowerCase();
+    list = list.filter(ex => 
+      (ex.name && ex.name.toLowerCase().includes(q)) ||
+      (ex.sub && ex.sub.toLowerCase().includes(q)) ||
+      (ex.category && ex.category.toLowerCase().includes(q)) ||
+      (ex.type && ex.type.toLowerCase().includes(q))
+    );
+  }
+
+  // Filter by Body Parts
+  if (!customWorkoutFilterParts.includes('all') && customWorkoutFilterParts.length > 0) {
+    list = list.filter(ex => {
+      const cat = (ex.category || '').toLowerCase();
+      const sub = (ex.sub || '').toLowerCase();
+      return customWorkoutFilterParts.some(p => cat.includes(p.toLowerCase()) || sub.includes(p.toLowerCase()));
+    });
+  }
+
+  // Filter by Workout Types
+  if (!customWorkoutFilterTypes.includes('all') && customWorkoutFilterTypes.length > 0) {
+    list = list.filter(ex => {
+      const typeStr = (ex.type || '').toLowerCase();
+      const name = (ex.name || '').toLowerCase();
+      const cat = (ex.category || '').toLowerCase();
+      return customWorkoutFilterTypes.some(t => {
+        if (t === 'Home') return typeStr.includes('home') || typeStr.includes('dumbbell') || typeStr.includes('bodyweight') || !typeStr.includes('barbell');
+        if (t === 'Gym') return typeStr.includes('gym') || typeStr.includes('barbell') || typeStr.includes('cable') || typeStr.includes('machine');
+        if (t === 'HIIT') return name.includes('jump') || name.includes('burpee') || name.includes('swing') || name.includes('mountain') || name.includes('lunge') || typeStr.includes('bodyweight');
+        if (t === 'Cardio') return name.includes('jump') || name.includes('cardio') || name.includes('run') || name.includes('burpee') || name.includes('skip');
+        if (t === 'Stretching') return name.includes('stretch') || name.includes('mobility') || name.includes('cat-cow') || name.includes('hip') || cat.includes('core');
+        return true;
+      });
+    });
+  }
+
+  if (!list.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#78887c;background:#fcfdfa;border-radius:12px;border:1px dashed #dce4d8;">
+      <b>No exercises found matching your selected filters.</b>
+      <p style="font-size:.85rem;margin-top:6px;">Try selecting "All Types" or "Full Body" to view the full exercise catalog.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.slice(0, 18).map(ex => {
+    const rxSets = ex.rxSetsReps || '3 sets × 10–12 reps';
+    const rxRest = '60s rest';
+    const cleanName = escapeHtml(ex.name);
+    const safeName = cleanName.replace(/'/g, "\\'");
+    return `
+      <div class="exercise-custom-card" style="background:#ffffff;border:1px solid #e2ebd9;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+            <span style="font-size:.72rem;font-weight:800;color:#39612a;background:#edf5e8;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+              ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
+            </span>
+            <span style="font-size:.74rem;color:#78887c;font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
+          </div>
+          <b style="color:#203b29;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
+          <p style="color:#637367;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
+          <div style="background:#f7faf4;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.78rem;font-weight:700;color:#2e4e34;">🎯 ${escapeHtml(rxSets)}</span>
+            <span style="font-size:.75rem;color:#677d6d;font-weight:600;">⏱️ ${escapeHtml(rxRest)}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:auto;">
+          <button type="button" class="solid-button small" style="flex:1;background:#203b29;justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
+            ▶ Start Set
+          </button>
+          <button type="button" class="outline-button small" style="justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="addExerciseToDailyRoutine('${safeName}', '${escapeHtml(rxSets)}')">
+            + Add
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function startCustomExerciseTimer(name, sets, rest) {
+  soundFX.pop();
+  const customDay = {
+    dayNumber: 'Custom',
+    title: name,
+    focus: 'Targeted Movement',
+    exercises: [{
+      name: name,
+      subMuscle: 'Targeted',
+      category: 'Custom',
+      sets: parseInt(sets) || 3,
+      reps: sets,
+      durationSec: 45,
+      restSec: parseInt(rest) || 60,
+      tip: 'Brace core, maintain full range of motion with controlled tempo.'
+    }]
+  };
+  startWorkoutSession(customDay);
+}
+
+function addExerciseToDailyRoutine(name, sets) {
+  soundFX.pop();
+  if (activeChallengePlan && activeChallengePlan.days) {
+    const curIdx = activeChallengePlan.currentDayIndex || 0;
+    const curDay = activeChallengePlan.days[curIdx];
+    if (curDay && curDay.exercises) {
+      curDay.exercises.push({
+        name: name,
+        subMuscle: 'Add-on',
+        category: 'Workout',
+        sets: 3,
+        reps: sets || '3 sets × 10 reps',
+        durationSec: 45,
+        restSec: 50,
+        tip: 'Controlled cadence and strict posture.'
+      });
+      store.set('activeChallengePlan', activeChallengePlan);
+      if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
+      renderChallengeView();
+      toast(`Added "${name}" to today's Challenge routine!`);
+      return;
+    }
+  }
+  toast(`Added "${name}" (${sets}) to workout!`);
+}
+
+function initWorkoutCustomizationListeners() {
+  // Workout Type filter pills
+  $$('#workoutTypeFilterPills .filter-pill').forEach(btn => {
+    btn.onclick = () => {
+      soundFX.pop();
+      const type = btn.dataset.type;
+      if (type === 'all') {
+        customWorkoutFilterTypes = ['all'];
+        $$('#workoutTypeFilterPills .filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        const allBtn = $('#workoutTypeFilterPills .filter-pill[data-type="all"]');
+        if (allBtn) allBtn.classList.remove('active');
+        customWorkoutFilterTypes = customWorkoutFilterTypes.filter(t => t !== 'all');
+
+        if (customWorkoutFilterTypes.includes(type)) {
+          customWorkoutFilterTypes = customWorkoutFilterTypes.filter(t => t !== type);
+          btn.classList.remove('active');
+        } else {
+          customWorkoutFilterTypes.push(type);
+          btn.classList.add('active');
+        }
+
+        if (!customWorkoutFilterTypes.length) {
+          customWorkoutFilterTypes = ['all'];
+          if (allBtn) allBtn.classList.add('active');
+        }
+      }
+      renderCustomWorkoutExplorer();
+    };
+  });
+
+  // Body Parts filter pills
+  $$('#workoutBodyPartFilterPills .filter-pill').forEach(btn => {
+    btn.onclick = () => {
+      soundFX.pop();
+      const part = btn.dataset.part;
+      if (part === 'all') {
+        customWorkoutFilterParts = ['all'];
+        $$('#workoutBodyPartFilterPills .filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        const allBtn = $('#workoutBodyPartFilterPills .filter-pill[data-part="all"]');
+        if (allBtn) allBtn.classList.remove('active');
+        customWorkoutFilterParts = customWorkoutFilterParts.filter(p => p !== 'all');
+
+        if (customWorkoutFilterParts.includes(part)) {
+          customWorkoutFilterParts = customWorkoutFilterParts.filter(p => p !== part);
+          btn.classList.remove('active');
+        } else {
+          customWorkoutFilterParts.push(part);
+          btn.classList.add('active');
+        }
+
+        if (!customWorkoutFilterParts.length) {
+          customWorkoutFilterParts = ['all'];
+          if (allBtn) allBtn.classList.add('active');
+        }
+      }
+      renderCustomWorkoutExplorer();
+    };
+  });
+
+  // Search input
+  if ($('#customWorkoutSearchInput')) {
+    $('#customWorkoutSearchInput').oninput = (e) => {
+      customWorkoutSearchQuery = e.target.value;
+      renderCustomWorkoutExplorer();
+    };
+  }
+}
+initWorkoutCustomizationListeners();
 
 /* ================= CHALLENGE VIEW RENDERING ================= */
 let swapTargetDayIdx = 0;
@@ -4054,11 +4796,11 @@ function startActiveSetTimer() {
       sessionTimerSec--;
       updateTimerClockDisplay();
       if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
-        playAudioChime(440, 'sine', 0.08);
+        soundFX.timerTick();
       }
     } else {
       clearInterval(sessionTimerInterval);
-      playAudioChime(660, 'sine', 0.2);
+      soundFX.timerGo();
       transitionToRestPhase();
     }
   }, 1000);
@@ -4076,7 +4818,7 @@ function transitionToRestPhase() {
       sessionTimerSec--;
       updateTimerClockDisplay();
       if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
-        playAudioChime(440, 'sine', 0.08);
+        soundFX.timerTick();
       }
     } else {
       clearInterval(sessionTimerInterval);
@@ -4098,18 +4840,18 @@ function trigger321CountdownAndAdvance() {
   overlay.style.display = 'flex';
   num.textContent = '3';
   sub.textContent = 'GET READY!';
-  playAudioChime(440, 'sine', 0.14);
+  soundFX.timerWarning();
 
   setTimeout(() => {
     num.textContent = '2';
-    playAudioChime(440, 'sine', 0.14);
+    soundFX.timerWarning();
     setTimeout(() => {
       num.textContent = '1';
-      playAudioChime(440, 'sine', 0.14);
+      soundFX.timerWarning();
       setTimeout(() => {
         num.textContent = 'GO! 🔥';
         sub.textContent = 'CRUSH THIS SET!';
-        playAudioChime(880, 'triangle', 0.35);
+        soundFX.timerGo();
         setTimeout(() => {
           overlay.style.display = 'none';
           advanceToNextSetOrExercise();
@@ -4166,6 +4908,7 @@ function finishCurrentWorkoutSession() {
   store.set('workoutsDone', workoutsDone);
   recordDailyActivity('challenge_workout');
 
+  soundFX.victoryCelebration();
   closeModal('#workoutSessionModal');
   renderChallengeView();
   renderTrackingView();

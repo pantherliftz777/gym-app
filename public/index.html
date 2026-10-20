@@ -120,11 +120,22 @@
       </button>
 
       <div>
-        <div class="eyebrow" id="eyebrowDate">MONDAY, OCTOBER 20, 2026 · 03:25 PM</div>
-        <h1 id="userGreeting">Good afternoon, Jordan</h1>
+        <div class="header-weather-badge" id="topbarLiveBadge">
+          <span id="eyebrowDate">MONDAY, OCTOBER 20, 2026</span>
+          <span style="color:#cbdad0;">•</span>
+          <span id="liveClockTime" style="font-variant-numeric:tabular-nums;font-weight:700;">03:25:12 PM</span>
+          <span style="color:#cbdad0;">•</span>
+          <button type="button" class="header-weather-temp" id="headerWeatherBtn" title="Click to change temperature">
+            <span id="headerWeatherIcon">☀️</span> <span id="headerWeatherTemp">29°C</span> <small id="headerWeatherLabel">Warm</small>
+          </button>
+        </div>
+        <h1 id="userGreeting" style="margin-top:4px;">Good afternoon, Jordan</h1>
       </div>
 
       <div class="top-actions">
+        <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
+          <span id="soundToggleIcon">🔊</span> <span id="soundToggleText">Audio On</span>
+        </button>
         <span class="sync-note" id="syncNote">
           <span class="status-dot"></span>
           <span id="syncStatus">Cloud database synced</span>
@@ -167,6 +178,23 @@
           </div>
           <div class="strip-orbit orbit-one"></div>
           <div class="strip-orbit orbit-two"></div>
+        </div>
+
+        <!-- DAILY MOTIVATION SECTION -->
+        <div class="daily-motivation-panel" id="dailyMotivationPanel">
+          <div class="motivation-overline">
+            <span class="motivation-tag">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"></path><path d="m4.93 4.93 2.83 2.83"></path><path d="M2 12h4"></path><path d="m4.93 19.07 2.83-2.83"></path><path d="M12 18v4"></path><path d="m16.24 16.24 2.83 2.83"></path><path d="M18 12h4"></path><path d="m16.24 7.76 2.83-2.83"></path></svg>
+              DAILY MOTIVATION &amp; MINDSET
+            </span>
+            <button type="button" class="text-button" id="nextMotivationQuoteBtn" style="color:#c9f582;font-size:.78rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.12);padding:4px 10px;border-radius:20px;border:none;cursor:pointer;">
+              ✨ Next Quote
+            </button>
+          </div>
+          <p class="motivation-quote-text" id="dailyMotivationQuoteText">
+            "The body achieves what the mind believes. Push past the comfort zone; that is where growth begins."
+          </p>
+          <div class="motivation-author" id="dailyMotivationAuthor">— Napoleon Hill</div>
         </div>
 
         <!-- AI DAILY VERIFICATION & COACH INSIGHT BANNER -->
@@ -320,6 +348,44 @@
                   <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path>
                 </svg>
               </button>
+            </div>
+
+            <!-- FRONT SCREEN DAILY WATER ESTIMATE & WEATHER ADVISORY -->
+            <div class="front-water-advisory-card" id="frontWaterAdvisoryCard">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <div>
+                  <span style="font-size:.72rem;font-weight:800;color:#355c28;text-transform:uppercase;letter-spacing:.05em;">DAILY WATER ESTIMATE &amp; ADVISORY</span>
+                  <div style="font-size:1.05rem;font-weight:800;color:#1e3825;margin-top:2px;">
+                    Target: <span id="frontCalculatedWaterL">2.8</span> L / day
+                  </div>
+                </div>
+                <button type="button" class="header-weather-temp" id="frontWeatherBadgeBtn" title="Click to adjust temperature">
+                  <span id="frontWeatherIcon">☀️</span> <span id="frontWeatherTemp">29°C</span> · <span id="frontWeatherLabel">Warm</span> ✎
+                </button>
+              </div>
+
+              <!-- Interactive Creatine Input & Weather Breakdown -->
+              <div class="front-water-breakdown-row">
+                <div class="front-water-pill">
+                  <span>Base Weight Demand</span>
+                  <b id="waterBreakdownBase">2.4 L</b>
+                </div>
+                <div class="front-water-pill">
+                  <span>Creatine Amount</span>
+                  <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+                    <input type="number" id="frontCreatineGramsInput" min="0" max="30" step="1" value="5" style="width:52px;padding:2px 4px;font-weight:800;border:1.5px solid #b8ceb2;border-radius:6px;font-size:.88rem;color:#1e3825;background:#fff;" title="Enter grams of creatine taken today" />
+                    <span style="font-size:.78rem;font-weight:700;color:#495e50;">g (<span id="waterBreakdownCreatine">+500</span>ml)</span>
+                  </div>
+                </div>
+                <div class="front-water-pill">
+                  <span>Weather Impact</span>
+                  <b id="waterBreakdownWeather">+250 ml (Warm)</b>
+                </div>
+                <div class="front-water-pill">
+                  <span>Workout Demand</span>
+                  <b id="waterBreakdownWorkout">+300 ml</b>
+                </div>
+              </div>
             </div>
 
             <div class="water-readout">
@@ -583,6 +649,74 @@
             </div>
           </article>
         </div>
+
+        <!-- WORKOUT SECTION CUSTOMIZATION & MULTI-SELECTION TOOL -->
+        <article class="panel" style="margin-top:24px;padding:24px 26px;" id="customWorkoutExplorerPanel">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <span class="section-kicker">WORKOUT CUSTOMIZATION &amp; MULTI-SELECT FINDER</span>
+              <h3 style="font-size:1.25rem;color:#203b29;margin:3px 0 0;">Tailor Your Training Session</h3>
+              <p style="color:#637367;font-size:.88rem;margin:4px 0 0;">
+                Select your workout styles (Gym, Home, HIIT, Cardio, Stretching) and targeted body parts with customized sets, reps, and rest guidance.
+              </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="text" id="customWorkoutSearchInput" placeholder="🔍 Search exercises (e.g. Squat, Pushup, Incline)..." style="padding:9px 16px;border:1.5px solid #d4ded2;border-radius:24px;font-size:.88rem;min-width:240px;outline:none;" />
+            </div>
+          </div>
+
+          <!-- Workout Types Filter (Multi-select) -->
+          <div style="margin-bottom:14px;">
+            <div style="font-size:.76rem;font-weight:800;color:#355c28;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">
+              1. Workout Type (Select one or multiple)
+            </div>
+            <div class="filter-pills-row" id="workoutTypeFilterPills">
+              <button type="button" class="filter-pill active" data-type="all">✨ All Types</button>
+              <button type="button" class="filter-pill" data-type="Gym">🏋️ Gym Workout</button>
+              <button type="button" class="filter-pill" data-type="Home">🏠 Home Workout</button>
+              <button type="button" class="filter-pill" data-type="HIIT">⚡ High Intensity (HIIT)</button>
+              <button type="button" class="filter-pill" data-type="Cardio">🏃 Cardio</button>
+              <button type="button" class="filter-pill" data-type="Stretching">🧘 Stretching &amp; Mobility</button>
+            </div>
+          </div>
+
+          <!-- Body Parts Filter (Multi-select) -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:.76rem;font-weight:800;color:#355c28;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">
+              2. Target Body Part (Select one or multiple)
+            </div>
+            <div class="filter-pills-row" id="workoutBodyPartFilterPills">
+              <button type="button" class="filter-pill active" data-part="all">✨ Full Body</button>
+              <button type="button" class="filter-pill" data-part="Chest">🛡️ Chest (Upper / Mid / Lower)</button>
+              <button type="button" class="filter-pill" data-part="Back">🦅 Back (Lats / Upper / Lower)</button>
+              <button type="button" class="filter-pill" data-part="Shoulders">🎯 Shoulders (Front / Side / Rear)</button>
+              <button type="button" class="filter-pill" data-part="Arms">💪 Arms (Biceps / Triceps)</button>
+              <button type="button" class="filter-pill" data-part="Legs">🦵 Legs (Quads / Hamstrings / Glutes)</button>
+              <button type="button" class="filter-pill" data-part="Core">🧱 Core &amp; Abs</button>
+            </div>
+          </div>
+
+          <!-- Sets & Reps Guidance Banner -->
+          <div style="background:#f4f9ee;border:1px solid #dcebd4;border-radius:12px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:20px;">💡</span>
+              <div style="font-size:.88rem;color:#243e2b;">
+                <b>Scientific Sets &amp; Reps Prescription:</b>
+                <span id="prescriptionRecommendationText" style="color:#4a614e;margin-left:4px;">
+                  3–4 sets × 8–12 reps (Hypertrophy / Muscle Building) with 45–60s rest between sets.
+                </span>
+              </div>
+            </div>
+            <span style="font-size:.74rem;font-weight:700;background:#203b29;color:#b4db79;padding:3px 10px;border-radius:99px;">
+              Verified Protocol
+            </span>
+          </div>
+
+          <!-- Custom Filtered Exercises Output -->
+          <div id="customWorkoutResultsGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));gap:14px;">
+            <!-- Populated dynamically with customizable exercise cards -->
+          </div>
+        </article>
       </section>
 
       <!-- ================= VIEW 4: EXERCISE LIBRARY ================= -->
@@ -1578,7 +1712,7 @@
   <div class="modal-card" style="max-width:520px;">
     <div class="modal-head">
       <div>
-        <span class="section-kicker">CHALLENGE WIZARD · STEP 1 OF 2</span>
+        <span class="section-kicker">CHALLENGE WIZARD · STEP 1 OF 3</span>
         <h2>What is your primary motive?</h2>
       </div>
       <button class="close-btn" data-close>&times;</button>
@@ -1618,6 +1752,107 @@
     </div>
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
       <button type="button" class="outline-button" data-close>Cancel</button>
+      <button type="button" class="solid-button" id="proceedToPrefsBtn" style="background:#203b29;">
+        Next: Training Preferences →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE SETUP STEP 2: PREFERENCES MODAL (TYPE MULTI-SELECT, TIME DURATION & INTENSITY) -->
+<div class="modal-backdrop" id="challengePrefsModal">
+  <div class="modal-card" style="max-width:540px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">CHALLENGE WIZARD · STEP 2 OF 3</span>
+        <h2>Custom Training Preferences</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <p style="color:#637367;font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
+      Customize your workout styles, time commitment, and training intensity.
+    </p>
+
+    <!-- 1. Workout Types Multi-Select -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:.8rem;font-weight:800;color:#203b29;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;">
+        1. Select Workout Types (Choose one or multiple):
+      </label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="chTypesOptionsList">
+        <label class="setup-choice-card selected" style="padding:10px 12px;cursor:pointer;">
+          <input type="checkbox" value="Gym" checked style="accent-color:#203b29;" />
+          <span style="font-size:.9rem;font-weight:700;color:#203b29;">🏋️ Gym Workout</span>
+        </label>
+        <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
+          <input type="checkbox" value="Home" style="accent-color:#203b29;" />
+          <span style="font-size:.9rem;font-weight:700;color:#203b29;">🏠 Home Workout</span>
+        </label>
+        <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
+          <input type="checkbox" value="HIIT" style="accent-color:#203b29;" />
+          <span style="font-size:.9rem;font-weight:700;color:#203b29;">⚡ High Intensity (HIIT)</span>
+        </label>
+        <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
+          <input type="checkbox" value="Cardio" style="accent-color:#203b29;" />
+          <span style="font-size:.9rem;font-weight:700;color:#203b29;">🏃 Cardio</span>
+        </label>
+        <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;grid-column:span 2;">
+          <input type="checkbox" value="Stretching" style="accent-color:#203b29;" />
+          <span style="font-size:.9rem;font-weight:700;color:#203b29;">🧘 Stretching &amp; Mobility Cooldown</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 2. Daily Workout Duration in Minutes -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:.8rem;font-weight:800;color:#203b29;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;">
+        2. How much time do you want to train per day?
+      </label>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="chTimeOptionsList">
+        <button type="button" class="setup-choice-card" data-minutes="20" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
+          <b style="font-size:1rem;color:#203b29;">20 min</b>
+          <small style="color:#637367;font-size:.72rem;">Express</small>
+        </button>
+        <button type="button" class="setup-choice-card" data-minutes="35" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
+          <b style="font-size:1rem;color:#203b29;">35 min</b>
+          <small style="color:#637367;font-size:.72rem;">Balanced</small>
+        </button>
+        <button type="button" class="setup-choice-card selected" data-minutes="45" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
+          <b style="font-size:1rem;color:#203b29;">45 min</b>
+          <small style="color:#637367;font-size:.72rem;">Standard</small>
+        </button>
+        <button type="button" class="setup-choice-card" data-minutes="60" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
+          <b style="font-size:1rem;color:#203b29;">60 min</b>
+          <small style="color:#637367;font-size:.72rem;">Intensive</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Workout Intensity -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:.8rem;font-weight:800;color:#203b29;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;">
+        3. Workout Intensity Level:
+      </label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="chIntensityOptionsList">
+        <button type="button" class="setup-choice-card" data-intensity="Mild" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
+          <span style="font-size:20px;">🟢</span>
+          <b style="font-size:.9rem;color:#203b29;margin-top:2px;">Mild / Easy</b>
+          <small style="color:#637367;font-size:.72rem;">60-90s rest</small>
+        </button>
+        <button type="button" class="setup-choice-card selected" data-intensity="Moderate" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
+          <span style="font-size:20px;">🟡</span>
+          <b style="font-size:.9rem;color:#203b29;margin-top:2px;">Moderate</b>
+          <small style="color:#637367;font-size:.72rem;">45-60s rest</small>
+        </button>
+        <button type="button" class="setup-choice-card" data-intensity="Hard" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
+          <span style="font-size:20px;">🔴</span>
+          <b style="font-size:.9rem;color:#203b29;margin-top:2px;">Hard / High</b>
+          <small style="color:#637367;font-size:.72rem;">30-45s rest (+water)</small>
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;">
+      <button type="button" class="outline-button" id="backToMotiveBtn">← Back</button>
       <button type="button" class="solid-button" id="proceedToDurationBtn" style="background:#203b29;">
         Next: Select Duration →
       </button>
@@ -1625,29 +1860,29 @@
   </div>
 </div>
 
-<!-- CHALLENGE SETUP STEP 2: DURATION MODAL -->
+<!-- CHALLENGE SETUP STEP 3: DURATION MODAL -->
 <div class="modal-backdrop" id="challengeDurationModal">
   <div class="modal-card" style="max-width:540px;">
     <div class="modal-head">
       <div>
-        <span class="section-kicker">CHALLENGE WIZARD · STEP 2 OF 2</span>
+        <span class="section-kicker">CHALLENGE WIZARD · STEP 3 OF 3</span>
         <h2>Select Challenge Duration</h2>
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
     <p style="color:#637367;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
-      Choose your commitment window. The AI will engineer a complete day-by-day plan based on your recorded bodyweight, height, and target goals.
+      Choose your commitment window. The AI will generate a tailored schedule matching your duration, intensity, and hydration requirements.
     </p>
 
     <!-- User Metrics Confirmation Banner -->
     <div style="background:#f4f9ee;border:1px solid #dbead2;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <div>
-        <span style="font-size:.72rem;font-weight:800;color:#3b6426;text-transform:uppercase;letter-spacing:.05em;">YOUR REGISTERED METRICS</span>
+        <span style="font-size:.72rem;font-weight:800;color:#3b6426;text-transform:uppercase;letter-spacing:.05em;">AI CONFIGURATION SUMMARY</span>
         <div style="font-size:.88rem;color:#1e3424;font-weight:700;margin-top:2px;" id="challengeMetricsPreview">
-          70 kg · 175 cm · 4 Days / Week · Maintain Weight
+          45 Total Min/Day · Moderate Intensity · Gym Workout
         </div>
       </div>
-      <button type="button" class="text-button" onclick="closeModal('#challengeDurationModal');switchView('profile');" style="font-size:.78rem;color:#203b29;font-weight:700;">Edit Profile ✎</button>
+      <button type="button" class="text-button" onclick="closeModal('#challengeDurationModal');openModal('#challengePrefsModal');" style="font-size:.78rem;color:#203b29;font-weight:700;">Edit Settings ✎</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="durationOptionsList">
@@ -1674,10 +1909,81 @@
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
-      <button type="button" class="outline-button" id="backToMotiveBtn">← Back</button>
+      <button type="button" class="outline-button" id="backToPrefsBtn">← Back</button>
       <button type="button" class="solid-button" id="generateChallengePlanBtn" style="background:#203b29;">
         ✨ Generate AI Plan
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- AVATAR OPTIONS MODAL (SEE PIC, UPLOAD NEW PIC, REMOVE PIC) -->
+<div class="modal-backdrop" id="avatarOptionsModal">
+  <div class="modal-card" style="max-width:440px;text-align:center;padding:26px 24px;">
+    <div class="modal-head" style="justify-content:center;position:relative;">
+      <h2 style="font-size:1.25rem;">Profile Picture Options</h2>
+      <button class="close-btn" data-close style="position:absolute;right:0;top:0;">&times;</button>
+    </div>
+    <div style="margin:18px auto 12px;width:110px;height:110px;border-radius:50%;overflow:hidden;border:3px solid #203b29;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,59,41,0.15);background:#f2f7ef;" id="avatarModalPreviewBox">
+      <!-- Live avatar preview -->
+    </div>
+    <h4 id="avatarModalName" style="color:#203b29;margin:0 0 4px;font-size:1.15rem;">Jordan Davis</h4>
+    <p id="avatarModalStatusText" style="color:#637367;font-size:.86rem;margin:0 0 20px;">Custom photo active</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button type="button" class="solid-button" id="avatarModalSeePicBtn" style="background:#203b29;width:100%;justify-content:center;">
+        🔍 See Full-Size Photo
+      </button>
+      <button type="button" class="outline-button" id="avatarModalUploadNewBtn" style="width:100%;justify-content:center;">
+        📷 Upload New Photo
+      </button>
+      <button type="button" class="outline-button" id="avatarModalRemoveBtn" style="width:100%;justify-content:center;color:#c53030;border-color:#feb2b2;">
+        🗑️ Remove Photo
+      </button>
+      <button type="button" class="text-button" data-close style="color:#78887c;margin-top:4px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEATHER TEMPERATURE ADJUSTER MODAL -->
+<div class="modal-backdrop" id="weatherTempModal">
+  <div class="modal-card" style="max-width:440px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker">WEATHER &amp; HYDRATION ENGINE</span>
+        <h2 style="font-size:1.2rem;">Local Temperature</h2>
+      </div>
+      <button class="close-btn" data-close>&times;</button>
+    </div>
+    <p style="color:#637367;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
+      Set your local temperature so our AI accurately calculates sweat loss and daily minimum water requirements.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="weatherTempPresets">
+      <button type="button" class="setup-choice-card" data-temp="18" data-label="Cool">
+        <span style="font-size:22px;">⛅</span>
+        <div><b>18°C</b><small style="display:block;color:#666;">Cool / Normal</small></div>
+      </button>
+      <button type="button" class="setup-choice-card" data-temp="24" data-label="Mild">
+        <span style="font-size:22px;">🌤️</span>
+        <div><b>24°C</b><small style="display:block;color:#666;">Mild Weather</small></div>
+      </button>
+      <button type="button" class="setup-choice-card selected" data-temp="29" data-label="Warm (Summer)">
+        <span style="font-size:22px;">☀️</span>
+        <div><b>29°C</b><small style="display:block;color:#666;">Warm (Summer)</small></div>
+      </button>
+      <button type="button" class="setup-choice-card" data-temp="36" data-label="Hot Peak">
+        <span style="font-size:22px;">🔥</span>
+        <div><b>36°C</b><small style="display:block;color:#666;">Hot Summer Peak</small></div>
+      </button>
+    </div>
+    <div style="margin-top:16px;">
+      <label style="font-size:.86rem;font-weight:700;color:#203b29;display:block;">
+        Or enter exact temperature (°C):
+        <input type="number" id="customTempInput" min="0" max="55" value="29" style="width:100%;margin-top:4px;padding:8px 12px;border:1px solid #d4ded2;border-radius:8px;font-size:1rem;" />
+      </label>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+      <button type="button" class="outline-button" data-close>Cancel</button>
+      <button type="button" class="solid-button" id="saveWeatherTempBtn" style="background:#203b29;">Save Temperature ✓</button>
     </div>
   </div>
 </div>

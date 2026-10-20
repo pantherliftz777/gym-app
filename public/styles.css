@@ -812,3 +812,202 @@
   color: #fff;
 }
 
+/* ================= FOOD LOG SPACING & PADDING FIX ================= */
+.food-log-main {
+  padding: 24px 28px !important;
+}
+@media (max-width: 640px) {
+  .food-log-main {
+    padding: 16px 14px !important;
+  }
+}
+.meal-group-block {
+  background: #ffffff;
+  border: 1px solid #e5ede0;
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(32, 59, 41, 0.03);
+  transition: border-color 0.15s ease;
+}
+.meal-group-block:hover {
+  border-color: #d1dfcb;
+}
+.meal-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2ea;
+  margin-bottom: 12px;
+}
+
+/* ================= LIVE TIME & WEATHER TEMPERATURE BADGE ================= */
+.header-weather-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e1ebdc;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #2e4735;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(32, 59, 41, 0.04);
+}
+.header-weather-temp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f7ec;
+  color: #234729;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  cursor: pointer;
+  border: 1px solid #d2e4cb;
+  transition: all 0.15s ease;
+}
+.header-weather-temp:hover {
+  background: #e2f0d9;
+  border-color: #b5d8a8;
+}
+
+/* ================= DAILY MOTIVATION PANEL ================= */
+.daily-motivation-panel {
+  background: linear-gradient(135deg, #1d3624 0%, #294c34 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 18px rgba(29, 54, 36, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+.daily-motivation-panel::after {
+  content: "“";
+  position: absolute;
+  right: 20px;
+  bottom: -25px;
+  font-size: 130px;
+  line-height: 1;
+  font-family: Georgia, serif;
+  color: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+.motivation-overline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.motivation-tag {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c9f582;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.motivation-quote-text {
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #ffffff;
+  margin: 0 0 10px;
+}
+.motivation-author {
+  font-size: 0.84rem;
+  color: #d1e5d5;
+  font-weight: 600;
+}
+
+/* ================= FRONT SCREEN WATER ESTIMATE & WEATHER ADVISORY ================= */
+.front-water-advisory-card {
+  background: #f7faf5;
+  border: 1px solid #dfe9da;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(32, 59, 41, 0.03);
+}
+.front-water-breakdown-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.front-water-pill {
+  background: #ffffff;
+  border: 1px solid #e3ede0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #495e50;
+}
+.front-water-pill b {
+  display: block;
+  font-size: 0.95rem;
+  color: #1e3b26;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+/* ================= MULTI-SELECT WORKOUT FILTER PILLS ================= */
+.filter-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+.filter-pill {
+  background: #ffffff;
+  border: 1.5px solid #dbe6d7;
+  color: #3b5242;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+.filter-pill:hover {
+  background: #f2f7ef;
+  border-color: #b5cbad;
+  color: #1d3324;
+}
+.filter-pill.active {
+  background: #203b29;
+  border-color: #203b29;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(32, 59, 41, 0.22);
+}
+
+/* ================= SOUND EFFECT TOGGLE ================= */
+.sound-toggle-btn {
+  background: #f1f6ec;
+  border: 1px solid #d4e2cf;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2b4c34;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+.sound-toggle-btn:hover {
+  background: #e3eedc;
+}
+
+
