@@ -46,6 +46,31 @@ let workoutsDone = store.get('workoutsDone', []);
 let session = store.get('session', null);
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
+
+/* ---------- Hydration Calculation from Bodyweight ---------- */
+function calcWaterFromWeight(w, units, creatine, days) {
+  let wKg = Number(w) || 68;
+  if (units === 'Imperial') {
+    wKg = wKg * 0.45359237;
+  }
+  // Base daily requirement: 35 ml per kg of bodyweight
+  let ml = wKg * 35;
+  if (creatine === 'yes') ml += 200;
+  if (Number(days) >= 5) ml += 150;
+  return (Math.max(1200, Math.min(5000, Math.round(ml / 100) * 100)) / 1000).toFixed(1);
+}
+
+function updateLiveWaterEstimate() {
+  const w = Number($('#pfWeightInput') ? $('#pfWeightInput').value : 0) || profile.wKg || 68;
+  const units = profile.units || 'Metric';
+  const creatine = $('#pfCreatineSelect') ? $('#pfCreatineSelect').value : (profile.creatine || 'yes');
+  const days = Number($('#pfDaysSelect') ? $('#pfDaysSelect').value : 4);
+  const targetL = calcWaterFromWeight(w, units, creatine, days);
+  if ($('#pfWaterCalculated')) {
+    $('#pfWaterCalculated').textContent = targetL;
+  }
+  return targetL;
+}
 let activeWorkoutIdx = 0;
 
 /* ---------- Default Curated Foods & Exercises ---------- */
@@ -338,7 +363,7 @@ function renderDashboard() {
 
   // Water Intake & 12 Interactive Glasses
   const waterMl = (water && water.date === today()) ? (water.ml || 0) : 0;
-  const waterGoalL = ((profile.cal ? Math.round(profile.cal * 1.2) : 2500) / 1000).toFixed(1);
+  const waterGoalL = profile.waterGoal || calcWaterFromWeight(profile.wKg, profile.units, profile.creatine, profile.days);
   if ($('#waterDisplay')) $('#waterDisplay').innerHTML = `${(waterMl / 1000).toFixed(1)}<small> L</small>`;
   if ($('#waterGoalDisplay')) $('#waterGoalDisplay').textContent = waterGoalL;
 
@@ -771,8 +796,7 @@ function renderProfileView() {
   if ($('#pfDaysSelect')) $('#pfDaysSelect').value = profile.days || 4;
   if ($('#pfCreatineSelect')) $('#pfCreatineSelect').value = profile.creatine || 'yes';
 
-  const waterCalc = ((profile.cal ? Math.round(profile.cal * 1.2) : 2500) / 1000).toFixed(1);
-  if ($('#pfWaterCalculated')) $('#pfWaterCalculated').textContent = waterCalc;
+  updateLiveWaterEstimate();
 
   // Sync button text in topbar
   if ($('#topAuthBtn')) {
@@ -781,12 +805,15 @@ function renderProfileView() {
 }
 
 function saveProfileData() {
+  const inputWeight = Number($('#pfWeightInput').value) || profile.wKg || 68;
   profile.hCm = Number($('#pfHeightInput').value) || profile.hCm;
-  profile.wKg = Number($('#pfWeightInput').value) || profile.wKg;
+  profile.wKg = profile.units === 'Imperial' ? Math.round(inputWeight * 0.45359237) : inputWeight;
   profile.cal = Number($('#pfCalorieInput').value) || profile.cal;
   profile.goal = $('#pfGoalSelect').value;
   profile.days = Number($('#pfDaysSelect').value);
   profile.creatine = $('#pfCreatineSelect').value;
+
+  profile.waterGoal = updateLiveWaterEstimate();
 
   // Auto calculate protein & carbs targets based on goal
   const w = profile.wKg;
@@ -802,19 +829,43 @@ function saveProfileData() {
 
 $('#saveProfileBtn').onclick = saveProfileData;
 
-/* Unit Switcher */
+/* Unit Switcher & Live Profile Field Listeners */
 $$('#unitSwitch button').forEach(b => {
   b.onclick = () => {
     $$('#unitSwitch button').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     const u = b.dataset.unit;
+    const oldUnits = profile.units || 'Metric';
     profile.units = u;
     if ($('#pfHeightUnit')) $('#pfHeightUnit').textContent = u === 'Metric' ? 'cm' : 'in';
     if ($('#pfWeightUnit')) $('#pfWeightUnit').textContent = u === 'Metric' ? 'kg' : 'lbs';
+
+    // Convert input field value smoothly
+    if (oldUnits !== u && $('#pfWeightInput')) {
+      const curW = Number($('#pfWeightInput').value) || profile.wKg || 68;
+      if (u === 'Imperial') {
+        $('#pfWeightInput').value = Math.round(curW * 2.20462);
+      } else {
+        $('#pfWeightInput').value = Math.round(curW / 2.20462);
+      }
+    }
+    updateLiveWaterEstimate();
     store.set('profile', profile);
     toast(`Units switched to ${u}`);
   };
 });
+
+// Live recalculation when user types or changes fields
+if ($('#pfWeightInput')) $('#pfWeightInput').oninput = updateLiveWaterEstimate;
+if ($('#pfCreatineSelect')) $('#pfCreatineSelect').onchange = updateLiveWaterEstimate;
+if ($('#pfDaysSelect')) $('#pfDaysSelect').onchange = updateLiveWaterEstimate;
+if ($('#pfCalorieInput')) {
+  $('#pfCalorieInput').oninput = () => {
+    const cal = Number($('#pfCalorieInput').value) || 2100;
+    const w = Number($('#pfWeightInput')?.value) || profile.wKg || 68;
+    profile.cal = cal;
+  };
+}
 
 /* ---------- Settings, Logout & Admin Portal ---------- */
 $('#topSettingsBtn').onclick = () => {
