@@ -25,28 +25,124 @@ let curMeal = 'Breakfast';
 let camState = null;
 let session = store.get('session',null);
 
-/* ---------- toast ---------- */
+/* ---------- Motion (Framer Motion engine in Vanilla JS) ---------- */
+const M = (typeof window !== 'undefined' && window.Motion) ? window.Motion : null;
+
+/* ---------- toast (with Motion spring physics) ---------- */
 let toastT;
 function toast(msg){
-  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+  const t=$('#toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  if(M && M.animate){
+    M.animate(t, { opacity: [0, 1], y: [35, 0], scale: [0.92, 1] }, {
+      duration: 0.35,
+      easing: M.spring({ stiffness: 360, damping: 24, mass: 0.8 })
+    });
+  }
+  toastT=setTimeout(()=>{
+    if(M && M.animate){
+      const a = M.animate(t, { opacity: [1, 0], y: [0, 16], scale: [1, 0.95] }, { duration: 0.2 });
+      a.finished.then(()=>{ t.classList.remove('show'); t.style.opacity=''; t.style.transform=''; }).catch(()=>{ t.classList.remove('show'); });
+    } else {
+      t.classList.remove('show');
+    }
+  }, 2600);
 }
 
-/* ---------- navigation ---------- */
+/* ---------- navigation & page transitions (Motion spring + stagger) ---------- */
 function go(page){
-  $$('.page').forEach(p=>p.classList.remove('active'));
-  $('#page-'+page).classList.add('active');
-  $$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
-  window.scrollTo({top:0});
+  $('.page').forEach(p=>p.classList.remove('active'));
+  const target = $('#page-'+page);
+  if(!target) return;
+  target.classList.add('active');
+  $('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  window.scrollTo({top:0, behavior:'smooth'});
   if(page==='tracking') renderTracking();
+
+  if(M && M.animate){
+    M.animate(target, { opacity: [0, 1], y: [14, 0] }, {
+      duration: 0.34,
+      easing: M.spring({ stiffness: 280, damping: 25, mass: 0.8 })
+    });
+    const cards = target.querySelectorAll('.card, .hero, .stat-card, .chart-card, .metric-box, .glass');
+    if(cards.length > 0){
+      M.animate(cards, { opacity: [0, 1], y: [12, 0] }, {
+        delay: M.stagger(0.04, { start: 0.04 }),
+        duration: 0.32,
+        easing: M.spring({ stiffness: 260, damping: 24 })
+      });
+    }
+  }
 }
 $$('.nav-btn').forEach(b=>b.onclick=()=>go(b.dataset.page));
+
+/* ---------- modal spring open & close ---------- */
+function openModal(target){
+  const m = typeof target === 'string' ? $(target) : target;
+  if(!m) return;
+  m.classList.add('open');
+  if(M && M.animate){
+    const dialog = m.querySelector('.modal');
+    M.animate(m, { opacity: [0, 1] }, { duration: 0.18 });
+    if(dialog){
+      M.animate(dialog, { opacity: [0, 1], scale: [0.93, 1], y: [16, 0] }, {
+        duration: 0.36,
+        easing: M.spring({ stiffness: 320, damping: 26, mass: 0.85 })
+      });
+    }
+  }
+}
+
+function closeModal(target){
+  const m = typeof target === 'string' ? $(target) : target;
+  if(!m || !m.classList.contains('open')) return;
+  if(M && M.animate){
+    const dialog = m.querySelector('.modal');
+    if(dialog){
+      M.animate(dialog, { opacity: [1, 0], scale: [1, 0.94], y: [0, 10] }, { duration: 0.16 });
+    }
+    const anim = M.animate(m, { opacity: [1, 0] }, { duration: 0.18 });
+    anim.finished.then(() => {
+      m.classList.remove('open');
+      m.style.opacity = '';
+      if(dialog) { dialog.style.opacity = ''; dialog.style.transform = ''; }
+    }).catch(() => {
+      m.classList.remove('open');
+    });
+  } else {
+    m.classList.remove('open');
+  }
+}
+
 document.addEventListener('click',e=>{
   const g=e.target.closest('[data-goto]'); if(g) go(g.dataset.goto);
-  const c=e.target.closest('[data-close]'); if(c) c.closest('.modal-back').classList.remove('open');
+  const c=e.target.closest('[data-close]'); if(c) closeModal(c.closest('.modal-back'));
 });
-function openModal(id){ $(id).classList.add('open'); }
-$$('.modal-back').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+$$('.modal-back').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) closeModal(m); }));
+
+/* ---------- interactive tap physics (Motion spring) ---------- */
+function initMotionInteractions(){
+  if(!M || !M.animate || typeof document === 'undefined') return;
+  document.documentElement.classList.add('has-motion');
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest('.btn, .nav-btn, .chip, .user-chip, .filter-chip, .quick-add-btn');
+    if(!el) return;
+    M.animate(el, { scale: 0.95 }, { duration: 0.1, easing: 'ease-out' });
+  }, { passive: true });
+  const release = e => {
+    const el = e.target.closest('.btn, .nav-btn, .chip, .user-chip, .filter-chip, .quick-add-btn');
+    if(!el) return;
+    M.animate(el, { scale: 1 }, {
+      duration: 0.3,
+      easing: M.spring({ stiffness: 450, damping: 22 })
+    });
+  };
+  document.addEventListener('pointerup', release, { passive: true });
+  document.addEventListener('pointercancel', release, { passive: true });
+}
 
 /* ---------- macro engine ---------- */
 function calcMacros(cal,wKg,gender){
@@ -138,7 +234,7 @@ $('#loginBtn').onclick=doLogin;
 function onLoggedIn(user,fresh){
   session={name:user.name,email:user.email,phone:user.contact||'',at:Date.now(),lastLogin:user.last_login||Date.now()};
   store.set('session',session);
-  $('#authScreen').classList.remove('open');
+  closeModal('#authScreen');
   dbBadge();
   if(fresh){
     FF.patch({profile,log,custom,plan,water,settings:{}}).catch(()=>{});
@@ -165,7 +261,7 @@ async function logout(){
 }
 $('#userChip').onclick=()=>{ renderProfileModal(); openModal('#profileModal'); };
 $('#openSettingsFromProfile').onclick=()=>{
-  $('#profileModal').classList.remove('open');
+  closeModal('#profileModal');
   renderUser(); openModal('#settingsModal');
 };
 function renderProfileModal(){
@@ -557,7 +653,7 @@ function openPortion(f, isCustom){
     const g=+$('#portionG').value||0;
     if(g<1) return toast('Enter weight in grams');
     addEntry({n:name,e:portionCtx.e||'🍽️',img:portionCtx.img,meal,g,...portionCtx.macros});
-    $('#portionModal').classList.remove('open'); toast(`${name} added to ${meal}`);
+    closeModal('#portionModal'); toast(`${name} added to ${meal}`);
   };
   upd(); openModal('#portionModal');
 }
@@ -648,7 +744,7 @@ $('#camAddBtn').onclick=()=>{
   if(g<1) return toast('Enter food weight');
   const meal=$('#camMealSeg').querySelector('.active').dataset.m;
   addEntry({n:f.n,e:f.e,img:camState.img,meal,g,k:f.k*g/100,p:f.p*g/100,c:f.c*g/100,f:f.f*g/100});
-  $('#cameraModal').classList.remove('open'); toast(`${f.n} (${g} g) added to ${meal}`);
+  closeModal('#cameraModal'); toast(`${f.n} (${g} g) added to ${meal}`);
 };
 
 /* ================= WORKOUTS ================= */
@@ -1132,7 +1228,7 @@ $('#customSaveBtn').onclick=()=>{
   }
   editingId=null;
   store.set('custom',custom);
-  $('#customModal').classList.remove('open');
+  closeModal('#customModal');
   renderSearch(); renderLibrary();
 };
 
@@ -1286,7 +1382,7 @@ function renderAll(){ renderDash(); renderDietMacros(); renderSearch(); renderLi
 /* ================= WATER / SETTINGS ================= */
 $('#addWaterBtn').onclick=()=>{ water.ml+=250; store.set('water',water); renderDash(); };
 $('#resetWaterBtn').onclick=()=>{ water.ml=0; store.set('water',water); renderDash(); };
-$('#saveSettingsBtn').onclick=()=>{ $('#settingsModal').classList.remove('open'); toast('Settings saved'); };
+$('#saveSettingsBtn').onclick=()=>{ closeModal('#settingsModal'); toast('Settings saved'); };
 $('#wipeDataBtn').onclick=()=>{
   if(!confirm('Erase profile, logs, custom foods and plans from THIS device? This cannot be undone.')) return;
   ['profile','log','custom','plan','water','weights','workoutsDone','session'].forEach(store.del);
@@ -1307,7 +1403,7 @@ async function boot(){
   if(res==='offline'){
     dbBadge();
     if(!session) $('#authScreen').classList.add('open');
-    else $('#authScreen').classList.remove('open');
+    else closeModal('#authScreen');
     toast('📴 Offline mode — data saved on this device');
     return;
   }
@@ -1348,8 +1444,9 @@ async function boot(){
       store.set('savedPlans',savedPlans);
     }
   }catch(e){}
-  $('#authScreen').classList.remove('open');
+  closeModal('#authScreen');
   dbBadge(); renderUser(); renderPlanPage(); renderWorkouts(); renderAll(); renderProfileModal();
 }
+initMotionInteractions();
 boot();
 }
