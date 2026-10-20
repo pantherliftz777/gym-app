@@ -25,6 +25,7 @@ const store = {
 const M = (typeof window !== 'undefined' && window.Motion) ? window.Motion : null;
 
 /* ---------- State ---------- */
+let plan = store.get('plan', null);
 let profile = store.get('profile', {
   name: 'Jordan Davis',
   email: 'jordan.davis@example.com',
@@ -82,7 +83,7 @@ const DEFAULT_PREVIEW_MEALS = [
   { meal: 'Snack', name: 'Vanilla whey shake', detail: 'Whey protein · 1 scoop', k: 145, p: 27, c: 5, f: 2, icon: 'apple' }
 ];
 
-const WORKOUT_PLANS = [
+let WORKOUT_PLANS = [
   {
     name: 'Full-body strength',
     focus: 'Glutes · Back · Core',
@@ -120,6 +121,10 @@ const WORKOUT_PLANS = [
     benefit: 'Push, pull and stabilize through a practical upper-body strength circuit.'
   }
 ];
+
+if (plan && plan.workout && !WORKOUT_PLANS.some(w => w.name === plan.workout.name)) {
+  WORKOUT_PLANS.unshift(plan.workout);
+}
 
 const EXERCISES_LIBRARY = [
   // --- CHEST: Upper, Mid, Lower ---
@@ -1713,7 +1718,14 @@ $('#confirmAddFoodBtn').onclick = confirmAddFood;
 /* ---------- Workouts View Rendering ---------- */
 function renderWorkouts() {
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
-  if ($('#planWorkoutTitle')) $('#planWorkoutTitle').textContent = wo.name;
+  const isCustomAi = plan && plan.workout && (wo.name === plan.workout.name);
+  if ($('#planWorkoutTitle')) {
+    if (isCustomAi) {
+      $('#planWorkoutTitle').innerHTML = `✨ ${wo.name} <span style="font-size:.72rem;background:#203b29;color:#b4db79;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px;">AI GENERATED</span>`;
+    } else {
+      $('#planWorkoutTitle').textContent = wo.name;
+    }
+  }
   if ($('#planFocusBadge')) $('#planFocusBadge').textContent = wo.focus.toUpperCase();
   if ($('#planBenefitText')) $('#planBenefitText').textContent = wo.benefit;
 
@@ -2267,7 +2279,8 @@ if ($('#generateAiPlanBtn')) {
       renderProfileView();
       renderFoodLog();
       renderWorkouts();
-      toast('🎉 AI Plan created & synced with your account!');
+      switchView('workouts');
+      toast('🎉 AI Plan created! Displaying your personalized workout below.');
     } catch (err) {
       toast(err.message || 'Error generating AI plan');
     } finally {

@@ -1,3 +1,36 @@
+
+function safeJsonParse(raw) {
+  if (!raw) throw new Error('Empty AI response');
+  if (typeof raw === 'object') return raw;
+
+  let clean = String(raw).replace(/```json/gi, '').replace(/```/g, '').trim();
+
+  const start = clean.indexOf('{');
+  const end = clean.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    clean = clean.slice(start, end + 1);
+  }
+
+  try {
+    return JSON.parse(clean);
+  } catch (e1) {
+    let repaired = clean
+      .replace(/,\s*([\}\]])/g, '$1')
+      .replace(/([{,]\s*)'([^']+)'(\s*:)/g, '$1"$2"$3')
+      .replace(/:\s*'([^']*)'/g, ':"$1"');
+    try {
+      return JSON.parse(repaired);
+    } catch (e2) {
+      try {
+        const fn = new Function('return (' + clean + ')');
+        const res = fn();
+        if (res && typeof res === 'object') return res;
+      } catch (e3) {}
+    }
+  }
+  throw new Error('Could not parse AI response');
+}
+
 /* FitFuel API client — server se data save/load. Server na mile to localStorage pe chalta rehta hai. */
 const FF = {
   token: typeof localStorage !== 'undefined' ? (localStorage.getItem('ff_token') || null) : null,
@@ -90,7 +123,9 @@ const FF = {
   async adminComplaints() { const r = await this.req('GET', '/api/complaints'); return r.complaints; },
   async adminDeleteUser(id) { await this.req('DELETE', '/api/admin/user', { id }); },
 
-    /* OpenRouter Free AI Engine with Cascade Failover */
+    safeJsonParse: safeJsonParse,
+
+  /* OpenRouter Free AI Engine with Cascade Failover */
   openRouterKey: (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_openrouter_key') : '') || '',
   freeModels: [
     'openrouter/free',
@@ -131,7 +166,7 @@ const FF = {
               { role: 'user', content: prompt }
             ],
             temperature: 0.3,
-            max_tokens: 850
+            max_tokens: 2500
           })
         });
 
@@ -163,10 +198,13 @@ Return ONLY valid JSON matching this exact structure:
   "carbs": 35,
   "fat": 6
 }`;
-    const raw = await this.callAI(prompt, 'You are an accurate nutritional database and AI nutrition analyzer. Respond with strict JSON only.');
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Could not parse nutrition data');
-    return JSON.parse(match[0]);
+    try {
+      const raw = await this.callAI(prompt, 'You are an accurate nutritional database and AI nutrition analyzer. Respond with strict JSON only.');
+      return safeJsonParse(raw);
+    } catch (e) {
+      const fallback = generateSmartAiFallback(prompt, 'strict JSON');
+      return safeJsonParse(fallback);
+    }
   },
 
   async aiGeneratePlan(profileData) {
@@ -206,10 +244,13 @@ Return ONLY valid JSON with this exact structure:
     ]
   }
 }`;
-    const raw = await this.callAI(prompt, 'You are Formwise AI, an elite personal trainer and sports nutritionist. Respond with strict JSON only.');
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Could not parse AI plan');
-    return JSON.parse(match[0]);
+    try {
+      const raw = await this.callAI(prompt, 'You are Formwise AI, an elite personal trainer and sports nutritionist. Respond with strict JSON only.');
+      return safeJsonParse(raw);
+    } catch (e) {
+      const fallback = generateSmartAiFallback(prompt, 'strict JSON');
+      return safeJsonParse(fallback);
+    }
   }
 };
 
@@ -338,3 +379,12 @@ function generateSmartAiFallback(prompt, systemPrompt = '') {
     '• **Recovery**: Prioritize 7-8 hours of sleep and adequate hydration (35ml/kg) to maximize muscle recovery.\n\n' +
     'Feel free to ask me about specific foods, micronutrient profiles, or customized exercise biomechanics!';
 }
+
+if (typeof window !== 'undefined') {
+  window.FF = FF;
+  window.safeJsonParse = safeJsonParse;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { FF, safeJsonParse, generateSmartAiFallback };
+}
+

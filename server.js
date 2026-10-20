@@ -348,7 +348,10 @@ const routes = {
     if (key) {
       for (const model of models) {
         try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s fast timeout per model
           const fetchRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            signal: controller.signal,
             method: 'POST',
             headers: {
               'Authorization': 'Bearer ' + key,
@@ -363,9 +366,10 @@ const routes = {
                 { role: 'user', content: prompt }
               ],
               temperature: 0.3,
-              max_tokens: 850
+              max_tokens: 2500
             })
           });
+          clearTimeout(timeoutId);
 
           if (fetchRes.ok) {
             const data = await fetchRes.json();
