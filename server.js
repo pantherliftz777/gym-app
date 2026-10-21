@@ -349,43 +349,105 @@ const routes = {
     }
     json(res, 403, { error: 'Wrong admin secret' });
   },
-    'POST /api/ai/chat': async (req, res) => {
-    const { prompt, systemPrompt } = await readBody(req);
-    const key = process.env.OPENROUTER_API_KEY;
-    const models = [
-      'openrouter/free',
-      'minimax/minimax-m3.1-flash:free',
-      'liquid/lfm-2.5-2.6b:free',
-      'nvidia/nemotron-3.5-lightning:free',
-      'nvidia/nemotron-3.5-super-vl:free',
-      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-      'poolside/laguna-s-2.1:free',
-      'google/gemma-4-31b-it:free',
-      'google/gemma-4-26b-a4b-it:free'
-    ];
+  'POST /api/ai/chat': async (req, res) => {
+    const body = await readBody(req);
+    const { prompt, systemPrompt, messages, geminiKey: userGeminiKey, openRouterKey: userOpenRouterKey } = body || {};
 
-    if (key) {
-      for (const model of models) {
+    const isJson = (systemPrompt && systemPrompt.toLowerCase().includes('json')) || (prompt && prompt.toLowerCase().includes('json'));
+
+    // Format messages for OpenAI / OpenRouter standard
+    let chatMessages = [];
+    if (Array.isArray(messages) && messages.length > 0) {
+      if (systemPrompt) chatMessages.push({ role: 'system', content: systemPrompt });
+      chatMessages = chatMessages.concat(messages.map(m => ({
+        role: m.role === 'assistant' || m.role === 'bot' ? 'assistant' : 'user',
+        content: m.content || m.text || ''
+      })));
+      if (prompt && (!messages.length || (messages[messages.length - 1].content !== prompt && messages[messages.length - 1].text !== prompt))) {
+        chatMessages.push({ role: 'user', content: prompt });
+      }
+    } else {
+      chatMessages = [
+        { role: 'system', content: systemPrompt || 'You are FitFuel AI Coach — an elite sports nutritionist and personal trainer. Give insightful, direct, customized advice.' },
+        { role: 'user', content: prompt || 'Hello' }
+      ];
+    }
+
+    // 1. First Priority: Direct Google Gemini API (if user or server has key)
+    const geminiKey = userGeminiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (geminiKey) {
+      const geminiModels = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+      for (const gModel of geminiModels) {
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s fast timeout per model
+          const timeoutId = setTimeout(() => controller.abort(), 18000);
+
+          const geminiContents = chatMessages
+            .filter(m => m.role !== 'system')
+            .map(m => ({
+              role: m.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: m.content }]
+            }));
+
+          const gResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent?key=${geminiKey}`, {
+            signal: controller.signal,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
+              contents: geminiContents,
+              generationConfig: {
+                temperature: isJson ? 0.2 : 0.7,
+                maxOutputTokens: 2500
+              }
+            })
+          });
+          clearTimeout(timeoutId);
+
+          if (gResp.ok) {
+            const gData = await gResp.json();
+            const text = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) {
+              return json(res, 200, { ok: true, provider: 'google-gemini', model: gModel, content: text });
+            }
+          }
+        } catch (err) {
+          // Cascade to OpenRouter
+        }
+      }
+    }
+
+    // 2. Second Priority: OpenRouter Live Cascade across free models
+    const orKey = userOpenRouterKey || process.env.OPENROUTER_API_KEY;
+    const orModels = [
+      'nvidia/nemotron-3.5-super-vl:free',
+      'minimax/minimax-m3.1-flash:free',
+      'openrouter/free',
+      'dots-studio/dots-3-note-preview:free',
+      'liquid/lfm-2.5-2.6b:free',
+      'thinkingmachines/inkling:free'
+    ];
+
+    if (orKey) {
+      for (const model of orModels) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s generous timeout so live answers never get cut off
+
           const fetchRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             signal: controller.signal,
             method: 'POST',
             headers: {
-              'Authorization': 'Bearer ' + key,
+              'Authorization': 'Bearer ' + orKey,
               'Content-Type': 'application/json',
               'HTTP-Referer': 'https://fitfuel.app',
-              'X-Title': 'FitFuel AI Engine'
+              'X-Title': 'FitFuel AI Live Coach'
             },
             body: JSON.stringify({
               model: model,
-              messages: [
-                { role: 'system', content: systemPrompt || 'You are an elite fitness and nutrition AI. Respond with strict JSON only.' },
-                { role: 'user', content: prompt }
-              ],
-              temperature: 0.3,
-              max_tokens: 2500
+              messages: chatMessages,
+              temperature: isJson ? 0.2 : 0.7,
+              max_tokens: 2200
             })
           });
           clearTimeout(timeoutId);
@@ -393,7 +455,10 @@ const routes = {
           if (fetchRes.ok) {
             const data = await fetchRes.json();
             if (data && data.choices && data.choices[0] && data.choices[0].message) {
-              return json(res, 200, { ok: true, model, content: data.choices[0].message.content });
+              const content = data.choices[0].message.content;
+              if (content && content.trim()) {
+                return json(res, 200, { ok: true, provider: 'openrouter', model, content });
+              }
             }
           }
         } catch (e) {
@@ -402,9 +467,9 @@ const routes = {
       }
     }
 
-    // High-accuracy fallback engine so the user NEVER receives busy errors
-    const fallbackContent = generateSmartAiFallback(prompt, systemPrompt);
-    return json(res, 200, { ok: true, model: 'fitfuel-expert-engine', content: fallbackContent });
+    // 3. Fallback: Dynamic Smart Context Engine (Generates helpful advice based on exact user query if network is down)
+    const fallbackContent = generateSmartAiFallback(prompt || '', systemPrompt || '');
+    return json(res, 200, { ok: true, provider: 'fitfuel-offline-engine', model: 'fitfuel-expert-engine', content: fallbackContent });
   }
 };
 

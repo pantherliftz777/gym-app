@@ -157,63 +157,100 @@ const FF = {
 
     safeJsonParse: safeJsonParse,
 
-  /* OpenRouter Free AI Engine with Cascade Failover */
-  openRouterKey: (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_openrouter_key') : '') || '',
+  /* Live AI Engine with Multi-Provider Cascade (Google Gemini & OpenRouter) */
+  getGeminiKey() {
+    return (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_gemini_key') : '') || '';
+  },
+  getOpenRouterKey() {
+    return (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_openrouter_key') : '') || '';
+  },
   freeModels: [
-    'openrouter/free',
-    'minimax/minimax-m3.1-flash:free',
-    'liquid/lfm-2.5-2.6b:free',
-    'nvidia/nemotron-3.5-lightning:free',
     'nvidia/nemotron-3.5-super-vl:free',
-    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-    'poolside/laguna-s-2.1:free',
-    'google/gemma-4-31b-it:free',
-    'google/gemma-4-26b-a4b-it:free'
+    'minimax/minimax-m3.1-flash:free',
+    'openrouter/free',
+    'dots-studio/dots-3-note-preview:free',
+    'liquid/lfm-2.5-2.6b:free',
+    'thinkingmachines/inkling:free'
   ],
 
-  async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI. Respond with valid JSON only.') {
-    // 1. Try server endpoint first (handles key safely from .env)
+  async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI coach.', messages = null) {
+    const geminiKey = this.getGeminiKey();
+    const openRouterKey = this.getOpenRouterKey();
+
+    // 1. Try server endpoint first (has secure .env keys + fast fallback)
     try {
-      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt });
+      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt, messages, geminiKey, openRouterKey });
       if (res && res.content) return res.content;
     } catch (e) {
       // Proceed to direct client-side fallback
     }
 
-    // 2. Cascade across free OpenRouter models directly from client
-    for (const model of this.freeModels) {
+    // 2. Direct client Google Gemini call if user configured personal Gemini API key
+    if (geminiKey) {
       try {
-        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const geminiContents = Array.isArray(messages) && messages.length > 0
+          ? messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content || m.text }] }))
+          : [{ role: 'user', parts: [{ text: prompt }] }];
+
+        const gResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
           method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + this.openRouterKey,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': typeof location !== 'undefined' ? location.origin : 'https://fitfuel.app',
-            'X-Title': 'FitFuel AI Engine'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: prompt }
-            ],
-            temperature: 0.3,
-            max_tokens: 2500
+            systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
+            contents: geminiContents,
+            generationConfig: { temperature: 0.7, maxOutputTokens: 2500 }
           })
         });
-
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && data.choices && data.choices[0] && data.choices[0].message) {
-            return data.choices[0].message.content;
-          }
+        if (gResp.ok) {
+          const gData = await gResp.json();
+          const text = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text;
         }
-      } catch (err) {
-        // Cascade to next free model
+      } catch (err) {}
+    }
+
+    // 3. Cascade across free OpenRouter models directly from client if client key present
+    const activeOrKey = openRouterKey;
+    if (activeOrKey) {
+      const clientMessages = Array.isArray(messages) && messages.length > 0
+        ? [{ role: 'system', content: systemPrompt }, ...messages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content || m.text }))]
+        : [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }];
+
+      for (const model of this.freeModels) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 18000);
+          const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            signal: controller.signal,
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + activeOrKey,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': typeof location !== 'undefined' ? location.origin : 'https://fitfuel.app',
+              'X-Title': 'FitFuel AI Live Coach'
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: clientMessages,
+              temperature: 0.7,
+              max_tokens: 2200
+            })
+          });
+          clearTimeout(timeoutId);
+
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.choices && data.choices[0] && data.choices[0].message) {
+              return data.choices[0].message.content;
+            }
+          }
+        } catch (err) {
+          // Cascade to next free model
+        }
       }
     }
 
-    // 3. Fallback to expert local intelligence so request NEVER fails
+    // 4. Fallback to expert local intelligence so request NEVER crashes
     return generateSmartAiFallback(prompt, systemPrompt);
   },
 

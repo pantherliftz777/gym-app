@@ -3303,13 +3303,36 @@ if ($('#removeAvatarBtn')) {
 }
 
 /* ---------- Settings, Logout & Admin Portal ---------- */
+function syncSettingsAiKeys() {
+  const gInp = $('#customGeminiKeyInput');
+  const oInp = $('#customOpenRouterKeyInput');
+  if (gInp) gInp.value = localStorage.getItem('ff_gemini_key') || '';
+  if (oInp) oInp.value = localStorage.getItem('ff_openrouter_key') || '';
+}
+
+if ($('#saveAiKeysBtn')) {
+  $('#saveAiKeysBtn').onclick = () => {
+    const gVal = ($('#customGeminiKeyInput')?.value || '').trim();
+    const oVal = ($('#customOpenRouterKeyInput')?.value || '').trim();
+    if (gVal) localStorage.setItem('ff_gemini_key', gVal);
+    else localStorage.removeItem('ff_gemini_key');
+
+    if (oVal) localStorage.setItem('ff_openrouter_key', oVal);
+    else localStorage.removeItem('ff_openrouter_key');
+
+    toast('🎉 AI API configuration saved! Live chatbot will use your keys.');
+  };
+}
+
 $('#topSettingsBtn').onclick = () => {
   renderProfileView();
+  syncSettingsAiKeys();
   openModal('#settingsModal');
 };
 
 $('#sidebarProfileBtn').onclick = () => {
   renderProfileView();
+  syncSettingsAiKeys();
   openModal('#settingsModal');
 };
 
@@ -3319,6 +3342,7 @@ $('#topAvatar').onclick = () => {
 
 $('#adminPortalShortcutBtn').onclick = () => {
   renderProfileView();
+  syncSettingsAiKeys();
   openModal('#settingsModal');
 };
 
@@ -3979,11 +4003,61 @@ function renderChatMessages() {
 
 function formatChatMarkdown(txt) {
   if (!txt) return '';
-  return txt
-    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-    .replace(/\*(.*?)\*/g, '<i>$1</i>')
-    .replace(/^• (.*$)/gim, '• $1<br>')
-    .replace(/\n/g, '<br>');
+  let html = txt;
+
+  // Headers
+  html = html.replace(/^### (.*$)/gim, '<h4 style="color:#38bdf8;margin:8px 0 4px;font-size:1.02rem;">$1</h4>');
+  html = html.replace(/^## (.*$)/gim, '<h3 style="color:#38bdf8;margin:10px 0 6px;font-size:1.15rem;">$1</h3>');
+  html = html.replace(/^# (.*$)/gim, '<h2 style="color:#38bdf8;margin:12px 0 8px;font-size:1.25rem;">$1</h2>');
+
+  // Bold and italic
+  html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+
+  // Bullet and numbered lists
+  html = html.replace(/^[•\-\*]\s+(.*$)/gim, '<div style="margin:2px 0;display:flex;gap:6px;"><span>•</span><span>$1</span></div>');
+  html = html.replace(/^(\d+)\.\s+(.*$)/gim, '<div style="margin:2px 0;display:flex;gap:6px;"><b>$1.</b><span>$2</span></div>');
+
+  // Parse markdown tables if present
+  if (html.includes('|')) {
+    const lines = html.split('\n');
+    let inTable = false;
+    let tableHtml = '';
+    const newLines = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        const cells = trimmed.split('|').filter((_, idx, arr) => idx > 0 && idx < arr.length - 1).map(c => c.trim());
+        if (cells.every(c => c.match(/^[-: ]+$/))) {
+          continue; // header divider
+        }
+        if (!inTable) {
+          inTable = true;
+          tableHtml = '<div style="overflow-x:auto;margin:8px 0;"><table style="width:100%;border-collapse:collapse;font-size:.82rem;border:1px solid #1e293b;">';
+          tableHtml += '<thead><tr style="background:#172554;color:#38bdf8;">' + cells.map(c => `<th style="padding:5px 8px;border:1px solid #1e293b;text-align:left;">${c}</th>`).join('') + '</tr></thead><tbody>';
+        } else {
+          tableHtml += '<tr>' + cells.map(c => `<td style="padding:5px 8px;border:1px solid #1e293b;">${c}</td>`).join('') + '</tr>';
+        }
+      } else {
+        if (inTable) {
+          inTable = false;
+          tableHtml += '</tbody></table></div>';
+          newLines.push(tableHtml);
+          tableHtml = '';
+        }
+        newLines.push(line);
+      }
+    }
+    if (inTable) {
+      tableHtml += '</tbody></table></div>';
+      newLines.push(tableHtml);
+    }
+    html = newLines.join('\n');
+  }
+
+  // Preserve paragraphs and breaks
+  html = html.replace(/\n\n+/g, '<br><br>').replace(/\n/g, '<br>');
+  return html;
 }
 
 async function handleUserAiQuery(query) {
@@ -3997,15 +4071,26 @@ async function handleUserAiQuery(query) {
     const typingDiv = document.createElement('div');
     typingDiv.className = 'ai-msg bot';
     typingDiv.id = typingId;
-    typingDiv.innerHTML = `<span style="font-size:.74rem;color:#64748b;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>
-      <div style="color:#64748b;font-style:italic;">Analyzing with AI cascade... ✨</div>`;
+    typingDiv.innerHTML = `
+      <span style="font-size:.74rem;color:#38bdf8;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 6px #38bdf8;"></span>
+        🤖 AI LIVE COACH · GENERATING ANSWER
+      </span>
+      <div style="color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:12px;height:12px;border:2px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+        Thinking and crafting live response... ✨
+      </div>`;
     container.appendChild(typingDiv);
     container.scrollTop = container.scrollHeight;
   }
 
   try {
     const systemPrompt = getAiSystemContext();
-    const reply = await FF.callAI(q, systemPrompt);
+    const recentMessages = chatHistory.slice(-8).map(m => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: m.text
+    }));
+    const reply = await FF.callAI(q, systemPrompt, recentMessages);
     const typingEl = document.getElementById(typingId);
     if (typingEl) typingEl.remove();
     addBotChatMessage(reply);

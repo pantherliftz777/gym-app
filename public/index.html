@@ -1217,6 +1217,34 @@
         </div>
       </div>
 
+      <!-- AI Engine & Live API Configuration -->
+      <div style="border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:14px;" id="settingsAiApiBox">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <b style="color:#2563eb;font-size:.95rem;display:flex;align-items:center;gap:6px;">
+            🤖 AI Live Intelligence &amp; Chatbot API
+          </b>
+          <span style="font-size:.72rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700;border:1px solid #93c5fd;" id="aiStatusPill">
+            🟢 Live Connected
+          </span>
+        </div>
+        <p style="color:#64748b;font-size:.82rem;margin:0 0 10px;line-height:1.4;">
+          FitFuel AI Chatbot is connected to live reasoning models for unscripted, dynamic answers. You can also configure your own <b>Google Gemini API Key</b> or <b>OpenRouter Key</b> for ultra-fast custom responses.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <label style="font-size:.78rem;font-weight:700;color:#1e293b;display:block;margin-bottom:3px;">Google Gemini API Key (Optional)</label>
+            <input type="password" id="customGeminiKeyInput" placeholder="AIzaSy..." style="width:100%;font-size:.85rem;padding:7px 10px;border-radius:7px;border:1px solid #cbd5e1;background:#fff;" />
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:700;color:#1e293b;display:block;margin-bottom:3px;">OpenRouter API Key (Optional)</label>
+            <input type="password" id="customOpenRouterKeyInput" placeholder="sk-or-v1-..." style="width:100%;font-size:.85rem;padding:7px 10px;border-radius:7px;border:1px solid #cbd5e1;background:#fff;" />
+          </div>
+          <button type="button" class="solid-button small" id="saveAiKeysBtn" style="margin-top:4px;align-self:flex-start;padding:6px 14px;">
+            Save API Keys
+          </button>
+        </div>
+      </div>
+
       <!-- Feedback & Complaint Box -->
       <div style="border:1px solid #dbeafe;background:#f8fafc;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <div>
@@ -1572,8 +1600,11 @@
     <div class="ai-chat-header-info">
       <div style="font-size:1.4rem;">🤖</div>
       <div>
-        <h4>FitFuel AI Coach</h4>
-        <span>Diet · Workout · Micronutrients</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <h4 style="margin:0;">FitFuel AI Coach</h4>
+          <span style="font-size:.66rem;background:#172554;color:#38bdf8;padding:1px 6px;border-radius:99px;border:1px solid #1e40af;font-weight:700;">🟢 Live AI</span>
+        </div>
+        <span style="font-size:.76rem;color:#64748b;">Live Nutrition &amp; Workout Intelligence</span>
       </div>
     </div>
     <div class="ai-chat-header-actions">
