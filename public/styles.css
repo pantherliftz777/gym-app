@@ -1323,6 +1323,101 @@
   box-shadow: 0 0 0 1px #2563eb;
 }
 
+/* ================= INPUTS & COMPONENT WRAPPERS BASE STYLES ================= */
+.input-unit {
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-sizing: border-box !important;
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.input-unit input {
+  flex: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+.input-unit span {
+  flex-shrink: 0 !important;
+  margin-left: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  background: transparent !important;
+  pointer-events: none;
+}
+
+.input-unit:focus-within {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.search-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 240px !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-sizing: border-box !important;
+  transition: all .2s ease;
+}
+
+.search-wrap input {
+  flex: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+}
+
+.search-wrap svg {
+  flex-shrink: 0 !important;
+  color: #64748b !important;
+  stroke: #64748b !important;
+  transition: color .2s ease, stroke .2s ease;
+}
+
+.search-wrap:focus-within {
+  width: 270px !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.search-wrap:focus-within svg {
+  color: #2563eb !important;
+  stroke: #2563eb !important;
+}
+
 /* ================= DARK THEME STYLESHEET (DARK BLUE & MIDNIGHT BLACK) ================= */
 html.dark, [data-theme="dark"] {
   color-scheme: dark;
@@ -1628,6 +1723,123 @@ html.dark input:focus, html.dark select:focus, html.dark textarea:focus,
 
 html.dark ::placeholder, [data-theme="dark"] ::placeholder {
   color: #64748b !important;
+}
+
+/* Composite Input Wrappers in Dark Mode (Eliminates nested black/white box contrast bugs) */
+html.dark .input-unit, [data-theme="dark"] .input-unit {
+  background: #090e18 !important;
+  border: 1px solid #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark .input-unit input, [data-theme="dark"] .input-unit input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #f8fafc !important;
+}
+
+html.dark .input-unit span, [data-theme="dark"] .input-unit span {
+  color: #94a3b8 !important;
+  background: transparent !important;
+}
+
+html.dark .input-unit:focus-within, [data-theme="dark"] .input-unit:focus-within {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+html.dark .search-wrap, [data-theme="dark"] .search-wrap {
+  background: #090e18 !important;
+  border: 1px solid #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark .search-wrap input, [data-theme="dark"] .search-wrap input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #f8fafc !important;
+}
+
+html.dark .search-wrap svg, [data-theme="dark"] .search-wrap svg {
+  color: #94a3b8 !important;
+  stroke: #94a3b8 !important;
+}
+
+html.dark .search-wrap:focus-within, [data-theme="dark"] .search-wrap:focus-within {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+html.dark .search-wrap:focus-within svg, [data-theme="dark"] .search-wrap:focus-within svg {
+  color: #38bdf8 !important;
+  stroke: #38bdf8 !important;
+}
+
+html.dark #customWorkoutSearchInput, [data-theme="dark"] #customWorkoutSearchInput {
+  background: #090e18 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark #customWorkoutSearchInput:focus, [data-theme="dark"] #customWorkoutSearchInput:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Metric / Imperial Unit Switch & Segmented Controls in Dark Mode */
+html.dark .unit-switch, [data-theme="dark"] .unit-switch,
+html.dark .segmented, [data-theme="dark"] .segmented,
+html.dark .weight-mode, [data-theme="dark"] .weight-mode {
+  background: #090e18 !important;
+  border: 1px solid #1e293b !important;
+}
+
+html.dark .unit-switch button, [data-theme="dark"] .unit-switch button,
+html.dark .segmented button, [data-theme="dark"] .segmented button,
+html.dark .weight-mode button, [data-theme="dark"] .weight-mode button {
+  color: #94a3b8 !important;
+}
+
+html.dark .unit-switch button.active, [data-theme="dark"] .unit-switch button.active,
+html.dark .segmented button.active, [data-theme="dark"] .segmented button.active,
+html.dark .weight-mode button.active, [data-theme="dark"] .weight-mode button.active {
+  background: #1e293b !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Profile Avatar Action Buttons & Remove Pic Styling */
+html.dark .avatar-action-btn.upload, [data-theme="dark"] .avatar-action-btn.upload {
+  background: #172554 !important;
+  color: #38bdf8 !important;
+  border-color: #1e40af !important;
+}
+
+html.dark .avatar-action-btn.remove, [data-theme="dark"] .avatar-action-btn.remove {
+  background: #330b0e !important;
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+
+html.dark #avatarModalRemoveBtn, [data-theme="dark"] #avatarModalRemoveBtn {
+  background: #330b0e !important;
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+
+html.dark #avatarModalRemoveBtn:hover, [data-theme="dark"] #avatarModalRemoveBtn:hover {
+  background: #450a0a !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+html.dark #avatarModalPreviewBox, [data-theme="dark"] #avatarModalPreviewBox {
+  background: #090e18 !important;
+  border-color: #38bdf8 !important;
 }
 
 /* Core Buttons */

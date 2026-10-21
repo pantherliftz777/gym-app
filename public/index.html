@@ -852,12 +852,12 @@
               <div style="flex:1;">
                 <h3 id="pfDisplayName">Jordan Davis</h3>
                 <p id="pfEmailDisplay">jordan.davis@example.com</p>
-                <div style="display:flex;gap:10px;align-items:center;margin-top:6px;">
-                  <label for="pfAvatarUploadInput" style="font-size:.76rem;color:#2563eb;background:#eff6ff;padding:3px 8px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
-                    📷 Upload Photo
+                <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+                  <label for="pfAvatarUploadInput" class="avatar-action-btn upload" style="font-size:.78rem;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">
+                    📷 Upload New Pic
                   </label>
-                  <button type="button" id="removeAvatarBtn" style="display:none;background:none;border:none;color:#c53030;font-size:.76rem;cursor:pointer;padding:0;text-decoration:underline;">
-                    Remove Photo
+                  <button type="button" id="removeAvatarBtn" class="avatar-action-btn remove" style="display:none;font-size:.78rem;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">
+                    🗑️ Remove Pic
                   </button>
                 </div>
               </div>
@@ -1982,20 +1982,20 @@
       <h2 style="font-size:1.25rem;">Profile Picture Options</h2>
       <button class="close-btn" data-close style="position:absolute;right:0;top:0;">&times;</button>
     </div>
-    <div style="margin:18px auto 12px;width:110px;height:110px;border-radius:50%;overflow:hidden;border:3px solid #2563eb;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,59,41,0.15);background:#f2f7ef;" id="avatarModalPreviewBox">
+    <div style="margin:18px auto 12px;width:110px;height:110px;border-radius:50%;overflow:hidden;border:3px solid #2563eb;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,99,235,0.2);background:#eff6ff;" id="avatarModalPreviewBox">
       <!-- Live avatar preview -->
     </div>
     <h4 id="avatarModalName" style="color:#2563eb;margin:0 0 4px;font-size:1.15rem;">Jordan Davis</h4>
-    <p id="avatarModalStatusText" style="color:#64748b;font-size:.86rem;margin:0 0 20px;">Custom photo active</p>
+    <p id="avatarModalStatusText" style="color:#64748b;font-size:.86rem;margin:0 0 20px;">Active Profile Picture</p>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button type="button" class="solid-button" id="avatarModalSeePicBtn" style="background:#2563eb;width:100%;justify-content:center;">
-        🔍 See Full-Size Photo
+        👁️ See Pic
       </button>
       <button type="button" class="outline-button" id="avatarModalUploadNewBtn" style="width:100%;justify-content:center;">
-        📷 Upload New Photo
+        📷 Upload New Pic
       </button>
-      <button type="button" class="outline-button" id="avatarModalRemoveBtn" style="width:100%;justify-content:center;color:#c53030;border-color:#feb2b2;">
-        🗑️ Remove Photo
+      <button type="button" class="outline-button" id="avatarModalRemoveBtn" style="width:100%;justify-content:center;color:#ef4444;border-color:#fca5a5;">
+        🗑️ Remove Pic
       </button>
       <button type="button" class="text-button" data-close style="color:#64748b;margin-top:4px;">Cancel</button>
     </div>

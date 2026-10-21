@@ -3193,9 +3193,10 @@ function openAvatarOptionsModal() {
 
   if (profile && profile.avatarUrl) {
     if (box) box.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;" alt="Avatar" />`;
-    if (statusText) statusText.textContent = 'Custom photo active';
+    if (statusText) statusText.textContent = 'Active Profile Picture';
     if (seePicBtn) {
       seePicBtn.style.display = 'inline-flex';
+      seePicBtn.textContent = '👁️ See Pic';
       seePicBtn.onclick = () => {
         closeModal('#avatarOptionsModal');
         openImageLightbox(profile.avatarUrl, `${uName}'s Profile Photo`);
@@ -3203,23 +3204,26 @@ function openAvatarOptionsModal() {
     }
     if (removeBtn) {
       removeBtn.style.display = 'inline-flex';
+      removeBtn.textContent = '🗑️ Remove Pic';
       removeBtn.onclick = () => {
-        delete profile.avatarUrl;
-        store.set('profile', profile);
-        if (FF.patch) FF.patch({ profile });
-        renderProfileView();
-        closeModal('#avatarOptionsModal');
-        toast('Profile photo removed');
+        if (confirm('Are you sure you want to remove your profile picture?')) {
+          delete profile.avatarUrl;
+          store.set('profile', profile);
+          if (FF.patch) FF.patch({ profile });
+          renderProfileView();
+          closeModal('#avatarOptionsModal');
+          toast('🗑️ Profile picture removed successfully');
+        }
       };
     }
-    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Photo';
+    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Pic';
   } else {
     const initials = uName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'FF';
     if (box) box.innerHTML = `<span style="font-size:2.4rem;font-weight:800;color:#2563eb;">${initials}</span>`;
-    if (statusText) statusText.textContent = 'No photo uploaded yet (using initials)';
+    if (statusText) statusText.textContent = 'No profile picture uploaded yet';
     if (seePicBtn) seePicBtn.style.display = 'none';
     if (removeBtn) removeBtn.style.display = 'none';
-    if (uploadBtn) uploadBtn.textContent = '📷 Upload Photo';
+    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Pic';
   }
 
   if (uploadBtn) {
@@ -3288,11 +3292,13 @@ if ($('#pfAvatarUploadInput')) {
 
 if ($('#removeAvatarBtn')) {
   $('#removeAvatarBtn').onclick = () => {
-    delete profile.avatarUrl;
-    store.set('profile', profile);
-    if (FF.patch) FF.patch({ profile });
-    renderProfileView();
-    toast('Profile photo removed');
+    if (confirm('Are you sure you want to remove your profile picture?')) {
+      delete profile.avatarUrl;
+      store.set('profile', profile);
+      if (FF.patch) FF.patch({ profile });
+      renderProfileView();
+      toast('🗑️ Profile picture removed successfully');
+    }
   };
 }
 
