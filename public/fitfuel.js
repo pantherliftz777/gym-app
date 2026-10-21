@@ -1332,7 +1332,9 @@ function renderDashboard() {
 
   const deg = Math.round((pct / 100) * 360);
   if ($('#dashCalRing')) {
-    $('#dashCalRing').style.background = `conic-gradient(#38bdf8 ${deg}deg, #ecefe8 0deg)`;
+    const isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark') || (localStorage.getItem('fitfuel_theme') === 'dark');
+    const ringTrackColor = isDark ? '#1e293b' : '#e2e8f0';
+    $('#dashCalRing').style.background = `conic-gradient(#38bdf8 ${deg}deg, ${ringTrackColor} 0deg)`;
   }
 
   // Macros (Strict 0 when no foods logged)
@@ -1647,6 +1649,11 @@ function applyTheme(themeChoice) {
       btn.classList.remove('selected');
     }
   });
+
+  // Re-render dashboard calorie ring track if on dashboard
+  if ($('#dashCalRing') && typeof renderDashboard === 'function') {
+    renderDashboard();
+  }
 }
 
 function initThemeEngine() {
@@ -2854,27 +2861,27 @@ function renderWorkouts() {
       const ex = findExerciseInfo(m.name);
       return `
         <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
-          <span style="width:30px;height:30px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;">${i + 1}</span>
+          <span class="move-index-badge">${i + 1}</span>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <b style="color:#1e293b;font-size:1.02rem;">${m.name}</b>
-                <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub || 'COMPOUND'}</span>
+                <b class="move-name-title">${m.name}</b>
+                <span class="move-sub-badge">${ex.sub || 'COMPOUND'}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-weight:600;color:#64748b;font-size:.88rem;">${m.sets}</span>
+                <span class="move-sets-text">${m.sets}</span>
                 <span class="move-hover-cta">View Visual</span>
               </div>
             </div>
-            <p style="color:#64748b;font-size:.86rem;margin-top:4px;"> ${m.tip}</p>
+            <p class="move-tip-text">${m.tip}</p>
             
             <!-- Hover details strip (visible on hover) -->
             <div class="move-hover-details">
               <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
-                <span> <b>Target:</b> ${ex.sub || ex.category}</span>
-                <span><b>Tempo:</b> ${ex.rxTempo || '2-1-1'}</span>
+                <span class="move-detail-target"><b>Target:</b> ${ex.sub || ex.category}</span>
+                <span class="move-detail-tempo"><b>Tempo:</b> ${ex.rxTempo || '2-1-1'}</span>
               </div>
-              <p style="margin:2px 0 0;font-size:.8rem;color:#64748b;"> ${ex.rxWhy || ex.benefit}</p>
+              <p class="move-detail-why">${ex.rxWhy || ex.benefit}</p>
             </div>
           </div>
         </div>
@@ -2952,16 +2959,16 @@ function renderExerciseLibrary() {
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
             <span class="exercise-type">${ex.type}</span>
-            <span style="font-size:.76rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
+            <span class="exercise-sub-tag">${ex.sub}</span>
           </div>
-          <h4 style="margin:4px 0 8px;color:#1e293b;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
-            ${ex.name} <span style="font-size:.76rem;color:#2563eb;vertical-align:middle;"></span>
+          <h4 class="exercise-card-heading" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
+            ${ex.name}
           </h4>
           
           <!-- Scientific Prescription Box -->
           <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
             <div class="rx-header">
-              <span class="rx-sets-reps"> ${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
+              <span class="rx-sets-reps">${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
               <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
             </div>
             <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
@@ -4783,29 +4790,36 @@ function renderChallengeView() {
   if (!activeChallengePlan || !activeChallengePlan.days || !activeChallengePlan.days.length) {
     // Empty state: invite user to start a challenge
     container.innerHTML = `
-      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:18px;padding:36px 24px;text-align:center;box-shadow:0 4px 18px rgba(32,59,41,0.05);max-width:680px;margin:20px auto;">
-        <div style="width:68px;height:68px;border-radius:20px;background:#eff6ff;color:#2563eb;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          
+      <div class="challenge-empty-card">
+        <div class="challenge-empty-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.45.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+            <path d="M14 14.66V17c0 .55.45.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+          </svg>
         </div>
-        <h3 style="font-size:1.4rem;color:#1e293b;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
-        <p style="color:#64748b;font-size:.92rem;line-height:1.55;max-width:500px;margin:0 auto 24px;">
+        <h3 class="challenge-empty-title">No Active Challenge Plan</h3>
+        <p class="challenge-empty-desc">
           Ready to transform? Choose your goal (Burn Fat, Build Muscle, Maintain Weight) and duration (10, 15, 25, 30 days) to have our AI generate your personalized roadmap.
         </p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;text-align:left;">
-          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;"> AI Engineered</b>
-            <small style="color:#64748b;">Personalized to your height, weight &amp; strength targets.</small>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;">
+          <div class="challenge-feature-box">
+            <b>AI Engineered</b>
+            <small>Personalized to your height, weight &amp; strength targets.</small>
           </div>
-          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">Built-in Timers</b>
-            <small style="color:#64748b;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
+          <div class="challenge-feature-box">
+            <b>Built-in Timers</b>
+            <small>Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
           </div>
-          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">Swap Any Workout</b>
-            <small style="color:#64748b;">Change or replace any exercise with 1 click.</small>
+          <div class="challenge-feature-box">
+            <b>Swap Any Workout</b>
+            <small>Change or replace any exercise with 1 click.</small>
           </div>
         </div>
-        <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#2563eb;padding:12px 28px;font-size:1rem;font-weight:700;">
+        <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="padding:12px 28px;font-size:1rem;font-weight:700;">
           Start Your Challenge Now
         </button>
       </div>
@@ -4861,12 +4875,12 @@ function renderChallengeView() {
     </div>
 
     <!-- TODAY'S ROUTINE CARD -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(15,23,42,0.04);">
+    <div class="challenge-dash-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
-          <span class="section-kicker" style="color:#64748b;font-weight:800;">TODAY'S SCHEDULED ROUTINE</span>
-          <h3 style="margin:2px 0 0;font-size:1.2rem;color:#1e293b;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
-          <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
+          <span class="section-kicker">TODAY'S SCHEDULED ROUTINE</span>
+          <h3 style="margin:2px 0 0;font-size:1.25rem;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
+          <p style="margin:4px 0 0;font-size:.88rem;color:#64748b;">Focus: <b style="color:#2563eb;">${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
         </div>
         <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#dbeafe' : '#f1f5f9'};color:${currentDay.completed ? '#1e40af' : '#475569'};">
           ${currentDay.completed ? 'COMPLETED' : 'READY TO TRAIN'}
@@ -4876,18 +4890,18 @@ function renderChallengeView() {
       <!-- Exercise List with Swap Buttons -->
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${currentDay.exercises.map((ex, idx) => `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:12px;gap:12px;flex-wrap:wrap;">
+          <div class="challenge-routine-item">
             <div style="display:flex;align-items:center;gap:12px;">
-              <span style="width:28px;height:28px;border-radius:8px;background:#eff6ff;color:#2563eb;font-weight:800;font-size:.84rem;display:flex;align-items:center;justify-content:center;">
+              <span class="challenge-routine-idx">
                 ${idx + 1}
               </span>
               <div>
-                <b style="color:#2563eb;font-size:.94rem;display:block;">${escapeHtml(ex.name)}</b>
-                <small style="color:#64748b;font-size:.82rem;">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</small>
+                <b class="challenge-routine-name">${escapeHtml(ex.name)}</b>
+                <span class="challenge-routine-meta">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</span>
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#cbd5e1;padding:5px 12px;background:#ffffff;">
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;padding:5px 12px;">
                 Swap Workout
               </button>
             </div>
@@ -4897,30 +4911,29 @@ function renderChallengeView() {
     </div>
 
     <!-- FULL CHALLENGE ROADMAP TIMELINE -->
-    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+    <div class="challenge-dash-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
           <span class="section-kicker">ALL DAYS OVERVIEW</span>
-          <h3 style="margin:2px 0 0;font-size:1.15rem;color:#1e293b;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
+          <h3 style="margin:2px 0 0;font-size:1.25rem;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
         </div>
-        <span style="font-size:.84rem;color:#64748b;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
+        <span style="font-size:.86rem;color:#64748b;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;">
         ${p.days.map((d, dIdx) => {
           const isCurrent = dIdx === currentIdx;
-          const bg = d.completed ? '#f3f9ed' : (isCurrent ? '#fdfefb' : '#fafbfa');
-          const border = isCurrent ? '2px solid #2563eb' : (d.completed ? '1px solid #38bdf8' : '1px solid #edf0ea');
+          const cardClass = 'challenge-day-card' + (d.completed ? ' completed' : (isCurrent ? ' current' : ''));
           return `
-            <div style="padding:12px 14px;border-radius:12px;background:${bg};border:${border};display:flex;flex-direction:column;gap:4px;">
+            <div class="${cardClass}">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <b style="font-size:.88rem;color:#2563eb;">Day ${d.dayNumber}</b>
-                <span style="font-size:.72rem;font-weight:700;color:${d.completed ? '#2563eb' : (isCurrent ? '#2563eb' : '#88988d')};">
+                <b class="challenge-day-num">Day ${d.dayNumber}</b>
+                <span class="challenge-day-status">
                   ${d.completed ? 'Done' : (isCurrent ? 'Current' : 'Upcoming')}
                 </span>
               </div>
-              <span style="font-size:.82rem;color:#64748b;font-weight:600;">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
-              <small style="font-size:.74rem;color:#64748b;">${d.exercises.length} moves · ${d.estDuration}</small>
+              <span class="challenge-day-title">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
+              <span class="challenge-day-meta">${d.exercises.length} moves · ${d.estDuration}</span>
             </div>
           `;
         }).join('')}
