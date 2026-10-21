@@ -23,7 +23,7 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=2.8">
+  <link rel="stylesheet" href="styles.css?v=3.0">
 </head>
 <body>
 <div class="app-shell">
@@ -100,6 +100,16 @@
         </svg>
         <span>Profile</span>
       </button>
+
+      <!-- Dedicated Admin Portal Navigation Link (Shown for Admins) -->
+      <button class="nav-link admin-only-link" data-view="admin" id="sidebarAdminNavBtn" style="display:none;color:#38bdf8;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <span>Admin Portal</span>
+        <span style="font-size:0.65rem;background:#1e3a8a;color:#38bdf8;padding:2px 7px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid #38bdf8;">ADMIN</span>
+      </button>
     </nav>
 
     <div class="sidebar-bottom">
@@ -166,6 +176,12 @@
 
           <!-- 4. Sign in / Sign out -->
           <button class="text-button" id="topAuthBtn">Sign in</button>
+
+          <!-- Dedicated Admin Portal Shortcut (Visible for Admins) -->
+          <button type="button" class="admin-only-btn" id="topAdminBtn" style="display:none;background:#1e3a8a;border:1px solid #38bdf8;color:#38bdf8;font-size:0.75rem;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer;align-items:center;gap:5px;box-shadow:0 0 10px rgba(56,189,248,0.25);" title="Open Dedicated Admin Resolution Portal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            Admin Portal
+          </button>
 
           <!-- 5. Settings Button -->
           <button class="icon-button" id="topSettingsBtn" title="Settings & Admin" aria-label="Settings">
@@ -1004,6 +1020,96 @@
         <!-- Dynamic Tracking Dashboard Grid -->
         <div id="trackingViewContainer">
           <!-- Populated dynamically by renderTrackingView() -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 8: DEDICATED ADMIN & PROBLEM RESOLUTION PORTAL ================= -->
+      <section class="view" id="view-admin">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker" style="color:#38bdf8;">ADMIN MANAGEMENT &amp; PROBLEM RESOLUTION CENTER</span>
+            <h2>FitFuel Admin Portal</h2>
+            <p>Inspect user complaints, solve customer issues, update bug statuses, and manage registered members.</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="solid-button" id="adminRefreshBtn" style="background:#2563eb;font-size:0.85rem;padding:8px 16px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              Refresh Data
+            </button>
+            <button type="button" class="outline-button" id="adminReturnToUserBtn" style="font-size:0.85rem;padding:8px 14px;">
+              Exit Admin &amp; Return to Dashboard
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Overview Stat Badges -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:20px;">
+          <div class="panel" style="padding:16px 20px;border-left:4px solid #38bdf8;">
+            <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">REGISTERED ACCOUNTS</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <strong id="admTotalUsers" style="font-size:1.8rem;font-weight:800;color:#2563eb;">0</strong>
+              <small style="color:#64748b;font-weight:600;">Total Members</small>
+            </div>
+          </div>
+          <div class="panel" style="padding:16px 20px;border-left:4px solid #f59e0b;">
+            <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">PENDING ISSUES</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <strong id="admPendingComplaints" style="font-size:1.8rem;font-weight:800;color:#f59e0b;">0</strong>
+              <small style="color:#64748b;font-weight:600;">Needs Resolution</small>
+            </div>
+          </div>
+          <div class="panel" style="padding:16px 20px;border-left:4px solid #10b981;">
+            <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">SOLVED &amp; RESOLVED</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <strong id="admResolvedComplaints" style="font-size:1.8rem;font-weight:800;color:#10b981;">0</strong>
+              <small style="color:#64748b;font-weight:600;">Resolved</small>
+            </div>
+          </div>
+          <div class="panel" style="padding:16px 20px;border-left:4px solid #6366f1;">
+            <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">TOTAL SUBMISSIONS</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <strong id="admTotalComplaints" style="font-size:1.8rem;font-weight:800;color:#6366f1;">0</strong>
+              <small style="color:#64748b;font-weight:600;">Complaints &amp; Bugs</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Navigation Sub-Tabs -->
+        <div style="display:flex;gap:10px;margin-bottom:18px;border-bottom:1px solid #cbd5e1;padding-bottom:10px;" id="adminSubTabs">
+          <button type="button" class="solid-button small" id="adminTabComplaints" style="border-radius:999px;padding:7px 18px;font-weight:700;">
+            User Complaints &amp; Issues
+          </button>
+          <button type="button" class="outline-button small" id="adminTabUsers" style="border-radius:999px;padding:7px 18px;font-weight:700;">
+            Registered Users Database
+          </button>
+        </div>
+
+        <!-- SECTION 1: COMPLAINTS & ISSUE RESOLUTION -->
+        <div id="adminComplaintsViewPane">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="complaintFilterBtns">
+              <button type="button" class="filter-pill active" data-cfilter="all">All Issues</button>
+              <button type="button" class="filter-pill" data-cfilter="pending">Pending</button>
+              <button type="button" class="filter-pill" data-cfilter="in_progress">In Progress</button>
+              <button type="button" class="filter-pill" data-cfilter="resolved">Resolved</button>
+            </div>
+            <div style="font-size:0.85rem;color:#64748b;" id="complaintCountIndicator">Loading issues...</div>
+          </div>
+
+          <div id="adminComplaintsCardsGrid" style="display:flex;flex-direction:column;gap:12px;">
+            <!-- Rendered by renderAdminView() -->
+          </div>
+        </div>
+
+        <!-- SECTION 2: USERS DATABASE MANAGEMENT -->
+        <div id="adminUsersViewPane" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <input type="text" id="adminUserSearchInput" class="form-input" placeholder="Search user by name or email..." style="max-width:320px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:0.88rem;" />
+            <div style="font-size:0.85rem;color:#64748b;" id="adminUsersCountIndicator">Loading users...</div>
+          </div>
+          <div id="adminUsersCardsGrid" style="display:flex;flex-direction:column;gap:10px;">
+            <!-- Rendered by renderAdminUsers() -->
+          </div>
         </div>
       </section>
     </div>
@@ -2229,7 +2335,7 @@
 
 <script src="data.js?v=2.5"></script>
 <script src="motion.min.js"></script>
-<script src="api.js?v=2.9"></script>
-<script src="fitfuel.js?v=2.9"></script>
+<script src="api.js?v=3.0"></script>
+<script src="fitfuel.js?v=3.0"></script>
 </body>
 </html>

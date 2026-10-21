@@ -2958,5 +2958,42 @@ html.dark .challenge-day-meta,
   color: #94a3b8 !important;
 }
 
+/* ================= DEDICATED ADMIN PORTAL STYLING ================= */
+#view-admin .panel {
+  transition: all 0.2s ease;
+}
+html.dark #adminComplaintsCardsGrid article,
+[data-theme="dark"] #adminComplaintsCardsGrid article {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+html.dark #adminComplaintsCardsGrid article [style*="background:#f8fafc"],
+[data-theme="dark"] #adminComplaintsCardsGrid article [style*="background:#f8fafc"],
+html.dark #adminComplaintsCardsGrid article [style*="background: #f8fafc"],
+[data-theme="dark"] #adminComplaintsCardsGrid article [style*="background: #f8fafc"] {
+  background: #090e18 !important;
+  border-color: #1e293b !important;
+}
+html.dark #adminSubTabs,
+[data-theme="dark"] #adminSubTabs {
+  border-bottom-color: #1e293b !important;
+}
+html.dark #adminSubTabs button.solid-button,
+[data-theme="dark"] #adminSubTabs button.solid-button {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+html.dark #adminSubTabs button.outline-button,
+[data-theme="dark"] #adminSubTabs button.outline-button {
+  background: #111c30 !important;
+  border-color: #1e2d4a !important;
+  color: #94a3b8 !important;
+}
+html.dark #adminUsersCardsGrid .panel,
+[data-theme="dark"] #adminUsersCardsGrid .panel {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
 
 

@@ -153,6 +153,9 @@ const FF = {
   /* admin */
   async adminUsers() { const r = await this.req('GET', '/api/admin/users'); return r.users; },
   async adminComplaints() { const r = await this.req('GET', '/api/complaints'); return r.complaints; },
+  async adminUpdateComplaintStatus(id, status, admin_notes) { return await this.req('PATCH', '/api/complaint/status', { id, status, admin_notes }); },
+  async adminDeleteComplaint(id) { return await this.req('DELETE', '/api/complaint', { id }); },
+  async adminStats() { return await this.req('GET', '/api/admin/stats'); },
   async adminDeleteUser(id) { await this.req('DELETE', '/api/admin/user', { id }); },
 
     safeJsonParse: safeJsonParse,

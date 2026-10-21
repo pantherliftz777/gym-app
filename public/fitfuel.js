@@ -1193,6 +1193,7 @@ function switchView(viewName) {
   if (viewName === 'profile') renderProfileView();
   if (viewName === 'challenge') renderChallengeView();
   if (viewName === 'tracking') renderTrackingView();
+  if (viewName === 'admin') renderAdminView();
 }
 
 // Attach Nav Links
@@ -3113,6 +3114,7 @@ function renderProfileView() {
   if ($('#settingsUserName')) $('#settingsUserName').textContent = name;
   if ($('#settingsUserEmail')) $('#settingsUserEmail').textContent = email;
   if ($('#settingsRoleBadge')) $('#settingsRoleBadge').textContent = (session && session.is_admin) ? ' ADMIN' : 'USER';
+  updateAdminNavVisibility();
 
   // Fill Inputs
   if ($('#pfHeightInput')) $('#pfHeightInput').value = profile.hCm || 175;
@@ -3355,9 +3357,7 @@ $('#topAvatar').onclick = () => {
 };
 
 $('#adminPortalShortcutBtn').onclick = () => {
-  renderProfileView();
-  syncSettingsAiKeys();
-  openModal('#settingsModal');
+  switchView('admin');
 };
 
 $('#forceSyncBtn').onclick = async () => {
@@ -3368,74 +3368,355 @@ $('#forceSyncBtn').onclick = async () => {
   toast('Database synced with Turso cloud');
 };
 
-if ($('#viewAllUsersBtn')) {
-  $('#viewAllUsersBtn').onclick = async () => {
-    const list = $('#adminUsersList');
-    if (list) list.innerHTML = '<span style="color:#64748b;">Loading registered users...</span>';
-    try {
-      const users = await FF.adminUsers();
-      if (!users || !users.length) {
-        if (list) list.innerHTML = '<span style="color:#64748b;font-size:.85rem;">No registered users found.</span>';
-        return;
-      }
-      if (list) {
-        list.innerHTML = users.map(u => `
-          <div style="padding:6px 0;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
-            <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#64748b;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
-            <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eff6ff;color:#2563eb;">${escapeHtml(u.role || 'user')}</span>
-          </div>
-        `).join('');
-      }
-    } catch (e) {
-      if (list) list.innerHTML = `<span style="color:#b23;font-size:.82rem;">${escapeHtml(e.message || 'Admin access required')}</span>`;
-    }
-  };
+/* ==========================================================================
+   DEDICATED ADMIN RESOLUTION & MANAGEMENT PORTAL
+   ========================================================================== */
+let currentComplaintFilter = 'all';
+let cachedComplaints = [];
+let cachedAdminUsers = [];
+
+function updateAdminNavVisibility() {
+  const isAdmin = Boolean(session && session.is_admin);
+  const adminNav = $('#sidebarAdminNavBtn');
+  if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
+  const topAdmin = $('#topAdminBtn');
+  if (topAdmin) topAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
+  const adminSec = $('#adminSection');
+  if (adminSec) adminSec.style.display = isAdmin ? 'block' : 'none';
+  const adminShort = $('#adminPortalShortcutBtn');
+  if (adminShort) adminShort.style.display = isAdmin ? 'block' : 'none';
 }
 
-if ($('#viewAllComplaintsBtn')) {
-  $('#viewAllComplaintsBtn').onclick = async () => {
-    const list = $('#adminComplaintsList');
-    if (!list) return;
-    list.style.display = 'block';
-    list.innerHTML = '<span style="color:#64748b;">Loading complaints & suggestions...</span>';
-    try {
-      const complaints = await FF.adminComplaints();
-      if (!complaints || !complaints.length) {
-        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f8fafc;border-radius:8px;">No complaints or suggestions submitted yet! </div>';
-        return;
-      }
-      list.innerHTML = complaints.map(c => {
-        const dateStr = c.created ? new Date(c.created).toLocaleString() : '';
-        const files = Array.isArray(c.files) ? c.files : [];
-        const filesHtml = files.length ? `
-          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
-            ${files.map(f => {
-              if (f.data && f.data.startsWith('data:image')) {
-                return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #cbd5e1;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
-              }
-              return `<span style="font-size:.72rem;background:#e2e8f0;padding:2px 6px;border-radius:4px;color:#1e293b;">${escapeHtml(f.name)}</span>`;
-            }).join('')}
-          </div>` : '';
-        return `
-          <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #dbeafe;border-radius:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;flex-wrap:wrap;gap:6px;">
-              <div>
-                <b style="color:#2563eb;font-size:.88rem;display:block;">${escapeHtml(c.name)}</b>
-                ${c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:#64748b;font-size:.78rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;" title="Click to reply via email"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> ${escapeHtml(c.email)}</a>` : ''}
-              </div>
-              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
-            </div>
-            <p style="margin:6px 0 0;color:#1e293b;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
-            ${filesHtml}
-            <small style="display:block;margin-top:4px;color:#64748b;font-size:.72rem;">${dateStr}</small>
-          </div>
-        `;
-      }).join('');
-    } catch (e) {
-      list.innerHTML = `<span style="color:#b23;font-size:.82rem;">${escapeHtml(e.message || 'Admin access required')}</span>`;
+async function renderAdminView() {
+  if (!session || !session.is_admin) {
+    toast('Admin access required');
+    switchView('today');
+    return;
+  }
+
+  // Fetch admin stats
+  try {
+    const stats = await FF.adminStats();
+    if (stats) {
+      if ($('#admTotalUsers')) $('#admTotalUsers').textContent = stats.totalUsers || 0;
+      if ($('#admPendingComplaints')) $('#admPendingComplaints').textContent = stats.pendingComplaints || 0;
+      if ($('#admResolvedComplaints')) $('#admResolvedComplaints').textContent = stats.resolvedComplaints || 0;
+      if ($('#admTotalComplaints')) $('#admTotalComplaints').textContent = stats.totalComplaints || 0;
     }
-  };
+  } catch (e) {
+    console.warn('Error fetching admin stats:', e);
+  }
+
+  await loadAndRenderAdminComplaints();
 }
+
+async function loadAndRenderAdminComplaints() {
+  const grid = $('#adminComplaintsCardsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">Loading user issues and complaints...</div>';
+
+  try {
+    const complaints = await FF.adminComplaints();
+    cachedComplaints = complaints || [];
+    renderFilteredComplaints();
+  } catch (err) {
+    grid.innerHTML = `<div style="padding:16px;background:#fee2e2;border:1px solid #ef4444;color:#991b1b;border-radius:10px;">Error loading complaints: ${escapeHtml(err.message || 'Admin authentication required')}</div>`;
+  }
+}
+
+function renderFilteredComplaints() {
+  const grid = $('#adminComplaintsCardsGrid');
+  if (!grid) return;
+
+  let list = cachedComplaints;
+  if (currentComplaintFilter === 'pending') {
+    list = list.filter(c => !c.status || c.status === 'pending');
+  } else if (currentComplaintFilter === 'in_progress') {
+    list = list.filter(c => c.status === 'in_progress');
+  } else if (currentComplaintFilter === 'resolved') {
+    list = list.filter(c => c.status === 'resolved');
+  }
+
+  if ($('#complaintCountIndicator')) {
+    $('#complaintCountIndicator').textContent = `Showing ${list.length} of ${cachedComplaints.length} issues`;
+  }
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div style="padding:36px 20px;text-align:center;background:#f8fafc;border:1px solid #cbd5e1;border-radius:14px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px;display:block;"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        <b style="color:#1e293b;font-size:1.1rem;display:block;margin-bottom:4px;">No ${currentComplaintFilter === 'all' ? '' : currentComplaintFilter} issues found</b>
+        <p style="color:#64748b;font-size:0.88rem;margin:0;">All user issues in this category have been addressed.</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => {
+    const dateStr = c.created ? new Date(c.created).toLocaleString() : '';
+    const status = c.status || 'pending';
+    const statusBadge = status === 'resolved'
+      ? `<span style="font-size:0.75rem;padding:3px 10px;border-radius:99px;background:#d1fae5;color:#065f46;font-weight:800;display:inline-flex;align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> RESOLVED</span>`
+      : (status === 'in_progress'
+        ? `<span style="font-size:0.75rem;padding:3px 10px;border-radius:99px;background:#dbeafe;color:#1e40af;font-weight:800;display:inline-flex;align-items:center;gap:4px;">IN PROGRESS</span>`
+        : `<span style="font-size:0.75rem;padding:3px 10px;border-radius:99px;background:#fef3c7;color:#92400e;font-weight:800;display:inline-flex;align-items:center;gap:4px;">PENDING</span>`);
+
+    const files = Array.isArray(c.files) ? c.files : [];
+    const filesHtml = files.length ? `
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #cbd5e1;">
+        <b style="font-size:0.78rem;color:#64748b;display:block;margin-bottom:6px;">Attached User Files (${files.length}):</b>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${files.map(f => {
+            if (f.data && f.data.startsWith('data:image')) {
+              return `<img src="${f.data}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #cbd5e1;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to view full photo" />`;
+            }
+            return `<span style="font-size:0.75rem;background:#e2e8f0;padding:4px 8px;border-radius:6px;color:#1e293b;">${escapeHtml(f.name)}</span>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+
+    return `
+      <article class="panel" style="padding:18px 20px;border-radius:14px;border:1.5px solid ${status === 'resolved' ? '#a7f3d0' : '#cbd5e1'};">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <b style="font-size:1.05rem;color:#0f172a;">${escapeHtml(c.name)}</b>
+              <span style="font-size:0.72rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid #bfdbfe;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
+              ${statusBadge}
+            </div>
+            ${c.email ? `
+              <div style="margin-top:4px;">
+                <a href="mailto:${escapeHtml(c.email)}?subject=Re: FitFuel Support Issue #${c.id}" style="color:#2563eb;font-size:0.84rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600;" title="Click to reply via email">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  ${escapeHtml(c.email)}
+                </a>
+              </div>
+            ` : '<span style="color:#94a3b8;font-size:0.8rem;">No email provided</span>'}
+          </div>
+          <small style="color:#64748b;font-weight:500;">Submitted: ${dateStr}</small>
+        </div>
+
+        <!-- Issue text description -->
+        <div style="background:#f8fafc;padding:12px 14px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:12px;">
+          <p style="margin:0;color:#1e293b;font-size:0.92rem;line-height:1.5;white-space:pre-wrap;">${escapeHtml(c.text)}</p>
+        </div>
+
+        ${filesHtml}
+
+        <!-- Resolution Notes & Actions -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1;">
+            <input type="text" id="admNoteInput_${c.id}" placeholder="Add internal resolution note or reply summary..." value="${escapeHtml(c.admin_notes || '')}" style="min-width:240px;flex:1;padding:7px 12px;font-size:0.82rem;border:1px solid #cbd5e1;border-radius:8px;" />
+            <button type="button" class="outline-button small" onclick="saveAdminNote(${c.id})" style="font-size:0.8rem;padding:6px 12px;">Save Note</button>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            ${status !== 'in_progress' ? `
+              <button type="button" class="outline-button small" onclick="updateComplaintStatus(${c.id}, 'in_progress')" style="border-color:#38bdf8;color:#2563eb;font-size:0.8rem;padding:6px 12px;font-weight:700;">
+                Mark In Progress
+              </button>
+            ` : ''}
+            ${status !== 'resolved' ? `
+              <button type="button" class="solid-button small" onclick="updateComplaintStatus(${c.id}, 'resolved')" style="background:#059669;color:#ffffff;font-size:0.8rem;padding:6px 14px;font-weight:800;">
+                Mark Solved
+              </button>
+            ` : `
+              <button type="button" class="outline-button small" onclick="updateComplaintStatus(${c.id}, 'pending')" style="color:#64748b;font-size:0.8rem;padding:6px 12px;">
+                Reopen
+              </button>
+            `}
+            <a href="mailto:${escapeHtml(c.email || '')}?subject=FitFuel Support: Regarding your issue #${c.id}" class="outline-button small" style="text-decoration:none;font-size:0.8rem;padding:6px 12px;display:inline-flex;align-items:center;gap:4px;">
+              Email User
+            </a>
+            <button type="button" class="text-button small" onclick="deleteComplaint(${c.id})" style="color:#ef4444;font-size:0.8rem;" title="Delete this complaint">
+              Delete
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+window.updateComplaintStatus = async function(id, newStatus) {
+  try {
+    const note = ($(`#admNoteInput_${id}`)?.value || '').trim();
+    await FF.adminUpdateComplaintStatus(id, newStatus, note);
+    toast(`Issue status updated to "${newStatus.replace('_', ' ')}"!`);
+    await renderAdminView();
+  } catch (e) {
+    toast('Error updating status: ' + (e.message || 'Failed'));
+  }
+};
+
+window.saveAdminNote = async function(id) {
+  try {
+    const note = ($(`#admNoteInput_${id}`)?.value || '').trim();
+    const existing = cachedComplaints.find(c => c.id === id);
+    const st = existing ? existing.status : 'pending';
+    await FF.adminUpdateComplaintStatus(id, st, note);
+    toast('Resolution note saved');
+  } catch (e) {
+    toast('Error saving note: ' + (e.message || 'Failed'));
+  }
+};
+
+window.deleteComplaint = async function(id) {
+  if (!confirm('Are you sure you want to permanently delete this complaint ticket?')) return;
+  try {
+    await FF.adminDeleteComplaint(id);
+    toast('Complaint deleted');
+    await renderAdminView();
+  } catch (e) {
+    toast('Error deleting: ' + (e.message || 'Failed'));
+  }
+};
+
+async function loadAndRenderAdminUsers() {
+  const grid = $('#adminUsersCardsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">Loading user accounts database...</div>';
+  try {
+    const users = await FF.adminUsers();
+    cachedAdminUsers = users || [];
+    renderFilteredAdminUsers();
+  } catch (e) {
+    grid.innerHTML = `<div style="padding:16px;background:#fee2e2;color:#991b1b;border-radius:10px;">Error: ${escapeHtml(e.message || 'Admin authentication failed')}</div>`;
+  }
+}
+
+function renderFilteredAdminUsers() {
+  const grid = $('#adminUsersCardsGrid');
+  if (!grid) return;
+  const q = ($('#adminUserSearchInput')?.value || '').toLowerCase().trim();
+  let list = cachedAdminUsers;
+  if (q) {
+    list = list.filter(u => (u.name && u.name.toLowerCase().includes(q)) || (u.email && u.email.toLowerCase().includes(q)));
+  }
+
+  if ($('#adminUsersCountIndicator')) {
+    $('#adminUsersCountIndicator').textContent = `${list.length} user accounts found`;
+  }
+
+  if (!list.length) {
+    grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">No matching users found.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(u => {
+    const joinDate = u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A';
+    const lastLogin = u.last_login ? new Date(u.last_login).toLocaleDateString() : 'N/A';
+    return `
+      <div class="panel" style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <b style="font-size:0.98rem;color:#0f172a;">${escapeHtml(u.name || 'Member')}</b>
+            ${u.is_admin ? `<span style="font-size:0.68rem;background:#1e3a8a;color:#38bdf8;padding:2px 7px;border-radius:99px;font-weight:800;border:1px solid #38bdf8;">ADMIN</span>` : ''}
+          </div>
+          <div style="font-size:0.84rem;color:#64748b;margin-top:2px;">
+            Email: <b style="color:#2563eb;">${escapeHtml(u.email)}</b> · Joined: ${joinDate} · Last active: ${lastLogin} · Food entries: ${u.logCount || 0}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <a href="mailto:${escapeHtml(u.email)}" class="outline-button small" style="text-decoration:none;font-size:0.8rem;padding:5px 12px;">
+            Email Member
+          </a>
+          ${!u.is_admin ? `
+            <button type="button" class="text-button small" onclick="deleteUserAccount(${u.id})" style="color:#ef4444;font-size:0.8rem;">
+              Delete User
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.deleteUserAccount = async function(id) {
+  if (!confirm('Are you sure you want to permanently delete this user account and all their synced data?')) return;
+  try {
+    await FF.adminDeleteUser(id);
+    toast('User account deleted');
+    await loadAndRenderAdminUsers();
+  } catch (e) {
+    toast('Error: ' + (e.message || 'Failed'));
+  }
+};
+
+function initAdminPortalListeners() {
+  const tabComp = $('#adminTabComplaints');
+  const tabUsers = $('#adminTabUsers');
+  const compPane = $('#adminComplaintsViewPane');
+  const usersPane = $('#adminUsersViewPane');
+
+  if (tabComp && tabUsers && compPane && usersPane) {
+    tabComp.onclick = () => {
+      tabComp.className = 'solid-button small';
+      tabUsers.className = 'outline-button small';
+      compPane.style.display = 'block';
+      usersPane.style.display = 'none';
+      renderFilteredComplaints();
+    };
+
+    tabUsers.onclick = () => {
+      tabUsers.className = 'solid-button small';
+      tabComp.className = 'outline-button small';
+      compPane.style.display = 'none';
+      usersPane.style.display = 'block';
+      loadAndRenderAdminUsers();
+    };
+  }
+
+  // Filter pills
+  $$('#complaintFilterBtns button').forEach(btn => {
+    btn.onclick = () => {
+      $$('#complaintFilterBtns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentComplaintFilter = btn.dataset.cfilter || 'all';
+      renderFilteredComplaints();
+    };
+  });
+
+  if ($('#adminUserSearchInput')) {
+    $('#adminUserSearchInput').oninput = () => renderFilteredAdminUsers();
+  }
+
+  if ($('#adminRefreshBtn')) {
+    $('#adminRefreshBtn').onclick = () => {
+      toast('Refreshing admin data...');
+      renderAdminView();
+    };
+  }
+
+  if ($('#adminReturnToUserBtn')) {
+    $('#adminReturnToUserBtn').onclick = () => switchView('today');
+  }
+
+  if ($('#topAdminBtn')) {
+    $('#topAdminBtn').onclick = () => switchView('admin');
+  }
+
+  if ($('#sidebarAdminNavBtn')) {
+    $('#sidebarAdminNavBtn').onclick = () => switchView('admin');
+  }
+
+  // Settings modal admin list buttons
+  if ($('#viewAllUsersBtn')) {
+    $('#viewAllUsersBtn').onclick = () => {
+      closeModal('#settingsModal');
+      switchView('admin');
+      setTimeout(() => $('#adminTabUsers')?.click(), 100);
+    };
+  }
+  if ($('#viewAllComplaintsBtn')) {
+    $('#viewAllComplaintsBtn').onclick = () => {
+      closeModal('#settingsModal');
+      switchView('admin');
+      setTimeout(() => $('#adminTabComplaints')?.click(), 100);
+    };
+  }
+}
+initAdminPortalListeners();
 
 /* ---------- Complaint / Feedback Form Submission ---------- */
 let cmpTypeVal = 'complaint';
@@ -3521,6 +3802,7 @@ async function handleLogout() {
   await FF.logout();
   session = null;
   store.del('session');
+  updateAdminNavVisibility();
   renderProfileView();
   updateSyncStatus('Preview mode · Logged out');
   toast('Logged out successfully');
@@ -3714,6 +3996,7 @@ async function submitAuth() {
 
     session = { name: user.name, email: user.email, is_admin: user.is_admin };
     store.set('session', session);
+    updateAdminNavVisibility();
 
     // Pull user cloud database state
     try {
@@ -5516,12 +5799,14 @@ async function bootApp() {
   renderMyFoods();
   renderChallengeView();
   renderTrackingView();
+  updateAdminNavVisibility();
 
   try {
     const res = await FF.boot();
     if (res && res.user) {
       session = { name: res.user.name, email: res.user.email, is_admin: res.user.is_admin };
       store.set('session', session);
+      updateAdminNavVisibility();
       const st = res.state || {};
       if (st.profile) { profile = st.profile; store.set('profile', profile); }
       if (st.water) { water = st.water; store.set('water', water); }

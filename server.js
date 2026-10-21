@@ -323,6 +323,37 @@ const routes = {
     `);
     json(res, 200, { complaints: rows.map(r => ({ ...r, files: JSON.parse(r.files || '[]') })) });
   },
+  'PATCH /api/complaint/status': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const { id, status, admin_notes } = await readBody(req);
+    if (!id) return json(res, 400, { error: 'Missing complaint id' });
+    const safeStatus = ['pending', 'in_progress', 'resolved'].includes(status) ? status : 'pending';
+    await db.run('UPDATE complaints SET status = ?, admin_notes = ? WHERE id = ?', [safeStatus, String(admin_notes || '').slice(0, 1000), id]);
+    json(res, 200, { ok: true, status: safeStatus });
+  },
+  'DELETE /api/complaint': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const { id } = await readBody(req);
+    if (!id) return json(res, 400, { error: 'Missing complaint id' });
+    await db.run('DELETE FROM complaints WHERE id = ?', [id]);
+    json(res, 200, { ok: true });
+  },
+  'GET /api/admin/stats': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const userCountRow = await db.get('SELECT COUNT(*) as count FROM users');
+    const complaintCountRow = await db.get('SELECT COUNT(*) as count FROM complaints');
+    const pendingRow = await db.get("SELECT COUNT(*) as count FROM complaints WHERE status = 'pending' OR status IS NULL");
+    const resolvedRow = await db.get("SELECT COUNT(*) as count FROM complaints WHERE status = 'resolved'");
+    json(res, 200, {
+      totalUsers: userCountRow ? Number(userCountRow.count) : 0,
+      totalComplaints: complaintCountRow ? Number(complaintCountRow.count) : 0,
+      pendingComplaints: pendingRow ? Number(pendingRow.count) : 0,
+      resolvedComplaints: resolvedRow ? Number(resolvedRow.count) : 0
+    });
+  },
 
   /* ---------- admin ---------- */
   'GET /api/admin/users': async (req, res) => {
