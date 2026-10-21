@@ -1830,79 +1830,192 @@ html.dark #lightboxImage, [data-theme="dark"] #lightboxImage {
   filter: none !important;
 }
 
-/* Comprehensive Text & Contrast Rules to Override Hardcoded Inline Light Colors */
-html.dark [style*="color:#2563eb"],
-html.dark [style*="color:#1e293b"],
-html.dark [style*="color:#1e293b"],
-html.dark [style*="color:#1e3424"],
-html.dark [style*="color:#2b3d32"],
-html.dark [style*="color:#1e293b"],
-html.dark [style*="color:#33463a"],
-html.dark [style*="color:#1d4ed8"],
-html.dark [style*="color:#243628"],
-html.dark [style*="color: #2563eb"],
-html.dark [style*="color: #1e293b"],
-html.dark [style*="color: #1e293b"] {
+/* ==========================================================================
+   DARK THEME COMPREHENSIVE TEXT VISIBILITY & CONTRAST SYSTEM
+   Guarantees 100% readable, high-contrast, crystal-clear text on dark midnight backgrounds
+   ========================================================================== */
+
+/* Universal Dark Mode Base Typography */
+html.dark,
+[data-theme="dark"],
+html.dark body,
+[data-theme="dark"] body {
+  color-scheme: dark;
+  --background: #080c14;
+  --foreground: #f8fafc;
+  --color-bg: #080c14;
+  --color-text: #f8fafc;
+  --color-muted: #94a3b8;
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  background-color: #080c14 !important;
   color: #f1f5f9 !important;
 }
 
-html.dark [style*="color:#64748b"],
-html.dark [style*="color:#64748b"],
-html.dark [style*="color:#64748b"],
-html.dark [style*="color:#64748b"],
-html.dark [style*="color:#64748b"],
-html.dark [style*="color:#859288"],
-html.dark [style*="color:#879287"],
-html.dark [style*="color:#89938a"],
-html.dark [style*="color: #64748b"],
-html.dark [style*="color: #64748b"] {
+/* All headings, titles, labels, bold values on dark mode */
+html.dark h1, [data-theme="dark"] h1,
+html.dark h2, [data-theme="dark"] h2,
+html.dark h3, [data-theme="dark"] h3,
+html.dark h4, [data-theme="dark"] h4,
+html.dark h5, [data-theme="dark"] h5,
+html.dark h6, [data-theme="dark"] h6,
+html.dark strong, [data-theme="dark"] strong,
+html.dark b:not([class*="badge"]):not([class*="btn"]):not([class*="button"]),
+[data-theme="dark"] b:not([class*="badge"]):not([class*="btn"]):not([class*="button"]),
+html.dark th, [data-theme="dark"] th {
+  color: #f8fafc !important;
+}
+
+/* All body text, descriptions, lists, table cells on dark mode */
+html.dark p, [data-theme="dark"] p,
+html.dark label, [data-theme="dark"] label,
+html.dark li, [data-theme="dark"] li,
+html.dark td, [data-theme="dark"] td {
+  color: #e2e8f0 !important;
+}
+
+/* Secondary, meta, units, and muted small text on dark mode */
+html.dark small, [data-theme="dark"] small,
+html.dark .text-muted, [data-theme="dark"] .text-muted,
+html.dark .muted, [data-theme="dark"] .muted,
+html.dark .stat-label, [data-theme="dark"] .stat-label,
+html.dark .sync-note, [data-theme="dark"] .sync-note,
+html.dark .subtext, [data-theme="dark"] .subtext,
+html.dark .unit, [data-theme="dark"] .unit,
+html.dark .meta, [data-theme="dark"] .meta {
   color: #94a3b8 !important;
 }
 
-html.dark [style*="background:#f4f7f2"],
-html.dark [style*="background:#f9fcf7"],
-html.dark [style*="background:#fcfefb"],
-html.dark [style*="background:#f1f8ed"],
-html.dark [style*="background:#f7faf4"],
-html.dark [style*="background:#fcfdfb"],
-html.dark [style*="background:#f4f8f2"],
-html.dark [style*="background:#eff6ff"],
-html.dark [style*="background:#f8fbf5"],
-html.dark [style*="background:#fbfdfa"],
-html.dark [style*="background: #f4f7f2"],
-html.dark [style*="background: #f9fcf7"],
-html.dark [style*="background: #fcfefb"] {
-  background: #111a2e !important;
+/* Form inputs, select menus, dropdowns, and textareas */
+html.dark input, [data-theme="dark"] input,
+html.dark select, [data-theme="dark"] select,
+html.dark textarea, [data-theme="dark"] textarea {
+  background: #090e18 !important;
   border-color: #1e293b !important;
+  color: #f8fafc !important;
 }
-
-html.dark [style*="background:#ffffff"],
-html.dark [style*="background: #ffffff"],
-html.dark [style*="background:#fff"],
-html.dark [style*="background: #fff"] {
+html.dark option, [data-theme="dark"] option {
   background: #0f172a !important;
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
+}
+html.dark input::placeholder, [data-theme="dark"] input::placeholder,
+html.dark textarea::placeholder, [data-theme="dark"] textarea::placeholder {
+  color: #64748b !important;
 }
 
-html.dark [style*="border: 1px solid #e2e8f0"],
-html.dark [style*="border:1px solid #e2e8f0"],
-html.dark [style*="border: 1px solid #e2ebd9"],
-html.dark [style*="border:1px solid #e2ebd9"],
-html.dark [style*="border: 1px solid #dce8d5"],
-html.dark [style*="border:1px solid #dce8d5"],
-html.dark [style*="border: 1px solid #cbd5e1"],
-html.dark [style*="border:1px solid #cbd5e1"] {
+/* ================= INLINE COLOR OVERRIDES IN DARK MODE ================= */
+
+/* Override dark slate / dark charcoal / black inline text (#1e293b, #000, etc.) -> bright crisp white (#f8fafc) */
+html.dark [style*="color:#1e293b"], html.dark [style*="color: #1e293b"],
+html.dark [style*="color:#0f172a"], html.dark [style*="color: #0f172a"],
+html.dark [style*="color:#111827"], html.dark [style*="color: #111827"],
+html.dark [style*="color:#000"], html.dark [style*="color: #000"],
+html.dark [style*="color:#000000"], html.dark [style*="color: #000000"],
+[data-theme="dark"] [style*="color:#1e293b"], [data-theme="dark"] [style*="color: #1e293b"],
+[data-theme="dark"] [style*="color:#0f172a"], [data-theme="dark"] [style*="color: #0f172a"],
+[data-theme="dark"] [style*="color:#111827"], [data-theme="dark"] [style*="color: #111827"],
+[data-theme="dark"] [style*="color:#000"], [data-theme="dark"] [style*="color: #000"],
+[data-theme="dark"] [style*="color:#000000"], [data-theme="dark"] [style*="color: #000000"] {
+  color: #f8fafc !important;
+}
+
+/* Override muted slate-500 inline text (#64748b, #4a5568, #cbd5e0) -> readable bright slate-400 (#94a3b8) */
+html.dark [style*="color:#64748b"], html.dark [style*="color: #64748b"],
+html.dark [style*="color:#4a5568"], html.dark [style*="color: #4a5568"],
+html.dark [style*="color:#cbd5e0"], html.dark [style*="color: #cbd5e0"],
+[data-theme="dark"] [style*="color:#64748b"], [data-theme="dark"] [style*="color: #64748b"],
+[data-theme="dark"] [style*="color:#4a5568"], [data-theme="dark"] [style*="color: #4a5568"],
+[data-theme="dark"] [style*="color:#cbd5e0"], [data-theme="dark"] [style*="color: #cbd5e0"] {
+  color: #94a3b8 !important;
+}
+
+/* Override royal/sapphire blue inline text (#2563eb, #1d4ed8, #1e3a8a, #0284c7) -> vibrant sky blue (#38bdf8) */
+html.dark [style*="color:#2563eb"], html.dark [style*="color: #2563eb"],
+html.dark [style*="color:#1d4ed8"], html.dark [style*="color: #1d4ed8"],
+html.dark [style*="color:#1e3a8a"], html.dark [style*="color: #1e3a8a"],
+html.dark [style*="color:#0284c7"], html.dark [style*="color: #0284c7"],
+[data-theme="dark"] [style*="color:#2563eb"], [data-theme="dark"] [style*="color: #2563eb"],
+[data-theme="dark"] [style*="color:#1d4ed8"], [data-theme="dark"] [style*="color: #1d4ed8"],
+[data-theme="dark"] [style*="color:#1e3a8a"], [data-theme="dark"] [style*="color: #1e3a8a"],
+[data-theme="dark"] [style*="color:#0284c7"], [data-theme="dark"] [style*="color: #0284c7"] {
+  color: #38bdf8 !important;
+}
+
+/* Warnings / Inactive Streaks / Mission Failed in Dark Mode */
+html.dark [style*="color:#c53030"], html.dark [style*="color: #c53030"],
+html.dark [style*="color:#9b2c2c"], html.dark [style*="color: #9b2c2c"],
+html.dark [style*="color:#742a2a"], html.dark [style*="color: #742a2a"],
+html.dark [style*="color:#7b341e"], html.dark [style*="color: #7b341e"],
+html.dark [style*="color:#9c4221"], html.dark [style*="color: #9c4221"],
+html.dark [style*="color:#c05621"], html.dark [style*="color: #c05621"],
+html.dark [style*="color:#b23"], html.dark [style*="color: #b23"],
+[data-theme="dark"] [style*="color:#c53030"], [data-theme="dark"] [style*="color: #c53030"],
+[data-theme="dark"] [style*="color:#9b2c2c"], [data-theme="dark"] [style*="color: #9b2c2c"],
+[data-theme="dark"] [style*="color:#742a2a"], [data-theme="dark"] [style*="color: #742a2a"],
+[data-theme="dark"] [style*="color:#7b341e"], [data-theme="dark"] [style*="color: #7b341e"],
+[data-theme="dark"] [style*="color:#9c4221"], [data-theme="dark"] [style*="color: #9c4221"],
+[data-theme="dark"] [style*="color:#c05621"], [data-theme="dark"] [style*="color: #c05621"],
+[data-theme="dark"] [style*="color:#b23"], [data-theme="dark"] [style*="color: #b23"] {
+  color: #fca5a5 !important;
+}
+
+/* Safe Button Text Preservation */
+html.dark .solid-button, [data-theme="dark"] .solid-button,
+html.dark button[style*="background:#2563eb"], [data-theme="dark"] button[style*="background:#2563eb"],
+html.dark button[style*="background: #2563eb"], [data-theme="dark"] button[style*="background: #2563eb"],
+html.dark button[style*="background:#c53030"], [data-theme="dark"] button[style*="background:#c53030"],
+html.dark button[style*="background: #c53030"], [data-theme="dark"] button[style*="background: #c53030"] {
+  color: #ffffff !important;
+}
+
+/* ================= INVERT LIGHT BACKGROUNDS IN DARK MODE ================= */
+html.dark [style*="background:#f8fafc"], html.dark [style*="background: #f8fafc"],
+html.dark [style*="background:#eff6ff"], html.dark [style*="background: #eff6ff"],
+html.dark [style*="background:#dbeafe"], html.dark [style*="background: #dbeafe"],
+html.dark [style*="background:#ffffff"], html.dark [style*="background: #ffffff"],
+html.dark [style*="background:#fff"], html.dark [style*="background: #fff"],
+html.dark [style*="background:white"], html.dark [style*="background: white"],
+[data-theme="dark"] [style*="background:#f8fafc"], [data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background:#eff6ff"], [data-theme="dark"] [style*="background: #eff6ff"],
+[data-theme="dark"] [style*="background:#dbeafe"], [data-theme="dark"] [style*="background: #dbeafe"],
+[data-theme="dark"] [style*="background:#ffffff"], [data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background:#fff"], [data-theme="dark"] [style*="background: #fff"],
+[data-theme="dark"] [style*="background:white"], [data-theme="dark"] [style*="background: white"] {
+  background: #0f172a !important;
   border-color: #1e293b !important;
 }
 
-html.dark [style*="background:#fffaf0"] {
-  background: #1c1512 !important;
-  border-color: #442a22 !important;
+/* Dark mode alert box backgrounds */
+html.dark [style*="background:#fff5f5"], html.dark [style*="background: #fff5f5"],
+html.dark [style*="background:#fed7d7"], html.dark [style*="background: #fed7d7"],
+html.dark [style*="background:#feb2b2"], html.dark [style*="background: #feb2b2"],
+[data-theme="dark"] [style*="background:#fff5f5"], [data-theme="dark"] [style*="background: #fff5f5"],
+[data-theme="dark"] [style*="background:#fed7d7"], [data-theme="dark"] [style*="background: #fed7d7"],
+[data-theme="dark"] [style*="background:#feb2b2"], [data-theme="dark"] [style*="background: #feb2b2"] {
+  background: #3b1114 !important;
+  border-color: #7f1d1d !important;
 }
 
-html.dark [style*="background:#fff5f5"] {
-  background: #1c1214 !important;
-  border-color: #442025 !important;
+html.dark [style*="background:#fffaf0"], html.dark [style*="background: #fffaf0"],
+html.dark [style*="background:#fbd38d"], html.dark [style*="background: #fbd38d"],
+[data-theme="dark"] [style*="background:#fffaf0"], [data-theme="dark"] [style*="background: #fffaf0"],
+[data-theme="dark"] [style*="background:#fbd38d"], [data-theme="dark"] [style*="background: #fbd38d"] {
+  background: #331f0c !important;
+  border-color: #7c2d12 !important;
+}
+
+/* Invert borders that were light */
+html.dark [style*="border: 1px solid #e2e8f0"], html.dark [style*="border:1px solid #e2e8f0"],
+html.dark [style*="border: 1px solid #cbd5e1"], html.dark [style*="border:1px solid #cbd5e1"],
+html.dark [style*="border: 1.5px solid #cbd5e1"], html.dark [style*="border:1.5px solid #cbd5e1"],
+html.dark [style*="border: 1px dashed #cbd5e1"], html.dark [style*="border:1px dashed #cbd5e1"],
+html.dark [style*="border: 1px solid #dbeafe"], html.dark [style*="border:1px solid #dbeafe"],
+[data-theme="dark"] [style*="border: 1px solid #e2e8f0"], [data-theme="dark"] [style*="border:1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border: 1px solid #cbd5e1"], [data-theme="dark"] [style*="border:1px solid #cbd5e1"],
+[data-theme="dark"] [style*="border: 1.5px solid #cbd5e1"], [data-theme="dark"] [style*="border:1.5px solid #cbd5e1"],
+[data-theme="dark"] [style*="border: 1px dashed #cbd5e1"], [data-theme="dark"] [style*="border:1px dashed #cbd5e1"],
+[data-theme="dark"] [style*="border: 1px solid #dbeafe"], [data-theme="dark"] [style*="border:1px solid #dbeafe"] {
+  border-color: #1e293b !important;
 }
 
 /* SVG icons visibility */

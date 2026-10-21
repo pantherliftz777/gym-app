@@ -1376,10 +1376,10 @@ function renderDashboard() {
   if (mealList) {
     if (entries.length === 0) {
       mealList.innerHTML = `
-        <div style="padding: 24px 16px; text-align: center; color: #637367; background: #f9fbf8; border: 1px dashed #dbe6d6; border-radius: 14px;">
+        <div style="padding: 24px 16px; text-align: center; color:#64748b; background:#f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px;">
           <div style="font-size: 28px; margin-bottom: 6px;">🥗</div>
           <b style="color: #2563eb; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
-          <p style="font-size: 12px; margin: 0 0 12px; color: #637367; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
+          <p style="font-size: 12px; margin: 0 0 12px; color:#64748b; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
           <button type="button" class="solid-button small" id="emptyDashAddMealBtn" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             Log Food Now
@@ -1482,7 +1482,7 @@ function renderDashboard() {
     barGraph.innerHTML = weeklyDayData.map(d => {
       const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
       const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
-      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color: #788b7e;';
+      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:#64748b;';
       const statusIcon = d.isActive ? '✓' : (d.isToday ? '•' : '');
       return `
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
@@ -1709,7 +1709,7 @@ function renderFoodLog() {
             <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
             <b style="color:#2563eb;font-size:1.08rem;font-weight:700;">${mealType}</b>
           </div>
-          <span style="color:#2f5338;font-size:.88rem;font-weight:700;background:#edf5e8;padding:3px 12px;border-radius:99px;border:1px solid #dcebd4;">
+          <span style="color:#1e293b;font-size:.88rem;font-weight:700;background:#eff6ff;padding:3px 12px;border-radius:99px;border: 1px solid #dbeafe;">
             ${subKcal} kcal
           </span>
         </div>
@@ -1721,19 +1721,19 @@ function renderFoodLog() {
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
                 ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
                 <div style="min-width:0;">
-                  <b style="color:#203125;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
-                  <p style="color:#78887c;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+                  <b style="color:#1e293b;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
+                  <p style="color:#64748b;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                <span style="font-weight:700;color:#34483a;font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
-                <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;font-size:0.95rem;color:#4f6b52;display:flex;align-items:center;justify-content:center;">
+                <span style="font-weight:700;color:#1e293b;font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
+                <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;font-size:0.95rem;color:#1e293b;display:flex;align-items:center;justify-content:center;">
                   ✏️
                 </button>
                 <button type="button" class="close-btn" style="color:#dc2626;cursor:pointer;padding:6px;border-radius:6px;font-size:1.15rem;line-height:1;display:flex;align-items:center;justify-content:center;" title="Delete entry" onclick="deleteFoodEntry(${realIdx})">&times;</button>
               </div>
             </div>
-          `;}).join('') : `<p style="color:#8b998e;font-size:.86rem;padding:8px 6px;margin:0;font-style:italic;">No items logged for ${mealType.toLowerCase()} yet. Click "Add Food" above to log.</p>`}
+          `;}).join('') : `<p style="color:#64748b;font-size:.86rem;padding:8px 6px;margin:0;font-style:italic;">No items logged for ${mealType.toLowerCase()} yet. Click "Add Food" above to log.</p>`}
         </div>
       </div>`;
     }).join('');
@@ -1946,14 +1946,14 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
   ).join('');
 
   row.innerHTML = `
-    <select class="recipe-cat-sel" style="padding:6px 8px;border:1px solid #d4ded2;border-radius:8px;font-size:.85rem;background:#fff;">
+    <select class="recipe-cat-sel" style="padding:6px 8px;border: 1px solid #e2e8f0;border-radius:8px;font-size:.85rem;background:#fff;">
       ${catOptions}
     </select>
-    <select class="recipe-item-sel" style="padding:6px 8px;border:1px solid #d4ded2;border-radius:8px;font-size:.85rem;background:#fff;">
+    <select class="recipe-item-sel" style="padding:6px 8px;border: 1px solid #e2e8f0;border-radius:8px;font-size:.85rem;background:#fff;">
     </select>
-    <div style="display:flex;align-items:center;background:#fff;border:1px solid #d4ded2;border-radius:8px;padding:4px 8px;">
+    <div style="display:flex;align-items:center;background:#fff;border: 1px solid #e2e8f0;border-radius:8px;padding:4px 8px;">
       <input type="number" class="recipe-qty-input" value="${initialQty}" min="1" max="5000" style="width:100%;border:none;outline:none;font-size:.85rem;font-weight:600;">
-      <span style="font-size:.78rem;color:#78887c;margin-left:4px;">g</span>
+      <span style="font-size:.78rem;color:#64748b;margin-left:4px;">g</span>
     </div>
     <div class="recipe-row-cal" style="font-size:.82rem;font-weight:700;color:#2563eb;text-align:right;">
       0 kcal
@@ -2511,11 +2511,11 @@ if ($('#foodSearchInput')) {
         <div style="display:flex;align-items:center;gap:10px;">
           ${visual}
           <div>
-            <b style="color:#203125;font-size:.9rem;">${f.name}</b>
-            <p style="color:#78887c;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#4a7c59;font-weight:600;">· 💊 ${f.micros}</span>` : ''}</p>
+            <b style="color:#1e293b;font-size:.9rem;">${f.name}</b>
+            <p style="color:#64748b;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#2563eb;font-weight:600;">· 💊 ${f.micros}</span>` : ''}</p>
           </div>
         </div>
-        <span style="font-weight:700;color:#34483a;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#78887c;">kcal/100g</small></span>
+        <span style="font-weight:700;color:#1e293b;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#64748b;">kcal/100g</small></span>
       </div>`;
     }).join('');
   };
@@ -2793,7 +2793,7 @@ function openExerciseDetailModal(exerciseName) {
     $('#exModalAiCoachBtn').onclick = async () => {
       if (!adviceEl) return;
       adviceEl.style.display = 'block';
-      adviceEl.innerHTML = '<span style="color:#557c60;">🤖 Formwise AI is analyzing biomechanics &amp; customized cues...</span>';
+      adviceEl.innerHTML = '<span style="color:#2563eb;">🤖 Formwise AI is analyzing biomechanics &amp; customized cues...</span>';
 
       const prompt = `As an elite strength & biomechanics coach, give a direct, impactful breakdown for "${ex.name}" targeting ${ex.sub || ex.category}:
 1. The #1 Mind-Muscle Connection Cue
@@ -2851,15 +2851,15 @@ function renderWorkouts() {
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <b style="color:#203125;font-size:1.02rem;">${m.name}</b>
+                <b style="color:#1e293b;font-size:1.02rem;">${m.name}</b>
                 <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub || 'COMPOUND'}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-weight:600;color:#556658;font-size:.88rem;">${m.sets}</span>
+                <span style="font-weight:600;color:#64748b;font-size:.88rem;">${m.sets}</span>
                 <span class="move-hover-cta">👁️ View Visual</span>
               </div>
             </div>
-            <p style="color:#637367;font-size:.86rem;margin-top:4px;">💡 ${m.tip}</p>
+            <p style="color:#64748b;font-size:.86rem;margin-top:4px;">💡 ${m.tip}</p>
             
             <!-- Hover details strip (visible on hover) -->
             <div class="move-hover-details">
@@ -2867,7 +2867,7 @@ function renderWorkouts() {
                 <span>🎯 <b>Target:</b> ${ex.sub || ex.category}</span>
                 <span>⏱️ <b>${ex.rxTempo || 'Tempo: 2-1-1'}</b></span>
               </div>
-              <p style="margin:2px 0 0;font-size:.8rem;color:#556658;">🧬 ${ex.rxWhy || ex.benefit}</p>
+              <p style="margin:2px 0 0;font-size:.8rem;color:#64748b;">🧬 ${ex.rxWhy || ex.benefit}</p>
             </div>
           </div>
         </div>
@@ -2947,8 +2947,8 @@ function renderExerciseLibrary() {
             <span class="exercise-type">${ex.type}</span>
             <span style="font-size:.76rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
           </div>
-          <h4 style="margin:4px 0 8px;color:#203125;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
-            ${ex.name} <span style="font-size:.76rem;color:#557c60;vertical-align:middle;">👁️</span>
+          <h4 style="margin:4px 0 8px;color:#1e293b;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
+            ${ex.name} <span style="font-size:.76rem;color:#2563eb;vertical-align:middle;">👁️</span>
           </h4>
           
           <!-- Scientific Prescription Box -->
@@ -2960,7 +2960,7 @@ function renderExerciseLibrary() {
             <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
           </div>
 
-          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#637367;">💡 ${ex.steps}</p>
+          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#64748b;">💡 ${ex.steps}</p>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
@@ -3017,9 +3017,9 @@ function renderMyFoods() {
       </div>
       <div style="flex:1;">
         <span class="section-kicker">${item.meal || 'RECIPE'}</span>
-        <h4 style="margin:2px 0;color:#203125;">${item.name}</h4>
-        <p style="color:#78887c;font-size:.85rem;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
-        <b style="color:#34483a;font-size:1.05rem;display:inline-block;margin-top:6px;">${item.k || item.calories} kcal</b>
+        <h4 style="margin:2px 0;color:#1e293b;">${item.name}</h4>
+        <p style="color:#64748b;font-size:.85rem;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+        <b style="color:#1e293b;font-size:1.05rem;display:inline-block;margin-top:6px;">${item.k || item.calories} kcal</b>
       </div>
       <button class="solid-button small" onclick="quickAddSavedFood(${i})" style="margin-top:10px;width:100%;">
         Add to today +
@@ -3327,17 +3327,17 @@ $('#forceSyncBtn').onclick = async () => {
 if ($('#viewAllUsersBtn')) {
   $('#viewAllUsersBtn').onclick = async () => {
     const list = $('#adminUsersList');
-    if (list) list.innerHTML = '<span style="color:#637367;">Loading registered users...</span>';
+    if (list) list.innerHTML = '<span style="color:#64748b;">Loading registered users...</span>';
     try {
       const users = await FF.adminUsers();
       if (!users || !users.length) {
-        if (list) list.innerHTML = '<span style="color:#637367;font-size:.85rem;">No registered users found.</span>';
+        if (list) list.innerHTML = '<span style="color:#64748b;font-size:.85rem;">No registered users found.</span>';
         return;
       }
       if (list) {
         list.innerHTML = users.map(u => `
           <div style="padding:6px 0;border-bottom:1px solid #eef3eb;display:flex;justify-content:space-between;align-items:center;">
-            <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#777;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
+            <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#64748b;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
             <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eff6ff;color:#2563eb;">${escapeHtml(u.role || 'user')}</span>
           </div>
         `).join('');
@@ -3353,11 +3353,11 @@ if ($('#viewAllComplaintsBtn')) {
     const list = $('#adminComplaintsList');
     if (!list) return;
     list.style.display = 'block';
-    list.innerHTML = '<span style="color:#637367;">Loading complaints & suggestions...</span>';
+    list.innerHTML = '<span style="color:#64748b;">Loading complaints & suggestions...</span>';
     try {
       const complaints = await FF.adminComplaints();
       if (!complaints || !complaints.length) {
-        list.innerHTML = '<div style="padding:10px;text-align:center;color:#637367;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! 🎉</div>';
+        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! 🎉</div>';
         return;
       }
       list.innerHTML = complaints.map(c => {
@@ -3369,18 +3369,18 @@ if ($('#viewAllComplaintsBtn')) {
               if (f.data && f.data.startsWith('data:image')) {
                 return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #dbe2d6;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
               }
-              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#334438;">📎 ${escapeHtml(f.name)}</span>`;
+              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#1e293b;">📎 ${escapeHtml(f.name)}</span>`;
             }).join('')}
           </div>` : '';
         return `
           <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #dbeafe;border-radius:10px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
               <b style="color:#2563eb;font-size:.88rem;">${escapeHtml(c.name)}</b>
-              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eff6ff;color:#2a5033;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
+              <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
             </div>
-            <p style="margin:0;color:#34483a;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
+            <p style="margin:0;color:#1e293b;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
             ${filesHtml}
-            <small style="display:block;margin-top:4px;color:#859288;font-size:.72rem;">${dateStr}</small>
+            <small style="display:block;margin-top:4px;color:#64748b;font-size:.72rem;">${dateStr}</small>
           </div>
         `;
       }).join('');
@@ -3963,7 +3963,7 @@ function renderChatMessages() {
     const isBot = msg.role === 'assistant';
     const formatted = formatChatMarkdown(msg.text);
     return `<div class="ai-msg ${isBot ? 'bot' : 'user'}">
-      ${isBot ? '<span style="font-size:.74rem;color:#78887c;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>' : ''}
+      ${isBot ? '<span style="font-size:.74rem;color:#64748b;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>' : ''}
       <div>${formatted}</div>
     </div>`;
   }).join('');
@@ -3991,8 +3991,8 @@ async function handleUserAiQuery(query) {
     const typingDiv = document.createElement('div');
     typingDiv.className = 'ai-msg bot';
     typingDiv.id = typingId;
-    typingDiv.innerHTML = `<span style="font-size:.74rem;color:#78887c;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>
-      <div style="color:#78887c;font-style:italic;">Analyzing with AI cascade... ✨</div>`;
+    typingDiv.innerHTML = `<span style="font-size:.74rem;color:#64748b;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>
+      <div style="color:#64748b;font-style:italic;">Analyzing with AI cascade... ✨</div>`;
     container.appendChild(typingDiv);
     container.scrollTop = container.scrollHeight;
   }
@@ -4492,7 +4492,7 @@ function renderCustomWorkoutExplorer() {
   }
 
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#78887c;background:#fcfdfa;border-radius:12px;border:1px dashed #dce4d8;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#64748b;background:#fcfdfa;border-radius:12px;border:1px dashed #dce4d8;">
       <b>No exercises found matching your selected filters.</b>
       <p style="font-size:.85rem;margin-top:6px;">Try selecting "All Types" or "Full Body" to view the full exercise catalog.</p>
     </div>`;
@@ -4508,16 +4508,16 @@ function renderCustomWorkoutExplorer() {
       <div class="exercise-custom-card" style="background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <span style="font-size:.72rem;font-weight:800;color:#39612a;background:#edf5e8;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+            <span style="font-size:.72rem;font-weight:800;color:#1e293b;background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
               ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
             </span>
-            <span style="font-size:.74rem;color:#78887c;font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
+            <span style="font-size:.74rem;color:#64748b;font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
           </div>
           <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
-          <p style="color:#637367;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
-          <div style="background:#f7faf4;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:.78rem;font-weight:700;color:#2e4e34;">🎯 ${escapeHtml(rxSets)}</span>
-            <span style="font-size:.75rem;color:#677d6d;font-weight:600;">⏱️ ${escapeHtml(rxRest)}</span>
+          <p style="color:#64748b;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
+          <div style="background:#f8fafc;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.78rem;font-weight:700;color:#1e293b;">🎯 ${escapeHtml(rxSets)}</span>
+            <span style="font-size:.75rem;color:#64748b;font-weight:600;">⏱️ ${escapeHtml(rxRest)}</span>
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:auto;">
@@ -4667,22 +4667,22 @@ function renderChallengeView() {
         <div style="width:68px;height:68px;border-radius:20px;background:#eff6ff;color:#2563eb;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
           🎯
         </div>
-        <h3 style="font-size:1.4rem;color:#1e3424;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
-        <p style="color:#637367;font-size:.92rem;line-height:1.55;max-width:500px;margin:0 auto 24px;">
+        <h3 style="font-size:1.4rem;color:#1e293b;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
+        <p style="color:#64748b;font-size:.92rem;line-height:1.55;max-width:500px;margin:0 auto 24px;">
           Ready to transform? Choose your goal (Burn Fat, Build Muscle, Maintain Weight) and duration (10, 15, 25, 30 days) to have our AI generate your personalized roadmap.
         </p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;text-align:left;">
-          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
             <b style="color:#2563eb;font-size:.88rem;display:block;">⚡ AI Engineered</b>
-            <small style="color:#637367;">Personalized to your height, weight &amp; strength targets.</small>
+            <small style="color:#64748b;">Personalized to your height, weight &amp; strength targets.</small>
           </div>
-          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
             <b style="color:#2563eb;font-size:.88rem;display:block;">⏱️ Built-in Timers</b>
-            <small style="color:#637367;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
+            <small style="color:#64748b;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
           </div>
-          <div style="background:#f9fcf8;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
+          <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
             <b style="color:#2563eb;font-size:.88rem;display:block;">🔄 Swap Any Workout</b>
-            <small style="color:#637367;">Change or replace any exercise with 1 click.</small>
+            <small style="color:#64748b;">Change or replace any exercise with 1 click.</small>
           </div>
         </div>
         <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#2563eb;padding:12px 28px;font-size:1rem;font-weight:700;">
@@ -4707,13 +4707,13 @@ function renderChallengeView() {
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span style="background:rgba(180,219,121,0.2);color:#38bdf8;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
-            <span style="font-size:.8rem;color:#b8cebe;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
+            <span style="font-size:.8rem;color:#64748b;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
           </div>
           <h2 style="margin:0;font-size:1.45rem;color:#ffffff;font-weight:800;">${escapeHtml(p.motive)} Challenge</h2>
-          <p style="margin:4px 0 0;color:#ccdccf;font-size:.88rem;">Personalized for ${p.userWeight} kg · ${p.userHeight} cm · Target Goal Active</p>
+          <p style="margin:4px 0 0;color:#64748b;font-size:.88rem;">Personalized for ${p.userWeight} kg · ${p.userHeight} cm · Target Goal Active</p>
         </div>
         <div style="text-align:right;">
-          <span style="font-size:.74rem;color:#a3baa9;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
+          <span style="font-size:.74rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
           <strong style="font-size:1.6rem;color:#38bdf8;font-weight:800;">${pct}%</strong>
         </div>
       </div>
@@ -4725,7 +4725,7 @@ function renderChallengeView() {
 
       <!-- Action Button Controls -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:#182e1f;font-weight:800;padding:10px 22px;border:none;">
+        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:#1e293b;font-weight:800;padding:10px 22px;border:none;">
           ▶ Start Today's Workout (${escapeHtml(currentDay.title)})
         </button>
         <button type="button" class="outline-button" id="refreshTodayRoutineBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
@@ -4744,9 +4744,9 @@ function renderChallengeView() {
     <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
-          <span class="section-kicker" style="color:#456b32;font-weight:800;">TODAY'S SCHEDULED ROUTINE</span>
-          <h3 style="margin:2px 0 0;font-size:1.2rem;color:#1e3424;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
-          <p style="margin:2px 0 0;font-size:.86rem;color:#637367;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
+          <span class="section-kicker" style="color:#64748b;font-weight:800;">TODAY'S SCHEDULED ROUTINE</span>
+          <h3 style="margin:2px 0 0;font-size:1.2rem;color:#1e293b;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
+          <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
         </div>
         <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#e6f4da' : '#f4f6f2'};color:${currentDay.completed ? '#2d581e' : '#556658'};">
           ${currentDay.completed ? '✓ COMPLETED' : '⚡ READY TO TRAIN'}
@@ -4763,11 +4763,11 @@ function renderChallengeView() {
               </span>
               <div>
                 <b style="color:#2563eb;font-size:.94rem;display:block;">${escapeHtml(ex.name)}</b>
-                <small style="color:#637367;font-size:.82rem;">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</small>
+                <small style="color:#64748b;font-size:.82rem;">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</small>
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#c8dac1;padding:5px 12px;background:#ffffff;">
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#64748b;padding:5px 12px;background:#ffffff;">
                 ⇄ Swap Workout
               </button>
             </div>
@@ -4781,9 +4781,9 @@ function renderChallengeView() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
           <span class="section-kicker">ALL DAYS OVERVIEW</span>
-          <h3 style="margin:2px 0 0;font-size:1.15rem;color:#1e3424;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
+          <h3 style="margin:2px 0 0;font-size:1.15rem;color:#1e293b;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
         </div>
-        <span style="font-size:.84rem;color:#637367;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
+        <span style="font-size:.84rem;color:#64748b;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;">
@@ -4799,8 +4799,8 @@ function renderChallengeView() {
                   ${d.completed ? '✓ Done' : (isCurrent ? '⚡ Current' : 'Upcoming')}
                 </span>
               </div>
-              <span style="font-size:.82rem;color:#45594b;font-weight:600;">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
-              <small style="font-size:.74rem;color:#788b7e;">${d.exercises.length} moves · ${d.estDuration}</small>
+              <span style="font-size:.82rem;color:#64748b;font-weight:600;">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
+              <small style="font-size:.74rem;color:#64748b;">${d.exercises.length} moves · ${d.estDuration}</small>
             </div>
           `;
         }).join('')}
@@ -4884,7 +4884,7 @@ function openSwapExerciseModal(dayIdx, exIdx) {
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #edf2e8;border-radius:10px;background:#ffffff;gap:10px;">
         <div>
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
-          <small style="color:#637367;font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
+          <small style="color:#64748b;font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
         </div>
         <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#2563eb;font-size:.78rem;white-space:nowrap;">
           Select &amp; Replace
@@ -5218,9 +5218,9 @@ function renderTrackingView() {
       <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
           <div>
-            <span class="section-kicker" style="color:#3e632b;font-weight:800;">ACTIVE PLAN TRACKER</span>
-            <h3 style="margin:2px 0 0;font-size:1.25rem;color:#1e3424;font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
-            <p style="margin:2px 0 0;font-size:.86rem;color:#637367;">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
+            <span class="section-kicker" style="color:#2563eb;font-weight:800;">ACTIVE PLAN TRACKER</span>
+            <h3 style="margin:2px 0 0;font-size:1.25rem;color:#1e293b;font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
+            <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
           </div>
           <button type="button" class="solid-button small" onclick="switchView('challenge')" style="background:#2563eb;">
             Open Challenge Engine →
@@ -5251,7 +5251,7 @@ function renderTrackingView() {
       <div style="background:#fcfdfa;border:1px dashed #d5e2d0;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
         <span style="font-size:28px;">🎯</span>
         <b style="color:#2563eb;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
-        <p style="color:#637367;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
+        <p style="color:#64748b;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
         <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#2563eb;">
           🚀 Start Challenge
         </button>
@@ -5265,15 +5265,15 @@ function renderTrackingView() {
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #edf2e8;">
         <div>
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
-          <small style="color:#788b7e;font-size:.78rem;">${w.date || today()}</small>
+          <small style="color:#64748b;font-size:.78rem;">${w.date || today()}</small>
         </div>
-        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:#2c561e;font-weight:700;">
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;">
           ✓ Logged
         </span>
       </div>
     `).join('')
   ) : `
-    <div style="padding:20px;text-align:center;color:#637367;font-size:.85rem;">
+    <div style="padding:20px;text-align:center;color:#64748b;font-size:.85rem;">
       No workouts completed yet. Mark exercises complete or start a challenge routine!
     </div>
   `;
@@ -5285,18 +5285,18 @@ function renderTrackingView() {
       <!-- STREAK & CONSISTENCY -->
       <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <span class="section-kicker">HABIT CONSISTENCY</span>
-        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e3424;font-weight:800;">Workout &amp; Streak Metrics</h4>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e293b;font-weight:800;">Workout &amp; Streak Metrics</h4>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-          <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
-            <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">CURRENT STREAK</span>
+          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+            <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">CURRENT STREAK</span>
             <b style="font-size:1.4rem;color:#2563eb;">🔥 ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
-          <div style="background:#f7faf4;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
-            <span style="font-size:.72rem;color:#788b7e;font-weight:700;display:block;">TOTAL WORKOUTS</span>
+          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+            <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">TOTAL WORKOUTS</span>
             <b style="font-size:1.4rem;color:#2563eb;">💪 ${totalWorkouts}</b>
           </div>
         </div>
-        <p style="font-size:.84rem;color:#556658;margin:0;line-height:1.45;">
+        <p style="font-size:.84rem;color:#64748b;margin:0;line-height:1.45;">
           ${curStreak.streakBroken ? '⚠️ Streak broken due to 2+ inactive days. Rebuild your streak today!' : 'Keep training consistently to lock in permanent muscle and metabolic adaptations.'}
         </p>
       </div>
@@ -5304,34 +5304,34 @@ function renderTrackingView() {
       <!-- NUTRITION & HYDRATION COMPLIANCE -->
       <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <span class="section-kicker">TODAY'S FUELING</span>
-        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e3424;font-weight:800;">Nutrition &amp; Water Compliance</h4>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e293b;font-weight:800;">Nutrition &amp; Water Compliance</h4>
         <div style="display:flex;flex-direction:column;gap:12px;">
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#556658;font-weight:600;">Calories Intake</span>
+              <span style="color:#64748b;font-weight:600;">Calories Intake</span>
               <b>${todayKcal} / ${goalKcal} kcal</b>
             </div>
-            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+            <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
               <div style="background:#3b82f6;height:100%;width:${Math.min(100, Math.round((todayKcal/goalKcal)*100))}%;"></div>
             </div>
           </div>
 
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#556658;font-weight:600;">Protein Target</span>
+              <span style="color:#64748b;font-weight:600;">Protein Target</span>
               <b>${todayP} / ${goalP} g</b>
             </div>
-            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+            <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
               <div style="background:#3b82f6;height:100%;width:${Math.min(100, Math.round((todayP/goalP)*100))}%;"></div>
             </div>
           </div>
 
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#556658;font-weight:600;">Hydration</span>
+              <span style="color:#64748b;font-weight:600;">Hydration</span>
               <b>${(waterMl/1000).toFixed(1)} / ${waterGoal} L</b>
             </div>
-            <div style="background:#edf2ea;height:7px;border-radius:99px;overflow:hidden;">
+            <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
               <div style="background:#63a1d9;height:100%;width:${Math.min(100, Math.round((waterMl/(Number(waterGoal)*1000))*100))}%;"></div>
             </div>
           </div>
@@ -5344,9 +5344,9 @@ function renderTrackingView() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div>
           <span class="section-kicker">COMPLETION LOG</span>
-          <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e3424;font-weight:800;">Recent Completed Workouts</h4>
+          <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e293b;font-weight:800;">Recent Completed Workouts</h4>
         </div>
-        <span style="font-size:.82rem;color:#637367;">Total: ${totalWorkouts} sessions</span>
+        <span style="font-size:.82rem;color:#64748b;">Total: ${totalWorkouts} sessions</span>
       </div>
       <div style="display:flex;flex-direction:column;">
         ${recentWorkoutsHtml}
