@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f5ef">
+  <meta name="theme-color" content="#f8fafc">
   <meta name="description" content="Formwise — your daily personal nutrition and training health dashboard.">
   <title>Formwise — Daily Health & Nutrition Dashboard</title>
   <script>
@@ -543,15 +543,15 @@
                 <h3 style="margin:2px 0 0;font-size:1.1rem;color:#1e3a8a;font-weight:700;" id="dailyTipTitle">Target 1.6g to 2.2g Protein per kg Bodyweight</h3>
               </div>
             </div>
-            <button type="button" class="text-button" id="nextDailyTipBtn" style="font-size:.82rem;font-weight:700;color:#1e293b;display:inline-flex;align-items:center;gap:5px;background:#e5f0dc;padding:6px 12px;border-radius:8px;">
+            <button type="button" class="text-button" id="nextDailyTipBtn" style="font-size:.82rem;font-weight:700;color:#1e40af;display:inline-flex;align-items:center;gap:5px;background:#dbeafe;padding:6px 12px;border-radius:8px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
-              Next Tip ⟳
+              Next Tip
             </button>
           </div>
           <p id="dailyTipContent" style="color:#64748b;font-size:.9rem;line-height:1.55;margin:0 0 14px;">
             Consuming adequate protein throughout the day distributes leucine spikes to trigger muscle protein synthesis (MPS). Distribute your daily intake evenly over 3 to 4 meals to maximize recovery.
           </p>
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:#64748b;padding-top:10px;border-top:1px solid #e0ebd9;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:#64748b;padding-top:10px;border-top:1px solid #e2e8f0;">
             <span id="dailyTipKeyTakeaway"><b>Key takeaway:</b> Aim for ~25-40g protein per meal.</span>
             <span id="dailyTipSource" style="font-style:italic;">Evidence-Based Sports Nutrition</span>
           </div>
@@ -1110,21 +1110,21 @@
 
         <label>
           Calories (kcal)
-          <input type="number" id="foodCalInput" value="150" readonly style="background:#f4f7f2;">
+          <input type="number" id="foodCalInput" value="150" readonly style="background:#f1f5f9;">
         </label>
 
         <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <label>
             Protein (g)
-            <input type="number" id="foodPInput" value="10" readonly style="background:#f4f7f2;">
+            <input type="number" id="foodPInput" value="10" readonly style="background:#f1f5f9;">
           </label>
           <label>
             Carbs (g)
-            <input type="number" id="foodCInput" value="15" readonly style="background:#f4f7f2;">
+            <input type="number" id="foodCInput" value="15" readonly style="background:#f1f5f9;">
           </label>
           <label>
             Fat (g)
-            <input type="number" id="foodFInput" value="4" readonly style="background:#f4f7f2;">
+            <input type="number" id="foodFInput" value="4" readonly style="background:#f1f5f9;">
           </label>
         </div>
       </div>
@@ -1194,22 +1194,22 @@
     </div>
 
     <div style="display:flex;flex-direction:column;gap:14px;">
-      <div style="background:#f4f7f2;border:1px solid #edf0e9;border-radius:12px;padding:14px;" id="settingsAccountInfo">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;" id="settingsAccountInfo">
         <b id="settingsUserName">Jordan Davis</b>
         <p id="settingsUserEmail" style="color:#64748b;font-size:.88rem;margin-top:3px;">jordan.davis@example.com</p>
         <span class="pref-badge" id="settingsRoleBadge" style="margin-top:8px;display:inline-block;">USER</span>
       </div>
 
-      <div style="border:1px solid #edf0e9;border-radius:12px;padding:14px;">
+      <div style="border:1px solid #e2e8f0;border-radius:12px;padding:14px;">
         <b style="color:#1e293b;font-size:.95rem;">Database Sync Status</b>
         <p style="color:#64748b;font-size:.85rem;margin:4px 0 10px;">
           Connected to Turso Cloud SQLite in Mumbai region. All changes are encrypted and backed up.
         </p>
-        <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database ⟳</button>
+        <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database</button>
       </div>
 
       <!-- Visual Theme & Mode Selector -->
-      <div style="border:1px solid #edf0e9;border-radius:12px;padding:14px;background:#fbfdfa;" id="settingsThemeBox">
+      <div style="border:1px solid #e2e8f0;border-radius:12px;padding:14px;background:#f8fafc;" id="settingsThemeBox">
         <b style="color:#1e293b;font-size:.95rem;display:block;">Theme &amp; Visual Style</b>
         <p style="color:#64748b;font-size:.84rem;margin:3px 0 10px;">Select light, dark, or automatic system default mode.</p>
         <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;" id="settingsThemeButtonGroup">
@@ -1456,7 +1456,7 @@
         </label>
       </div>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0e9;padding-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">
         <b style="color:#1e293b;font-size:.9rem;">Ingredients List</b>
         <button type="button" class="outline-button small" id="addIngredientRowBtn" style="font-size:.8rem;padding:4px 10px;">
           + Add Ingredient
@@ -1646,11 +1646,12 @@
   </div>
 
   <div class="ai-chat-chips" id="aiChatChips">
-    <button type="button" class="ai-chip" data-q="What are the essential daily micronutrients, their RDAs, and best food sources?">Daily Micronutrients</button>
+    <button type="button" class="ai-chip" data-q="What theme color mode works best for workout focus, and can you switch my theme to dark mode?">Theme Color &amp; Style</button>
+    <button type="button" class="ai-chip" data-q="Audit my daily nutrition macros and calculate my remaining protein targets.">Daily Macro Audit</button>
     <button type="button" class="ai-chip" data-q="Recommend a high-protein dinner under 450 kcal with exact ingredient weights and macros.">High-Protein Dinner</button>
     <button type="button" class="ai-chip" data-q="What is the optimal training volume, exercise selection, and progression for Upper Chest?">Upper Chest Protocol</button>
+    <button type="button" class="ai-chip" data-q="Analyze the essential micronutrients, vitamins, and minerals missing from standard gym diets.">Micronutrient Breakdown</button>
     <button type="button" class="ai-chip" data-q="How can I fit dining out or travel meals into my fitness goals without derailing my weekly macros?">Dining Out Strategy</button>
-    <button type="button" class="ai-chip" data-q="Please perform a comprehensive audit of my logged meals and water intake today, and provide personalized feedback.">Audit Today's Progress</button>
   </div>
 
   <form class="ai-chat-footer" id="aiChatForm" onsubmit="return false;">
@@ -1709,16 +1710,16 @@
     </div>
 
     <!-- Biomechanics & Execution Guide -->
-    <div style="background:#fcfdfb;border:1px solid #edf0e9;border-radius:12px;padding:14px;margin-bottom:16px;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;">
       <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">Biomechanical Rationale:</b>
       <p id="exModalWhy" style="color:#64748b;font-size:.88rem;line-height:1.45;margin-bottom:12px;"></p>
 
-      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;"> Step-by-Step Execution:</b>
+      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">Step-by-Step Execution:</b>
       <p id="exModalSteps" style="color:#64748b;font-size:.88rem;line-height:1.45;margin:0;"></p>
     </div>
 
     <!-- AI Form Coach Live Generator -->
-    <div style="border:1px solid #cbe0c5;background:linear-gradient(135deg, #f3f7f0 0%, #e9f3e4 100%);border-radius:12px;padding:14px;">
+    <div style="border:1px solid #bfdbfe;background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);border-radius:12px;padding:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Formwise AI Coach</b>
@@ -1778,12 +1779,12 @@
 
       <div>
         <label for="cmpNameInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Your Name</label>
-        <input type="text" id="cmpNameInput" class="form-input" placeholder="e.g. Jordan Davis" required style="width:100%;padding:10px 12px;border:1px solid #dbe2d6;border-radius:8px;font-size:.9rem;outline:none;" />
+        <input type="text" id="cmpNameInput" class="form-input" placeholder="e.g. Jordan Davis" required style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;outline:none;" />
       </div>
 
       <div>
         <label for="cmpTextInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Details / Message</label>
-        <textarea id="cmpTextInput" class="form-input" rows="4" placeholder="Describe the problem, steps to reproduce, or feature idea..." required style="width:100%;padding:10px 12px;border:1px solid #dbe2d6;border-radius:8px;font-size:.9rem;outline:none;resize:vertical;"></textarea>
+        <textarea id="cmpTextInput" class="form-input" rows="4" placeholder="Describe the problem, steps to reproduce, or feature idea..." required style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;outline:none;resize:vertical;"></textarea>
       </div>
 
       <div>
@@ -2085,7 +2086,7 @@
         <span style="font-size:.78rem;color:#64748b;display:block;margin-top:2px;" id="autoWeatherCityNote">Location-based weather</span>
       </div>
       <button type="button" class="solid-button small" id="triggerAutoWeatherSyncBtn" style="background:#2563eb;padding:6px 12px;font-size:.78rem;white-space:nowrap;">
-        Sync Now ⟳
+        Sync Now
       </button>
     </div>
 
@@ -2130,11 +2131,11 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <div style="background:#fcfdfa;border:1px solid #edf2e8;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.88rem;color:#1e293b;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.88rem;color:#1e293b;">
       Replacing: <b id="swapTargetExName" style="color:#2563eb;">Incline Dumbbell Press</b>
     </div>
     <div style="margin-bottom:12px;">
-      <input type="text" id="swapSearchInput" class="form-input" placeholder="Search alternative exercises..." style="width:100%;padding:8px 12px;border:1px solid #dbe4d6;border-radius:8px;font-size:.88rem;" />
+      <input type="text" id="swapSearchInput" class="form-input" placeholder="Search alternative exercises..." style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.88rem;" />
     </div>
     <div id="swapAlternativesList" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
       <!-- Populated dynamically with exercises from the library -->
@@ -2181,7 +2182,7 @@
         <div class="timer-controls-row">
           <button type="button" class="timer-ctrl-btn" id="timerMinusTenBtn">-10s</button>
           <button type="button" class="timer-ctrl-btn" id="timerPlayPauseBtn" style="background:#38bdf8;color:#1e293b;border-color:#38bdf8;font-weight:800;min-width:100px;">
-            ⏸ Pause
+            Pause
           </button>
           <button type="button" class="timer-ctrl-btn" id="timerPlusTenBtn">+10s</button>
         </div>
@@ -2196,13 +2197,13 @@
           Adjust your rest interval:
         </div>
         <div class="timer-controls-row">
-          <button type="button" class="timer-ctrl-btn" id="restPlusSixtyBtn" style="background:#eef5eb;color:#2563eb;border-color:#38bdf8;">
+          <button type="button" class="timer-ctrl-btn" id="restPlusSixtyBtn" style="background:#eff6ff;color:#2563eb;border-color:#38bdf8;">
             +60s (+1 min)
           </button>
           <button type="button" class="timer-ctrl-btn" id="restPlusFifteenBtn">+15s</button>
           <button type="button" class="timer-ctrl-btn" id="restMinusFifteenBtn">-15s</button>
           <button type="button" class="timer-ctrl-btn" id="restSkipBtn" style="background:#fff2f2;color:#c53030;border-color:#feb2b2;">
-            Skip Rest (0s) ⏭
+            Skip Rest (0s)
           </button>
         </div>
         <button type="button" class="solid-button" id="startNextSetNowBtn" style="background:#2563eb;padding:12px;font-size:1rem;font-weight:700;">
@@ -2211,7 +2212,7 @@
       </div>
 
       <!-- Current Exercise Biomechanics Cue -->
-      <div style="background:#fcfdfa;border:1px solid #edf0e9;border-radius:10px;padding:10px 14px;text-align:left;font-size:.82rem;color:#64748b;" id="sessionBioTip">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;text-align:left;font-size:.82rem;color:#64748b;" id="sessionBioTip">
         <b>Form Tip:</b> Keep chest tall, brace core throughout the movement, and maintain smooth cadence.
       </div>
     </div>

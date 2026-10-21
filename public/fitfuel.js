@@ -1300,7 +1300,7 @@ function getCheerupMessage(streakDays, weeklyGoalMet, remainingDays) {
   if (streakDays === 2) return ' 2 Days in a row! Momentum is building—keep the flame alive!';
   if (streakDays === 3) return ' 3-Day streak! Halfway through the work week, solid consistency!';
   if (streakDays === 4) return ' 4 Days strong! One more day to hit your weekly goal.';
-  if (streakDays === 5) return '⭐ 5-Day milestone! You crushed your weekly workout goal!';
+  if (streakDays === 5) return '5-Day milestone! You crushed your weekly workout goal!';
   if (streakDays === 6) return ' 6 Days! Elite dedication. You are performing at peak level!';
   return `${streakDays}-Day Legendary Streak! Master of discipline. Incredible consistency!`;
 }
@@ -1630,7 +1630,7 @@ function applyTheme(themeChoice) {
   // Update browser chrome/status bar theme color
   const metaTheme = $('meta[name="theme-color"]');
   if (metaTheme) {
-    metaTheme.setAttribute('content', effectiveTheme === 'dark' ? '#080c14' : '#f5f5ef');
+    metaTheme.setAttribute('content', effectiveTheme === 'dark' ? '#080c14' : '#f8fafc');
   }
 
   // Sync Topbar theme selector
@@ -1721,7 +1721,7 @@ function renderFoodLog() {
           ${mealItems.length ? mealItems.map(item => {
             const realIdx = entries.indexOf(item);
             return `
-            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fcfdfa;border:1px solid #e7eee2;border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(32,59,41,0.02);">
+            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(15,23,42,0.02);">
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
                 ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : getFoodCategoryBadge(item.cat)}
                 <div style="min-width:0;">
@@ -1946,7 +1946,7 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
 
   const row = document.createElement('div');
   row.className = 'ingredient-row';
-  row.style.cssText = 'display:grid;grid-template-columns:1.2fr 1.6fr 100px 70px 30px;gap:8px;align-items:center;padding:8px 10px;background:#fbfdfa;border:1px solid #e5ece2;border-radius:10px;margin-bottom:8px;';
+  row.style.cssText = 'display:grid;grid-template-columns:1.2fr 1.6fr 100px 70px 30px;gap:8px;align-items:center;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;';
 
   const catOptions = Object.keys(INGREDIENT_CATALOG).map(cat => 
     `<option value="${cat}" ${cat === initialCat ? 'selected' : ''}>${cat}</option>`
@@ -2872,7 +2872,7 @@ function renderWorkouts() {
             <div class="move-hover-details">
               <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
                 <span> <b>Target:</b> ${ex.sub || ex.category}</span>
-                <span>⏱ <b>${ex.rxTempo || 'Tempo: 2-1-1'}</b></span>
+                <span><b>Tempo:</b> ${ex.rxTempo || '2-1-1'}</span>
               </div>
               <p style="margin:2px 0 0;font-size:.8rem;color:#64748b;"> ${ex.rxWhy || ex.benefit}</p>
             </div>
@@ -3373,7 +3373,7 @@ if ($('#viewAllUsersBtn')) {
       }
       if (list) {
         list.innerHTML = users.map(u => `
-          <div style="padding:6px 0;border-bottom:1px solid #eef3eb;display:flex;justify-content:space-between;align-items:center;">
+          <div style="padding:6px 0;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
             <div><b>${escapeHtml(u.name || 'User')}</b> <span style="color:#64748b;font-size:.78rem;">(${escapeHtml(u.email)})</span></div>
             <span style="font-size:.75rem;padding:2px 8px;border-radius:12px;background:#eff6ff;color:#2563eb;">${escapeHtml(u.role || 'user')}</span>
           </div>
@@ -3394,7 +3394,7 @@ if ($('#viewAllComplaintsBtn')) {
     try {
       const complaints = await FF.adminComplaints();
       if (!complaints || !complaints.length) {
-        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! </div>';
+        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f8fafc;border-radius:8px;">No complaints or suggestions submitted yet! </div>';
         return;
       }
       list.innerHTML = complaints.map(c => {
@@ -3404,9 +3404,9 @@ if ($('#viewAllComplaintsBtn')) {
           <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
             ${files.map(f => {
               if (f.data && f.data.startsWith('data:image')) {
-                return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #dbe2d6;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
+                return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #cbd5e1;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
               }
-              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#1e293b;"> ${escapeHtml(f.name)}</span>`;
+              return `<span style="font-size:.72rem;background:#e2e8f0;padding:2px 6px;border-radius:4px;color:#1e293b;">${escapeHtml(f.name)}</span>`;
             }).join('')}
           </div>` : '';
         return `
@@ -3936,6 +3936,8 @@ function getAiSystemContext() {
   const totF = entries.reduce((a, b) => a + (b.f || b.fat || 0), 0);
   const waterMl = (water && water.date === d) ? (water.ml || 0) : 0;
   const woDone = (workoutsDone || []).filter(w => w.date === d).map(w => w.name);
+  const currentTheme = getActiveThemeSetting();
+  const effectiveTheme = document.documentElement.getAttribute('data-theme') || (currentTheme === 'dark' ? 'dark' : 'light');
 
   return `You are FitFuel AI Coach — an elite sports nutritionist, clinical dietitian, and master strength coach.
 User Profile:
@@ -3945,14 +3947,16 @@ User Profile:
 - Today's Consumed: ${totKcal} kcal (${totP}g Protein, ${totC}g Carbs, ${totF}g Fat)
 - Today's Water: ${(waterMl / 1000).toFixed(1)} L (Target: ${profile.waterGoal || '2.5'} L)
 - Completed Workouts Today: ${woDone.length ? woDone.join(', ') : 'None yet'}
+- Active Theme Color: ${currentTheme.toUpperCase()} (Render Mode: ${effectiveTheme}, Primary Theme Palette: Deep Navy #0f172a, Cobalt Blue #2563eb, Sky Blue #38bdf8)
 
 Instructions:
 1. Always directly and specifically answer the user's exact question with concrete numbers, portion grams, calories, or exercise sets.
 2. Provide highly accurate macronutrient and micronutrient details for ANY food: homemade Indian dishes, hotel meals, vegetarian proteins (soya, paneer, tofu, seitan, lentils), fast foods, fruits, and vegetables.
 3. For workouts, give precise scientific sets, reps, and tempo guidance tailored to the target muscle part.
 4. Keep responses structured, concise, and engaging using markdown bullet points and bold highlights.
-5. NEVER use emojis in your response. Output clean, professional typography only.
-6. Think and reason through the user's specific scenario dynamically without repeating canned disclaimers.`;
+5. NEVER use emojis in your response under any circumstances. Output clean, professional typography only.
+6. If the user asks about the theme color, interface styling, or asks to change theme (e.g. to dark or light mode), confirm the theme color settings and explain the high-contrast athletic blue palette.
+7. Think and reason through the user's specific scenario dynamically without repeating canned disclaimers.`;
 }
 
 function openAiChat(initialPrompt = null) {
@@ -3964,9 +3968,10 @@ function openAiChat(initialPrompt = null) {
     addBotChatMessage(`**Hello ${profile.name ? profile.name.split(' ')[0] : 'there'}!** I am your **FitFuel AI Coach & Nutrition Specialist**.
 
 Ask me anything about:
-• **Micronutrients & Diet**: Exact vitamins (D, B12, C) and minerals (Iron, Zinc, Magnesium, Calcium) for any dish or meal.
-• **Targeted Workouts**: Biomechanical exercise selection, sets, reps, and cues for specific muscle regions.
-• **Daily Verification**: Comprehensive audit of your logged food, hydration, and completed workouts.`);
+• **Micronutrients & Nutrition**: Exact grams, calories, vitamins, and minerals for any meal or recipe.
+• **Personalized Training**: Sets, reps, biomechanical cues, and form progression tailored to your goals.
+• **Theme & Visual Customization**: Ask me to switch between Dark, Light, or System theme colors to match your training environment.
+• **Live Progress Audit**: Real-time review of today's logged food, water hydration, and workout volume.`);
   }
 
   if (initialPrompt) {
@@ -4073,6 +4078,21 @@ async function handleUserAiQuery(query) {
   if (!query || !query.trim()) return;
   const q = query.trim();
   addUserChatMessage(q);
+
+  // Active theme switching command detection
+  const lowerQ = q.toLowerCase();
+  if (lowerQ.includes('theme') || lowerQ.includes('dark mode') || lowerQ.includes('light mode')) {
+    if (lowerQ.includes('dark') || lowerQ.includes('night') || lowerQ.includes('black')) {
+      applyTheme('dark');
+      toast('Theme changed to DARK mode');
+    } else if (lowerQ.includes('light') || lowerQ.includes('day') || lowerQ.includes('white')) {
+      applyTheme('light');
+      toast('Theme changed to LIGHT mode');
+    } else if (lowerQ.includes('system') || lowerQ.includes('default') || lowerQ.includes('auto')) {
+      applyTheme('system');
+      toast('Theme changed to SYSTEM default');
+    }
+  }
 
   const container = $('#aiChatMessages');
   const typingId = 'typing_' + Date.now();
@@ -4592,7 +4612,7 @@ function renderCustomWorkoutExplorer() {
   }
 
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#64748b;background:#fcfdfa;border-radius:12px;border:1px dashed #dce4d8;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#64748b;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
       <b>No exercises found matching your selected filters.</b>
       <p style="font-size:.85rem;margin-top:6px;">Try selecting "All Types" or "Full Body" to view the full exercise catalog.</p>
     </div>`;
@@ -4615,14 +4635,14 @@ function renderCustomWorkoutExplorer() {
           </div>
           <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
           <p style="color:#64748b;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
-          <div style="background:#f8fafc;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:.78rem;font-weight:700;color:#1e293b;"> ${escapeHtml(rxSets)}</span>
-            <span style="font-size:.75rem;color:#64748b;font-weight:600;">⏱ ${escapeHtml(rxRest)}</span>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.78rem;font-weight:700;color:#1e293b;">${escapeHtml(rxSets)}</span>
+            <span style="font-size:.75rem;color:#64748b;font-weight:600;">Rest: ${escapeHtml(rxRest)}</span>
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:auto;">
           <button type="button" class="solid-button small" style="flex:1;background:#2563eb;justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
-            ▶ Start Set
+            Start Set
           </button>
           <button type="button" class="outline-button small" style="justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="addExerciseToDailyRoutine('${safeName}', '${escapeHtml(rxSets)}')">
             + Add
@@ -4777,11 +4797,11 @@ function renderChallengeView() {
             <small style="color:#64748b;">Personalized to your height, weight &amp; strength targets.</small>
           </div>
           <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">⏱ Built-in Timers</b>
+            <b style="color:#2563eb;font-size:.88rem;display:block;">Built-in Timers</b>
             <small style="color:#64748b;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
           </div>
           <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;"> Swap Any Workout</b>
+            <b style="color:#2563eb;font-size:.88rem;display:block;">Swap Any Workout</b>
             <small style="color:#64748b;">Change or replace any exercise with 1 click.</small>
           </div>
         </div>
@@ -4802,18 +4822,18 @@ function renderChallengeView() {
 
   container.innerHTML = `
     <!-- CHALLENGE HERO BANNER -->
-    <div style="background:linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);color:#f0f5ee;border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:0 6px 24px rgba(32,59,41,0.18);">
+    <div style="background:linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);color:#f0f5ee;border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:0 6px 24px rgba(37,99,235,0.18);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;">
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="background:rgba(180,219,121,0.2);color:#38bdf8;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
-            <span style="font-size:.8rem;color:#64748b;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
+            <span style="background:rgba(255,255,255,0.15);color:#38bdf8;font-size:.72rem;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:99px;text-transform:uppercase;">ACTIVE CHALLENGE</span>
+            <span style="font-size:.8rem;color:#cbd5e1;font-weight:600;">Day ${currentIdx + 1} of ${p.durationDays}</span>
           </div>
           <h2 style="margin:0;font-size:1.45rem;color:#ffffff;font-weight:800;">${escapeHtml(p.motive)} Challenge</h2>
-          <p style="margin:4px 0 0;color:#64748b;font-size:.88rem;">Personalized for ${p.userWeight} kg · ${p.userHeight} cm · Target Goal Active</p>
+          <p style="margin:4px 0 0;color:#bfdbfe;font-size:.88rem;">Personalized for ${p.userWeight} kg · ${p.userHeight} cm · Target Goal Active</p>
         </div>
         <div style="text-align:right;">
-          <span style="font-size:.74rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
+          <span style="font-size:.74rem;color:#bfdbfe;display:block;text-transform:uppercase;font-weight:700;">COMPLETION</span>
           <strong style="font-size:1.6rem;color:#38bdf8;font-weight:800;">${pct}%</strong>
         </div>
       </div>
@@ -4826,10 +4846,10 @@ function renderChallengeView() {
       <!-- Action Button Controls -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:#1e293b;font-weight:800;padding:10px 22px;border:none;">
-          ▶ Start Today's Workout (${escapeHtml(currentDay.title)})
+          Start Today's Workout (${escapeHtml(currentDay.title)})
         </button>
         <button type="button" class="outline-button" id="refreshTodayRoutineBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
-          ⟳ Refresh Day Plan
+          Refresh Day Plan
         </button>
         <button type="button" class="outline-button" id="resetChallengePlanBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
           Reset to Day 1
@@ -4841,14 +4861,14 @@ function renderChallengeView() {
     </div>
 
     <!-- TODAY'S ROUTINE CARD -->
-    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(15,23,42,0.04);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
           <span class="section-kicker" style="color:#64748b;font-weight:800;">TODAY'S SCHEDULED ROUTINE</span>
           <h3 style="margin:2px 0 0;font-size:1.2rem;color:#1e293b;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
           <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
         </div>
-        <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#e6f4da' : '#f4f6f2'};color:${currentDay.completed ? '#2d581e' : '#556658'};">
+        <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#dbeafe' : '#f1f5f9'};color:${currentDay.completed ? '#1e40af' : '#475569'};">
           ${currentDay.completed ? 'COMPLETED' : 'READY TO TRAIN'}
         </span>
       </div>
@@ -4856,7 +4876,7 @@ function renderChallengeView() {
       <!-- Exercise List with Swap Buttons -->
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${currentDay.exercises.map((ex, idx) => `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #eef3eb;background:#fbfdfa;border-radius:12px;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:12px;gap:12px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:12px;">
               <span style="width:28px;height:28px;border-radius:8px;background:#eff6ff;color:#2563eb;font-weight:800;font-size:.84rem;display:flex;align-items:center;justify-content:center;">
                 ${idx + 1}
@@ -4867,8 +4887,8 @@ function renderChallengeView() {
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#64748b;padding:5px 12px;background:#ffffff;">
-                ⇄ Swap Workout
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;color:#2563eb;border-color:#cbd5e1;padding:5px 12px;background:#ffffff;">
+                Swap Workout
               </button>
             </div>
           </div>
@@ -5091,7 +5111,7 @@ function renderSessionStepUI() {
 function startActiveSetTimer() {
   clearInterval(sessionTimerInterval);
   sessionIsPaused = false;
-  if ($('#timerPlayPauseBtn')) $('#timerPlayPauseBtn').textContent = '⏸ Pause';
+  if ($('#timerPlayPauseBtn')) $('#timerPlayPauseBtn').textContent = 'Pause';
 
   sessionTimerInterval = setInterval(() => {
     if (sessionIsPaused) return;
@@ -5243,7 +5263,7 @@ if ($('#timerPlusTenBtn')) {
 if ($('#timerPlayPauseBtn')) {
   $('#timerPlayPauseBtn').onclick = () => {
     sessionIsPaused = !sessionIsPaused;
-    $('#timerPlayPauseBtn').textContent = sessionIsPaused ? '▶ Resume' : '⏸ Pause';
+    $('#timerPlayPauseBtn').textContent = sessionIsPaused ? 'Resume' : 'Pause';
   };
 }
 
@@ -5348,7 +5368,7 @@ function renderTrackingView() {
     `;
   } else {
     challengeBlock = `
-      <div style="background:#fcfdfa;border:1px dashed #d5e2d0;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
+      <div style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
         <span style="font-size:28px;"></span>
         <b style="color:#2563eb;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
         <p style="color:#64748b;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>

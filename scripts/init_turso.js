@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS complaints(
 async function main() {
   console.log('Connecting to Turso...');
   await client.executeMultiple(schema);
-  console.log('✅ All tables successfully created in Turso Cloud!');
+  console.log('All tables successfully created in Turso Cloud!');
   const res = await client.execute("SELECT name FROM sqlite_master WHERE type='table'");
   console.log('Tables in Turso DB:', res.rows.map(r => r.name));
 }

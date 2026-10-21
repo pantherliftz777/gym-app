@@ -19,7 +19,7 @@ const FOODS = [
   {n:"Palak Paneer",e:"",k:150,p:7,c:8,f:11,serve:200,det:1},
   {n:"Paneer Butter Masala",e:"",k:230,p:9,c:10,f:18,serve:200,det:1},
   {n:"Paneer Tikka",e:"",k:220,p:18,c:6,f:14,serve:150,det:1},
-  {n:"Tofu",e:"⬜",k:76,p:8,c:1.9,f:4.8,serve:100},
+  {n:"Tofu",e:"",k:76,p:8,c:1.9,f:4.8,serve:100},
   {n:"Greek Yogurt",e:"",k:59,p:10,c:3.6,f:0.4,serve:150,det:1},
   {n:"Curd (Dahi)",e:"",k:60,p:3.5,c:4.7,f:3.3,serve:150,det:1},
   {n:"Toned Milk",e:"",k:61,p:3.2,c:4.8,f:3.3,serve:250,det:1},

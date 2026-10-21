@@ -438,17 +438,18 @@ const routes = {
             body: JSON.stringify({
               model: model,
               messages: chatMessages,
-              temperature: isJson ? 0.2 : 0.7,
-              max_tokens: 2500
+              temperature: isJson ? 0.2 : 0.6,
+              max_tokens: 2200,
+              reasoning: { max_tokens: 120 }
             })
           });
           clearTimeout(timeoutId);
 
           if (!fetchRes.ok) throw new Error('Status ' + fetchRes.status);
           const data = await fetchRes.json();
-          const content = data?.choices?.[0]?.message?.content;
-          if (isValidAiOutput(content)) {
-            return { model, content: stripEmojis(content).trim() };
+          const extracted = extractAiMessage(data);
+          if (isValidAiOutput(extracted)) {
+            return { model: data.model || model, content: extracted };
           }
           throw new Error('Invalid or error content from ' + model);
         } catch (err) {
@@ -457,30 +458,37 @@ const routes = {
         }
       };
 
-      // Race top live models in parallel
-      try {
-        const winner = await Promise.any([
-          callOrModel('openrouter/free', 25000),
-          callOrModel('minimax/minimax-m3.1-flash:free', 25000),
-          callOrModel('nvidia/nemotron-3.5-lightning:free', 25000)
-        ]);
-        if (winner && winner.content) {
-          return json(res, 200, { ok: true, provider: 'openrouter', model: winner.model, content: winner.content });
+      // Try prioritized free models (minimax does not hit OpenRouter free-tier quota; openrouter/free auto-cascades)
+      const primaryModels = [
+        'minimax/minimax-m3.1-flash:free',
+        'openrouter/free',
+        'nvidia/nemotron-3.5-lightning:free'
+      ];
+
+      for (const m of primaryModels) {
+        try {
+          const resData = await callOrModel(m, 22000);
+          if (resData && resData.content) {
+            return json(res, 200, { ok: true, provider: 'openrouter', model: resData.model, content: resData.content });
+          }
+        } catch (err) {
+          // Cascade to next model
         }
-      } catch (raceErr) {
-        // Fallback sequentially
-        const fallbackModels = [
-          'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-          'nvidia/nemotron-3.5-super-vl:free'
-        ];
-        for (const m of fallbackModels) {
-          try {
-            const resData = await callOrModel(m, 20000);
-            if (resData && resData.content) {
-              return json(res, 200, { ok: true, provider: 'openrouter', model: m, content: resData.content });
-            }
-          } catch (e) {}
-        }
+      }
+
+      // Fallback sequentially
+      const fallbackModels = [
+        'liquid/lfm-2.5-2.6b:free',
+        'google/gemma-4-26b-a4b-it:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free'
+      ];
+      for (const m of fallbackModels) {
+        try {
+          const resData = await callOrModel(m, 16000);
+          if (resData && resData.content) {
+            return json(res, 200, { ok: true, provider: 'openrouter', model: resData.model, content: resData.content });
+          }
+        } catch (e) {}
       }
     }
 
@@ -499,10 +507,37 @@ const routes = {
   }
 };
 
+function cleanReasoningToMarkdown(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  let text = raw.trim();
+  const draftIndex = text.search(/(\n\s*(#{1,4}|[A-Z][a-zA-Z\s]{2,15}:|\d+\.|\-)\s+[A-Z0-9])/);
+  if (draftIndex > 20) {
+    const candidate = text.slice(draftIndex).trim();
+    if (candidate.length > 50) text = candidate;
+  }
+  text = text.replace(/^(We need|I need|User asks|Let's verify|Let me check).*$/gmi, '').trim();
+  return text;
+}
+
+function extractAiMessage(data) {
+  const choice = data?.choices?.[0];
+  if (!choice || !choice.message) return null;
+  const msg = choice.message;
+  if (msg.content && typeof msg.content === 'string' && msg.content.trim().length >= 8) {
+    return stripEmojis(msg.content).trim();
+  }
+  const reasoning = msg.reasoning || (Array.isArray(msg.reasoning_details) ? msg.reasoning_details.map(d => d.text).join('\n') : null);
+  if (reasoning && typeof reasoning === 'string') {
+    const cleaned = cleanReasoningToMarkdown(reasoning);
+    if (cleaned && cleaned.length >= 8) return stripEmojis(cleaned).trim();
+  }
+  return null;
+}
+
 function stripEmojis(str) {
   if (!str || typeof str !== 'string') return '';
   return str
-    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{25A0}-\u{25FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
     .replace(/[ \t]+/g, ' ')
     .replace(/^ +/gm, '');
 }
@@ -515,6 +550,7 @@ function isValidAiOutput(text) {
   if (lower.startsWith('upstream error') ||
       lower.includes('resourceexhausted') ||
       lower.includes('rate-limited') ||
+      lower.includes('rate limit exceeded') ||
       lower.includes('worker local total request limit') ||
       lower.startsWith('user safety:') ||
       lower.startsWith('error:')) {
