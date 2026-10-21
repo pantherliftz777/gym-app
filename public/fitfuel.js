@@ -3418,11 +3418,14 @@ if ($('#viewAllComplaintsBtn')) {
           </div>` : '';
         return `
           <div style="padding:10px 12px;margin-bottom:8px;background:#ffffff;border:1px solid #dbeafe;border-radius:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <b style="color:#2563eb;font-size:.88rem;">${escapeHtml(c.name)}</b>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;flex-wrap:wrap;gap:6px;">
+              <div>
+                <b style="color:#2563eb;font-size:.88rem;display:block;">${escapeHtml(c.name)}</b>
+                ${c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:#64748b;font-size:.78rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;" title="Click to reply via email"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> ${escapeHtml(c.email)}</a>` : ''}
+              </div>
               <span style="font-size:.7rem;padding:2px 8px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
             </div>
-            <p style="margin:0;color:#1e293b;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
+            <p style="margin:6px 0 0;color:#1e293b;font-size:.84rem;line-height:1.4;">${escapeHtml(c.text)}</p>
             ${filesHtml}
             <small style="display:block;margin-top:4px;color:#64748b;font-size:.72rem;">${dateStr}</small>
           </div>
@@ -3463,6 +3466,10 @@ function initComplaintSystem() {
       if ($('#cmpNameInput') && profile && profile.name) {
         $('#cmpNameInput').value = profile.name;
       }
+      if ($('#cmpEmailInput')) {
+        const uEmail = (profile && profile.email) || (session && session.email) || '';
+        if (uEmail) $('#cmpEmailInput').value = uEmail;
+      }
       openModal('#complaintModal');
     };
   });
@@ -3472,6 +3479,7 @@ function initComplaintSystem() {
     form.onsubmit = async (e) => {
       e.preventDefault();
       const name = ($('#cmpNameInput')?.value || '').trim();
+      const email = ($('#cmpEmailInput')?.value || '').trim();
       const text = ($('#cmpTextInput')?.value || '').trim();
       if (name.length < 2) return toast('Please enter your name');
       if (text.length < 5) return toast('Please describe your issue or suggestion');
@@ -3492,7 +3500,7 @@ function initComplaintSystem() {
       const safeFiles = await Promise.all(readAll);
 
       try {
-        await FF.sendComplaint(name, cmpTypeVal, text, safeFiles);
+        await FF.sendComplaint(name, email, cmpTypeVal, text, safeFiles);
         toast('Feedback received! Admin team has been notified.');
         closeModal('#complaintModal');
         if ($('#cmpTextInput')) $('#cmpTextInput').value = '';

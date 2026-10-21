@@ -121,7 +121,7 @@ const FF = {
   async deletePlan(id) { await this.req('DELETE', '/api/plans', { id }); },
 
   /* complaints */
-  async sendComplaint(name, type, text, files) { await this.req('POST', '/api/complaint', { name, type, text, files }); },
+  async sendComplaint(name, email, type, text, files) { await this.req('POST', '/api/complaint', { name, email, type, text, files }); },
 
   /* data erasure & account deletion */
   async eraseData() {

@@ -297,24 +297,30 @@ const routes = {
   /* ---------- complaints / suggestions ---------- */
   'POST /api/complaint': async (req, res) => {
     const u = await getUser(req);
-    const { name, type, text, files } = await readBody(req);
+    const { name, email, type, text, files } = await readBody(req);
     if (!name || String(name).trim().length < 2) return json(res, 400, { error: 'Please enter your name' });
     if (!text || String(text).trim().length < 5) return json(res, 400, { error: 'Please describe your problem / suggestion' });
+    const userEmail = (email && String(email).trim()) || (u && u.email) || '';
     const safeFiles = (Array.isArray(files) ? files : []).slice(0, 3).map(f => ({
       name: String(f.name || 'file').slice(0, 80),
       type: String(f.type || '').slice(0, 60),
       data: String(f.data || '').slice(0, 900000)
     }));
     await db.run(
-      'INSERT INTO complaints(user_id,name,type,text,files,created,seen) VALUES(?,?,?,?,?,?,0)',
-      [u ? u.id : null, String(name).trim(), String(type || 'complaint'), String(text).trim(), JSON.stringify(safeFiles), Date.now()]
+      'INSERT INTO complaints(user_id,name,email,type,text,files,created,seen) VALUES(?,?,?,?,?,?,?,0)',
+      [u ? u.id : null, String(name).trim(), userEmail, String(type || 'complaint'), String(text).trim(), JSON.stringify(safeFiles), Date.now()]
     );
     json(res, 200, { ok: true });
   },
   'GET /api/complaints': async (req, res) => {
     const u = await getUser(req);
     if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
-    const rows = await db.all('SELECT * FROM complaints ORDER BY created DESC LIMIT 200');
+    const rows = await db.all(`
+      SELECT c.*, COALESCE(NULLIF(c.email, ''), u.email, 'Not provided') as email
+      FROM complaints c
+      LEFT JOIN users u ON c.user_id = u.id
+      ORDER BY c.created DESC LIMIT 200
+    `);
     json(res, 200, { complaints: rows.map(r => ({ ...r, files: JSON.parse(r.files || '[]') })) });
   },
 
