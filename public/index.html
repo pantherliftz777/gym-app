@@ -84,14 +84,14 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
         </svg>
-        <span>Challenge 🔥</span>
+        <span>Challenge</span>
       </button>
 
       <button class="nav-link" data-view="tracking">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>
         </svg>
-        <span>Tracking 📊</span>
+        <span>Tracking</span>
       </button>
 
       <button class="nav-link" data-view="profile">
@@ -145,7 +145,7 @@
           <span id="liveClockTime" style="font-variant-numeric:tabular-nums;font-weight:700;">05:09:50 AM</span>
           <span class="badge-dot">•</span>
           <button type="button" class="header-weather-temp" id="headerWeatherBtn" title="Click to change temperature">
-            <span id="headerWeatherIcon">☀️</span> <span id="headerWeatherTemp">20°C</span> <small id="headerWeatherLabel">Clear Sky</small>
+            <span id="headerWeatherIcon"></span> <span id="headerWeatherTemp">20°C</span> <small id="headerWeatherLabel">Clear Sky</small>
           </button>
         </div>
 
@@ -153,15 +153,15 @@
           <!-- 2. Theme Light / Dark / System Selector -->
           <div class="theme-select-wrap" title="Visual Theme (Light / Dark / System)">
             <select id="themeSelector" class="theme-select-pill" aria-label="Visual Theme">
-              <option value="light">☀️ Light</option>
-              <option value="dark">🌙 Dark</option>
-              <option value="system">💻 System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="system">System</option>
             </select>
           </div>
 
           <!-- 3. Audio On / Off -->
           <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
-            <span id="soundToggleIcon">🔊</span> <span id="soundToggleText">Audio On</span>
+            <span id="soundToggleIcon"></span> <span id="soundToggleText">Audio On</span>
           </button>
 
           <!-- 4. Sign in / Sign out -->
@@ -229,7 +229,7 @@
               DAILY MOTIVATION &amp; MINDSET
             </span>
             <button type="button" class="next-quote-btn" id="nextMotivationQuoteBtn">
-              ✨ Next Quote
+              Next Quote
             </button>
           </div>
           <p class="motivation-quote-text" id="dailyMotivationQuoteText">
@@ -241,14 +241,22 @@
         <!-- AI DAILY VERIFICATION & COACH INSIGHT BANNER -->
         <div class="ai-verify-card" id="aiDailyVerifyCard">
           <div class="ai-verify-content">
-            <div class="ai-verify-icon">🤖</div>
+            <div class="ai-verify-icon" style="color:#2563eb;display:flex;align-items:center;justify-content:center;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+      <circle cx="12" cy="5" r="2"></circle>
+      <path d="M12 7v4"></path>
+      <line x1="8" y1="16" x2="8" y2="16"></line>
+      <line x1="16" y1="16" x2="16" y2="16"></line>
+    </svg>
+  </div>
             <div class="ai-verify-text">
               <b id="aiVerifyHeadline">AI Health &amp; Adherence Verification</b>
               <p id="aiVerifySub">Analyzing calories, protein targets, hydration &amp; workout volume in real time...</p>
             </div>
           </div>
           <button type="button" class="ai-verify-action-btn" id="triggerAiVerifyBtn">
-            ✨ Verify My Day
+            Verify My Day
           </button>
         </div>
 
@@ -256,7 +264,7 @@
         <div class="streak-dashboard-card" id="streakDashboardCard" style="margin-bottom:16px;">
           <!-- Mission Failed / Streak Broken Alert (Shown if inactive >= 2 days) -->
           <div id="missionFailedAlert" style="display:none;background:#fff5f5;border:1px solid #feb2b2;border-radius:14px;padding:14px 18px;margin-bottom:14px;align-items:center;gap:14px;box-shadow:0 4px 14px rgba(229,62,62,0.08);">
-            <div style="font-size:28px;line-height:1;">⚠️</div>
+            <div style="font-size:.85rem;font-weight:700;color:#f59e0b;letter-spacing:.06em;">ATTENTION</div>
             <div style="flex:1;">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                 <b style="color:#c53030;font-size:.95rem;">Mission Failed: Streak Broken!</b>
@@ -267,7 +275,7 @@
               </p>
             </div>
             <button type="button" class="solid-button small" id="restartStreakBtn" style="background:#c53030;color:#fff;border:none;white-space:nowrap;padding:8px 16px;">
-              Restart Day 1 🔥
+              Restart Day 1
             </button>
           </div>
 
@@ -276,12 +284,12 @@
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
               <div style="display:flex;align-items:center;gap:12px;">
                 <div style="width:42px;height:42px;border-radius:12px;background:#eef6e9;display:flex;align-items:center;justify-content:center;font-size:22px;">
-                  🔥
+                  
                 </div>
                 <div>
                   <div style="display:flex;align-items:center;gap:8px;">
                     <span style="font-size:.76rem;font-weight:800;letter-spacing:0.06em;color:#64748b;text-transform:uppercase;">Weekly Streak &amp; Tracking</span>
-                    <span id="streakBadgePill" style="font-size:.72rem;font-weight:700;background:#eff6ff;color:#2563eb;padding:2px 9px;border-radius:99px;">🔥 4 Days</span>
+                    <span id="streakBadgePill" style="font-size:.72rem;font-weight:700;background:#eff6ff;color:#2563eb;padding:2px 9px;border-radius:99px;"> 4 Days</span>
                   </div>
                   <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e293b;font-weight:700;" id="streakCongratsHeadline">A little progress adds up!</h4>
                 </div>
@@ -305,7 +313,7 @@
               </p>
               <button type="button" class="text-button" id="quickCheckInBtn" style="font-size:.82rem;font-weight:700;color:#1e293b;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                ⚡ Quick Daily Check-In
+                Quick Daily Check-In
               </button>
             </div>
           </div>
@@ -401,7 +409,7 @@
                   </div>
                 </div>
                 <button type="button" class="header-weather-temp" id="frontWeatherBadgeBtn" title="Click to adjust temperature">
-                  <span id="frontWeatherIcon">☀️</span> <span id="frontWeatherTemp">29°C</span> · <span id="frontWeatherLabel">Warm</span> ✎
+                  <span id="frontWeatherIcon"></span> <span id="frontWeatherTemp">29°C</span> · <span id="frontWeatherLabel">Warm</span> 
                 </button>
               </div>
 
@@ -528,7 +536,7 @@
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="width:38px;height:38px;border-radius:10px;background:#e2eed9;display:flex;align-items:center;justify-content:center;font-size:20px;">
-                💡
+                
               </div>
               <div>
                 <span class="section-kicker" id="dailyTipCategory" style="color:#2563eb;font-weight:800;letter-spacing:0.06em;">DAILY NUTRITION &amp; MUSCLE SCIENCE</span>
@@ -576,13 +584,13 @@
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
             <button class="outline-button" id="aiMicronutrientAuditBtn" style="border-color:#38bdf8;background:#f0f6ff;">
-              ✨ AI Micronutrient Audit
+              AI Micronutrient Audit
             </button>
             <button class="outline-button" id="openCameraBtn" style="border-color:#38bdf8;background:#f0f6ff;">
-              📷 Scan Food Photo
+              Scan Food Photo
             </button>
             <button class="outline-button" id="openRecipeBuilderBtn" style="border-color:#38bdf8;background:#f0f6ff;">
-              🍳 Custom Recipe Builder
+              Custom Recipe Builder
             </button>
             <button class="solid-button" id="foodLogAddBtn">
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -608,7 +616,7 @@
               <!-- Calories -->
               <div class="macro-target-row">
                 <div class="macro-target-labels">
-                  <span class="macro-target-name">🔥 Calories</span>
+                  <span class="macro-target-name">Calories</span>
                   <span class="macro-target-values"><b id="sideKcalCurrent">0</b> <small style="color:#64748b;">/ <span id="sideKcalGoal">2,000</span> kcal</small></span>
                 </div>
                 <div class="macro-meter-track">
@@ -619,7 +627,7 @@
               <!-- Protein -->
               <div class="macro-target-row">
                 <div class="macro-target-labels">
-                  <span class="macro-target-name">🍗 Protein</span>
+                  <span class="macro-target-name">Protein</span>
                   <span class="macro-target-values"><b id="sidePCurrent">0</b> <small style="color:#64748b;">/ <span id="sidePGoal">165</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
@@ -630,7 +638,7 @@
               <!-- Carbs -->
               <div class="macro-target-row">
                 <div class="macro-target-labels">
-                  <span class="macro-target-name">🍚 Carbs</span>
+                  <span class="macro-target-name">Carbs</span>
                   <span class="macro-target-values"><b id="sideCCurrent">0</b> <small style="color:#64748b;">/ <span id="sideCGoal">139</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
@@ -641,7 +649,7 @@
               <!-- Fat -->
               <div class="macro-target-row">
                 <div class="macro-target-labels">
-                  <span class="macro-target-name">🥑 Fat</span>
+                  <span class="macro-target-name">Fat</span>
                   <span class="macro-target-values"><b id="sideFCurrent">0</b> <small style="color:#64748b;">/ <span id="sideFGoal">87</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
@@ -672,7 +680,7 @@
               <div style="position:relative;cursor:pointer;border-radius:14px;overflow:hidden;" class="img-preview-trigger" data-title="Workout: Dumbbell Training" data-src="images/workout-rdl.jpg">
                 <img src="images/workout-rdl.jpg" alt="Dumbbell training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;">
                 <span style="position:absolute;bottom:10px;right:10px;background:rgba(20,33,24,0.78);color:#fff;font-size:.76rem;padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px);display:flex;align-items:center;gap:4px;">
-                  🔍 Click for Full View
+                  Click for Full View
                 </span>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
@@ -681,7 +689,7 @@
                   <h3 id="planWorkoutTitle" style="font-size:1.4rem;color:#1e293b;margin:4px 0;">Full-body strength</h3>
                   <p id="planBenefitText" style="color:#64748b;font-size:.92rem;">Build strength with compound movements that train your posterior chain and core together.</p>
                 </div>
-                <button class="solid-button" id="markWorkoutDoneBtn">Mark completed ✓</button>
+                <button class="solid-button" id="markWorkoutDoneBtn">Mark completed</button>
               </div>
             </div>
 
@@ -702,7 +710,7 @@
               </p>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <input type="text" id="customWorkoutSearchInput" placeholder="🔍 Search exercises (e.g. Squat, Pushup, Incline)..." style="padding:9px 16px;border:1.5px solid #d4ded2;border-radius:24px;font-size:.88rem;min-width:240px;outline:none;" />
+              <input type="text" id="customWorkoutSearchInput" placeholder=" Search exercises (e.g. Squat, Pushup, Incline)..." style="padding:9px 16px;border:1.5px solid #d4ded2;border-radius:24px;font-size:.88rem;min-width:240px;outline:none;" />
             </div>
           </div>
 
@@ -712,12 +720,12 @@
               1. Workout Type (Select one or multiple)
             </div>
             <div class="filter-pills-row" id="workoutTypeFilterPills">
-              <button type="button" class="filter-pill active" data-type="all">✨ All Types</button>
-              <button type="button" class="filter-pill" data-type="Gym">🏋️ Gym Workout</button>
-              <button type="button" class="filter-pill" data-type="Home">🏠 Home Workout</button>
-              <button type="button" class="filter-pill" data-type="HIIT">⚡ High Intensity (HIIT)</button>
-              <button type="button" class="filter-pill" data-type="Cardio">🏃 Cardio</button>
-              <button type="button" class="filter-pill" data-type="Stretching">🧘 Stretching &amp; Mobility</button>
+              <button type="button" class="filter-pill active" data-type="all">All Types</button>
+              <button type="button" class="filter-pill" data-type="Gym">Gym Workout</button>
+              <button type="button" class="filter-pill" data-type="Home">Home Workout</button>
+              <button type="button" class="filter-pill" data-type="HIIT">High Intensity (HIIT)</button>
+              <button type="button" class="filter-pill" data-type="Cardio">Cardio</button>
+              <button type="button" class="filter-pill" data-type="Stretching">Stretching &amp; Mobility</button>
             </div>
           </div>
 
@@ -727,20 +735,20 @@
               2. Target Body Part (Select one or multiple)
             </div>
             <div class="filter-pills-row" id="workoutBodyPartFilterPills">
-              <button type="button" class="filter-pill active" data-part="all">✨ Full Body</button>
-              <button type="button" class="filter-pill" data-part="Chest">🛡️ Chest (Upper / Mid / Lower)</button>
-              <button type="button" class="filter-pill" data-part="Back">🦅 Back (Lats / Upper / Lower)</button>
-              <button type="button" class="filter-pill" data-part="Shoulders">🎯 Shoulders (Front / Side / Rear)</button>
-              <button type="button" class="filter-pill" data-part="Arms">💪 Arms (Biceps / Triceps)</button>
-              <button type="button" class="filter-pill" data-part="Legs">🦵 Legs (Quads / Hamstrings / Glutes)</button>
-              <button type="button" class="filter-pill" data-part="Core">🧱 Core &amp; Abs</button>
+              <button type="button" class="filter-pill active" data-part="all">Full Body</button>
+              <button type="button" class="filter-pill" data-part="Chest">Chest (Upper / Mid / Lower)</button>
+              <button type="button" class="filter-pill" data-part="Back">Back (Lats / Upper / Lower)</button>
+              <button type="button" class="filter-pill" data-part="Shoulders">Shoulders (Front / Side / Rear)</button>
+              <button type="button" class="filter-pill" data-part="Arms">Arms (Biceps / Triceps)</button>
+              <button type="button" class="filter-pill" data-part="Legs">Legs (Quads / Hamstrings / Glutes)</button>
+              <button type="button" class="filter-pill" data-part="Core">Core &amp; Abs</button>
             </div>
           </div>
 
           <!-- Sets & Reps Guidance Banner -->
           <div style="background:#f8fafc;border: 1px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
             <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-size:20px;">💡</span>
+              <span style="font-size:20px;"></span>
               <div style="font-size:.88rem;color:#1e293b;">
                 <b>Scientific Sets &amp; Reps Prescription:</b>
                 <span id="prescriptionRecommendationText" style="color:#64748b;margin-left:4px;">
@@ -828,7 +836,7 @@
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="solid-button small" id="openAiPlanModalBtn" style="background:#2563eb;">
-              ✨ AI Personalize Plan
+              AI Personalize Plan
             </button>
             <button class="solid-button small" id="saveProfileBtn">
               Save profile
@@ -845,7 +853,7 @@
               <div style="position:relative;display:inline-block;flex-shrink:0;">
                 <div class="large-avatar" id="pfLargeAvatar" style="overflow:hidden;position:relative;cursor:pointer;" title="Click to upload/change photo">JD</div>
                 <label for="pfAvatarUploadInput" title="Upload custom photo" style="position:absolute;bottom:-2px;right:-2px;width:28px;height:28px;border-radius:50%;background:#2563eb;color:#38bdf8;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.22);font-size:.85rem;">
-                  📷
+                  
                 </label>
                 <input type="file" id="pfAvatarUploadInput" accept="image/*" style="display:none;">
               </div>
@@ -854,10 +862,10 @@
                 <p id="pfEmailDisplay">jordan.davis@example.com</p>
                 <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;">
                   <label for="pfAvatarUploadInput" class="avatar-action-btn upload" style="font-size:.78rem;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">
-                    📷 Upload New Pic
+                    Upload New Pic
                   </label>
                   <button type="button" id="removeAvatarBtn" class="avatar-action-btn remove" style="display:none;font-size:.78rem;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">
-                    🗑️ Remove Pic
+                    Remove Pic
                   </button>
                 </div>
               </div>
@@ -938,21 +946,21 @@
           </div>
 
           <aside class="panel profile-tip">
-            <div class="tip-mark">💡</div>
+            <div class="tip-mark"></div>
             <span class="section-kicker">A NOTE ON YOUR TARGETS</span>
             <h3 style="font-size:1.1rem;color:#1e293b;margin:6px 0;">Consistency beats perfection</h3>
             <p style="color:#64748b;font-size:.88rem;line-height:1.5;">Targets are guides, not strict rules. Hitting close to your protein and calorie target over time is what builds sustainable strength.</p>
             <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
               <button class="outline-button full" id="profileComplaintBtn" style="width:100%;font-size:.85rem;color:#2563eb;border-color:#38bdf8;background:#f8fbf6;font-weight:600;">
-                📮 Report Issue / Suggestion
+                Report Issue / Suggestion
               </button>
               <button class="outline-button full" id="adminPortalShortcutBtn" style="width:100%;">Admin &amp; Database Tools</button>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;">
                 <button type="button" class="outline-button small" id="profileEraseDataBtn" style="color:#c05621;border-color:#fbd38d;background:#fffaf0;font-size:.82rem;font-weight:600;">
-                  🗑️ Erase Data
+                  Erase Data
                 </button>
                 <button type="button" class="outline-button small" id="profileDeleteAccountBtn" style="color:#c53030;border-color:#feb2b2;background:#fff5f5;font-size:.82rem;font-weight:600;">
-                  ⚠️ Delete Account
+                  Delete Account
                 </button>
               </div>
             </div>
@@ -965,12 +973,12 @@
         <div class="view-intro">
           <div>
             <span class="section-kicker">YOUR SPACE · TARGETED ROADMAP</span>
-            <h2>Challenge Engine 🔥</h2>
+            <h2>Challenge Engine</h2>
             <p>Structured, day-by-day workout progression tailored to your physique goals and personal metrics.</p>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <button type="button" class="solid-button" id="createChallengeBtn" style="background:#2563eb;">
-              🚀 Start New Challenge
+              Start New Challenge
             </button>
           </div>
         </div>
@@ -986,12 +994,12 @@
         <div class="view-intro">
           <div>
             <span class="section-kicker">YOUR SPACE · COMPREHENSIVE ANALYTICS</span>
-            <h2>Activity &amp; Habit Tracking 📊</h2>
+            <h2>Activity &amp; Habit Tracking</h2>
             <p>Accurate monitoring of your workout frequency, challenge milestones, daily consistency, and nutrition targets.</p>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <button type="button" class="outline-button" id="trackingCheckInBtn" style="border-color:#38bdf8;background:#f8fafc;font-weight:700;color:#2563eb;">
-              ⚡ Quick Daily Check-In
+               Quick Daily Check-In
             </button>
           </div>
         </div>
@@ -1084,7 +1092,7 @@
           <div style="display:flex;gap:8px;margin-top:4px;">
             <input type="text" id="foodSearchInput" placeholder="e.g. White rice, Paneer butter masala, 2 Boiled eggs, Protein oats..." autocomplete="off">
             <button type="button" class="solid-button small" id="aiPredictFoodBtn" style="white-space:nowrap;padding:0 14px;height:38px;background:#2563eb;" title="Use AI to estimate calories and macros">
-              ✨ AI Predict
+              AI Predict
             </button>
           </div>
           <div id="foodSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:90;background:#ffffff;border:1px solid #dce2d7;border-radius:10px;max-height:210px;overflow-y:auto;box-shadow:0 14px 35px rgba(25,40,28,0.18);margin-top:4px;padding:6px;">
@@ -1202,17 +1210,17 @@
 
       <!-- Visual Theme & Mode Selector -->
       <div style="border:1px solid #edf0e9;border-radius:12px;padding:14px;background:#fbfdfa;" id="settingsThemeBox">
-        <b style="color:#1e293b;font-size:.95rem;display:block;">🎨 Theme &amp; Visual Style</b>
+        <b style="color:#1e293b;font-size:.95rem;display:block;">Theme &amp; Visual Style</b>
         <p style="color:#64748b;font-size:.84rem;margin:3px 0 10px;">Select light, dark, or automatic system default mode.</p>
         <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;" id="settingsThemeButtonGroup">
           <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="light" style="padding:10px 8px;justify-content:center;text-align:center;">
-            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">☀️</span><b style="font-size:.85rem;">Light</b></div>
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;"></span><b style="font-size:.85rem;">Light</b></div>
           </button>
           <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="dark" style="padding:10px 8px;justify-content:center;text-align:center;">
-            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">🌙</span><b style="font-size:.85rem;">Dark</b></div>
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;"></span><b style="font-size:.85rem;">Dark</b></div>
           </button>
           <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="system" style="padding:10px 8px;justify-content:center;text-align:center;">
-            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;">💻</span><b style="font-size:.85rem;">System</b></div>
+            <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;"></span><b style="font-size:.85rem;">System</b></div>
           </button>
         </div>
       </div>
@@ -1221,10 +1229,10 @@
       <div style="border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:14px;" id="settingsAiApiBox">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <b style="color:#2563eb;font-size:.95rem;display:flex;align-items:center;gap:6px;">
-            🤖 AI Live Intelligence &amp; Chatbot API
+            AI Live Intelligence &amp; Chatbot API
           </b>
           <span style="font-size:.72rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700;border:1px solid #93c5fd;" id="aiStatusPill">
-            🟢 Live Connected
+            Live Connected
           </span>
         </div>
         <p style="color:#64748b;font-size:.82rem;margin:0 0 10px;line-height:1.4;">
@@ -1248,7 +1256,7 @@
       <!-- Feedback & Complaint Box -->
       <div style="border:1px solid #dbeafe;background:#f8fafc;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <div>
-          <b style="color:#2563eb;font-size:.92rem;display:block;">📮 Feedback &amp; Complaints</b>
+          <b style="color:#2563eb;font-size:.92rem;display:block;">Feedback &amp; Complaints</b>
           <p style="color:#64748b;font-size:.82rem;margin:2px 0 0;">Report bugs, suggest features, or ask for new exercises and foods.</p>
         </div>
         <button type="button" class="solid-button small" id="openComplaintModalBtn" style="white-space:nowrap;">
@@ -1257,7 +1265,7 @@
       </div>
 
       <div id="adminSection" style="display:none;border:1px solid #dbeafe;background:#f8fafc;border-radius:12px;padding:14px;">
-        <b style="color:#2563eb;font-size:.95rem;">👑 Admin Controls</b>
+        <b style="color:#2563eb;font-size:.95rem;">Admin Controls</b>
         <p style="color:#64748b;font-size:.85rem;margin:4px 0 10px;">Manage registered accounts, inspect user complaints and database records.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="solid-button small" id="viewAllUsersBtn">View Users</button>
@@ -1275,17 +1283,17 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <button type="button" class="outline-button small" id="eraseDataBtn" style="color:#c05621;border-color:#fbd38d;background:#ffffff;font-size:.82rem;font-weight:600;">
-            🗑️ Erase Data
+             Erase Data
           </button>
           <button type="button" class="outline-button small" id="deleteAccountBtn" style="color:#c53030;border-color:#feb2b2;background:#ffffff;font-size:.82rem;font-weight:600;">
-            ⚠️ Delete Account
+             Delete Account
           </button>
         </div>
       </div>
 
       <div style="margin-top:4px;display:flex;flex-direction:column;gap:8px;">
         <button type="button" class="outline-button full" id="logoutBtn" style="color:#4a5568;border-color:#cbd5e0;width:100%;">
-          🚪 Log Out
+          Log Out
         </button>
       </div>
     </div>
@@ -1338,7 +1346,7 @@
 
       <div style="margin-top:18px;">
         <button type="button" class="solid-button full" id="generateAiPlanBtn" style="width:100%;height:44px;background:#2563eb;">
-          ✨ Generate &amp; Apply My AI Plan
+          Generate &amp; Apply My AI Plan
         </button>
       </div>
 
@@ -1465,7 +1473,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <b style="color:#2563eb;font-size:.92rem;">Total Dish Nutrition</b>
           <button type="button" class="text-button" id="aiSuggestRecipeBtn" style="font-size:.82rem;color:#2563eb;font-weight:700;">
-            ✨ AI Macro Tip
+            AI Macro Tip
           </button>
         </div>
         <div class="recipe-macro-grid">
@@ -1494,7 +1502,7 @@
           Save to My Foods
         </button>
         <button type="button" class="solid-button" id="logRecipeToTodayBtn" style="flex:1;">
-          Add to Food Log ✓
+          Add to Food Log
         </button>
       </div>
     </form>
@@ -1520,17 +1528,17 @@
 
       <div class="cam-dropzone" id="camDrop">
         <input type="file" id="camFileInput" accept="image/*" capture="environment" style="display:none;" />
-        <div style="font-size:2.4rem;margin-bottom:8px;">📸</div>
+        <div style="color:#2563eb;margin-bottom:8px;display:flex;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
         <b style="color:#1e293b;font-size:1rem;display:block;">Capture or Drag &amp; Drop Photo</b>
         <p style="color:#64748b;font-size:.82rem;margin-top:4px;">Supports JPG, PNG, WebP up to 10MB</p>
 
         <div class="cam-action-buttons">
           <button type="button" class="cam-big-btn" id="camClickTakeBtn">
-            <span>📷</span>
+            <span>Take Photo</span>
             <span>Take Photo</span>
           </button>
           <button type="button" class="cam-big-btn" id="camClickUploadBtn">
-            <span>🖼️</span>
+            <span>Upload File</span>
             <span>Upload Image</span>
           </button>
         </div>
@@ -1540,14 +1548,14 @@
 
       <div style="margin-top:16px;">
         <button type="button" class="solid-button full" id="startCamAnalyzeBtn" style="display:none;width:100%;height:42px;background:#2563eb;">
-          🤖 Analyze Food with AI
+          Analyze Food with AI
         </button>
       </div>
     </div>
 
     <!-- Step 2: Loading State -->
     <div id="camStep2" style="display:none;text-align:center;padding:30px 10px;">
-      <div style="font-size:2.2rem;animation:pulse 1s infinite;">🔍</div>
+      <div style="color:#2563eb;animation:spin 1s linear infinite;display:flex;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
       <b style="color:#1e293b;font-size:1.05rem;display:block;margin-top:10px;" id="camAnalyzeStatusText">Detecting food visual...</b>
       <p style="color:#64748b;font-size:.85rem;margin-top:4px;">Estimating portion size and nutrient breakdown</p>
     </div>
@@ -1583,33 +1591,53 @@
 
       <div style="margin-top:18px;display:flex;gap:10px;">
         <button type="button" class="outline-button" id="camRetakeBtn" style="flex:1;">Retake</button>
-        <button type="button" class="solid-button" id="camConfirmAddBtn" style="flex:2;">Add to Food Log ✓</button>
+        <button type="button" class="solid-button" id="camConfirmAddBtn" style="flex:2;">Add to Food Log </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ============ FLOATING AI CHATBOT LAUNCHER & DRAWER ============ -->
-<div class="ai-chat-launcher" id="aiChatLauncher" title="Ask AI Coach about diet, workout & micronutrients">
+<div class="ai-chat-launcher" id="aiChatLauncher" title="Ask AI Coach about diet, workout &amp; micronutrients">
   <div class="ai-chat-pulse"></div>
-  <span>🤖 Ask AI Coach</span>
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+    <circle cx="12" cy="5" r="2"></circle>
+    <path d="M12 7v4"></path>
+    <line x1="8" y1="16" x2="8" y2="16"></line>
+    <line x1="16" y1="16" x2="16" y2="16"></line>
+  </svg>
+  <span>Ask AI Coach</span>
 </div>
 
 <div class="ai-chat-drawer" id="aiChatDrawer">
   <div class="ai-chat-header">
     <div class="ai-chat-header-info">
-      <div style="font-size:1.4rem;">🤖</div>
+      <div style="width:34px;height:34px;border-radius:8px;background:#1e40af;display:flex;align-items:center;justify-content:center;color:#38bdf8;flex-shrink:0;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16"></line>
+          <line x1="16" y1="16" x2="16" y2="16"></line>
+        </svg>
+      </div>
       <div>
         <div style="display:flex;align-items:center;gap:6px;">
-          <h4 style="margin:0;">FitFuel AI Coach</h4>
-          <span style="font-size:.66rem;background:#172554;color:#38bdf8;padding:1px 6px;border-radius:99px;border:1px solid #1e40af;font-weight:700;">🟢 Live AI</span>
+          <h4 style="margin:0;font-size:1rem;color:#ffffff;">FitFuel AI Coach</h4>
+          <span style="font-size:.66rem;background:#172554;color:#38bdf8;padding:2px 7px;border-radius:99px;border:1px solid #1e40af;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">Live</span>
         </div>
-        <span style="font-size:.76rem;color:#64748b;">Live Nutrition &amp; Workout Intelligence</span>
+        <span style="font-size:.76rem;color:#bfdbfe;">Dynamic Nutrition &amp; Workout Reasoning</span>
       </div>
     </div>
     <div class="ai-chat-header-actions">
-      <button type="button" id="aiChatClearBtn" title="Clear chat history">🗑️</button>
-      <button type="button" id="aiChatCloseBtn" title="Close chat">&times;</button>
+      <button type="button" id="aiChatClearBtn" title="Clear chat history" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:transparent;border:none;color:#bfdbfe;cursor:pointer;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+      </button>
+      <button type="button" id="aiChatCloseBtn" title="Close chat" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:transparent;border:none;color:#bfdbfe;cursor:pointer;font-size:1.3rem;">&times;</button>
     </div>
   </div>
 
@@ -1618,11 +1646,11 @@
   </div>
 
   <div class="ai-chat-chips" id="aiChatChips">
-    <button type="button" class="ai-chip" data-q="What are the essential micronutrients I need daily and their food sources?">🥦 Daily Micronutrients</button>
-    <button type="button" class="ai-chip" data-q="Give me a high-protein dinner under 450 kcal with exact ingredients.">🍗 35g Protein Dinner</button>
-    <button type="button" class="ai-chip" data-q="What are the best exercises, sets, and reps for Upper Chest growth?">💪 Upper Chest sets &amp; reps</button>
-    <button type="button" class="ai-chip" data-q="Can I eat hotel biryani or pizza on a fat loss cut? How should I balance it?">🍕 Hotel &amp; Fast Food Guide</button>
-    <button type="button" class="ai-chip" data-q="Review my logged meals and water intake today and give me feedback.">📊 Verify My Today's Log</button>
+    <button type="button" class="ai-chip" data-q="What are the essential daily micronutrients, their RDAs, and best food sources?">Daily Micronutrients</button>
+    <button type="button" class="ai-chip" data-q="Recommend a high-protein dinner under 450 kcal with exact ingredient weights and macros.">High-Protein Dinner</button>
+    <button type="button" class="ai-chip" data-q="What is the optimal training volume, exercise selection, and progression for Upper Chest?">Upper Chest Protocol</button>
+    <button type="button" class="ai-chip" data-q="How can I fit dining out or travel meals into my fitness goals without derailing my weekly macros?">Dining Out Strategy</button>
+    <button type="button" class="ai-chip" data-q="Please perform a comprehensive audit of my logged meals and water intake today, and provide personalized feedback.">Audit Today's Progress</button>
   </div>
 
   <form class="ai-chat-footer" id="aiChatForm" onsubmit="return false;">
@@ -1638,15 +1666,15 @@
 
 <!-- IMAGE PREVIEW LIGHTBOX MODAL -->
 <div class="modal-backdrop" id="imageLightboxModal">
-  <div class="modal-card" style="max-width:760px;background:#18261d;color:#fff;padding:16px;border:1px solid #2f4534;border-radius:16px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #2b3d30;">
+  <div class="modal-card" style="max-width:760px;background:#0f172a;color:#fff;padding:16px;border:1px solid #1e293b;border-radius:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #1e293b;">
       <div>
         <span style="font-size:.72rem;letter-spacing:.08em;color:#38bdf8;font-weight:700;display:block;">HIGH-RES VIEW</span>
         <b id="lightboxTitle" style="font-size:1.1rem;color:#f0f7ed;">Image Preview</b>
       </div>
       <button class="close-btn" data-close style="color:#f0f7ed;font-size:1.6rem;background:transparent;border:none;cursor:pointer;">&times;</button>
     </div>
-    <div style="display:flex;align-items:center;justify-content:center;background:#0d1610;border-radius:12px;overflow:hidden;padding:8px;">
+    <div style="display:flex;align-items:center;justify-content:center;background:#0b1329;border-radius:12px;overflow:hidden;padding:8px;">
       <img id="lightboxImage" src="" alt="Full preview" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px;display:block;">
     </div>
   </div>
@@ -1664,7 +1692,7 @@
     </div>
 
     <!-- Visual Demonstration / Anatomy Graphic -->
-    <div id="exModalVisualContainer" style="background:#0f1712;border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,0.18);">
+    <div id="exModalVisualContainer" style="background:#0b1329;border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,0.18);">
       <!-- Rendered SVG / Visual Graphic -->
     </div>
 
@@ -1682,10 +1710,10 @@
 
     <!-- Biomechanics & Execution Guide -->
     <div style="background:#fcfdfb;border:1px solid #edf0e9;border-radius:12px;padding:14px;margin-bottom:16px;">
-      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">🧬 Why This Exercise Works:</b>
+      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">Biomechanical Rationale:</b>
       <p id="exModalWhy" style="color:#64748b;font-size:.88rem;line-height:1.45;margin-bottom:12px;"></p>
 
-      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">📋 Step-by-Step Execution:</b>
+      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;"> Step-by-Step Execution:</b>
       <p id="exModalSteps" style="color:#64748b;font-size:.88rem;line-height:1.45;margin:0;"></p>
     </div>
 
@@ -1693,11 +1721,11 @@
     <div style="border:1px solid #cbe0c5;background:linear-gradient(135deg, #f3f7f0 0%, #e9f3e4 100%);border-radius:12px;padding:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <b style="color:#2563eb;font-size:.95rem;display:block;">🤖 Formwise AI Coach</b>
+          <b style="color:#2563eb;font-size:.95rem;display:block;">Formwise AI Coach</b>
           <span style="font-size:.8rem;color:#64748b;">Get customized form cues, modifications &amp; biomechanics</span>
         </div>
         <button type="button" class="solid-button small" id="exModalAiCoachBtn" style="font-size:.8rem;padding:6px 14px;background:#2563eb;white-space:nowrap;">
-          ✨ AI Form Analysis
+          AI Form Analysis
         </button>
       </div>
       <div id="exModalAiAdvice" style="display:none;font-size:.86rem;color:#1e293b;line-height:1.45;background:#ffffff;padding:12px;border-radius:8px;border:1px solid #d4e2d0;margin-top:10px;">
@@ -1709,7 +1737,7 @@
     <div style="display:flex;gap:10px;margin-top:16px;">
       <button type="button" class="outline-button" data-close style="flex:1;">Close</button>
       <button type="button" class="solid-button" id="exModalLogDoneBtn" style="flex:1.5;background:#2563eb;">
-        ✓ Mark Completed
+        Mark Completed
       </button>
     </div>
   </div>
@@ -1734,16 +1762,16 @@
         <label style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Feedback Category</label>
         <div id="cmpTypeSelector" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           <button type="button" class="cmp-type-btn active" data-type="complaint" style="padding:9px 12px;border:1px solid #38bdf8;background:#f8fafc;border-radius:10px;font-size:.84rem;font-weight:700;cursor:pointer;color:#2563eb;text-align:left;transition:all .15s;">
-            😞 Complaint / Issue
+            Complaint / Issue
           </button>
           <button type="button" class="cmp-type-btn" data-type="bug" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
-            🐛 Bug Report
+            Bug Report
           </button>
           <button type="button" class="cmp-type-btn" data-type="suggestion" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
-            💡 Feature Suggestion
+            Feature Suggestion
           </button>
           <button type="button" class="cmp-type-btn" data-type="food_workout" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
-            🥗 Food / Workout Request
+            Food / Workout Request
           </button>
         </div>
       </div>
@@ -1767,7 +1795,7 @@
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
         <button type="button" class="outline-button" data-close>Cancel</button>
         <button type="submit" class="solid-button" id="cmpSubmitBtn" style="background:#2563eb;padding:9px 18px;">
-          Submit Feedback 🚀
+          Submit Feedback
         </button>
       </div>
     </form>
@@ -1778,7 +1806,7 @@
 <div class="modal-backdrop" id="motivationModal">
   <div class="modal-card" style="max-width:440px;text-align:center;padding:28px 24px;">
     <div style="width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg, #2563eb 0%, #2f5439 100%);color:#38bdf8;font-size:30px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(32,59,41,0.22);">
-      🔥
+      
     </div>
     <span class="section-kicker" style="color:#2563eb;letter-spacing:1px;font-weight:800;">DAILY MOTIVATION &amp; FOCUS</span>
     <h3 style="font-size:1.25rem;color:#1e3a8a;font-weight:800;margin:8px 0 12px;line-height:1.45;" id="motivationQuoteText">
@@ -1791,7 +1819,7 @@
       Welcome to FitFuel! Every rep, every healthy meal, and every glass of water builds your ultimate strength. Let’s make today exceptional!
     </div>
     <button type="button" class="solid-button full" id="dismissMotivationBtn" style="background:#2563eb;padding:12px;font-size:.95rem;font-weight:700;width:100%;">
-      Let's Crush It Today! 🚀
+      Let's Crush It Today!
     </button>
   </div>
 </div>
@@ -1811,28 +1839,28 @@
     </p>
     <div style="display:flex;flex-direction:column;gap:10px;" id="motiveOptionsList">
       <div class="setup-choice-card selected" data-motive="Burn Fat &amp; Lean Out">
-        <div class="setup-choice-icon">🔥</div>
+        <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">01</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Burn Fat &amp; Lean Out</b>
           <small style="color:#64748b;font-size:.82rem;">High metabolic density, compound supersets, and elevated caloric burn.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Build Muscle &amp; Hypertrophy">
-        <div class="setup-choice-icon">💪</div>
+        <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">02</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Build Muscle &amp; Hypertrophy</b>
           <small style="color:#64748b;font-size:.82rem;">Hypertrophy rep ranges (8-12 reps), time under tension, and progressive overload.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Maintain Weight &amp; Tone">
-        <div class="setup-choice-icon">⚖️</div>
+        <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">03</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Maintain Weight &amp; Athletic Tone</b>
           <small style="color:#64748b;font-size:.82rem;">Balanced functional strength, postural stamina, and core stability.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Raw Strength &amp; Power">
-        <div class="setup-choice-icon">⚡</div>
+        <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">04</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Raw Strength &amp; Heavy Power</b>
           <small style="color:#64748b;font-size:.82rem;">Heavy compound lifts, 4-6 rep strength schemes, and neuromuscular adaptation.</small>
@@ -1870,23 +1898,23 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="chTypesOptionsList">
         <label class="setup-choice-card selected" style="padding:10px 12px;cursor:pointer;">
           <input type="checkbox" value="Gym" checked style="accent-color:#2563eb;" />
-          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">🏋️ Gym Workout</span>
+          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">Gym Workout</span>
         </label>
         <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
           <input type="checkbox" value="Home" style="accent-color:#2563eb;" />
-          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">🏠 Home Workout</span>
+          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">Home Workout</span>
         </label>
         <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
           <input type="checkbox" value="HIIT" style="accent-color:#2563eb;" />
-          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">⚡ High Intensity (HIIT)</span>
+          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">High Intensity (HIIT)</span>
         </label>
         <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;">
           <input type="checkbox" value="Cardio" style="accent-color:#2563eb;" />
-          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">🏃 Cardio</span>
+          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">Cardio</span>
         </label>
         <label class="setup-choice-card" style="padding:10px 12px;cursor:pointer;grid-column:span 2;">
           <input type="checkbox" value="Stretching" style="accent-color:#2563eb;" />
-          <span style="font-size:.9rem;font-weight:700;color:#2563eb;">🧘 Stretching &amp; Mobility Cooldown</span>
+          <span style="font-size:.9rem;font-weight:700;color:#2563eb;"> Stretching &amp; Mobility Cooldown</span>
         </label>
       </div>
     </div>
@@ -1923,17 +1951,17 @@
       </label>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="chIntensityOptionsList">
         <button type="button" class="setup-choice-card" data-intensity="Mild" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
-          <span style="font-size:20px;">🟢</span>
+          <span style="font-size:.7rem;font-weight:700;color:#0284c7;letter-spacing:.04em;">EASY</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Mild / Easy</b>
           <small style="color:#64748b;font-size:.72rem;">60-90s rest</small>
         </button>
         <button type="button" class="setup-choice-card selected" data-intensity="Moderate" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
-          <span style="font-size:20px;">🟡</span>
+          <span style="font-size:.7rem;font-weight:700;color:#2563eb;letter-spacing:.04em;">MEDIUM</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Moderate</b>
           <small style="color:#64748b;font-size:.72rem;">45-60s rest</small>
         </button>
         <button type="button" class="setup-choice-card" data-intensity="Hard" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
-          <span style="font-size:20px;">🔴</span>
+          <span style="font-size:.7rem;font-weight:700;color:#dc2626;letter-spacing:.04em;">HARD</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Hard / High</b>
           <small style="color:#64748b;font-size:.72rem;">30-45s rest (+water)</small>
         </button>
@@ -1971,27 +1999,27 @@
           45 Total Min/Day · Moderate Intensity · Gym Workout
         </div>
       </div>
-      <button type="button" class="text-button" onclick="closeModal('#challengeDurationModal');openModal('#challengePrefsModal');" style="font-size:.78rem;color:#2563eb;font-weight:700;">Edit Settings ✎</button>
+      <button type="button" class="text-button" onclick="closeModal('#challengeDurationModal');openModal('#challengePrefsModal');" style="font-size:.78rem;color:#2563eb;font-weight:700;">Edit Settings </button>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="durationOptionsList">
       <div class="setup-choice-card" data-days="10" style="flex-direction:column;align-items:flex-start;padding:16px;">
-        <span style="font-size:24px;">⚡</span>
+        <span style="font-size:.85rem;font-weight:700;color:#2563eb;">7D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">10 Days Blitz</b>
         <small style="color:#64748b;font-size:.8rem;">Rapid habit acceleration &amp; high intensity momentum.</small>
       </div>
       <div class="setup-choice-card selected" data-days="15" style="flex-direction:column;align-items:flex-start;padding:16px;">
-        <span style="font-size:24px;">🚀</span>
+        <span style="font-size:.85rem;font-weight:700;color:#2563eb;">14D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">15 Days Kickstart</b>
         <small style="color:#64748b;font-size:.8rem;">Visible physical adaptation &amp; core discipline booster.</small>
       </div>
       <div class="setup-choice-card" data-days="25" style="flex-direction:column;align-items:flex-start;padding:16px;">
-        <span style="font-size:24px;">🏆</span>
+        <span style="font-size:.85rem;font-weight:700;color:#2563eb;">30D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">25 Days Transformation</b>
         <small style="color:#64748b;font-size:.8rem;">Substantial hypertrophy, body composition, &amp; conditioning.</small>
       </div>
       <div class="setup-choice-card" data-days="30" style="flex-direction:column;align-items:flex-start;padding:16px;">
-        <span style="font-size:24px;">👑</span>
+        <span style="font-size:.85rem;font-weight:700;color:#2563eb;">60D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">30 Days Mastery</b>
         <small style="color:#64748b;font-size:.8rem;">Full body transformation, endurance, &amp; elite habit lock-in.</small>
       </div>
@@ -2000,7 +2028,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
       <button type="button" class="outline-button" id="backToPrefsBtn">← Back</button>
       <button type="button" class="solid-button" id="generateChallengePlanBtn" style="background:#2563eb;">
-        ✨ Generate AI Plan
+        Generate AI Plan
       </button>
     </div>
   </div>
@@ -2020,13 +2048,13 @@
     <p id="avatarModalStatusText" style="color:#64748b;font-size:.86rem;margin:0 0 20px;">Active Profile Picture</p>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button type="button" class="solid-button" id="avatarModalSeePicBtn" style="background:#2563eb;width:100%;justify-content:center;">
-        👁️ See Pic
+        See Pic
       </button>
       <button type="button" class="outline-button" id="avatarModalUploadNewBtn" style="width:100%;justify-content:center;">
-        📷 Upload New Pic
+         Upload New Pic
       </button>
       <button type="button" class="outline-button" id="avatarModalRemoveBtn" style="width:100%;justify-content:center;color:#ef4444;border-color:#fca5a5;">
-        🗑️ Remove Pic
+         Remove Pic
       </button>
       <button type="button" class="text-button" data-close style="color:#64748b;margin-top:4px;">Cancel</button>
     </div>
@@ -2051,7 +2079,7 @@
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
       <div>
         <b style="color:#1e293b;font-size:.88rem;display:flex;align-items:center;gap:6px;">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;"></span>
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;"></span>
           Auto-Sync Active: <span id="autoWeatherStatusText">Real-Time Weather</span>
         </b>
         <span style="font-size:.78rem;color:#64748b;display:block;margin-top:2px;" id="autoWeatherCityNote">Location-based weather</span>
@@ -2063,19 +2091,19 @@
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="weatherTempPresets">
       <button type="button" class="setup-choice-card" data-temp="18" data-label="Cool">
-        <span style="font-size:22px;">⛅</span>
+        <span style="font-size:.75rem;font-weight:700;color:#64748b;letter-spacing:.05em;">COOL</span>
         <div><b>18°C</b><small style="display:block;color:#64748b;">Cool / Normal</small></div>
       </button>
       <button type="button" class="setup-choice-card" data-temp="24" data-label="Mild">
-        <span style="font-size:22px;">🌤️</span>
+        <span style="font-size:.75rem;font-weight:700;color:#0284c7;letter-spacing:.05em;">MILD</span>
         <div><b>24°C</b><small style="display:block;color:#64748b;">Mild Weather</small></div>
       </button>
       <button type="button" class="setup-choice-card selected" data-temp="29" data-label="Warm (Summer)">
-        <span style="font-size:22px;">☀️</span>
+        <span style="font-size:.75rem;font-weight:700;color:#2563eb;letter-spacing:.05em;">WARM</span>
         <div><b>29°C</b><small style="display:block;color:#64748b;">Warm (Summer)</small></div>
       </button>
       <button type="button" class="setup-choice-card" data-temp="36" data-label="Hot Peak">
-        <span style="font-size:22px;">🔥</span>
+        <span style="font-size:.75rem;font-weight:700;color:#dc2626;letter-spacing:.05em;">HOT</span>
         <div><b>36°C</b><small style="display:block;color:#64748b;">Hot Summer Peak</small></div>
       </button>
     </div>
@@ -2087,7 +2115,7 @@
     </div>
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
       <button type="button" class="outline-button" data-close>Cancel</button>
-      <button type="button" class="solid-button" id="saveWeatherTempBtn" style="background:#2563eb;">Save Temperature ✓</button>
+      <button type="button" class="solid-button" id="saveWeatherTempBtn" style="background:#2563eb;">Save Temperature </button>
     </div>
   </div>
 </div>
@@ -2158,7 +2186,7 @@
           <button type="button" class="timer-ctrl-btn" id="timerPlusTenBtn">+10s</button>
         </div>
         <button type="button" class="solid-button" id="sessionCompleteSetBtn" style="background:#2563eb;padding:12px;font-size:1rem;font-weight:700;">
-          ✓ Complete Set (Start Rest)
+          Complete Set (Start Rest)
         </button>
       </div>
 
@@ -2178,7 +2206,7 @@
           </button>
         </div>
         <button type="button" class="solid-button" id="startNextSetNowBtn" style="background:#2563eb;padding:12px;font-size:1rem;font-weight:700;">
-          ⚡ Ready! Start Next Set (3, 2, 1)
+          Ready! Start Next Set (3, 2, 1)
         </button>
       </div>
 

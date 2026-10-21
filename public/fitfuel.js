@@ -1,3 +1,8 @@
+
+function getFoodCategoryBadge(cat) {
+  const c = cat || 'General';
+  return `<span class="food-cat-badge" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:#eff6ff;color:#2563eb;font-weight:700;font-size:.72rem;letter-spacing:.04em;border:1px solid #bfdbfe;flex-shrink:0;">${c.slice(0,3).toUpperCase()}</span>`;
+}
 /* ================= Formwise / FitFuel Core Application ================= */
 if (typeof window === 'undefined' || typeof document === 'undefined') {
   if (typeof module !== 'undefined') module.exports = (req, res) => { if (res) { res.writeHead(200); res.end('Formwise'); } };
@@ -85,12 +90,12 @@ const soundFX = {
     store.set('sound_enabled', this.enabled);
     this.updateUI();
     if (this.enabled) this.pop();
-    toast(this.enabled ? 'Audio sound effects enabled 🔊' : 'Audio muted 🔇');
+    toast(this.enabled ? 'Audio sound effects enabled' : 'Audio muted');
   },
   updateUI() {
     const icon = $('#soundToggleIcon');
     const text = $('#soundToggleText');
-    if (icon) icon.textContent = this.enabled ? '🔊' : '🔇';
+    if (icon) icon.innerHTML = this.enabled ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
     if (text) text.textContent = this.enabled ? 'Audio On' : 'Muted';
   },
   pop() {
@@ -245,7 +250,6 @@ const soundFX = {
 let weatherState = store.get('weatherState', {
   tempC: 28,
   label: 'Warm',
-  icon: '☀️',
   city: 'Auto Location',
   autoSynced: false
 });
@@ -276,19 +280,19 @@ function updateWeatherUI() {
 }
 
 function wmoCodeToCondition(code, tempC) {
-  if (code === 0) return { label: 'Clear Sky', icon: '☀️' };
-  if (code >= 1 && code <= 3) return { label: 'Partly Cloudy', icon: '🌤️' };
-  if (code === 45 || code === 48) return { label: 'Foggy', icon: '🌫️' };
-  if (code >= 51 && code <= 55) return { label: 'Light Drizzle', icon: '🌦️' };
-  if (code >= 61 && code <= 65) return { label: 'Rainy', icon: '🌧️' };
-  if (code >= 71 && code <= 77) return { label: 'Snowy', icon: '🌨️' };
-  if (code >= 80 && code <= 82) return { label: 'Showers', icon: '🌧️' };
-  if (code >= 95) return { label: 'Thunderstorm', icon: '⛈️' };
-  if (tempC >= 32) return { label: 'Hot Peak', icon: '🔥' };
-  if (tempC >= 25) return { label: 'Warm', icon: '☀️' };
-  if (tempC >= 18) return { label: 'Mild', icon: '🌤️' };
-  if (tempC >= 10) return { label: 'Cool', icon: '⛅' };
-  return { label: 'Cold', icon: '❄️' };
+  if (code === 0) return { label: 'Clear Sky', icon: '' };
+  if (code >= 1 && code <= 3) return { label: 'Partly Cloudy', icon: '' };
+  if (code === 45 || code === 48) return { label: 'Foggy', icon: '' };
+  if (code >= 51 && code <= 55) return { label: 'Light Drizzle', icon: '' };
+  if (code >= 61 && code <= 65) return { label: 'Rainy', icon: '' };
+  if (code >= 71 && code <= 77) return { label: 'Snowy', icon: '' };
+  if (code >= 80 && code <= 82) return { label: 'Showers', icon: '' };
+  if (code >= 95) return { label: 'Thunderstorm', icon: '' };
+  if (tempC >= 32) return { label: 'Hot Peak', icon: '' };
+  if (tempC >= 25) return { label: 'Warm', icon: '' };
+  if (tempC >= 18) return { label: 'Mild', icon: '' };
+  if (tempC >= 10) return { label: 'Cool', icon: '' };
+  return { label: 'Cold', icon: '' };
 }
 
 let isWeatherSyncing = false;
@@ -372,7 +376,7 @@ async function autoSyncWeather(manualTrigger = false) {
           updateLiveWaterEstimate();
         }
         if (manualTrigger) {
-          toast(`Weather synced: ${weatherState.tempC}°C ${weatherState.icon} (${weatherState.label})`);
+          toast(`Weather synced: ${weatherState.tempC}°C (${weatherState.label})`);
         }
       }
     }
@@ -386,17 +390,17 @@ async function autoSyncWeather(manualTrigger = false) {
 
 function setWeatherTemp(tempC, label) {
   tempC = Number(tempC) || 28;
-  let icon = '☀️';
+  let icon = '';
   if (!label) {
-    if (tempC >= 32) { label = 'Hot Peak'; icon = '🔥'; }
-    else if (tempC >= 26) { label = 'Warm'; icon = '☀️'; }
-    else if (tempC >= 21) { label = 'Mild'; icon = '🌤️'; }
-    else { label = 'Cool'; icon = '⛅'; }
+    if (tempC >= 32) { label = 'Hot Peak'; icon = ''; }
+    else if (tempC >= 26) { label = 'Warm'; icon = ''; }
+    else if (tempC >= 21) { label = 'Mild'; icon = ''; }
+    else { label = 'Cool'; icon = ''; }
   } else {
-    if (tempC >= 32) icon = '🔥';
-    else if (tempC >= 26) icon = '☀️';
-    else if (tempC >= 21) icon = '🌤️';
-    else icon = '⛅';
+    if (tempC >= 32) icon = '';
+    else if (tempC >= 26) icon = '';
+    else if (tempC >= 21) icon = '';
+    else icon = '';
   }
   weatherState = { tempC, label, icon, city: weatherState.city || 'Custom', autoSynced: false };
   store.set('weatherState', weatherState);
@@ -1292,13 +1296,13 @@ function evaluateStreakStatus() {
 
 function getCheerupMessage(streakDays, weeklyGoalMet, remainingDays) {
   if (streakDays <= 0) return 'Start your daily streak today! Log a meal, workout, or water intake.';
-  if (streakDays === 1) return '🌱 Day 1 started! A great journey begins with a single step. Keep going!';
-  if (streakDays === 2) return '⚡ 2 Days in a row! Momentum is building—keep the flame alive!';
-  if (streakDays === 3) return '🔥 3-Day streak! Halfway through the work week, solid consistency!';
-  if (streakDays === 4) return '🚀 4 Days strong! One more day to hit your weekly goal.';
+  if (streakDays === 1) return ' Day 1 started! A great journey begins with a single step. Keep going!';
+  if (streakDays === 2) return ' 2 Days in a row! Momentum is building—keep the flame alive!';
+  if (streakDays === 3) return ' 3-Day streak! Halfway through the work week, solid consistency!';
+  if (streakDays === 4) return ' 4 Days strong! One more day to hit your weekly goal.';
   if (streakDays === 5) return '⭐ 5-Day milestone! You crushed your weekly workout goal!';
-  if (streakDays === 6) return '🏆 6 Days! Elite dedication. You are performing at peak level!';
-  return `👑 ${streakDays}-Day Legendary Streak! Master of discipline. Incredible consistency!`;
+  if (streakDays === 6) return ' 6 Days! Elite dedication. You are performing at peak level!';
+  return `${streakDays}-Day Legendary Streak! Master of discipline. Incredible consistency!`;
 }
 
 /* ---------- Dashboard Rendering ---------- */
@@ -1377,7 +1381,7 @@ function renderDashboard() {
     if (entries.length === 0) {
       mealList.innerHTML = `
         <div style="padding: 24px 16px; text-align: center; color:#64748b; background:#f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px;">
-          <div style="font-size: 28px; margin-bottom: 6px;">🥗</div>
+          <div style="font-size: 28px; margin-bottom: 6px;"></div>
           <b style="color: #2563eb; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
           <p style="font-size: 12px; margin: 0 0 12px; color:#64748b; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
           <button type="button" class="solid-button small" id="emptyDashAddMealBtn" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;">
@@ -1460,15 +1464,15 @@ function renderDashboard() {
   }
   const remDays = Math.max(0, targetDays - weekCompletedCount);
   const cheerMsg = getCheerupMessage(streakCount, weekCompletedCount >= targetDays, remDays);
-  if ($('#streakText')) $('#streakText').textContent = (curStreakInfo.streakBroken ? '⚠️ Streak broken. Restart Day 1!' : (remDays > 0 ? `${remDays} more day${remDays > 1 ? 's' : ''} to hit your goal.` : 'Goal reached! Incredible effort! 🔥'));
+  if ($('#streakText')) $('#streakText').textContent = (curStreakInfo.streakBroken ? 'Streak broken. Restart Day 1!' : (remDays > 0 ? `${remDays} more day${remDays > 1 ? 's' : ''} to hit your goal.` : 'Goal reached! Incredible effort!'));
 
   // Update Dedicated Dashboard Streak Card (Image 2)
   if ($('#dashStreakFraction')) $('#dashStreakFraction').textContent = `${weekCompletedCount} / ${targetDays}`;
-  if ($('#streakBadgePill')) $('#streakBadgePill').innerHTML = `🔥 ${streakCount} Day${streakCount === 1 ? '' : 's'}`;
+  if ($('#streakBadgePill')) $('#streakBadgePill').innerHTML = `${streakCount} Day${streakCount === 1 ? '' : 's'}`;
   if ($('#streakCongratsHeadline')) {
     $('#streakCongratsHeadline').textContent = curStreakInfo.streakBroken
       ? 'Mission Failed: Streak Broken'
-      : (streakCount >= targetDays ? 'Weekly Target Smashed! 🎉' : (streakCount > 0 ? `${streakCount}-Day Streak in Action!` : 'Start Your Streak Today'));
+      : (streakCount >= targetDays ? 'Weekly Target Smashed!' : (streakCount > 0 ? `${streakCount}-Day Streak in Action!` : 'Start Your Streak Today'));
   }
   if ($('#dashStreakCheerMsg')) {
     $('#dashStreakCheerMsg').textContent = curStreakInfo.streakBroken
@@ -1483,7 +1487,7 @@ function renderDashboard() {
       const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
       const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
       const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:#64748b;';
-      const statusIcon = d.isActive ? '✓' : (d.isToday ? '•' : '');
+      const statusIcon = d.isActive ? '' : (d.isToday ? '•' : '');
       return `
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
           <span style="font-size:.72rem; ${labelWeight}">${d.name}</span>
@@ -1509,7 +1513,7 @@ function renderDashboard() {
           store.set('streakTracker', curStreakInfo);
           failBox.style.display = 'none';
           renderDashboard();
-          toast('🔥 Day 1 Streak Started! Welcome back champion.');
+          toast('Day 1 Streak Started! Welcome back champion.');
         };
       }
     } else {
@@ -1523,7 +1527,7 @@ function renderDashboard() {
     checkInBtn.onclick = () => {
       recordDailyActivity('manual_checkin');
       renderDashboard();
-      toast('⚡ Daily Check-In recorded! Streak updated.');
+      toast('Daily Check-In recorded! Streak updated.');
     };
   }
 
@@ -1692,10 +1696,10 @@ function renderFoodLog() {
   const d = today();
   const entries = log[d] || [];
   const meals = [
-    { type: 'Breakfast', icon: '🥞' },
-    { type: 'Lunch', icon: '🥗' },
-    { type: 'Dinner', icon: '🥩' },
-    { type: 'Snack', icon: '🍎' }
+    { type: 'Breakfast', icon: '' },
+    { type: 'Lunch', icon: '' },
+    { type: 'Dinner', icon: '' },
+    { type: 'Snack', icon: '' }
   ];
   const container = $('#foodLogMealsContainer');
 
@@ -1719,7 +1723,7 @@ function renderFoodLog() {
             return `
             <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fcfdfa;border:1px solid #e7eee2;border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(32,59,41,0.02);">
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
-                ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : (item.icon ? `<span style="font-size:1.4rem;flex-shrink:0;">${item.icon}</span>` : `<span style="font-size:1.3rem;flex-shrink:0;">🍽️</span>`)}
+                ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : getFoodCategoryBadge(item.cat)}
                 <div style="min-width:0;">
                   <b style="color:#1e293b;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
                   <p style="color:#64748b;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
@@ -1727,9 +1731,12 @@ function renderFoodLog() {
               </div>
               <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
                 <span style="font-weight:700;color:#1e293b;font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
-                <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;font-size:0.95rem;color:#1e293b;display:flex;align-items:center;justify-content:center;">
-                  ✏️
-                </button>
+                <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;color:#2563eb;display:flex;align-items:center;justify-content:center;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"></path>
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+    </svg>
+  </button>
                 <button type="button" class="close-btn" style="color:#dc2626;cursor:pointer;padding:6px;border-radius:6px;font-size:1.15rem;line-height:1;display:flex;align-items:center;justify-content:center;" title="Delete entry" onclick="deleteFoodEntry(${realIdx})">&times;</button>
               </div>
             </div>
@@ -2055,7 +2062,7 @@ if ($('#aiSuggestRecipeBtn')) {
     const k = currentRecipeTotals.k;
     const dish = ($('#recipeDishName') ? $('#recipeDishName').value.trim() : '') || 'Custom Dish';
 
-    let tip = `💡 For ${dish} (${k} kcal, ${p}g P / ${c}g C / ${f}g F): `;
+    let tip = ` For ${dish} (${k} kcal, ${p}g P / ${c}g C / ${f}g F): `;
     if (p < 25) {
       tip += `Protein is currently low (${p}g). Consider adding 60g paneer, 2 egg whites, or 80g tofu to reach 25-30g protein for muscle repair and high satiety.`;
     } else if (f > 25) {
@@ -2100,7 +2107,7 @@ if ($('#logRecipeToTodayBtn')) {
       p: currentRecipeTotals.p,
       c: currentRecipeTotals.c,
       f: currentRecipeTotals.f,
-      icon: '🍳'
+      icon: ''
     });
 
     store.set('log', log);
@@ -2123,7 +2130,7 @@ if ($('#saveRecipeToMyFoodsBtn')) {
       c: Math.round(currentRecipeTotals.c * ratio * 10) / 10,
       f: Math.round(currentRecipeTotals.f * ratio * 10) / 10,
       k: Math.round(currentRecipeTotals.k * ratio),
-      icon: '🍳'
+      icon: ''
     };
 
     custom.push(customFoodItem);
@@ -2322,7 +2329,7 @@ if ($('#camConfirmAddBtn')) {
       meal,
       name,
       portion: g,
-      detail: `${g}g portion · Scanned with AI 📷`,
+      detail: `${g}g portion · Scanned with AI `,
       image: camPhotoData,
       k,
       calories: k,
@@ -2354,132 +2361,132 @@ function openFoodModal() {
 // Rich food database with accurate per-100g nutritional benchmarks & visuals
 const COMMON_FOODS = [
   // --- HOMEMADE & INDIAN STAPLES ---
-  { name: 'Roti / Chapati (Whole Wheat, 1 pc ~35g)', p: 3.5, c: 17, f: 0.5, k: 85, icon: '🫓', cat: 'Homemade', micros: 'Fiber, B-Vitamins, Iron, Magnesium' },
-  { name: 'Dal Tadka (Yellow Lentil, 1 bowl ~150g)', p: 7.5, c: 18, f: 3.5, k: 135, icon: '🍲', cat: 'Homemade', micros: 'Folate, Iron, Potassium, Zinc' },
-  { name: 'Dal Makhani (Homemade, 1 bowl ~150g)', p: 8.2, c: 22, f: 7.5, k: 190, icon: '🍲', cat: 'Homemade', micros: 'Calcium, Iron, Folate' },
-  { name: 'Rajma Curry (Kidney Beans, 1 bowl ~150g)', p: 9.5, c: 24, f: 3.2, k: 165, icon: '🍛', cat: 'Homemade', micros: 'High Fiber, Molybdenum, Folate, Iron' },
-  { name: 'Chole / Chana Masala (1 bowl ~150g)', p: 8.8, c: 26, f: 4.5, k: 180, icon: '🍛', cat: 'Homemade', micros: 'Zinc, Folate, Dietary Fiber' },
-  { name: 'Moong Dal Khichdi (1 bowl ~200g)', p: 8.0, c: 38, f: 3.0, k: 210, icon: '🥣', cat: 'Homemade', micros: 'Easy digestion, Potassium, B-Vitamins' },
-  { name: 'Aloo Paratha (Homemade, 1 pc ~80g)', p: 4.5, c: 34, f: 8.0, k: 230, icon: '🫓', cat: 'Homemade', micros: 'Carbs, Vitamin C, Potassium' },
-  { name: 'Paneer Paratha (Homemade, 1 pc ~90g)', p: 10.5, c: 30, f: 12.0, k: 275, icon: '🫓', cat: 'Homemade', micros: 'Calcium, Protein, Phosphorus' },
-  { name: 'Palak Paneer (1 bowl ~180g)', p: 12.0, c: 9.0, f: 14.0, k: 215, icon: '🥬', cat: 'Homemade', micros: 'Iron, Vitamin A, Vitamin K, Calcium' },
-  { name: 'Paneer Bhurji (Scrambled Paneer, 150g)', p: 16.5, c: 5.5, f: 18.0, k: 250, icon: '🧀', cat: 'Homemade', micros: 'High Calcium, Vitamin B12, Phosphorus' },
-  { name: 'Bhindi Masala (Okra Sabzi, 1 bowl ~120g)', p: 2.2, c: 9.0, f: 4.0, k: 80, icon: '🥗', cat: 'Homemade', micros: 'Vitamin C, Vitamin K, Folate, Fiber' },
-  { name: 'Mixed Veg Sabzi (Carrot, Peas, Beans ~150g)', p: 3.5, c: 14.0, f: 4.0, k: 105, icon: '🥕', cat: 'Homemade', micros: 'Beta-Carotene, Vit A, Vit C, Fiber' },
-  { name: 'Poha with Peanuts (1 plate ~150g)', p: 5.5, c: 38.0, f: 6.5, k: 235, icon: '🍚', cat: 'Homemade', micros: 'Iron, Carbohydrates, Healthy Fats' },
-  { name: 'Suji Upma with Veggies (1 bowl ~150g)', p: 4.5, c: 32.0, f: 4.5, k: 190, icon: '🥣', cat: 'Homemade', micros: 'B-Complex, Iron' },
-  { name: 'Idli (Steamed Rice & Lentil, 2 pcs ~100g)', p: 4.2, c: 28.0, f: 0.5, k: 135, icon: '⚪', cat: 'Homemade', micros: 'Fermented Gut Probiotics, B-Vitamins' },
-  { name: 'Plain Dosa (Homemade, 1 medium ~80g)', p: 3.8, c: 27.0, f: 3.5, k: 155, icon: '🥞', cat: 'Homemade', micros: 'Carbohydrates, Sodium' },
-  { name: 'Besan Chilla (Gram Flour Pancake, 1 pc)', p: 7.0, c: 18.0, f: 4.0, k: 140, icon: '🥞', cat: 'Homemade', micros: 'Zinc, Magnesium, Plant Protein' },
-  { name: 'Moong Dal Chilla (High Protein, 1 pc)', p: 9.5, c: 19.0, f: 3.0, k: 145, icon: '🥞', cat: 'Homemade', micros: 'Potassium, Folate, Iron' },
-  { name: 'Curd / Plain Dahi (1 cup ~150g)', p: 5.5, c: 7.0, f: 4.5, k: 95, icon: '🥣', cat: 'Homemade', micros: 'Active Probiotics, Calcium, Vitamin B12' },
-  { name: 'Buttermilk / Chaas (1 glass ~200ml)', p: 3.2, c: 4.8, f: 1.5, k: 45, icon: '🥛', cat: 'Homemade', micros: 'Electrolytes, Potassium, Hydration' },
+  { name: 'Roti / Chapati (Whole Wheat, 1 pc ~35g)', p: 3.5, c: 17, f: 0.5, k: 85, cat: 'Homemade', micros: 'Fiber, B-Vitamins, Iron, Magnesium' },
+  { name: 'Dal Tadka (Yellow Lentil, 1 bowl ~150g)', p: 7.5, c: 18, f: 3.5, k: 135, cat: 'Homemade', micros: 'Folate, Iron, Potassium, Zinc' },
+  { name: 'Dal Makhani (Homemade, 1 bowl ~150g)', p: 8.2, c: 22, f: 7.5, k: 190, cat: 'Homemade', micros: 'Calcium, Iron, Folate' },
+  { name: 'Rajma Curry (Kidney Beans, 1 bowl ~150g)', p: 9.5, c: 24, f: 3.2, k: 165, cat: 'Homemade', micros: 'High Fiber, Molybdenum, Folate, Iron' },
+  { name: 'Chole / Chana Masala (1 bowl ~150g)', p: 8.8, c: 26, f: 4.5, k: 180, cat: 'Homemade', micros: 'Zinc, Folate, Dietary Fiber' },
+  { name: 'Moong Dal Khichdi (1 bowl ~200g)', p: 8.0, c: 38, f: 3.0, k: 210, cat: 'Homemade', micros: 'Easy digestion, Potassium, B-Vitamins' },
+  { name: 'Aloo Paratha (Homemade, 1 pc ~80g)', p: 4.5, c: 34, f: 8.0, k: 230, cat: 'Homemade', micros: 'Carbs, Vitamin C, Potassium' },
+  { name: 'Paneer Paratha (Homemade, 1 pc ~90g)', p: 10.5, c: 30, f: 12.0, k: 275, cat: 'Homemade', micros: 'Calcium, Protein, Phosphorus' },
+  { name: 'Palak Paneer (1 bowl ~180g)', p: 12.0, c: 9.0, f: 14.0, k: 215, cat: 'Homemade', micros: 'Iron, Vitamin A, Vitamin K, Calcium' },
+  { name: 'Paneer Bhurji (Scrambled Paneer, 150g)', p: 16.5, c: 5.5, f: 18.0, k: 250, cat: 'Homemade', micros: 'High Calcium, Vitamin B12, Phosphorus' },
+  { name: 'Bhindi Masala (Okra Sabzi, 1 bowl ~120g)', p: 2.2, c: 9.0, f: 4.0, k: 80, cat: 'Homemade', micros: 'Vitamin C, Vitamin K, Folate, Fiber' },
+  { name: 'Mixed Veg Sabzi (Carrot, Peas, Beans ~150g)', p: 3.5, c: 14.0, f: 4.0, k: 105, cat: 'Homemade', micros: 'Beta-Carotene, Vit A, Vit C, Fiber' },
+  { name: 'Poha with Peanuts (1 plate ~150g)', p: 5.5, c: 38.0, f: 6.5, k: 235, cat: 'Homemade', micros: 'Iron, Carbohydrates, Healthy Fats' },
+  { name: 'Suji Upma with Veggies (1 bowl ~150g)', p: 4.5, c: 32.0, f: 4.5, k: 190, cat: 'Homemade', micros: 'B-Complex, Iron' },
+  { name: 'Idli (Steamed Rice & Lentil, 2 pcs ~100g)', p: 4.2, c: 28.0, f: 0.5, k: 135, cat: 'Homemade', micros: 'Fermented Gut Probiotics, B-Vitamins' },
+  { name: 'Plain Dosa (Homemade, 1 medium ~80g)', p: 3.8, c: 27.0, f: 3.5, k: 155, cat: 'Homemade', micros: 'Carbohydrates, Sodium' },
+  { name: 'Besan Chilla (Gram Flour Pancake, 1 pc)', p: 7.0, c: 18.0, f: 4.0, k: 140, cat: 'Homemade', micros: 'Zinc, Magnesium, Plant Protein' },
+  { name: 'Moong Dal Chilla (High Protein, 1 pc)', p: 9.5, c: 19.0, f: 3.0, k: 145, cat: 'Homemade', micros: 'Potassium, Folate, Iron' },
+  { name: 'Curd / Plain Dahi (1 cup ~150g)', p: 5.5, c: 7.0, f: 4.5, k: 95, cat: 'Homemade', micros: 'Active Probiotics, Calcium, Vitamin B12' },
+  { name: 'Buttermilk / Chaas (1 glass ~200ml)', p: 3.2, c: 4.8, f: 1.5, k: 45, cat: 'Homemade', micros: 'Electrolytes, Potassium, Hydration' },
 
   // --- PROTEIN SOURCES (VEG & NON-VEG) ---
-  { name: 'Chicken Breast (Cooked, 100g)', p: 31.0, c: 0.0, f: 3.6, k: 165, icon: '🍗', cat: 'Protein', micros: 'Niacin (B3), B6, Selenium, Phosphorus' },
-  { name: 'Tandoori Chicken (1 leg/breast ~150g)', p: 32.0, c: 3.0, f: 8.0, k: 215, icon: '🍗', cat: 'Protein', micros: 'High Lean Protein, Iron, B-Vitamins' },
-  { name: 'Chicken Curry (Homemade, 1 bowl ~200g)', p: 26.0, c: 6.0, f: 12.0, k: 240, icon: '🍗', cat: 'Protein', micros: 'Zinc, Vitamin B12, Iron' },
-  { name: 'Boiled Egg (Whole, 1 Large ~50g)', p: 6.3, c: 0.5, f: 5.0, k: 74, icon: '🥚', cat: 'Protein', micros: 'Choline, Vitamin D, Vitamin B12, Lutein' },
-  { name: 'Egg Whites (Cooked, 3 whites ~100g)', p: 11.0, c: 0.7, f: 0.2, k: 52, icon: '🍳', cat: 'Protein', micros: 'Pure Albumin, Potassium, Sodium' },
-  { name: 'Egg Bhurji / Scramble (2 eggs + veggies)', p: 14.0, c: 4.0, f: 12.0, k: 185, icon: '🍳', cat: 'Protein', micros: 'Choline, Vitamin A, Selenium' },
-  { name: 'Masala Omelette (2 eggs with onions/chili)', p: 13.5, c: 3.5, f: 11.5, k: 175, icon: '🍳', cat: 'Protein', micros: 'Zinc, Iron, Vitamin D' },
-  { name: 'Fish Curry (Rohu / Catla, 1 bowl ~180g)', p: 22.0, c: 4.0, f: 9.0, k: 190, icon: '🐟', cat: 'Protein', micros: 'Omega-3 fatty acids, Iodine, Vitamin D' },
-  { name: 'Grilled Salmon Fillet (150g)', p: 34.0, c: 0.0, f: 18.0, k: 300, icon: '🐟', cat: 'Protein', image: 'images/salmon-bowl.jpg', micros: 'DHA/EPA Omega-3s, Vit B12, Selenium' },
-  { name: 'Paneer (Raw Fresh, 100g)', p: 18.0, c: 3.5, f: 20.0, k: 265, icon: '🧀', cat: 'Protein', micros: 'Calcium (480mg), Phosphorus, Vit A' },
-  { name: 'Tofu (Firm Soy Paneer, 100g)', p: 12.0, c: 2.5, f: 5.5, k: 90, icon: '🧊', cat: 'Protein', micros: 'Iron, Calcium, Isoflavones' },
-  { name: 'Soya Chunks (Cooked, 1 bowl ~120g)', p: 24.0, c: 14.0, f: 0.5, k: 160, icon: '🧆', cat: 'Protein', micros: 'High Plant Protein, Copper, Magnesium' },
-  { name: 'Whey Protein Isolate (1 scoop ~30g)', p: 26.0, c: 1.5, f: 0.5, k: 115, icon: '🥤', cat: 'Protein', micros: 'BCAAs (Leucine 2.7g), Glutamine, Calcium' },
-  { name: 'Casein Protein Powder (1 scoop ~30g)', p: 24.0, c: 2.0, f: 1.0, k: 120, icon: '🥤', cat: 'Protein', micros: 'Slow release amino acids, High Calcium' },
-  { name: 'Greek Yogurt 0% (Plain, 150g)', p: 15.0, c: 5.5, f: 0.5, k: 88, icon: '🥣', cat: 'Protein', image: 'images/greek-yogurt.jpg', micros: 'Probiotics, Calcium, B12, Zinc' },
-  { name: 'Sprouted Green Moong (Boiled, 100g)', p: 7.5, c: 19.0, f: 0.8, k: 105, icon: '🌱', cat: 'Protein', micros: 'Enzymes, Vitamin C, Folate, Iron' },
-  { name: 'Boiled Kala Chana (Black Chickpeas, 100g)', p: 9.0, c: 27.0, f: 2.5, k: 165, icon: '🥣', cat: 'Protein', micros: 'Iron, High Fiber, Low GI Energy' },
+  { name: 'Chicken Breast (Cooked, 100g)', p: 31.0, c: 0.0, f: 3.6, k: 165, cat: 'Protein', micros: 'Niacin (B3), B6, Selenium, Phosphorus' },
+  { name: 'Tandoori Chicken (1 leg/breast ~150g)', p: 32.0, c: 3.0, f: 8.0, k: 215, cat: 'Protein', micros: 'High Lean Protein, Iron, B-Vitamins' },
+  { name: 'Chicken Curry (Homemade, 1 bowl ~200g)', p: 26.0, c: 6.0, f: 12.0, k: 240, cat: 'Protein', micros: 'Zinc, Vitamin B12, Iron' },
+  { name: 'Boiled Egg (Whole, 1 Large ~50g)', p: 6.3, c: 0.5, f: 5.0, k: 74, cat: 'Protein', micros: 'Choline, Vitamin D, Vitamin B12, Lutein' },
+  { name: 'Egg Whites (Cooked, 3 whites ~100g)', p: 11.0, c: 0.7, f: 0.2, k: 52, cat: 'Protein', micros: 'Pure Albumin, Potassium, Sodium' },
+  { name: 'Egg Bhurji / Scramble (2 eggs + veggies)', p: 14.0, c: 4.0, f: 12.0, k: 185, cat: 'Protein', micros: 'Choline, Vitamin A, Selenium' },
+  { name: 'Masala Omelette (2 eggs with onions/chili)', p: 13.5, c: 3.5, f: 11.5, k: 175, cat: 'Protein', micros: 'Zinc, Iron, Vitamin D' },
+  { name: 'Fish Curry (Rohu / Catla, 1 bowl ~180g)', p: 22.0, c: 4.0, f: 9.0, k: 190, cat: 'Protein', micros: 'Omega-3 fatty acids, Iodine, Vitamin D' },
+  { name: 'Grilled Salmon Fillet (150g)', p: 34.0, c: 0.0, f: 18.0, k: 300, cat: 'Protein', image: 'images/salmon-bowl.jpg', micros: 'DHA/EPA Omega-3s, Vit B12, Selenium' },
+  { name: 'Paneer (Raw Fresh, 100g)', p: 18.0, c: 3.5, f: 20.0, k: 265, cat: 'Protein', micros: 'Calcium (480mg), Phosphorus, Vit A' },
+  { name: 'Tofu (Firm Soy Paneer, 100g)', p: 12.0, c: 2.5, f: 5.5, k: 90, cat: 'Protein', micros: 'Iron, Calcium, Isoflavones' },
+  { name: 'Soya Chunks (Cooked, 1 bowl ~120g)', p: 24.0, c: 14.0, f: 0.5, k: 160, cat: 'Protein', micros: 'High Plant Protein, Copper, Magnesium' },
+  { name: 'Whey Protein Isolate (1 scoop ~30g)', p: 26.0, c: 1.5, f: 0.5, k: 115, cat: 'Protein', micros: 'BCAAs (Leucine 2.7g), Glutamine, Calcium' },
+  { name: 'Casein Protein Powder (1 scoop ~30g)', p: 24.0, c: 2.0, f: 1.0, k: 120, cat: 'Protein', micros: 'Slow release amino acids, High Calcium' },
+  { name: 'Greek Yogurt 0% (Plain, 150g)', p: 15.0, c: 5.5, f: 0.5, k: 88, cat: 'Protein', image: 'images/greek-yogurt.jpg', micros: 'Probiotics, Calcium, B12, Zinc' },
+  { name: 'Sprouted Green Moong (Boiled, 100g)', p: 7.5, c: 19.0, f: 0.8, k: 105, cat: 'Protein', micros: 'Enzymes, Vitamin C, Folate, Iron' },
+  { name: 'Boiled Kala Chana (Black Chickpeas, 100g)', p: 9.0, c: 27.0, f: 2.5, k: 165, cat: 'Protein', micros: 'Iron, High Fiber, Low GI Energy' },
 
   // --- HOTEL & RESTAURANT DELICACIES ---
-  { name: 'Chicken Dum Biryani (Restaurant, 1 plate ~350g)', p: 32.0, c: 68.0, f: 22.0, k: 590, icon: '🍗', cat: 'Restaurant', micros: 'Iron, Niacin, Sodium' },
-  { name: 'Veg Dum Biryani (Restaurant, 1 plate ~300g)', p: 10.0, c: 65.0, f: 16.0, k: 445, icon: '🍚', cat: 'Restaurant', micros: 'Carbohydrates, Spices antioxidants' },
-  { name: 'Butter Chicken (Restaurant, 1 portion ~220g)', p: 28.0, c: 12.0, f: 26.0, k: 395, icon: '🥘', cat: 'Restaurant', micros: 'Lycopene, Vit A, Saturated fats' },
-  { name: 'Paneer Butter Masala (Restaurant, 1 portion ~200g)', p: 15.0, c: 14.0, f: 28.0, k: 365, icon: '🥘', cat: 'Restaurant', micros: 'Calcium, Fat soluble vitamins' },
-  { name: 'Butter Naan (Restaurant, 1 pc ~90g)', p: 7.5, c: 45.0, f: 11.0, k: 310, icon: '🫓', cat: 'Restaurant', micros: 'Refined carbs, Sodium' },
-  { name: 'Garlic Naan (Restaurant, 1 pc ~90g)', p: 7.8, c: 44.0, f: 9.5, k: 295, icon: '🫓', cat: 'Restaurant', micros: 'Allicin, Carbohydrates' },
-  { name: 'Veg Hakka Noodles (1 plate ~250g)', p: 7.0, c: 56.0, f: 14.0, k: 380, icon: '🍜', cat: 'Restaurant', micros: 'Sodium, B-Vitamins' },
-  { name: 'Chicken Fried Rice (Restaurant, 1 plate ~300g)', p: 20.0, c: 62.0, f: 16.0, k: 475, icon: '🍳', cat: 'Restaurant', micros: 'Protein, Selenium, Sodium' },
-  { name: 'Veg Manchurian Gravy (1 portion ~180g)', p: 5.0, c: 24.0, f: 12.0, k: 225, icon: '🧆', cat: 'Restaurant', micros: 'Dietary fiber from veggies, Sodium' },
-  { name: 'Pav Bhaji with Butter (2 pav + bhaji)', p: 9.0, c: 58.0, f: 18.0, k: 430, icon: '🍛', cat: 'Restaurant', micros: 'Potassium, Lycopene, Vitamin C' },
-  { name: 'Chole Bhature (2 bhature + chole)', p: 16.0, c: 84.0, f: 32.0, k: 690, icon: '🫓', cat: 'Restaurant', micros: 'High calorie density, Iron, Folate' },
+  { name: 'Chicken Dum Biryani (Restaurant, 1 plate ~350g)', p: 32.0, c: 68.0, f: 22.0, k: 590, cat: 'Restaurant', micros: 'Iron, Niacin, Sodium' },
+  { name: 'Veg Dum Biryani (Restaurant, 1 plate ~300g)', p: 10.0, c: 65.0, f: 16.0, k: 445, cat: 'Restaurant', micros: 'Carbohydrates, Spices antioxidants' },
+  { name: 'Butter Chicken (Restaurant, 1 portion ~220g)', p: 28.0, c: 12.0, f: 26.0, k: 395, cat: 'Restaurant', micros: 'Lycopene, Vit A, Saturated fats' },
+  { name: 'Paneer Butter Masala (Restaurant, 1 portion ~200g)', p: 15.0, c: 14.0, f: 28.0, k: 365, cat: 'Restaurant', micros: 'Calcium, Fat soluble vitamins' },
+  { name: 'Butter Naan (Restaurant, 1 pc ~90g)', p: 7.5, c: 45.0, f: 11.0, k: 310, cat: 'Restaurant', micros: 'Refined carbs, Sodium' },
+  { name: 'Garlic Naan (Restaurant, 1 pc ~90g)', p: 7.8, c: 44.0, f: 9.5, k: 295, cat: 'Restaurant', micros: 'Allicin, Carbohydrates' },
+  { name: 'Veg Hakka Noodles (1 plate ~250g)', p: 7.0, c: 56.0, f: 14.0, k: 380, cat: 'Restaurant', micros: 'Sodium, B-Vitamins' },
+  { name: 'Chicken Fried Rice (Restaurant, 1 plate ~300g)', p: 20.0, c: 62.0, f: 16.0, k: 475, cat: 'Restaurant', micros: 'Protein, Selenium, Sodium' },
+  { name: 'Veg Manchurian Gravy (1 portion ~180g)', p: 5.0, c: 24.0, f: 12.0, k: 225, cat: 'Restaurant', micros: 'Dietary fiber from veggies, Sodium' },
+  { name: 'Pav Bhaji with Butter (2 pav + bhaji)', p: 9.0, c: 58.0, f: 18.0, k: 430, cat: 'Restaurant', micros: 'Potassium, Lycopene, Vitamin C' },
+  { name: 'Chole Bhature (2 bhature + chole)', p: 16.0, c: 84.0, f: 32.0, k: 690, cat: 'Restaurant', micros: 'High calorie density, Iron, Folate' },
 
   // --- FAST FOOD, BURGERS & STREET FOOD ---
-  { name: "McDonald's McChicken Burger (1 pc)", p: 14.0, c: 40.0, f: 18.0, k: 380, icon: '🍔', cat: 'FastFood', micros: 'Sodium (800mg), Iron, B-Vitamins' },
-  { name: "McDonald's McAloo Tikki Burger (1 pc)", p: 7.0, c: 44.0, f: 14.0, k: 330, icon: '🍔', cat: 'FastFood', micros: 'Carbs, Sodium (650mg)' },
-  { name: 'Burger King Whopper (1 regular burger)', p: 28.0, c: 52.0, f: 36.0, k: 645, icon: '🍔', cat: 'FastFood', micros: 'High protein, High sodium, Iron' },
-  { name: 'French Fries (Medium, 110g)', p: 3.5, c: 42.0, f: 16.0, k: 325, icon: '🍟', cat: 'FastFood', micros: 'Potassium, Sodium' },
-  { name: "Domino's Margherita Pizza (1 medium slice)", p: 9.0, c: 28.0, f: 8.5, k: 225, icon: '🍕', cat: 'FastFood', micros: 'Calcium, Lycopene, Saturated fat' },
-  { name: 'Subway 6-inch Roasted Chicken Sub', p: 24.0, c: 42.0, f: 5.0, k: 310, icon: '🥪', cat: 'FastFood', micros: 'Lean protein, Fiber with fresh veggies' },
-  { name: 'Subway 6-inch Paneer Tikka Sub', p: 16.0, c: 46.0, f: 12.0, k: 360, icon: '🥪', cat: 'FastFood', micros: 'Calcium, Fresh veggie antioxidants' },
-  { name: 'Steamed Chicken Momos (6 pcs)', p: 16.0, c: 32.0, f: 6.0, k: 245, icon: '🥟', cat: 'FastFood', micros: 'Lean protein, Capsaicin in chili dip' },
-  { name: 'Steamed Veg Momos (6 pcs)', p: 5.0, c: 36.0, f: 4.5, k: 205, icon: '🥟', cat: 'FastFood', micros: 'Fiber, Carbs' },
-  { name: 'Samosa (1 pc ~80g, Deep Fried)', p: 3.5, c: 28.0, f: 14.0, k: 250, icon: '🥟', cat: 'FastFood', micros: 'High fat, Potassium from potatoes' },
-  { name: 'Vada Pav (1 pc with chutney)', p: 5.5, c: 38.0, f: 13.0, k: 290, icon: '🍔', cat: 'FastFood', micros: 'Carbohydrates, Garlic antioxidants' },
-  { name: 'Chicken Shawarma Roll (1 roll ~180g)', p: 22.0, c: 34.0, f: 14.0, k: 350, icon: '🌯', cat: 'FastFood', micros: 'High Protein, Vitamin B6, Garlic' },
-  { name: 'Maggi 2-Minute Noodles (1 single pack ~70g)', p: 7.5, c: 45.0, f: 12.0, k: 320, icon: '🍜', cat: 'FastFood', micros: 'Sodium (950mg), Fortified Iron' },
+  { name: "McDonald's McChicken Burger (1 pc)", p: 14.0, c: 40.0, f: 18.0, k: 380, cat: 'FastFood', micros: 'Sodium (800mg), Iron, B-Vitamins' },
+  { name: "McDonald's McAloo Tikki Burger (1 pc)", p: 7.0, c: 44.0, f: 14.0, k: 330, cat: 'FastFood', micros: 'Carbs, Sodium (650mg)' },
+  { name: 'Burger King Whopper (1 regular burger)', p: 28.0, c: 52.0, f: 36.0, k: 645, cat: 'FastFood', micros: 'High protein, High sodium, Iron' },
+  { name: 'French Fries (Medium, 110g)', p: 3.5, c: 42.0, f: 16.0, k: 325, cat: 'FastFood', micros: 'Potassium, Sodium' },
+  { name: "Domino's Margherita Pizza (1 medium slice)", p: 9.0, c: 28.0, f: 8.5, k: 225, cat: 'FastFood', micros: 'Calcium, Lycopene, Saturated fat' },
+  { name: 'Subway 6-inch Roasted Chicken Sub', p: 24.0, c: 42.0, f: 5.0, k: 310, cat: 'FastFood', micros: 'Lean protein, Fiber with fresh veggies' },
+  { name: 'Subway 6-inch Paneer Tikka Sub', p: 16.0, c: 46.0, f: 12.0, k: 360, cat: 'FastFood', micros: 'Calcium, Fresh veggie antioxidants' },
+  { name: 'Steamed Chicken Momos (6 pcs)', p: 16.0, c: 32.0, f: 6.0, k: 245, cat: 'FastFood', micros: 'Lean protein, Capsaicin in chili dip' },
+  { name: 'Steamed Veg Momos (6 pcs)', p: 5.0, c: 36.0, f: 4.5, k: 205, cat: 'FastFood', micros: 'Fiber, Carbs' },
+  { name: 'Samosa (1 pc ~80g, Deep Fried)', p: 3.5, c: 28.0, f: 14.0, k: 250, cat: 'FastFood', micros: 'High fat, Potassium from potatoes' },
+  { name: 'Vada Pav (1 pc with chutney)', p: 5.5, c: 38.0, f: 13.0, k: 290, cat: 'FastFood', micros: 'Carbohydrates, Garlic antioxidants' },
+  { name: 'Chicken Shawarma Roll (1 roll ~180g)', p: 22.0, c: 34.0, f: 14.0, k: 350, cat: 'FastFood', micros: 'High Protein, Vitamin B6, Garlic' },
+  { name: 'Maggi 2-Minute Noodles (1 single pack ~70g)', p: 7.5, c: 45.0, f: 12.0, k: 320, cat: 'FastFood', micros: 'Sodium (950mg), Fortified Iron' },
 
   // --- GRAINS, RICE & HEALTHY CARBS ---
-  { name: 'White Rice (Cooked, 100g)', p: 2.7, c: 28.0, f: 0.3, k: 130, icon: '🍚', cat: 'Carbs', micros: 'Fast digesting glycogen, Folate, Iron' },
-  { name: 'Brown Rice (Cooked, 100g)', p: 2.6, c: 23.0, f: 0.9, k: 111, icon: '🌾', cat: 'Carbs', micros: 'Magnesium, Phosphorus, Dietary fiber' },
-  { name: 'Rolled Oats (Raw, 100g)', p: 13.0, c: 68.0, f: 7.0, k: 389, icon: '🥣', cat: 'Carbs', micros: 'Beta-Glucan fiber (heart health), Zinc, Iron' },
-  { name: 'Sweet Potato (Boiled/Baked, 100g)', p: 2.0, c: 21.0, f: 0.1, k: 90, icon: '🍠', cat: 'Carbs', micros: 'Vitamin A (Beta-carotene 120% RDA), Potassium' },
-  { name: 'Whole Wheat Bread (2 slices ~60g)', p: 6.0, c: 26.0, f: 1.8, k: 145, icon: '🍞', cat: 'Carbs', micros: 'B-Vitamins, Complex fiber' },
-  { name: 'Quinoa (Cooked, 100g)', p: 4.4, c: 21.3, f: 1.9, k: 120, icon: '🌾', cat: 'Carbs', micros: 'Complete 9 Essential Aminos, Magnesium' },
+  { name: 'White Rice (Cooked, 100g)', p: 2.7, c: 28.0, f: 0.3, k: 130, cat: 'Carbs', micros: 'Fast digesting glycogen, Folate, Iron' },
+  { name: 'Brown Rice (Cooked, 100g)', p: 2.6, c: 23.0, f: 0.9, k: 111, cat: 'Carbs', micros: 'Magnesium, Phosphorus, Dietary fiber' },
+  { name: 'Rolled Oats (Raw, 100g)', p: 13.0, c: 68.0, f: 7.0, k: 389, cat: 'Carbs', micros: 'Beta-Glucan fiber (heart health), Zinc, Iron' },
+  { name: 'Sweet Potato (Boiled/Baked, 100g)', p: 2.0, c: 21.0, f: 0.1, k: 90, cat: 'Carbs', micros: 'Vitamin A (Beta-carotene 120% RDA), Potassium' },
+  { name: 'Whole Wheat Bread (2 slices ~60g)', p: 6.0, c: 26.0, f: 1.8, k: 145, cat: 'Carbs', micros: 'B-Vitamins, Complex fiber' },
+  { name: 'Quinoa (Cooked, 100g)', p: 4.4, c: 21.3, f: 1.9, k: 120, cat: 'Carbs', micros: 'Complete 9 Essential Aminos, Magnesium' },
 
   // --- FRUITS & MICRONUTRIENT-RICH VEGGIES ---
-  { name: 'Banana (1 Medium ~118g)', p: 1.3, c: 27.0, f: 0.4, k: 105, icon: '🍌', cat: 'Fruits', micros: 'Potassium (422mg), Vitamin B6, Vit C' },
-  { name: 'Apple (1 Medium ~180g)', p: 0.5, c: 25.0, f: 0.3, k: 95, icon: '🍎', cat: 'Fruits', micros: 'Pectin fiber, Quercetin antioxidant, Vit C' },
-  { name: 'Papaya (Fresh Diced, 150g)', p: 0.8, c: 16.0, f: 0.2, k: 65, icon: '🍈', cat: 'Fruits', micros: 'Papain digestive enzyme, Vit C (100% RDA), Vit A' },
-  { name: 'Guava (Amrood, 1 medium ~100g)', p: 2.6, c: 14.0, f: 1.0, k: 68, icon: '🍐', cat: 'Fruits', micros: 'Ultra Vitamin C (228mg = 250% RDA), Fiber 5.4g' },
-  { name: 'Mango (Alphonso Slices, 150g)', p: 1.2, c: 25.0, f: 0.6, k: 99, icon: '🥭', cat: 'Fruits', micros: 'Vitamin A, Vitamin C, Antioxidants' },
-  { name: 'Watermelon (Fresh Chunks, 200g)', p: 1.2, c: 15.0, f: 0.3, k: 60, icon: '🍉', cat: 'Fruits', micros: 'Lycopene, Citrulline (muscle pump), 92% Hydration' },
-  { name: 'Orange (1 Medium ~130g)', p: 1.2, c: 15.4, f: 0.2, k: 62, icon: '🍊', cat: 'Fruits', micros: 'Vitamin C (70mg), Potassium, Folate' },
-  { name: 'Spinach / Raw Palak (100g)', p: 2.9, c: 3.6, f: 0.4, k: 23, icon: '🥬', cat: 'Veggies', micros: 'Iron (2.7mg), Vit K (483% RDA), Vit A, Folate' },
-  { name: 'Broccoli (Steamed, 100g)', p: 2.8, c: 7.0, f: 0.4, k: 35, icon: '🥦', cat: 'Veggies', micros: 'Sulforaphane, Vit C (89mg), Vit K, Fiber' },
-  { name: 'Cucumber (Fresh with peel, 100g)', p: 0.7, c: 3.6, f: 0.1, k: 15, icon: '🥒', cat: 'Veggies', micros: 'Silica, Potassium, 96% Water' },
-  { name: 'Carrot (Raw, 100g)', p: 0.9, c: 9.6, f: 0.2, k: 41, icon: '🥕', cat: 'Veggies', micros: 'Beta-Carotene (Vit A 835mcg), Lutein, Vit K' },
+  { name: 'Banana (1 Medium ~118g)', p: 1.3, c: 27.0, f: 0.4, k: 105, cat: 'Fruits', micros: 'Potassium (422mg), Vitamin B6, Vit C' },
+  { name: 'Apple (1 Medium ~180g)', p: 0.5, c: 25.0, f: 0.3, k: 95, cat: 'Fruits', micros: 'Pectin fiber, Quercetin antioxidant, Vit C' },
+  { name: 'Papaya (Fresh Diced, 150g)', p: 0.8, c: 16.0, f: 0.2, k: 65, cat: 'Fruits', micros: 'Papain digestive enzyme, Vit C (100% RDA), Vit A' },
+  { name: 'Guava (Amrood, 1 medium ~100g)', p: 2.6, c: 14.0, f: 1.0, k: 68, cat: 'Fruits', micros: 'Ultra Vitamin C (228mg = 250% RDA), Fiber 5.4g' },
+  { name: 'Mango (Alphonso Slices, 150g)', p: 1.2, c: 25.0, f: 0.6, k: 99, cat: 'Fruits', micros: 'Vitamin A, Vitamin C, Antioxidants' },
+  { name: 'Watermelon (Fresh Chunks, 200g)', p: 1.2, c: 15.0, f: 0.3, k: 60, cat: 'Fruits', micros: 'Lycopene, Citrulline (muscle pump), 92% Hydration' },
+  { name: 'Orange (1 Medium ~130g)', p: 1.2, c: 15.4, f: 0.2, k: 62, cat: 'Fruits', micros: 'Vitamin C (70mg), Potassium, Folate' },
+  { name: 'Spinach / Raw Palak (100g)', p: 2.9, c: 3.6, f: 0.4, k: 23, cat: 'Veggies', micros: 'Iron (2.7mg), Vit K (483% RDA), Vit A, Folate' },
+  { name: 'Broccoli (Steamed, 100g)', p: 2.8, c: 7.0, f: 0.4, k: 35, cat: 'Veggies', micros: 'Sulforaphane, Vit C (89mg), Vit K, Fiber' },
+  { name: 'Cucumber (Fresh with peel, 100g)', p: 0.7, c: 3.6, f: 0.1, k: 15, cat: 'Veggies', micros: 'Silica, Potassium, 96% Water' },
+  { name: 'Carrot (Raw, 100g)', p: 0.9, c: 9.6, f: 0.2, k: 41, cat: 'Veggies', micros: 'Beta-Carotene (Vit A 835mcg), Lutein, Vit K' },
 
   // --- NUTS, DRY FRUITS & SEEDS ---
-  { name: 'Almonds / Badam (Raw, 100g)', p: 21.2, c: 21.6, f: 49.9, k: 579, icon: '🥜', cat: 'Dry Fruits', micros: 'Vitamin E (170% RDA), Magnesium, Manganese, Riboflavin' },
-  { name: 'Almonds / Badam (1 fistful ~28g / 23 nuts)', p: 6.0, c: 6.0, f: 14.0, k: 164, icon: '🥜', cat: 'Dry Fruits', micros: 'Vitamin E (50% RDA), Magnesium, Dietary Fiber' },
-  { name: 'Walnuts / Akhrot (Raw Halves, 100g)', p: 15.2, c: 13.7, f: 65.2, k: 654, icon: '🥜', cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 9.1g), Neuroprotective Polyphenols' },
-  { name: 'Walnuts / Akhrot (28g ~7 whole nuts)', p: 4.3, c: 3.9, f: 18.5, k: 185, icon: '🥜', cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 2.5g), Copper, Manganese' },
-  { name: 'Cashews / Kaju (Raw, 100g)', p: 18.2, c: 30.2, f: 43.8, k: 553, icon: '🥜', cat: 'Dry Fruits', micros: 'Zinc (5.8mg), Magnesium (292mg), Copper, Iron' },
-  { name: 'Cashews / Kaju (1 serving ~28g / 18 nuts)', p: 5.1, c: 8.5, f: 12.3, k: 155, icon: '🥜', cat: 'Dry Fruits', micros: 'Magnesium, Phosphorus, Monounsaturated oleic acid' },
-  { name: 'Pistachios / Pista (Shelled, 100g)', p: 20.2, c: 27.2, f: 45.3, k: 562, icon: '🥜', cat: 'Dry Fruits', micros: 'Potassium (1025mg), Vitamin B6 (1.7mg), Lutein' },
-  { name: 'Pistachios / Pista (1 serving ~28g / 45 kernels)', p: 5.7, c: 7.7, f: 12.8, k: 159, icon: '🥜', cat: 'Dry Fruits', micros: 'Eye health carotenoids, Fiber, Vitamin B6' },
-  { name: 'Raisins / Kismis (100g)', p: 3.1, c: 79.2, f: 0.5, k: 299, icon: '🍇', cat: 'Dry Fruits', micros: 'Iron (1.9mg), Potassium (749mg), Boron for bone health' },
-  { name: 'Raisins / Kismis (1 small handful ~30g)', p: 0.9, c: 23.8, f: 0.1, k: 90, icon: '🍇', cat: 'Dry Fruits', micros: 'Rapid glycogen replenish, Electrolyte potassium' },
-  { name: 'Dates / Khajoor (Medjool / Kimia, 100g)', p: 1.8, c: 75.0, f: 0.2, k: 277, icon: '🌴', cat: 'Dry Fruits', micros: 'Potassium (696mg), Magnesium, Polyphenols, Fiber' },
-  { name: 'Dates / Khajoor (2 whole dates ~48g)', p: 0.9, c: 36.0, f: 0.1, k: 133, icon: '🌴', cat: 'Dry Fruits', micros: 'Pre-workout natural burst energy, Copper, Vit B6' },
-  { name: 'Dried Figs / Anjeer (100g)', p: 3.3, c: 63.9, f: 0.9, k: 249, icon: '🌰', cat: 'Dry Fruits', micros: 'High Calcium (162mg), Iron (2.0mg), Potassium, Fiber 9.8g' },
-  { name: 'Dried Figs / Anjeer (2 whole soaked figs ~40g)', p: 1.3, c: 25.6, f: 0.4, k: 100, icon: '🌰', cat: 'Dry Fruits', micros: 'Digestive enzymes, Calcium, Soluble prebiotic fiber' },
-  { name: 'Dried Apricots / Khubani (100g)', p: 3.4, c: 62.6, f: 0.5, k: 241, icon: '🍑', cat: 'Dry Fruits', micros: 'Beta-Carotene (Vit A 180mcg), Potassium (1160mg), Iron' },
-  { name: 'Dried Cranberries (100g)', p: 0.5, c: 82.0, f: 1.4, k: 308, icon: '🍒', cat: 'Dry Fruits', micros: 'Proanthocyanidins (urinary tract health), Vit C' },
-  { name: 'Dried Prunes / Munakka (100g)', p: 2.2, c: 63.9, f: 0.4, k: 240, icon: '🍇', cat: 'Dry Fruits', micros: 'Sorbitol (gut motility), Vit K (60mcg), Boron, Iron' },
-  { name: 'Chia Seeds (Raw, 100g)', p: 16.5, c: 42.1, f: 30.7, k: 486, icon: '🌱', cat: 'Seeds', micros: 'Calcium (631mg = 63% RDA), Omega-3 (17.8g), Fiber 34g' },
-  { name: 'Chia Seeds (1 tbsp ~12g)', p: 2.0, c: 5.0, f: 3.8, k: 60, icon: '🌱', cat: 'Seeds', micros: 'Soluble mucilage fiber, Plant Omega-3 ALA, Calcium' },
-  { name: 'Flax Seeds / Alsi (Raw/Roasted, 100g)', p: 18.3, c: 28.9, f: 42.2, k: 534, icon: '🌱', cat: 'Seeds', micros: 'Omega-3 ALA (22.8g), Lignans (antioxidant), Magnesium' },
-  { name: 'Flax Seeds / Alsi (Ground, 1 tbsp ~10g)', p: 1.8, c: 2.9, f: 4.2, k: 53, icon: '🌱', cat: 'Seeds', micros: 'High bioavailability ALA, Prebiotic soluble fiber' },
-  { name: 'Pumpkin Seeds / Kaddu ke Beej (100g)', p: 30.2, c: 10.7, f: 49.1, k: 559, icon: '🎃', cat: 'Seeds', micros: 'Zinc (7.8mg = 70% RDA), Magnesium (592mg = 148% RDA)' },
-  { name: 'Pumpkin Seeds / Kaddu ke Beej (1 tbsp ~15g)', p: 4.5, c: 1.6, f: 7.4, k: 84, icon: '🎃', cat: 'Seeds', micros: 'High natural Zinc for testosterone & immunity, Tryptophan' },
-  { name: 'Sunflower Seeds / Surajmukhi Beej (100g)', p: 20.8, c: 20.0, f: 51.5, k: 584, icon: '🌻', cat: 'Seeds', micros: 'Vitamin E (35mg = 234% RDA), Selenium (53mcg), Folate' },
-  { name: 'Sunflower Seeds (1 tbsp ~15g)', p: 3.1, c: 3.0, f: 7.7, k: 88, icon: '🌻', cat: 'Seeds', micros: 'Cellular protection Vit E, Magnesium, Copper' },
-  { name: 'Sesame Seeds / White or Black Til (100g)', p: 17.7, c: 23.4, f: 49.7, k: 573, icon: '⚪', cat: 'Seeds', micros: 'Mega Calcium (975mg = 98% RDA), Iron, Copper, Sesamin' },
-  { name: 'Sesame Seeds / Til (1 tbsp ~10g)', p: 1.8, c: 2.3, f: 5.0, k: 57, icon: '⚪', cat: 'Seeds', micros: 'Highest non-dairy calcium source, Zinc, Vitamin B1' },
-  { name: 'Watermelon Seeds / Magaz (100g)', p: 28.3, c: 15.3, f: 47.4, k: 557, icon: '🍉', cat: 'Seeds', micros: 'Iron (7.3mg), Magnesium (515mg), Zinc, Essential aminos' },
-  { name: 'Hemp Seeds (Shelled Hearts, 100g)', p: 31.6, c: 8.7, f: 48.8, k: 553, icon: '🌿', cat: 'Seeds', micros: 'Complete 9 Aminos Plant Protein, GLA, Perfect 3:1 Omega' },
-  { name: 'Pine Nuts / Chilgoza (100g)', p: 13.7, c: 13.1, f: 68.4, k: 673, icon: '🌲', cat: 'Dry Fruits', micros: 'Pinolenic acid (appetite satiety), Vitamin E, Vit K' },
-  { name: 'Brazil Nuts (100g)', p: 14.3, c: 12.3, f: 66.4, k: 656, icon: '🌰', cat: 'Dry Fruits', micros: 'Extreme Selenium (1917mcg = 3485% RDA - eat 2 nuts/day)' },
-  { name: 'Roasted Fox Nuts / Makhana (100g)', p: 9.7, c: 76.9, f: 0.1, k: 347, icon: '⚪', cat: 'Dry Fruits', micros: 'Flavonoid antioxidants, Low Sodium, High Magnesium' },
-  { name: 'Roasted Fox Nuts / Makhana in Ghee (30g bowl)', p: 3.0, c: 23.0, f: 3.5, k: 135, icon: '⚪', cat: 'Dry Fruits', micros: 'Light snacking, Kidney support, Easy digestion' },
-  { name: 'Mixed Dry Fruits & Seeds Trail Mix (30g handful)', p: 4.8, c: 12.5, f: 11.2, k: 165, icon: '🥜', cat: 'Dry Fruits', micros: 'Complete balance of Omega-3s, Vit E, Zinc & Iron' },
-  { name: 'Peanut Butter (1 tbsp ~16g)', p: 4.0, c: 3.5, f: 8.0, k: 95, icon: '🥜', cat: 'Dry Fruits', micros: 'Niacin, Biotin, Monounsaturated healthy fats' },
-  { name: 'Desi Ghee (1 tsp ~5g)', p: 0.0, c: 0.0, f: 5.0, k: 45, icon: '🧈', cat: 'Homemade', micros: 'Butyric acid (gut lining), Vit A, Vit D, Vit E' }
+  { name: 'Almonds / Badam (Raw, 100g)', p: 21.2, c: 21.6, f: 49.9, k: 579, cat: 'Dry Fruits', micros: 'Vitamin E (170% RDA), Magnesium, Manganese, Riboflavin' },
+  { name: 'Almonds / Badam (1 fistful ~28g / 23 nuts)', p: 6.0, c: 6.0, f: 14.0, k: 164, cat: 'Dry Fruits', micros: 'Vitamin E (50% RDA), Magnesium, Dietary Fiber' },
+  { name: 'Walnuts / Akhrot (Raw Halves, 100g)', p: 15.2, c: 13.7, f: 65.2, k: 654, cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 9.1g), Neuroprotective Polyphenols' },
+  { name: 'Walnuts / Akhrot (28g ~7 whole nuts)', p: 4.3, c: 3.9, f: 18.5, k: 185, cat: 'Dry Fruits', micros: 'Plant Omega-3 (ALA 2.5g), Copper, Manganese' },
+  { name: 'Cashews / Kaju (Raw, 100g)', p: 18.2, c: 30.2, f: 43.8, k: 553, cat: 'Dry Fruits', micros: 'Zinc (5.8mg), Magnesium (292mg), Copper, Iron' },
+  { name: 'Cashews / Kaju (1 serving ~28g / 18 nuts)', p: 5.1, c: 8.5, f: 12.3, k: 155, cat: 'Dry Fruits', micros: 'Magnesium, Phosphorus, Monounsaturated oleic acid' },
+  { name: 'Pistachios / Pista (Shelled, 100g)', p: 20.2, c: 27.2, f: 45.3, k: 562, cat: 'Dry Fruits', micros: 'Potassium (1025mg), Vitamin B6 (1.7mg), Lutein' },
+  { name: 'Pistachios / Pista (1 serving ~28g / 45 kernels)', p: 5.7, c: 7.7, f: 12.8, k: 159, cat: 'Dry Fruits', micros: 'Eye health carotenoids, Fiber, Vitamin B6' },
+  { name: 'Raisins / Kismis (100g)', p: 3.1, c: 79.2, f: 0.5, k: 299, cat: 'Dry Fruits', micros: 'Iron (1.9mg), Potassium (749mg), Boron for bone health' },
+  { name: 'Raisins / Kismis (1 small handful ~30g)', p: 0.9, c: 23.8, f: 0.1, k: 90, cat: 'Dry Fruits', micros: 'Rapid glycogen replenish, Electrolyte potassium' },
+  { name: 'Dates / Khajoor (Medjool / Kimia, 100g)', p: 1.8, c: 75.0, f: 0.2, k: 277, cat: 'Dry Fruits', micros: 'Potassium (696mg), Magnesium, Polyphenols, Fiber' },
+  { name: 'Dates / Khajoor (2 whole dates ~48g)', p: 0.9, c: 36.0, f: 0.1, k: 133, cat: 'Dry Fruits', micros: 'Pre-workout natural burst energy, Copper, Vit B6' },
+  { name: 'Dried Figs / Anjeer (100g)', p: 3.3, c: 63.9, f: 0.9, k: 249, cat: 'Dry Fruits', micros: 'High Calcium (162mg), Iron (2.0mg), Potassium, Fiber 9.8g' },
+  { name: 'Dried Figs / Anjeer (2 whole soaked figs ~40g)', p: 1.3, c: 25.6, f: 0.4, k: 100, cat: 'Dry Fruits', micros: 'Digestive enzymes, Calcium, Soluble prebiotic fiber' },
+  { name: 'Dried Apricots / Khubani (100g)', p: 3.4, c: 62.6, f: 0.5, k: 241, cat: 'Dry Fruits', micros: 'Beta-Carotene (Vit A 180mcg), Potassium (1160mg), Iron' },
+  { name: 'Dried Cranberries (100g)', p: 0.5, c: 82.0, f: 1.4, k: 308, cat: 'Dry Fruits', micros: 'Proanthocyanidins (urinary tract health), Vit C' },
+  { name: 'Dried Prunes / Munakka (100g)', p: 2.2, c: 63.9, f: 0.4, k: 240, cat: 'Dry Fruits', micros: 'Sorbitol (gut motility), Vit K (60mcg), Boron, Iron' },
+  { name: 'Chia Seeds (Raw, 100g)', p: 16.5, c: 42.1, f: 30.7, k: 486, cat: 'Seeds', micros: 'Calcium (631mg = 63% RDA), Omega-3 (17.8g), Fiber 34g' },
+  { name: 'Chia Seeds (1 tbsp ~12g)', p: 2.0, c: 5.0, f: 3.8, k: 60, cat: 'Seeds', micros: 'Soluble mucilage fiber, Plant Omega-3 ALA, Calcium' },
+  { name: 'Flax Seeds / Alsi (Raw/Roasted, 100g)', p: 18.3, c: 28.9, f: 42.2, k: 534, cat: 'Seeds', micros: 'Omega-3 ALA (22.8g), Lignans (antioxidant), Magnesium' },
+  { name: 'Flax Seeds / Alsi (Ground, 1 tbsp ~10g)', p: 1.8, c: 2.9, f: 4.2, k: 53, cat: 'Seeds', micros: 'High bioavailability ALA, Prebiotic soluble fiber' },
+  { name: 'Pumpkin Seeds / Kaddu ke Beej (100g)', p: 30.2, c: 10.7, f: 49.1, k: 559, cat: 'Seeds', micros: 'Zinc (7.8mg = 70% RDA), Magnesium (592mg = 148% RDA)' },
+  { name: 'Pumpkin Seeds / Kaddu ke Beej (1 tbsp ~15g)', p: 4.5, c: 1.6, f: 7.4, k: 84, cat: 'Seeds', micros: 'High natural Zinc for testosterone & immunity, Tryptophan' },
+  { name: 'Sunflower Seeds / Surajmukhi Beej (100g)', p: 20.8, c: 20.0, f: 51.5, k: 584, cat: 'Seeds', micros: 'Vitamin E (35mg = 234% RDA), Selenium (53mcg), Folate' },
+  { name: 'Sunflower Seeds (1 tbsp ~15g)', p: 3.1, c: 3.0, f: 7.7, k: 88, cat: 'Seeds', micros: 'Cellular protection Vit E, Magnesium, Copper' },
+  { name: 'Sesame Seeds / White or Black Til (100g)', p: 17.7, c: 23.4, f: 49.7, k: 573, cat: 'Seeds', micros: 'Mega Calcium (975mg = 98% RDA), Iron, Copper, Sesamin' },
+  { name: 'Sesame Seeds / Til (1 tbsp ~10g)', p: 1.8, c: 2.3, f: 5.0, k: 57, cat: 'Seeds', micros: 'Highest non-dairy calcium source, Zinc, Vitamin B1' },
+  { name: 'Watermelon Seeds / Magaz (100g)', p: 28.3, c: 15.3, f: 47.4, k: 557, cat: 'Seeds', micros: 'Iron (7.3mg), Magnesium (515mg), Zinc, Essential aminos' },
+  { name: 'Hemp Seeds (Shelled Hearts, 100g)', p: 31.6, c: 8.7, f: 48.8, k: 553, cat: 'Seeds', micros: 'Complete 9 Aminos Plant Protein, GLA, Perfect 3:1 Omega' },
+  { name: 'Pine Nuts / Chilgoza (100g)', p: 13.7, c: 13.1, f: 68.4, k: 673, cat: 'Dry Fruits', micros: 'Pinolenic acid (appetite satiety), Vitamin E, Vit K' },
+  { name: 'Brazil Nuts (100g)', p: 14.3, c: 12.3, f: 66.4, k: 656, cat: 'Dry Fruits', micros: 'Extreme Selenium (1917mcg = 3485% RDA - eat 2 nuts/day)' },
+  { name: 'Roasted Fox Nuts / Makhana (100g)', p: 9.7, c: 76.9, f: 0.1, k: 347, cat: 'Dry Fruits', micros: 'Flavonoid antioxidants, Low Sodium, High Magnesium' },
+  { name: 'Roasted Fox Nuts / Makhana in Ghee (30g bowl)', p: 3.0, c: 23.0, f: 3.5, k: 135, cat: 'Dry Fruits', micros: 'Light snacking, Kidney support, Easy digestion' },
+  { name: 'Mixed Dry Fruits & Seeds Trail Mix (30g handful)', p: 4.8, c: 12.5, f: 11.2, k: 165, cat: 'Dry Fruits', micros: 'Complete balance of Omega-3s, Vit E, Zinc & Iron' },
+  { name: 'Peanut Butter (1 tbsp ~16g)', p: 4.0, c: 3.5, f: 8.0, k: 95, cat: 'Dry Fruits', micros: 'Niacin, Biotin, Monounsaturated healthy fats' },
+  { name: 'Desi Ghee (1 tsp ~5g)', p: 0.0, c: 0.0, f: 5.0, k: 45, cat: 'Homemade', micros: 'Butyric acid (gut lining), Vit A, Vit D, Vit E' }
 ];
 let selectedBaseFood = COMMON_FOODS[0];
 
@@ -2504,7 +2511,7 @@ if ($('#foodSearchInput')) {
     if (!matches.length) { res.style.display = 'none'; return; }
     res.style.display = 'block';
     res.innerHTML = matches.map((f, i) => {
-      const visual = f.image ? `<img src="${f.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;"/>` : `<span style="font-size:1.15rem;">${f.icon || '🍽️'}</span>`;
+      const visual = f.image ? `<img src="${f.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;"/>` : getFoodCategoryBadge(f.cat);
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;cursor:pointer;border-radius:8px;transition:background .15s;border-bottom:1px solid #f2f5ef;"
            onmouseover="this.style.background='#f0f5ee'" onmouseout="this.style.background='transparent'"
            onclick="selectSearchFood(${i})">
@@ -2512,7 +2519,7 @@ if ($('#foodSearchInput')) {
           ${visual}
           <div>
             <b style="color:#1e293b;font-size:.9rem;">${f.name}</b>
-            <p style="color:#64748b;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#2563eb;font-weight:600;">· 💊 ${f.micros}</span>` : ''}</p>
+            <p style="color:#64748b;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#2563eb;font-weight:600;">· ${f.micros}</span>` : ''}</p>
           </div>
         </div>
         <span style="font-weight:700;color:#1e293b;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#64748b;">kcal/100g</small></span>
@@ -2552,7 +2559,7 @@ if ($('#aiPredictFoodBtn')) {
     }
     const btn = $('#aiPredictFoodBtn');
     btn.disabled = true;
-    btn.textContent = '✨ Estimating...';
+    btn.textContent = 'Estimating...';
 
     try {
       const data = await FF.aiPredictFood(query, meal);
@@ -2569,12 +2576,12 @@ if ($('#aiPredictFoodBtn')) {
       if ($('#foodPInput')) $('#foodPInput').value = data.protein;
       if ($('#foodCInput')) $('#foodCInput').value = data.carbs;
       if ($('#foodFInput')) $('#foodFInput').value = data.fat;
-      toast(`✨ AI estimated ${data.calories} kcal for ${data.name || query}`);
+      toast(`AI estimated ${data.calories} kcal for ${data.name || query}`);
     } catch (e) {
       toast(e.message || 'AI prediction unavailable');
     } finally {
       btn.disabled = false;
-      btn.textContent = '✨ AI Predict';
+      btn.textContent = 'AI Predict';
     }
   };
 }
@@ -2793,7 +2800,7 @@ function openExerciseDetailModal(exerciseName) {
     $('#exModalAiCoachBtn').onclick = async () => {
       if (!adviceEl) return;
       adviceEl.style.display = 'block';
-      adviceEl.innerHTML = '<span style="color:#2563eb;">🤖 Formwise AI is analyzing biomechanics &amp; customized cues...</span>';
+      adviceEl.innerHTML = '<span style="color:#2563eb;">Formwise AI is analyzing biomechanics &amp; customized cues...</span>';
 
       const prompt = `As an elite strength & biomechanics coach, give a direct, impactful breakdown for "${ex.name}" targeting ${ex.sub || ex.category}:
 1. The #1 Mind-Muscle Connection Cue
@@ -2805,7 +2812,7 @@ function openExerciseDetailModal(exerciseName) {
         adviceEl.innerHTML = markedInline(reply);
       } catch (err) {
         adviceEl.innerHTML = `
-          <b>💡 Formwise AI Core Biomechanics Tip:</b>
+          <b>Formwise AI Core Biomechanics Tip:</b>
           <p style="margin:4px 0 0;">Focus on a strict 2-3 second eccentric stretch. Keep your core braced 360° and avoid momentum. For <b>${escapeHtml(ex.name)}</b>, pause for 1 second at maximum stretch to trigger maximal tension on the ${escapeHtml(ex.sub || 'target muscles')}.</p>
         `;
       }
@@ -2820,7 +2827,7 @@ function openExerciseDetailModal(exerciseName) {
       recordDailyActivity('workout');
       closeModal('#exerciseDetailModal');
       renderDashboard();
-      toast(`✓ Completed set logged for "${ex.name}"!`);
+      toast(`Completed set logged for "${ex.name}"!`);
     };
   }
 
@@ -2833,7 +2840,7 @@ function renderWorkouts() {
   const isCustomAi = plan && plan.workout && (wo.name === plan.workout.name);
   if ($('#planWorkoutTitle')) {
     if (isCustomAi) {
-      $('#planWorkoutTitle').innerHTML = `✨ ${wo.name} <span style="font-size:.72rem;background:#2563eb;color:#38bdf8;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px;">AI GENERATED</span>`;
+      $('#planWorkoutTitle').innerHTML = ` ${wo.name} <span style="font-size:.72rem;background:#2563eb;color:#38bdf8;padding:3px 9px;border-radius:999px;vertical-align:middle;margin-left:6px;">AI GENERATED</span>`;
     } else {
       $('#planWorkoutTitle').textContent = wo.name;
     }
@@ -2856,18 +2863,18 @@ function renderWorkouts() {
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-weight:600;color:#64748b;font-size:.88rem;">${m.sets}</span>
-                <span class="move-hover-cta">👁️ View Visual</span>
+                <span class="move-hover-cta">View Visual</span>
               </div>
             </div>
-            <p style="color:#64748b;font-size:.86rem;margin-top:4px;">💡 ${m.tip}</p>
+            <p style="color:#64748b;font-size:.86rem;margin-top:4px;"> ${m.tip}</p>
             
             <!-- Hover details strip (visible on hover) -->
             <div class="move-hover-details">
               <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
-                <span>🎯 <b>Target:</b> ${ex.sub || ex.category}</span>
-                <span>⏱️ <b>${ex.rxTempo || 'Tempo: 2-1-1'}</b></span>
+                <span> <b>Target:</b> ${ex.sub || ex.category}</span>
+                <span>⏱ <b>${ex.rxTempo || 'Tempo: 2-1-1'}</b></span>
               </div>
-              <p style="margin:2px 0 0;font-size:.8rem;color:#64748b;">🧬 ${ex.rxWhy || ex.benefit}</p>
+              <p style="margin:2px 0 0;font-size:.8rem;color:#64748b;"> ${ex.rxWhy || ex.benefit}</p>
             </div>
           </div>
         </div>
@@ -2891,7 +2898,7 @@ $('#markWorkoutDoneBtn').onclick = () => {
   recordDailyActivity('workout');
   soundFX.victoryCelebration();
   renderDashboard();
-  toast(`🎉 Great job! Completed ${wo.name}`);
+  toast(`Great job! Completed ${wo.name}`);
 };
 
 /* ---------- Exercise Library View Rendering ---------- */
@@ -2948,27 +2955,27 @@ function renderExerciseLibrary() {
             <span style="font-size:.76rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:999px;">${ex.sub}</span>
           </div>
           <h4 style="margin:4px 0 8px;color:#1e293b;font-size:1.15rem;cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
-            ${ex.name} <span style="font-size:.76rem;color:#2563eb;vertical-align:middle;">👁️</span>
+            ${ex.name} <span style="font-size:.76rem;color:#2563eb;vertical-align:middle;"></span>
           </h4>
           
           <!-- Scientific Prescription Box -->
           <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
             <div class="rx-header">
-              <span class="rx-sets-reps">🎯 ${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
+              <span class="rx-sets-reps"> ${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
               <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
             </div>
             <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
           </div>
 
-          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#64748b;">💡 ${ex.steps}</p>
+          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#64748b;"> ${ex.steps}</p>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
           <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#38bdf8;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
-            👁️ Visual Guide
+            Visual Guide
           </button>
           <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#2563eb;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
-            🤖 AI Coach
+            AI Coach
           </button>
         </div>
       </article>
@@ -3013,7 +3020,7 @@ function renderMyFoods() {
   grid.innerHTML = items.map((item, i) => `
     <article class="panel saved-food-card">
       <div class="saved-food-thumb image">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : `<span>🍎</span>`}
+        ${item.image ? `<img src="${item.image}" alt="${item.name}">` : `<span></span>`}
       </div>
       <div style="flex:1;">
         <span class="section-kicker">${item.meal || 'RECIPE'}</span>
@@ -3098,7 +3105,7 @@ function renderProfileView() {
 
   if ($('#settingsUserName')) $('#settingsUserName').textContent = name;
   if ($('#settingsUserEmail')) $('#settingsUserEmail').textContent = email;
-  if ($('#settingsRoleBadge')) $('#settingsRoleBadge').textContent = (session && session.is_admin) ? '👑 ADMIN' : 'USER';
+  if ($('#settingsRoleBadge')) $('#settingsRoleBadge').textContent = (session && session.is_admin) ? ' ADMIN' : 'USER';
 
   // Fill Inputs
   if ($('#pfHeightInput')) $('#pfHeightInput').value = profile.hCm || 175;
@@ -3136,7 +3143,7 @@ function saveProfileData() {
   store.set('profile', profile);
   renderDashboard();
   renderProfileView();
-  toast('Profile saved & synced to database ✓');
+  toast('Profile saved & synced to database');
 }
 
 $('#saveProfileBtn').onclick = saveProfileData;
@@ -3196,7 +3203,7 @@ function openAvatarOptionsModal() {
     if (statusText) statusText.textContent = 'Active Profile Picture';
     if (seePicBtn) {
       seePicBtn.style.display = 'inline-flex';
-      seePicBtn.textContent = '👁️ See Pic';
+      seePicBtn.textContent = 'See Pic';
       seePicBtn.onclick = () => {
         closeModal('#avatarOptionsModal');
         openImageLightbox(profile.avatarUrl, `${uName}'s Profile Photo`);
@@ -3204,7 +3211,7 @@ function openAvatarOptionsModal() {
     }
     if (removeBtn) {
       removeBtn.style.display = 'inline-flex';
-      removeBtn.textContent = '🗑️ Remove Pic';
+      removeBtn.textContent = 'Remove Pic';
       removeBtn.onclick = () => {
         if (confirm('Are you sure you want to remove your profile picture?')) {
           delete profile.avatarUrl;
@@ -3212,18 +3219,18 @@ function openAvatarOptionsModal() {
           if (FF.patch) FF.patch({ profile });
           renderProfileView();
           closeModal('#avatarOptionsModal');
-          toast('🗑️ Profile picture removed successfully');
+          toast('Profile picture removed successfully');
         }
       };
     }
-    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Pic';
+    if (uploadBtn) uploadBtn.textContent = 'Upload New Pic';
   } else {
     const initials = uName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase() || 'FF';
     if (box) box.innerHTML = `<span style="font-size:2.4rem;font-weight:800;color:#2563eb;">${initials}</span>`;
     if (statusText) statusText.textContent = 'No profile picture uploaded yet';
     if (seePicBtn) seePicBtn.style.display = 'none';
     if (removeBtn) removeBtn.style.display = 'none';
-    if (uploadBtn) uploadBtn.textContent = '📷 Upload New Pic';
+    if (uploadBtn) uploadBtn.textContent = ' Upload New Pic';
   }
 
   if (uploadBtn) {
@@ -3282,7 +3289,7 @@ if ($('#pfAvatarUploadInput')) {
         store.set('profile', profile);
         if (FF.patch) FF.patch({ profile });
         renderProfileView();
-        toast('🎉 Profile picture updated successfully!');
+        toast('Profile picture updated successfully!');
       };
       img.src = re.target.result;
     };
@@ -3297,7 +3304,7 @@ if ($('#removeAvatarBtn')) {
       store.set('profile', profile);
       if (FF.patch) FF.patch({ profile });
       renderProfileView();
-      toast('🗑️ Profile picture removed successfully');
+      toast(' Profile picture removed successfully');
     }
   };
 }
@@ -3320,7 +3327,7 @@ if ($('#saveAiKeysBtn')) {
     if (oVal) localStorage.setItem('ff_openrouter_key', oVal);
     else localStorage.removeItem('ff_openrouter_key');
 
-    toast('🎉 AI API configuration saved! Live chatbot will use your keys.');
+    toast('AI API configuration saved! Live chatbot will use your keys.');
   };
 }
 
@@ -3387,7 +3394,7 @@ if ($('#viewAllComplaintsBtn')) {
     try {
       const complaints = await FF.adminComplaints();
       if (!complaints || !complaints.length) {
-        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! 🎉</div>';
+        list.innerHTML = '<div style="padding:10px;text-align:center;color:#64748b;font-size:.85rem;background:#f9fcf7;border-radius:8px;">No complaints or suggestions submitted yet! </div>';
         return;
       }
       list.innerHTML = complaints.map(c => {
@@ -3399,7 +3406,7 @@ if ($('#viewAllComplaintsBtn')) {
               if (f.data && f.data.startsWith('data:image')) {
                 return `<img src="${f.data}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid #dbe2d6;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to enlarge" />`;
               }
-              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#1e293b;">📎 ${escapeHtml(f.name)}</span>`;
+              return `<span style="font-size:.72rem;background:#edf0e8;padding:2px 6px;border-radius:4px;color:#1e293b;"> ${escapeHtml(f.name)}</span>`;
             }).join('')}
           </div>` : '';
         return `
@@ -3479,12 +3486,12 @@ function initComplaintSystem() {
 
       try {
         await FF.sendComplaint(name, cmpTypeVal, text, safeFiles);
-        toast('✅ Feedback received! Admin team has been notified.');
+        toast('Feedback received! Admin team has been notified.');
         closeModal('#complaintModal');
         if ($('#cmpTextInput')) $('#cmpTextInput').value = '';
         if (fileInput) fileInput.value = '';
       } catch (err) {
-        toast('⚠️ Error sending complaint: ' + (err.message || 'Please retry'));
+        toast('Error sending complaint: ' + (err.message || 'Please retry'));
       } finally {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = origText; }
       }
@@ -3509,7 +3516,7 @@ $('#logoutBtn').onclick = handleLogout;
 
 /* ---------- Data Erasure & Account Deletion Handlers ---------- */
 async function handleEraseData() {
-  const confirmErase = confirm('⚠️ Are you sure you want to erase all your logged data?\n\nThis will clear:\n• All logged food entries & meals\n• All water intake records\n• All custom recipes and custom foods\n• All weight records\n• All completed workout logs\n\nYour account and login credentials will remain active. This cannot be undone.');
+  const confirmErase = confirm(' Are you sure you want to erase all your logged data?\n\nThis will clear:\n• All logged food entries & meals\n• All water intake records\n• All custom recipes and custom foods\n• All weight records\n• All completed workout logs\n\nYour account and login credentials will remain active. This cannot be undone.');
   if (!confirmErase) return;
 
   try {
@@ -3545,14 +3552,14 @@ async function handleEraseData() {
     renderTrackingView();
 
     updateSyncStatus('Data reset · Fresh start');
-    toast('✅ All logged data erased successfully. Starting fresh!');
+    toast('All logged data erased successfully. Starting fresh!');
   } catch (err) {
     toast('Error erasing data: ' + (err.message || 'Unknown error'));
   }
 }
 
 async function handleDeleteAccount() {
-  const response = prompt('🚨 DANGER: PERMANENT ACCOUNT DELETION\n\nThis will permanently delete your account, login credentials, and all records from the cloud database.\n\nType DELETE in uppercase to confirm:');
+  const response = prompt(' DANGER: PERMANENT ACCOUNT DELETION\n\nThis will permanently delete your account, login credentials, and all records from the cloud database.\n\nType DELETE in uppercase to confirm:');
   if (response !== 'DELETE') {
     if (response !== null) {
       toast('Account deletion cancelled (confirmation did not match).');
@@ -3683,11 +3690,11 @@ async function submitAuth() {
       $('#authPasswordInput').value = '';
       $('#authPasswordInput').focus();
       if ($('#authSubtitle')) $('#authSubtitle').textContent = 'ACCOUNT CREATED — PLEASE SIGN IN';
-      toast('🎉 Account created! Please enter your password to sign in.');
+      toast('Account created! Please enter your password to sign in.');
       return;
     } else {
       user = await FF.login(email, pass);
-      toast('Signed in successfully ✓');
+      toast('Signed in successfully');
     }
 
     session = { name: user.name, email: user.email, is_admin: user.is_admin };
@@ -3907,12 +3914,12 @@ if ($('#generateAiPlanBtn')) {
       renderFoodLog();
       renderWorkouts();
       switchView('workouts');
-      toast('🎉 AI Plan created! Displaying your personalized workout below.');
+      toast('AI Plan created! Displaying your personalized workout below.');
     } catch (err) {
       toast(err.message || 'Error generating AI plan');
     } finally {
       btn.disabled = false;
-      btn.textContent = '✨ Generate & Apply My AI Plan';
+      btn.textContent = 'Generate & Apply My AI Plan';
       if (loading) loading.style.display = 'none';
     }
   };
@@ -3943,7 +3950,9 @@ Instructions:
 1. Always directly and specifically answer the user's exact question with concrete numbers, portion grams, calories, or exercise sets.
 2. Provide highly accurate macronutrient and micronutrient details for ANY food: homemade Indian dishes, hotel meals, vegetarian proteins (soya, paneer, tofu, seitan, lentils), fast foods, fruits, and vegetables.
 3. For workouts, give precise scientific sets, reps, and tempo guidance tailored to the target muscle part.
-4. Keep responses structured, concise, and engaging using markdown bullet points and bold highlights. Never repeat canned or generic disclaimers.`;
+4. Keep responses structured, concise, and engaging using markdown bullet points and bold highlights.
+5. NEVER use emojis in your response. Output clean, professional typography only.
+6. Think and reason through the user's specific scenario dynamically without repeating canned disclaimers.`;
 }
 
 function openAiChat(initialPrompt = null) {
@@ -3952,12 +3961,12 @@ function openAiChat(initialPrompt = null) {
   drawer.classList.add('open');
 
   if (!chatHistory.length) {
-    addBotChatMessage(`👋 **Hello ${profile.name ? profile.name.split(' ')[0] : 'there'}!** I am your **FitFuel AI Coach & Nutrition Specialist**.
+    addBotChatMessage(`**Hello ${profile.name ? profile.name.split(' ')[0] : 'there'}!** I am your **FitFuel AI Coach & Nutrition Specialist**.
 
 Ask me anything about:
-• 🥦 **Micronutrients & Diet**: Exact vitamins (D, B12, C), minerals (Iron, Zinc, Magnesium, Calcium) for ANY food (homemade, hotel dishes, fast food, fruits).
-• 💪 **Targeted Workouts**: Optimal sets, reps, and cues for specific muscle regions (Upper Chest vs Lower Chest, Lats, Glutes, Hamstrings).
-• 📊 **Daily Verification**: Ask me to review today's logged food, water, and workouts to see if you hit your targets!`);
+• **Micronutrients & Diet**: Exact vitamins (D, B12, C) and minerals (Iron, Zinc, Magnesium, Calcium) for any dish or meal.
+• **Targeted Workouts**: Biomechanical exercise selection, sets, reps, and cues for specific muscle regions.
+• **Daily Verification**: Comprehensive audit of your logged food, hydration, and completed workouts.`);
   }
 
   if (initialPrompt) {
@@ -3993,7 +4002,7 @@ function renderChatMessages() {
     const isBot = msg.role === 'assistant';
     const formatted = formatChatMarkdown(msg.text);
     return `<div class="ai-msg ${isBot ? 'bot' : 'user'}">
-      ${isBot ? '<span style="font-size:.74rem;color:#64748b;font-weight:700;margin-bottom:4px;">🤖 AI COACH</span>' : ''}
+      ${isBot ? '<span style="font-size:.72rem;color:#0284c7;font-weight:700;margin-bottom:4px;letter-spacing:0.04em;">FITFUEL AI COACH</span>' : ''}
       <div>${formatted}</div>
     </div>`;
   }).join('');
@@ -4072,13 +4081,13 @@ async function handleUserAiQuery(query) {
     typingDiv.className = 'ai-msg bot';
     typingDiv.id = typingId;
     typingDiv.innerHTML = `
-      <span style="font-size:.74rem;color:#38bdf8;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
-        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 6px #38bdf8;"></span>
-        🤖 AI LIVE COACH · GENERATING ANSWER
+      <span style="font-size:.74rem;color:#0284c7;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0284c7;box-shadow:0 0 6px #0284c7;"></span>
+        AI LIVE COACH · REASONING
       </span>
-      <div style="color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:8px;">
-        <span style="display:inline-block;width:12px;height:12px;border:2px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
-        Thinking and crafting live response... ✨
+      <div style="color:#64748b;font-style:italic;display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:12px;height:12px;border:2px solid #0284c7;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+        Analyzing metrics and formulating dynamic response...
       </div>`;
     container.appendChild(typingDiv);
     container.scrollTop = container.scrollHeight;
@@ -4114,16 +4123,16 @@ function updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, targetP
     headline.textContent = 'Ready to fuel your day?';
     sub.textContent = `Target: ${goalKcal} kcal and ${targetP}g protein. Log your first meal, scan a food photo, or ask AI Coach!`;
   } else if (leftP > 40) {
-    headline.textContent = `🍗 Protein Gap: ${leftP}g remaining today`;
+    headline.textContent = `Protein Gap: ${leftP}g remaining today`;
     sub.textContent = `You've logged ${totalP}g / ${targetP}g protein. AI recommends paneer, chicken breast, or Greek yogurt for your next meal.`;
   } else if (leftKcal < 0) {
-    headline.textContent = `🔥 Calorie Target Reached (+${Math.abs(leftKcal)} kcal)`;
+    headline.textContent = `Calorie Target Reached (+${Math.abs(leftKcal)} kcal)`;
     sub.textContent = `You've reached ${totalKcal} kcal today. Focus on lean protein and adequate hydration tonight.`;
   } else if (waterMl < 1000) {
-    headline.textContent = '💧 Hydration Reminder';
+    headline.textContent = 'Hydration Reminder';
     sub.textContent = `Only ${(waterMl / 1000).toFixed(1)} L recorded so far. Drink 2-3 more glasses of water before your workout session.`;
   } else {
-    headline.textContent = '✅ Optimal Day Progress';
+    headline.textContent = 'Optimal Day Progress';
     sub.textContent = `Great adherence! ${totalKcal} / ${goalKcal} kcal with ${totalP}g protein logged. Click below to run a complete AI audit.`;
   }
 }
@@ -4494,7 +4503,7 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
   const btn = $('#generateChallengePlanBtn');
   const origText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = 'Engineering AI Plan...'; }
-  toast(`🤖 AI is personalizing your ${durationDays}-Day ${motive} Challenge (${targetMinutes} min/day)...`);
+  toast(`AI is personalizing your ${durationDays}-Day ${motive} Challenge (${targetMinutes} min/day)...`);
 
   const w = profile.wKg || 70;
   const h = profile.hCm || 175;
@@ -4531,7 +4540,7 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
   renderChallengeView();
   renderTrackingView();
   updateLiveWaterEstimate();
-  toast(`🔥 ${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
+  toast(`${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
 }
 
 /* ================= WORKOUT SECTION CUSTOMIZATION & EXPLORER ================= */
@@ -4607,8 +4616,8 @@ function renderCustomWorkoutExplorer() {
           <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
           <p style="color:#64748b;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
           <div style="background:#f8fafc;border:1px solid #e5ede0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:.78rem;font-weight:700;color:#1e293b;">🎯 ${escapeHtml(rxSets)}</span>
-            <span style="font-size:.75rem;color:#64748b;font-weight:600;">⏱️ ${escapeHtml(rxRest)}</span>
+            <span style="font-size:.78rem;font-weight:700;color:#1e293b;"> ${escapeHtml(rxSets)}</span>
+            <span style="font-size:.75rem;color:#64748b;font-weight:600;">⏱ ${escapeHtml(rxRest)}</span>
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:auto;">
@@ -4756,7 +4765,7 @@ function renderChallengeView() {
     container.innerHTML = `
       <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:18px;padding:36px 24px;text-align:center;box-shadow:0 4px 18px rgba(32,59,41,0.05);max-width:680px;margin:20px auto;">
         <div style="width:68px;height:68px;border-radius:20px;background:#eff6ff;color:#2563eb;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          🎯
+          
         </div>
         <h3 style="font-size:1.4rem;color:#1e293b;font-weight:800;margin:0 0 8px;">No Active Challenge Plan</h3>
         <p style="color:#64748b;font-size:.92rem;line-height:1.55;max-width:500px;margin:0 auto 24px;">
@@ -4764,20 +4773,20 @@ function renderChallengeView() {
         </p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-bottom:28px;text-align:left;">
           <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">⚡ AI Engineered</b>
+            <b style="color:#2563eb;font-size:.88rem;display:block;"> AI Engineered</b>
             <small style="color:#64748b;">Personalized to your height, weight &amp; strength targets.</small>
           </div>
           <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">⏱️ Built-in Timers</b>
+            <b style="color:#2563eb;font-size:.88rem;display:block;">⏱ Built-in Timers</b>
             <small style="color:#64748b;">Counter time, rest intervals (+60s), &amp; 3-2-1 countdown.</small>
           </div>
           <div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:12px 14px;">
-            <b style="color:#2563eb;font-size:.88rem;display:block;">🔄 Swap Any Workout</b>
+            <b style="color:#2563eb;font-size:.88rem;display:block;"> Swap Any Workout</b>
             <small style="color:#64748b;">Change or replace any exercise with 1 click.</small>
           </div>
         </div>
         <button type="button" class="solid-button" onclick="openModal('#challengeMotiveModal')" style="background:#2563eb;padding:12px 28px;font-size:1rem;font-weight:700;">
-          🚀 Start Your Challenge Now
+          Start Your Challenge Now
         </button>
       </div>
     `;
@@ -4823,10 +4832,10 @@ function renderChallengeView() {
           ⟳ Refresh Day Plan
         </button>
         <button type="button" class="outline-button" id="resetChallengePlanBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
-          🔄 Reset to Day 1
+          Reset to Day 1
         </button>
         <button type="button" class="outline-button" id="exitChallengePlanBtn" style="border-color:#feb2b2;color:#feb2b2;background:rgba(229,62,62,0.1);font-size:.84rem;margin-left:auto;">
-          ⚠️ Exit Challenge
+          Exit Challenge
         </button>
       </div>
     </div>
@@ -4840,7 +4849,7 @@ function renderChallengeView() {
           <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Focus: <b>${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
         </div>
         <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#e6f4da' : '#f4f6f2'};color:${currentDay.completed ? '#2d581e' : '#556658'};">
-          ${currentDay.completed ? '✓ COMPLETED' : '⚡ READY TO TRAIN'}
+          ${currentDay.completed ? 'COMPLETED' : 'READY TO TRAIN'}
         </span>
       </div>
 
@@ -4887,7 +4896,7 @@ function renderChallengeView() {
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <b style="font-size:.88rem;color:#2563eb;">Day ${d.dayNumber}</b>
                 <span style="font-size:.72rem;font-weight:700;color:${d.completed ? '#2563eb' : (isCurrent ? '#2563eb' : '#88988d')};">
-                  ${d.completed ? '✓ Done' : (isCurrent ? '⚡ Current' : 'Upcoming')}
+                  ${d.completed ? 'Done' : (isCurrent ? 'Current' : 'Upcoming')}
                 </span>
               </div>
               <span style="font-size:.82rem;color:#64748b;font-weight:600;">${escapeHtml(d.title.split(': ')[1] || d.title)}</span>
@@ -4906,7 +4915,7 @@ function renderChallengeView() {
 
   if ($('#exitChallengePlanBtn')) {
     $('#exitChallengePlanBtn').onclick = () => {
-      const ok = confirm('⚠️ Are you sure you want to exit and abandon this challenge?\n\nThis will remove your active plan. Only do this if you wish to exit or start a completely new challenge.');
+      const ok = confirm(' Are you sure you want to exit and abandon this challenge?\n\nThis will remove your active plan. Only do this if you wish to exit or start a completely new challenge.');
       if (ok) {
         activeChallengePlan = null;
         store.del('activeChallengePlan');
@@ -4920,7 +4929,7 @@ function renderChallengeView() {
 
   if ($('#resetChallengePlanBtn')) {
     $('#resetChallengePlanBtn').onclick = () => {
-      const ok = confirm('🔄 Reset your active challenge back to Day 1? All workout structures will be preserved.');
+      const ok = confirm(' Reset your active challenge back to Day 1? All workout structures will be preserved.');
       if (ok) {
         activeChallengePlan.currentDayIndex = 0;
         activeChallengePlan.completedCount = 0;
@@ -5143,7 +5152,7 @@ function trigger321CountdownAndAdvance() {
       num.textContent = '1';
       soundFX.timerWarning();
       setTimeout(() => {
-        num.textContent = 'GO! 🔥';
+        num.textContent = 'GO!';
         sub.textContent = 'CRUSH THIS SET!';
         soundFX.timerGo();
         setTimeout(() => {
@@ -5207,7 +5216,7 @@ function finishCurrentWorkoutSession() {
   renderChallengeView();
   renderTrackingView();
   renderDashboard();
-  toast(`🎉 Outstanding! You crushed Day ${sessionDay.dayNumber} of your challenge!`);
+  toast(`Outstanding! You crushed Day ${sessionDay.dayNumber} of your challenge!`);
 }
 
 // Wire Session Player Buttons
@@ -5330,7 +5339,7 @@ function renderTrackingView() {
             const color = (isDone || isCurrent) ? '#ffffff' : '#637367';
             return `
               <div style="height:36px;border-radius:8px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;" title="Day ${d.dayNumber}: ${d.title} (${isDone ? 'Completed' : (isCurrent ? 'Current' : 'Pending')})">
-                ${isDone ? '✓' : d.dayNumber}
+                ${isDone ? '' : d.dayNumber}
               </div>
             `;
           }).join('')}
@@ -5340,11 +5349,11 @@ function renderTrackingView() {
   } else {
     challengeBlock = `
       <div style="background:#fcfdfa;border:1px dashed #d5e2d0;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
-        <span style="font-size:28px;">🎯</span>
+        <span style="font-size:28px;"></span>
         <b style="color:#2563eb;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
         <p style="color:#64748b;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
         <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#2563eb;">
-          🚀 Start Challenge
+          Start Challenge
         </button>
       </div>
     `;
@@ -5359,7 +5368,7 @@ function renderTrackingView() {
           <small style="color:#64748b;font-size:.78rem;">${w.date || today()}</small>
         </div>
         <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;">
-          ✓ Logged
+           Logged
         </span>
       </div>
     `).join('')
@@ -5380,15 +5389,15 @@ function renderTrackingView() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
           <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
             <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">CURRENT STREAK</span>
-            <b style="font-size:1.4rem;color:#2563eb;">🔥 ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
+            <b style="font-size:1.4rem;color:#2563eb;"> ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
           <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
             <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">TOTAL WORKOUTS</span>
-            <b style="font-size:1.4rem;color:#2563eb;">💪 ${totalWorkouts}</b>
+            <b style="font-size:1.4rem;color:#2563eb;"> ${totalWorkouts}</b>
           </div>
         </div>
         <p style="font-size:.84rem;color:#64748b;margin:0;line-height:1.45;">
-          ${curStreak.streakBroken ? '⚠️ Streak broken due to 2+ inactive days. Rebuild your streak today!' : 'Keep training consistently to lock in permanent muscle and metabolic adaptations.'}
+          ${curStreak.streakBroken ? ' Streak broken due to 2+ inactive days. Rebuild your streak today!' : 'Keep training consistently to lock in permanent muscle and metabolic adaptations.'}
         </p>
       </div>
 
@@ -5451,7 +5460,7 @@ if ($('#trackingCheckInBtn')) {
     recordDailyActivity('manual_checkin');
     renderTrackingView();
     renderDashboard();
-    toast('⚡ Daily check-in logged to tracking!');
+    toast('Daily check-in logged to tracking!');
   };
 }
 
