@@ -23,7 +23,7 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=3.0">
+  <link rel="stylesheet" href="styles.css?v=3.1">
 </head>
 <body>
 <div class="app-shell">
@@ -1159,9 +1159,14 @@
 
       <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
         <button type="button" class="solid-button full" id="authSubmitBtn" style="width:100%;height:42px;">Sign In</button>
-        <p class="muted" style="font-size:.78rem;text-align:center;color:#64748b;">
+        <p class="muted" style="font-size:.78rem;text-align:center;color:#64748b;margin:0;">
           Data is synced in real-time to Turso cloud database across all your devices.
         </p>
+        <div style="text-align:center;padding-top:10px;border-top:1px dashed #cbd5e1;margin-top:4px;">
+          <button type="button" class="text-button" id="adminQuickFillBtn" style="font-size:0.8rem;color:#2563eb;font-weight:700;">
+            Sign in as Administrator (admin@fitfuel.app)
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -2335,7 +2340,7 @@
 
 <script src="data.js?v=2.5"></script>
 <script src="motion.min.js"></script>
-<script src="api.js?v=3.0"></script>
-<script src="fitfuel.js?v=3.0"></script>
+<script src="api.js?v=3.1"></script>
+<script src="fitfuel.js?v=3.1"></script>
 </body>
 </html>

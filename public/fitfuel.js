@@ -3377,6 +3377,7 @@ let cachedAdminUsers = [];
 
 function updateAdminNavVisibility() {
   const isAdmin = Boolean(session && session.is_admin);
+  const isPureAdmin = Boolean(session && session.email === 'admin@fitfuel.app');
   const adminNav = $('#sidebarAdminNavBtn');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
   const topAdmin = $('#topAdminBtn');
@@ -3385,6 +3386,12 @@ function updateAdminNavVisibility() {
   if (adminSec) adminSec.style.display = isAdmin ? 'block' : 'none';
   const adminShort = $('#adminPortalShortcutBtn');
   if (adminShort) adminShort.style.display = isAdmin ? 'block' : 'none';
+
+  if (isPureAdmin) {
+    if ($('#sidebarPlan')) $('#sidebarPlan').textContent = 'Root Administrator';
+    if ($('#sidebarName')) $('#sidebarName').textContent = 'FitFuel Admin';
+    if ($('#settingsRoleBadge')) $('#settingsRoleBadge').textContent = 'SUPER ADMIN';
+  }
 }
 
 async function renderAdminView() {
@@ -3715,6 +3722,16 @@ function initAdminPortalListeners() {
       setTimeout(() => $('#adminTabComplaints')?.click(), 100);
     };
   }
+  if ($('#adminQuickFillBtn')) {
+    $('#adminQuickFillBtn').onclick = () => {
+      setAuthMode('login');
+      if ($('#authEmailInput')) $('#authEmailInput').value = 'admin@fitfuel.app';
+      if ($('#authPasswordInput')) {
+        $('#authPasswordInput').value = '';
+        $('#authPasswordInput').focus();
+      }
+    };
+  }
 }
 initAdminPortalListeners();
 
@@ -4014,6 +4031,11 @@ async function submitAuth() {
 
     closeModal('#authModal');
     renderProfileView();
+    if (user.email === 'admin@fitfuel.app') {
+      switchView('admin');
+      toast('Signed in as Root Administrator (admin@fitfuel.app)');
+      return;
+    }
     renderDashboard();
     renderDailyTip();
     renderFoodLog();
@@ -5820,6 +5842,9 @@ async function bootApp() {
       renderDailyTip();
       renderChallengeView();
       renderTrackingView();
+      if (res.user.email === 'admin@fitfuel.app') {
+        switchView('admin');
+      }
     } else {
       updateSyncStatus('Preview session · Sign in to save');
     }

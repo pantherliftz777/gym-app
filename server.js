@@ -92,6 +92,9 @@ async function getUser(req) {
     'SELECT u.id, u.name, u.email, u.contact, u.created_at, u.last_login, u.is_admin FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?',
     [token]
   );
+  if (row && row.email === 'admin@fitfuel.app') {
+    row.is_admin = 1;
+  }
   return row || null;
 }
 
@@ -207,10 +210,11 @@ const routes = {
     const em = String(email || '').toLowerCase().trim();
     const u = await db.get('SELECT * FROM users WHERE email=?', [em]);
     if (!u || hashPass(password || '', u.salt) !== u.pass_hash) return json(res, 401, { error: 'Wrong email or password' });
-    await db.run('UPDATE users SET last_login=? WHERE id=?', [Date.now(), u.id]);
+    const isAdmin = (em === 'admin@fitfuel.app') ? 1 : (u.is_admin || 0);
+    await db.run('UPDATE users SET last_login=?, is_admin=? WHERE id=?', [Date.now(), isAdmin, u.id]);
     const token = crypto.randomBytes(24).toString('hex');
     await db.run('INSERT INTO sessions(token,user_id,created_at) VALUES(?,?,?)', [token, u.id, Date.now()]);
-    json(res, 200, { token, user: { id: u.id, name: u.name, email: u.email, contact: u.contact, created_at: u.created_at, last_login: Date.now(), is_admin: u.is_admin || 0 } });
+    json(res, 200, { token, user: { id: u.id, name: u.name, email: u.email, contact: u.contact, created_at: u.created_at, last_login: Date.now(), is_admin: isAdmin } });
   },
   'GET /api/auth/me': async (req, res) => {
     const u = await getUser(req);
