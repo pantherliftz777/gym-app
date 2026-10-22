@@ -96,7 +96,10 @@ const FOODS = [
   {n:"Sugar",e:"",k:387,p:0,c:100,f:0,serve:10},
   {n:"Ghee",e:"",k:900,p:0,c:0,f:100,serve:10},
   {n:"Vegetable Oil",e:"",k:884,p:0,c:0,f:100,serve:10},
-  {n:"Mango Lassi",e:"",k:90,p:3,c:14,f:2,serve:250}
+  {n:"Mango Lassi",e:"",k:90,p:3,c:14,f:2,serve:250},
+  {n:"Roasted Chana (Bhuna)",e:"Indian roasted chickpeas",k:367,p:20,c:57,f:7,serve:30,det:1},
+  {n:"Dry Fruits Mix",e:"Almonds, walnuts, dates",k:700,p:18,c:55,f:50,serve:28},
+  {n:"High-Protein Milk",e:"Skimmed, protein-concentrated",k:61,p:10,c:5,f:0,serve:250}
 ];
 
 /* ---------- INGREDIENTS (per 100 g raw) ---------- */
@@ -575,7 +578,8 @@ const FOOD_CATS = {
   'Chocolate':'junk|dessert|snack','Ice Cream':'junk|dessert','Cheese Pizza (1 slice)':'junk','Veg Burger':'junk','Chicken Burger':'junk',
   'French Fries':'junk|oily|snack','Veg Momos (4 pc)':'snack','Veg Noodles':'junk','Fried Rice':'oily|main','Veg Manchurian':'junk|snack',
   'Chai (milk tea)':'drink','Coffee (black)':'drink','Green Tea':'drink|healthy','Cold Drink':'junk|drink','Orange Juice':'drink|fruit',
-  'Lassi':'drink|dairy','Buttermilk':'drink|dairy|healthy','Honey':'dessert','Sugar':'dessert','Ghee':'oily','Vegetable Oil':'oily','Mango Lassi':'drink|dessert'
+  'Lassi':'drink|dairy','Buttermilk':'drink|dairy|healthy','Honey':'dessert','Sugar':'dessert','Ghee':'oily','Vegetable Oil':'oily','Mango Lassi':'drink|dessert',
+  'Roasted Chana (Bhuna)':'healthy|protein|snack','Dry Fruits Mix':'healthy|snack','High-Protein Milk':'healthy|dairy|drink'
 };
 function foodTags(name){
   return { veg: !NONVEG_FOODS.has(name), cats: (FOOD_CATS[name]||'other').split('|') };

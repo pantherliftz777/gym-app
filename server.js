@@ -92,8 +92,8 @@ async function getUser(req) {
     'SELECT u.id, u.name, u.email, u.contact, u.created_at, u.last_login, u.is_admin FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?',
     [token]
   );
-  if (row && row.email === 'admin@fitfuel.app') {
-    row.is_admin = 1;
+  if (row) {
+    row.is_admin = (row.email === 'admin@fitfuel.app') ? 1 : 0;
   }
   return row || null;
 }
@@ -194,8 +194,7 @@ const routes = {
     const existing = await db.get('SELECT id FROM users WHERE email=?', [em]);
     if (existing) return json(res, 409, { error: 'Email already registered — please login' });
     const salt = crypto.randomBytes(16).toString('hex');
-    const userCount = await db.get('SELECT COUNT(*) AS c FROM users');
-    const isAdmin = Number(userCount ? userCount.c : 0) === 0 ? 1 : 0;
+    const isAdmin = (em === 'admin@fitfuel.app') ? 1 : 0;
     const info = await db.run(
       'INSERT INTO users(name,email,contact,pass_hash,salt,created_at,last_login,is_admin) VALUES(?,?,?,?,?,?,?,?)',
       [String(name).trim(), em, String(contact || ''), hashPass(password, salt), salt, Date.now(), Date.now(), isAdmin]
@@ -210,7 +209,7 @@ const routes = {
     const em = String(email || '').toLowerCase().trim();
     const u = await db.get('SELECT * FROM users WHERE email=?', [em]);
     if (!u || hashPass(password || '', u.salt) !== u.pass_hash) return json(res, 401, { error: 'Wrong email or password' });
-    const isAdmin = (em === 'admin@fitfuel.app') ? 1 : (u.is_admin || 0);
+    const isAdmin = (em === 'admin@fitfuel.app') ? 1 : 0;
     await db.run('UPDATE users SET last_login=?, is_admin=? WHERE id=?', [Date.now(), isAdmin, u.id]);
     const token = crypto.randomBytes(24).toString('hex');
     await db.run('INSERT INTO sessions(token,user_id,created_at) VALUES(?,?,?)', [token, u.id, Date.now()]);

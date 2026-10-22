@@ -26,48 +26,149 @@ function escapeHtml(str) {
 /* ---------- Storage & Sync ---------- */
 const store = {
   get: (k, d) => { try { const v = localStorage.getItem('ff_' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set: (k, v) => {
+  set: (k, v, sync = true) => {
     try { localStorage.setItem('ff_' + k, JSON.stringify(v)); } catch (e) {}
-    if (typeof FF !== 'undefined' && FF.patch) {
+    if (sync && typeof FF !== 'undefined' && FF.patch && FF.token) {
       FF.patch({ [k]: v });
       updateSyncStatus('Syncing with database...');
     }
   },
-  del: k => localStorage.removeItem('ff_' + k)
+  del: k => { try { localStorage.removeItem('ff_' + k); } catch (e) {} }
 };
 
 /* ---------- Motion Physics (Vanilla JS) ---------- */
 const M = (typeof window !== 'undefined' && window.Motion) ? window.Motion : null;
 
+/* ---------- Default Profile Helper ---------- */
+function getDefaultProfile(name = 'Jordan Davis', email = '') {
+  return {
+    name: name || 'Jordan Davis',
+    email: email || '',
+    units: 'Metric',
+    hCm: 175,
+    wKg: 70,
+    cal: 2100,
+    p: 140,
+    c: 210,
+    f: 65,
+    goal: 'Maintain weight',
+    days: 4,
+    creatine: 'yes'
+  };
+}
+
+/* ---------- User State Cleanup & Isolation Helpers ---------- */
+function clearAllUserLocalData() {
+  profile = getDefaultProfile('Jordan Davis', '');
+  delete profile.avatarUrl;
+  log = {};
+  custom = [];
+  water = { date: today(), ml: 0 };
+  workoutsDone = [];
+  streakTracker = { currentStreak: 0, lastActiveDate: null, streakBroken: false, brokenStreakCount: 0, history: [] };
+  activeChallengePlan = null;
+  weightLog = [];
+  plan = null;
+  session = null;
+
+  const userKeys = [
+    'session',
+    'profile',
+    'log',
+    'custom',
+    'water',
+    'workoutsDone',
+    'activeChallengePlan',
+    'weights',
+    'plan',
+    'streakTracker',
+    'chatHistory',
+    'cachedComplaints',
+    'cachedAdminUsers'
+  ];
+  userKeys.forEach(k => store.del(k));
+}
+
+function applyUserCloudState(user, st = {}) {
+  const userEmail = (user && user.email) ? user.email.toLowerCase() : '';
+  const userName = (user && user.name) ? user.name : 'User';
+
+  if (st && st.profile && typeof st.profile === 'object') {
+    profile = { ...getDefaultProfile(userName, userEmail), ...st.profile };
+    profile.name = userName;
+    profile.email = userEmail;
+    // CRITICAL: If the cloud profile has no avatar, purge any lingering avatarUrl
+    if (!st.profile.avatarUrl) {
+      delete profile.avatarUrl;
+    }
+  } else {
+    // Brand new user or no profile saved yet: clean default with user's name & email, ZERO avatar
+    profile = getDefaultProfile(userName, userEmail);
+    delete profile.avatarUrl;
+  }
+  store.set('profile', profile, false);
+
+  if (st && st.water && st.water.date === today()) {
+    water = { date: today(), ml: Number(st.water.ml) || 0 };
+  } else {
+    water = { date: today(), ml: 0 };
+  }
+  store.set('water', water, false);
+
+  log = (st && st.log && typeof st.log === 'object') ? st.log : {};
+  store.set('log', log, false);
+
+  custom = (st && Array.isArray(st.custom)) ? st.custom : [];
+  store.set('custom', custom, false);
+
+  workoutsDone = (st && Array.isArray(st.workouts)) ? st.workouts : [];
+  store.set('workoutsDone', workoutsDone, false);
+
+  activeChallengePlan = (st && st.activeChallenge) ? st.activeChallenge : null;
+  if (activeChallengePlan) store.set('activeChallengePlan', activeChallengePlan, false);
+  else store.del('activeChallengePlan');
+
+  weightLog = (st && Array.isArray(st.weights)) ? st.weights : [];
+  store.set('weights', weightLog, false);
+
+  plan = (st && st.plan) ? st.plan : null;
+  if (plan) store.set('plan', plan, false);
+  else store.del('plan');
+}
+
 /* ---------- State ---------- */
-let plan = store.get('plan', null);
-let profile = store.get('profile', {
-  name: 'Jordan Davis',
-  email: 'jordan.davis@example.com',
-  units: 'Metric',
-  hCm: 175,
-  wKg: 70,
-  cal: 2100,
-  p: 140,
-  c: 210,
-  f: 65,
-  goal: 'Maintain weight',
-  days: 4,
-  creatine: 'yes'
-});
-let log = store.get('log', {});
-let custom = store.get('custom', []);
-let water = store.get('water', { date: today(), ml: 1000 });
-let workoutsDone = store.get('workoutsDone', []);
-let streakTracker = store.get('streakTracker', {
+let session = store.get('session', null);
+let profile = (() => {
+  const p = store.get('profile', null);
+  if (!session) {
+    if (p && !p.avatarUrl && (!p.email || p.email === 'jordan.davis@example.com')) return p;
+    return getDefaultProfile('Jordan Davis', '');
+  }
+  if (p && p.email && session.email && p.email.toLowerCase() === session.email.toLowerCase()) {
+    return p;
+  }
+  return getDefaultProfile(session.name, session.email);
+})();
+let plan = session ? store.get('plan', null) : null;
+let log = session ? store.get('log', {}) : {};
+let custom = session ? store.get('custom', []) : [];
+let water = session ? store.get('water', { date: today(), ml: 0 }) : { date: today(), ml: 0 };
+let workoutsDone = session ? store.get('workoutsDone', []) : [];
+let weightLog = session ? store.get('weights', []) : [];
+let streakTracker = session ? store.get('streakTracker', {
   currentStreak: 0,
   lastActiveDate: null,
   streakBroken: false,
   brokenStreakCount: 0,
   history: []
-});
-let activeChallengePlan = store.get('activeChallengePlan', null);
-let session = store.get('session', null);
+}) : {
+  currentStreak: 0,
+  lastActiveDate: null,
+  streakBroken: false,
+  brokenStreakCount: 0,
+  history: []
+};
+let activeChallengePlan = session ? store.get('activeChallengePlan', null) : null;
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
 let selectedSubMuscle = 'All Legs';
@@ -1194,6 +1295,7 @@ function switchView(viewName) {
   if (viewName === 'challenge') renderChallengeView();
   if (viewName === 'tracking') renderTrackingView();
   if (viewName === 'admin') renderAdminView();
+  if (viewName === 'starting-load') renderStartingLoad();
 }
 
 // Attach Nav Links
@@ -2892,6 +2994,40 @@ function renderWorkouts() {
   renderCustomWorkoutExplorer();
 }
 
+/* ---------- Starting Load Calculator (1RM-free, from claude-gym-coach) ---------- */
+const SL_LIFTS = [
+  { key: 'squat', name: 'Back Squat' },
+  { key: 'bench', name: 'Bench Press' },
+  { key: 'deadlift', name: 'Deadlift' },
+  { key: 'press', name: 'Overhead Press' },
+  { key: 'row', name: 'Barbell Row' }
+];
+
+function renderStartingLoad() {
+  const grid = $('#slLoadsGrid');
+  const note = $('#slCeilingNote');
+  if (!grid) return;
+  const bw = Number($('#slBodyweight') ? $('#slBodyweight').value : 70) || 70;
+  const sex = $('#slSex') ? $('#slSex').value : 'male';
+  const parts = [];
+  for (const lift of SL_LIFTS) {
+    const ceil = FF_ALGO.startingLoadCeiling(bw, sex, lift.key);
+    const start = FF_ALGO.startingLoadPropose(bw, sex, lift.key, false);
+    parts.push(`<div class="sl-load-card" style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px;text-align:center;">
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;">${lift.name}</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#1e293b;">${start} kg</div>
+      <div style="font-size:.76rem;color:#94a3b8;">ceiling ${ceil.min}–${ceil.max} kg</div>
+    </div>`);
+  }
+  grid.innerHTML = parts.join('');
+  if (note) {
+    note.textContent = `Based on beginner strength standards (~40–60% of a 1-month-trained lifter's %BW estimate) for ${sex} at ${bw} kg bodyweight. Empty-bar gate: try 20 kg first; only load more if it feels trivial and controlled.`;
+  }
+}
+
+$('#slBodyweight').oninput = renderStartingLoad;
+$('#slSex').onchange = renderStartingLoad;
+
 $('#switchWorkoutPlanBtn').onclick = () => {
   activeWorkoutIdx++;
   renderWorkouts();
@@ -3204,7 +3340,7 @@ function openAvatarOptionsModal() {
   const statusText = $('#avatarModalStatusText');
   const nameEl = $('#avatarModalName');
 
-  const uName = (profile && profile.name) || (session && session.name) || 'Jordan Davis';
+  const uName = (session && session.name) || (profile && profile.name) || 'Jordan Davis';
   if (nameEl) nameEl.textContent = uName;
 
   if (profile && profile.avatarUrl) {
@@ -3817,10 +3953,16 @@ initComplaintSystem();
 async function handleLogout() {
   closeModal('#settingsModal');
   await FF.logout();
-  session = null;
-  store.del('session');
+  clearAllUserLocalData();
   updateAdminNavVisibility();
   renderProfileView();
+  renderDashboard();
+  renderDailyTip();
+  renderFoodLog();
+  renderWorkouts();
+  renderMyFoods();
+  renderChallengeView();
+  renderTrackingView();
   updateSyncStatus('Preview mode · Logged out');
   toast('Logged out successfully');
   openModal('#authModal');
@@ -3886,19 +4028,8 @@ async function handleDeleteAccount() {
     toast('Permanently deleting account from database...');
     await FF.deleteAccount();
 
-    session = null;
-    profile = { name: 'New User', email: '', cal: 2100, goal: 'Maintain weight', units: 'Metric', hCm: 175, wKg: 70, days: 4, creatine: 'yes' };
-    log = {};
-    custom = [];
-    plan = null;
-    activeChallengePlan = null;
-    store.del('activeChallengePlan');
-    weightLog = [];
-    workoutsDone = [];
-    streakTracker = { currentStreak: 0, lastActiveDate: null, streakBroken: false, brokenStreakCount: 0, history: [] };
-    store.del('streakTracker');
-    waterMl = 0;
-    waterHistory = {};
+    clearAllUserLocalData();
+    updateAdminNavVisibility();
 
     renderDashboard();
     renderFoodLog();
@@ -4011,23 +4142,20 @@ async function submitAuth() {
       toast('Signed in successfully');
     }
 
+    // Completely wipe all residual state from any previous session before loading user state
+    clearAllUserLocalData();
+
     session = { name: user.name, email: user.email, is_admin: user.is_admin };
-    store.set('session', session);
+    store.set('session', session, false);
     updateAdminNavVisibility();
 
     // Pull user cloud database state
     try {
       const data = await FF.req('GET', '/api/data');
-      if (data && data.state) {
-        const st = data.state;
-        if (st.profile) { profile = st.profile; store.set('profile', profile); }
-        if (st.water) { water = st.water; store.set('water', water); }
-        if (st.log && Object.keys(st.log).length) { log = st.log; store.set('log', log); }
-        if (st.custom && st.custom.length) { custom = st.custom; store.set('custom', custom); }
-        if (st.workouts) { workoutsDone = st.workouts; store.set('workoutsDone', workoutsDone); }
-        if (st.activeChallenge) { activeChallengePlan = st.activeChallenge; store.set('activeChallengePlan', activeChallengePlan); }
-      }
-    } catch (e) {}
+      applyUserCloudState(user, data ? data.state : {});
+    } catch (e) {
+      applyUserCloudState(user, {});
+    }
 
     closeModal('#authModal');
     renderProfileView();
@@ -4039,6 +4167,10 @@ async function submitAuth() {
     renderDashboard();
     renderDailyTip();
     renderFoodLog();
+    renderWorkouts();
+    renderMyFoods();
+    renderChallengeView();
+    renderTrackingView();
     updateSyncStatus('Cloud database synced');
     showMotivationalQuotePopup();
   } catch (err) {
@@ -5827,25 +5959,25 @@ async function bootApp() {
     const res = await FF.boot();
     if (res && res.user) {
       session = { name: res.user.name, email: res.user.email, is_admin: res.user.is_admin };
-      store.set('session', session);
+      store.set('session', session, false);
       updateAdminNavVisibility();
-      const st = res.state || {};
-      if (st.profile) { profile = st.profile; store.set('profile', profile); }
-      if (st.water) { water = st.water; store.set('water', water); }
-      if (st.log && Object.keys(st.log).length) { log = st.log; store.set('log', log); }
-      if (st.custom && st.custom.length) { custom = st.custom; store.set('custom', custom); }
-      if (st.workouts) { workoutsDone = st.workouts; store.set('workoutsDone', workoutsDone); }
-      if (st.activeChallenge) { activeChallengePlan = st.activeChallenge; store.set('activeChallengePlan', activeChallengePlan); }
+      applyUserCloudState(res.user, res.state || {});
       updateSyncStatus('Cloud database synced');
       renderProfileView();
       renderDashboard();
       renderDailyTip();
+      renderFoodLog();
+      renderWorkouts();
+      renderMyFoods();
       renderChallengeView();
       renderTrackingView();
       if (res.user.email === 'admin@fitfuel.app') {
         switchView('admin');
       }
     } else {
+      clearAllUserLocalData();
+      renderProfileView();
+      renderDashboard();
       updateSyncStatus('Preview session · Sign in to save');
     }
   } catch (e) {

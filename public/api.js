@@ -66,7 +66,15 @@ const FF = {
       return data;
     } catch (e) {
       const msg = String(e.message);
-      if (msg.includes('Not logged in') || msg.includes('401') || msg.includes('Admin access')) { this.online = true; return null; }
+      if (msg.includes('Not logged in') || msg.includes('401') || msg.includes('Admin access')) {
+        this.online = true;
+        this.token = null;
+        this.user = null;
+        try { localStorage.removeItem('ff_token'); } catch (e) {}
+        this._syncQ = [];
+        clearTimeout(this._syncT);
+        return null;
+      }
       this.online = false;
       return 'offline';
     }
@@ -76,23 +84,27 @@ const FF = {
     const r = await this.req('POST', '/api/auth/register', { name, email, contact, password });
     if (autoLogin) {
       this.token = r.token; this.user = r.user; this.online = true;
-      localStorage.setItem('ff_token', r.token);
+      try { localStorage.setItem('ff_token', r.token); } catch (e) {}
     } else {
       this.token = null; this.user = null;
-      localStorage.removeItem('ff_token');
+      try { localStorage.removeItem('ff_token'); } catch (e) {}
     }
     return r.user;
   },
   async login(email, password) {
+    this._syncQ = [];
+    clearTimeout(this._syncT);
     const r = await this.req('POST', '/api/auth/login', { email, password });
     this.token = r.token; this.user = r.user; this.online = true;
-    localStorage.setItem('ff_token', r.token);
+    try { localStorage.setItem('ff_token', r.token); } catch (e) {}
     return r.user;
   },
   async logout() {
+    this._syncQ = [];
+    clearTimeout(this._syncT);
     try { await this.req('POST', '/api/auth/logout'); } catch (e) {}
     this.token = null; this.user = null;
-    localStorage.removeItem('ff_token');
+    try { localStorage.removeItem('ff_token'); } catch (e) {}
   },
 
   patch(state) {
