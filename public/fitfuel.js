@@ -7328,6 +7328,41 @@ bootApp();
 
 /* ---------- Image 3 & Image 5 Enhanced Interactive Bindings ---------- */
 document.addEventListener('DOMContentLoaded', () => {
+  /* ---------- A Stronger You Hero (User Reference Design) Bindings ---------- */
+  if ($('#syStartJourneyBtn')) $('#syStartJourneyBtn').onclick = () => switchView('workouts');
+  if ($('#syFloatWorkoutTrigger')) $('#syFloatWorkoutTrigger').onclick = () => switchView('workouts');
+  if ($('#syQuickFoodBtn')) $('#syQuickFoodBtn').onclick = () => {
+    if (typeof openModal === 'function' && $('#mealAnalysisModal')) openModal('#mealAnalysisModal');
+    else switchView('meals');
+  };
+  if ($('#syQuickBodyBtn')) $('#syQuickBodyBtn').onclick = () => {
+    if (typeof openModal === 'function' && $('#bodyAnalysisModal')) openModal('#bodyAnalysisModal');
+    else switchView('today');
+  };
+  if ($('#syQuickProgressBtn')) $('#syQuickProgressBtn').onclick = () => switchView('activity');
+  if ($('#syBottomCardWorkout')) $('#syBottomCardWorkout').onclick = () => switchView('workouts');
+  if ($('#syBottomCardNutrition')) $('#syBottomCardNutrition').onclick = () => switchView('meals');
+  if ($('#syBottomCardProgress')) $('#syBottomCardProgress').onclick = () => switchView('activity');
+  if ($('#syHeroBellBtn')) $('#syHeroBellBtn').onclick = () => {
+    if (typeof toast === 'function') toast('Notifications: Weekly AI coaching and performance report is ready.');
+  };
+  if ($('#syHeroProfilePill')) $('#syHeroProfilePill').onclick = () => switchView('profile');
+  if ($('#syHeroSearchInput')) {
+    $('#syHeroSearchInput').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        const q = $('#syHeroSearchInput').value.trim();
+        if (!q) return;
+        switchView('workouts');
+        const customInput = $('#customWorkoutSearchInput');
+        if (customInput) {
+          customInput.value = q;
+          customInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (typeof toast === 'function') toast('Searching catalog for: ' + q);
+      }
+    };
+  }
+
   // Image 3 Clickable Metric Triggers
   if ($('#metricCardCalTrigger')) $('#metricCardCalTrigger').onclick = () => switchView('food-log');
   if ($('#metricCardProteinTrigger')) $('#metricCardProteinTrigger').onclick = () => switchView('food-log');
