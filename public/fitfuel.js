@@ -1523,10 +1523,10 @@ function renderDashboard() {
   if (mealList) {
     if (entries.length === 0) {
       mealList.innerHTML = `
-        <div style="padding: 24px 16px; text-align: center; color:#64748b; background:#f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px;">
+        <div style="padding: 24px 16px; text-align: center; color:var(--glass-text-secondary); background:var(--glass-surface-subtle); border:1px dashed var(--glass-border); border-radius: 14px;">
           <div style="font-size: 28px; margin-bottom: 6px;"></div>
           <b style="color: #2563eb; font-size: 14px; display: block; margin-bottom: 4px;">No Meals Logged Today</b>
-          <p style="font-size: 12px; margin: 0 0 12px; color:#64748b; line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
+          <p style="font-size: 12px; margin: 0 0 12px; color:var(--glass-text-secondary); line-height: 1.45;">Your calorie and nutrient intake is currently 0. Log your breakfast, lunch, or snack to start tracking your daily nutrition.</p>
           <button type="button" class="solid-button small" id="emptyDashAddMealBtn" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             Log Food Now
@@ -1629,7 +1629,7 @@ function renderDashboard() {
     barGraph.innerHTML = weeklyDayData.map(d => {
       const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
       const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
-      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:#64748b;';
+      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:var(--glass-text-secondary);';
       const statusIcon = d.isActive ? '' : (d.isToday ? '•' : '');
       return `
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
@@ -1939,7 +1939,7 @@ function renderFoodLog() {
             <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
             <b style="color:#2563eb;font-size:1.08rem;font-weight:700;">${mealType}</b>
           </div>
-          <span style="color:#1e293b;font-size:.88rem;font-weight:700;background:#eff6ff;padding:3px 12px;border-radius:99px;border: 1px solid #dbeafe;">
+          <span style="color:var(--glass-text-primary);font-size:.88rem;font-weight:700;background:#eff6ff;padding:3px 12px;border-radius:99px;border: 1px solid #dbeafe;">
             ${subKcal} kcal
           </span>
         </div>
@@ -1947,16 +1947,16 @@ function renderFoodLog() {
           ${mealItems.length ? mealItems.map(item => {
             const realIdx = entries.indexOf(item);
             return `
-            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(15,23,42,0.02);">
+            <div class="meal-item-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:12px;gap:14px;box-shadow:0 1px 4px rgba(15,23,42,0.02);">
               <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
                 ${item.image ? `<img src="${item.image}" class="img-preview-trigger" data-title="${escapeHtml(item.name)}" data-src="${item.image}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;cursor:pointer;" alt="${item.name}" title="Click to view full image">` : getFoodCategoryBadge(item.cat)}
                 <div style="min-width:0;">
-                  <b style="color:#1e293b;font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
-                  <p style="color:#64748b;font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+                  <b style="color:var(--glass-text-primary);font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</b>
+                  <p style="color:var(--glass-text-secondary);font-size:.82rem;margin-top:2px;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                <span style="font-weight:700;color:#1e293b;font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
+                <span style="font-weight:700;color:var(--glass-text-primary);font-size:.95rem;margin-right:2px;">${item.k || item.calories} kcal</span>
                 <button type="button" class="action-icon-btn edit" title="Edit food entry" onclick="openEditFoodModal(${realIdx})" style="background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;color:#2563eb;display:flex;align-items:center;justify-content:center;">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 20h9"></path>
@@ -1966,7 +1966,7 @@ function renderFoodLog() {
                 <button type="button" class="close-btn" style="color:#dc2626;cursor:pointer;padding:6px;border-radius:6px;font-size:1.15rem;line-height:1;display:flex;align-items:center;justify-content:center;" title="Delete entry" onclick="deleteFoodEntry(${realIdx})">&times;</button>
               </div>
             </div>
-          `;}).join('') : `<p style="color:#64748b;font-size:.86rem;padding:8px 6px;margin:0;font-style:italic;">No items logged for ${mealType.toLowerCase()} yet. Click "Add Food" above to log.</p>`}
+          `;}).join('') : `<p style="color:var(--glass-text-secondary);font-size:.86rem;padding:8px 6px;margin:0;font-style:italic;">No items logged for ${mealType.toLowerCase()} yet. Click "Add Food" above to log.</p>`}
         </div>
       </div>`;
     }).join('');
@@ -2172,7 +2172,7 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
 
   const row = document.createElement('div');
   row.className = 'ingredient-row';
-  row.style.cssText = 'display:grid;grid-template-columns:1.2fr 1.6fr 100px 70px 30px;gap:8px;align-items:center;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;';
+  row.style.cssText = 'display:grid;grid-template-columns:1.2fr 1.6fr 100px 70px 30px;gap:8px;align-items:center;padding:8px 10px;background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:10px;margin-bottom:8px;';
 
   const catOptions = Object.keys(INGREDIENT_CATALOG).map(cat => 
     `<option value="${cat}" ${cat === initialCat ? 'selected' : ''}>${cat}</option>`
@@ -2186,7 +2186,7 @@ function addIngredientRow(initialCat = 'Vegetables', initialItemName = null, ini
     </select>
     <div style="display:flex;align-items:center;background:#fff;border: 1px solid #e2e8f0;border-radius:8px;padding:4px 8px;">
       <input type="number" class="recipe-qty-input" value="${initialQty}" min="1" max="5000" style="width:100%;border:none;outline:none;font-size:.85rem;font-weight:600;">
-      <span style="font-size:.78rem;color:#64748b;margin-left:4px;">g</span>
+      <span style="font-size:.78rem;color:var(--glass-text-secondary);margin-left:4px;">g</span>
     </div>
     <div class="recipe-row-cal" style="font-size:.82rem;font-weight:700;color:#2563eb;text-align:right;">
       0 kcal
@@ -2758,11 +2758,11 @@ if ($('#foodSearchInput')) {
         <div style="display:flex;align-items:center;gap:10px;">
           ${visual}
           <div>
-            <b style="color:#1e293b;font-size:.9rem;">${f.name}</b>
-            <p style="color:#64748b;font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#2563eb;font-weight:600;">· ${f.micros}</span>` : ''}</p>
+            <b style="color:var(--glass-text-primary);font-size:.9rem;">${f.name}</b>
+            <p style="color:var(--glass-text-secondary);font-size:.78rem;margin:0;">${f.p}g P · ${f.c}g C · ${f.f}g F ${f.micros ? `<span style="color:#2563eb;font-weight:600;">· ${f.micros}</span>` : ''}</p>
           </div>
         </div>
-        <span style="font-weight:700;color:#1e293b;font-size:.85rem;">${f.k} <small style="font-weight:400;color:#64748b;">kcal/100g</small></span>
+        <span style="font-weight:700;color:var(--glass-text-primary);font-size:.85rem;">${f.k} <small style="font-weight:400;color:var(--glass-text-secondary);">kcal/100g</small></span>
       </div>`;
     }).join('');
   };
@@ -3266,7 +3266,7 @@ function renderExerciseLibrary() {
             <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
           </div>
 
-          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:#64748b;"> ${ex.steps}</p>
+          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:var(--glass-text-secondary);"> ${ex.steps}</p>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
@@ -3323,9 +3323,9 @@ function renderMyFoods() {
       </div>
       <div style="flex:1;">
         <span class="section-kicker">${item.meal || 'RECIPE'}</span>
-        <h4 style="margin:2px 0;color:#1e293b;">${item.name}</h4>
-        <p style="color:#64748b;font-size:.85rem;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
-        <b style="color:#1e293b;font-size:1.05rem;display:inline-block;margin-top:6px;">${item.k || item.calories} kcal</b>
+        <h4 style="margin:2px 0;color:var(--glass-text-primary);">${item.name}</h4>
+        <p style="color:var(--glass-text-secondary);font-size:.85rem;">${item.detail || `${item.p || 0}g P · ${item.c || 0}g C · ${item.f || 0}g F`}</p>
+        <b style="color:var(--glass-text-primary);font-size:1.05rem;display:inline-block;margin-top:6px;">${item.k || item.calories} kcal</b>
       </div>
       <button class="solid-button small" onclick="quickAddSavedFood(${i})" style="margin-top:10px;width:100%;">
         Add to today +
@@ -3743,7 +3743,7 @@ async function renderAdminView() {
 async function loadAndRenderAdminComplaints() {
   const grid = $('#adminComplaintsCardsGrid');
   if (!grid) return;
-  grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">Loading user issues and complaints...</div>';
+  grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--glass-text-secondary);">Loading user issues and complaints...</div>';
 
   try {
     const complaints = await FF.adminComplaints();
@@ -3773,10 +3773,10 @@ function renderFilteredComplaints() {
 
   if (!list.length) {
     grid.innerHTML = `
-      <div style="padding:36px 20px;text-align:center;background:#f8fafc;border:1px solid #cbd5e1;border-radius:14px;">
+      <div style="padding:36px 20px;text-align:center;background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:14px;">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px;display:block;"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-        <b style="color:#1e293b;font-size:1.1rem;display:block;margin-bottom:4px;">No ${currentComplaintFilter === 'all' ? '' : currentComplaintFilter} issues found</b>
-        <p style="color:#64748b;font-size:0.88rem;margin:0;">All user issues in this category have been addressed.</p>
+        <b style="color:var(--glass-text-primary);font-size:1.1rem;display:block;margin-bottom:4px;">No ${currentComplaintFilter === 'all' ? '' : currentComplaintFilter} issues found</b>
+        <p style="color:var(--glass-text-secondary);font-size:0.88rem;margin:0;">All user issues in this category have been addressed.</p>
       </div>
     `;
     return;
@@ -3794,13 +3794,13 @@ function renderFilteredComplaints() {
     const files = Array.isArray(c.files) ? c.files : [];
     const filesHtml = files.length ? `
       <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #cbd5e1;">
-        <b style="font-size:0.78rem;color:#64748b;display:block;margin-bottom:6px;">Attached User Files (${files.length}):</b>
+        <b style="font-size:0.78rem;color:var(--glass-text-secondary);display:block;margin-bottom:6px;">Attached User Files (${files.length}):</b>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           ${files.map(f => {
             if (f.data && f.data.startsWith('data:image')) {
               return `<img src="${f.data}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #cbd5e1;cursor:pointer;" class="img-preview-trigger" data-title="${escapeHtml(f.name)}" data-src="${f.data}" title="Click to view full photo" />`;
             }
-            return `<span style="font-size:0.75rem;background:#e2e8f0;padding:4px 8px;border-radius:6px;color:#1e293b;">${escapeHtml(f.name)}</span>`;
+            return `<span style="font-size:0.75rem;background:#e2e8f0;padding:4px 8px;border-radius:6px;color:var(--glass-text-primary);">${escapeHtml(f.name)}</span>`;
           }).join('')}
         </div>
       </div>` : '';
@@ -3810,7 +3810,7 @@ function renderFilteredComplaints() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
           <div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <b style="font-size:1.05rem;color:#0f172a;">${escapeHtml(c.name)}</b>
+              <b style="font-size:1.05rem;color:var(--glass-text-primary);">${escapeHtml(c.name)}</b>
               <span style="font-size:0.72rem;background:#eff6ff;color:#2563eb;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid #bfdbfe;text-transform:uppercase;">${escapeHtml(c.type || 'complaint')}</span>
               ${statusBadge}
             </div>
@@ -3823,12 +3823,12 @@ function renderFilteredComplaints() {
               </div>
             ` : '<span style="color:#94a3b8;font-size:0.8rem;">No email provided</span>'}
           </div>
-          <small style="color:#64748b;font-weight:500;">Submitted: ${dateStr}</small>
+          <small style="color:var(--glass-text-secondary);font-weight:500;">Submitted: ${dateStr}</small>
         </div>
 
         <!-- Issue text description -->
         <div style="background:#f8fafc;padding:12px 14px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:12px;">
-          <p style="margin:0;color:#1e293b;font-size:0.92rem;line-height:1.5;white-space:pre-wrap;">${escapeHtml(c.text)}</p>
+          <p style="margin:0;color:var(--glass-text-primary);font-size:0.92rem;line-height:1.5;white-space:pre-wrap;">${escapeHtml(c.text)}</p>
         </div>
 
         ${filesHtml}
@@ -3851,7 +3851,7 @@ function renderFilteredComplaints() {
                 Mark Solved
               </button>
             ` : `
-              <button type="button" class="outline-button small" onclick="updateComplaintStatus(${c.id}, 'pending')" style="color:#64748b;font-size:0.8rem;padding:6px 12px;">
+              <button type="button" class="outline-button small" onclick="updateComplaintStatus(${c.id}, 'pending')" style="color:var(--glass-text-secondary);font-size:0.8rem;padding:6px 12px;">
                 Reopen
               </button>
             `}
@@ -3905,7 +3905,7 @@ window.deleteComplaint = async function(id) {
 async function loadAndRenderAdminUsers() {
   const grid = $('#adminUsersCardsGrid');
   if (!grid) return;
-  grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">Loading user accounts database...</div>';
+  grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--glass-text-secondary);">Loading user accounts database...</div>';
   try {
     const users = await FF.adminUsers();
     cachedAdminUsers = users || [];
@@ -3929,7 +3929,7 @@ function renderFilteredAdminUsers() {
   }
 
   if (!list.length) {
-    grid.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">No matching users found.</div>';
+    grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--glass-text-secondary);">No matching users found.</div>';
     return;
   }
 
@@ -3940,10 +3940,10 @@ function renderFilteredAdminUsers() {
       <div class="panel" style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <b style="font-size:0.98rem;color:#0f172a;">${escapeHtml(u.name || 'Member')}</b>
+            <b style="font-size:0.98rem;color:var(--glass-text-primary);">${escapeHtml(u.name || 'Member')}</b>
             ${u.is_admin ? `<span style="font-size:0.68rem;background:#1e3a8a;color:#38bdf8;padding:2px 7px;border-radius:99px;font-weight:800;border:1px solid #38bdf8;">ADMIN</span>` : ''}
           </div>
-          <div style="font-size:0.84rem;color:#64748b;margin-top:2px;">
+          <div style="font-size:0.84rem;color:var(--glass-text-secondary);margin-top:2px;">
             Email: <b style="color:#2563eb;">${escapeHtml(u.email)}</b> · Joined: ${joinDate} · Last active: ${lastLogin} · Food entries: ${u.logCount || 0}
           </div>
         </div>
@@ -4673,7 +4673,7 @@ function renderChatMessages() {
   if (coachStream) {
     if (chatHistory.length === 0) {
       coachStream.innerHTML = `
-        <div class="ai-msg bot" style="background:rgba(255,255,255,0.85);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
+        <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
             <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
@@ -4706,7 +4706,7 @@ function renderChatMessages() {
         const isBot = msg.role === 'assistant';
         const formatted = formatChatMarkdown(msg.text);
         if (isBot) {
-          return `<div class="ai-msg bot" style="background:rgba(255,255,255,0.88);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);margin-bottom:10px;">
+          return `<div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);margin-bottom:10px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
               <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
               <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
@@ -4848,7 +4848,7 @@ I have opened your **4D Body Composition & Goal Planner** modal:
         <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0284c7;box-shadow:0 0 6px #0284c7;"></span>
         AI LIVE COACH · REASONING
       </span>
-      <div style="color:#64748b;font-style:italic;display:flex;align-items:center;gap:8px;">
+      <div style="color:var(--glass-text-secondary);font-style:italic;display:flex;align-items:center;gap:8px;">
         <span style="display:inline-block;width:12px;height:12px;border:2px solid #0284c7;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
         Analyzing metrics and formulating dynamic response...
       </div>`;
@@ -5353,7 +5353,7 @@ function renderCustomWorkoutExplorer() {
   }
 
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:#64748b;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--glass-text-secondary);background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
       <b>No exercises found matching your selected filters.</b>
       <p style="font-size:.85rem;margin-top:6px;">Try selecting "All Types" or "Full Body" to view the full exercise catalog.</p>
     </div>`;
@@ -5370,19 +5370,19 @@ function renderCustomWorkoutExplorer() {
     const cleanName = escapeHtml(ex.name);
     const safeName = cleanName.replace(/'/g, "\\'");
     return `
-      <div class="exercise-custom-card" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
+      <div class="exercise-custom-card" style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <span style="font-size:.72rem;font-weight:800;color:#1e293b;background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+            <span style="font-size:.72rem;font-weight:800;color:var(--glass-text-primary);background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
               ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
             </span>
-            <span style="font-size:.74rem;color:#64748b;font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
+            <span style="font-size:.74rem;color:var(--glass-text-secondary);font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
           </div>
           <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
-          <p style="color:#64748b;font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:.78rem;font-weight:700;color:#1e293b;">${escapeHtml(rxSets)}</span>
-            <span style="font-size:.75rem;color:#64748b;font-weight:600;">Rest: ${escapeHtml(rxRest)}</span>
+          <p style="color:var(--glass-text-secondary);font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
+          <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.78rem;font-weight:700;color:var(--glass-text-primary);">${escapeHtml(rxSets)}</span>
+            <span style="font-size:.75rem;color:var(--glass-text-secondary);font-weight:600;">Rest: ${escapeHtml(rxRest)}</span>
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:auto;">
@@ -5399,7 +5399,7 @@ function renderCustomWorkoutExplorer() {
 
   const toggleBarHtml = list.length > defaultLimit ? `
     <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1.5px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
-      <span style="font-size:.85rem;color:#334155;font-weight:600;">
+      <span style="font-size:.85rem;color:var(--glass-text-secondary);font-weight:600;">
         Showing <b>${displayList.length}</b> of <b>${list.length}</b> targeted exercises (${customWorkoutShowAll ? 'Expanded Catalog' : 'Curated Session View - 4 Moves'})
       </span>
       <button type="button" class="solid-button small" id="toggleCustomWorkoutExpandBtn" style="background:#2563eb;padding:7px 16px;font-size:.82rem;">
@@ -5618,7 +5618,7 @@ function renderChallengeView() {
 
       <!-- Action Button Controls -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:#1e293b;font-weight:800;padding:10px 22px;border:none;">
+        <button type="button" class="solid-button" id="startActiveSessionBtn" style="background:#38bdf8;color:var(--glass-text-primary);font-weight:800;padding:10px 22px;border:none;">
           Start Today's Workout (${escapeHtml(currentDay.title)})
         </button>
         <button type="button" class="outline-button" id="refreshTodayRoutineBtn" style="border-color:rgba(255,255,255,0.3);color:#ffffff;background:rgba(255,255,255,0.06);font-size:.84rem;">
@@ -5639,7 +5639,7 @@ function renderChallengeView() {
         <div>
           <span class="section-kicker">TODAY'S SCHEDULED ROUTINE</span>
           <h3 style="margin:2px 0 0;font-size:1.25rem;font-weight:800;">${escapeHtml(currentDay.title)}</h3>
-          <p style="margin:4px 0 0;font-size:.88rem;color:#64748b;">Focus: <b style="color:#2563eb;">${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
+          <p style="margin:4px 0 0;font-size:.88rem;color:var(--glass-text-secondary);">Focus: <b style="color:#2563eb;">${escapeHtml(currentDay.focus)}</b> · Est: ${currentDay.estDuration}</p>
         </div>
         <span style="font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:99px;background:${currentDay.completed ? '#dbeafe' : '#f1f5f9'};color:${currentDay.completed ? '#1e40af' : '#475569'};">
           ${currentDay.completed ? 'COMPLETED' : 'READY TO TRAIN'}
@@ -5676,7 +5676,7 @@ function renderChallengeView() {
           <span class="section-kicker">ALL DAYS OVERVIEW</span>
           <h3 style="margin:2px 0 0;font-size:1.25rem;font-weight:800;">${p.durationDays}-Day Challenge Roadmap</h3>
         </div>
-        <span style="font-size:.86rem;color:#64748b;font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
+        <span style="font-size:.86rem;color:var(--glass-text-secondary);font-weight:600;">${remaining} day${remaining === 1 ? '' : 's'} remaining</span>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:10px;">
@@ -5776,7 +5776,7 @@ function openSwapExerciseModal(dayIdx, exIdx) {
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #edf2e8;border-radius:10px;background:#ffffff;gap:10px;">
         <div>
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
-          <small style="color:#64748b;font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
+          <small style="color:var(--glass-text-secondary);font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
         </div>
         <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#2563eb;font-size:.78rem;white-space:nowrap;">
           Select &amp; Replace
@@ -6107,12 +6107,12 @@ function renderTrackingView() {
     const completedDays = cp.completedCount || 0;
     const pct = Math.min(100, Math.round((completedDays / cp.durationDays) * 100));
     challengeBlock = `
-      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
           <div>
             <span class="section-kicker" style="color:#2563eb;font-weight:800;">ACTIVE PLAN TRACKER</span>
-            <h3 style="margin:2px 0 0;font-size:1.25rem;color:#1e293b;font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
-            <p style="margin:2px 0 0;font-size:.86rem;color:#64748b;">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
+            <h3 style="margin:2px 0 0;font-size:1.25rem;color:var(--glass-text-primary);font-weight:800;">${escapeHtml(cp.motive)} (${cp.durationDays} Days)</h3>
+            <p style="margin:2px 0 0;font-size:.86rem;color:var(--glass-text-secondary);">Progress: <b>Day ${completedDays} of ${cp.durationDays} Completed</b> (${pct}%)</p>
           </div>
           <button type="button" class="solid-button small" onclick="switchView('challenge')" style="background:#2563eb;">
             Open Challenge Engine →
@@ -6140,10 +6140,10 @@ function renderTrackingView() {
     `;
   } else {
     challengeBlock = `
-      <div style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
+      <div style="background:var(--glass-surface-subtle); border:1px dashed var(--glass-border);border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;">
         <span style="font-size:28px;"></span>
         <b style="color:#2563eb;font-size:1.05rem;display:block;margin:6px 0 2px;">No Active Challenge Plan</b>
-        <p style="color:#64748b;font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
+        <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:0 0 14px;">Set a 10, 15, 25, or 30-day fitness challenge to unlock day-by-day progression tracking.</p>
         <button type="button" class="solid-button small" onclick="switchView('challenge');openModal('#challengeMotiveModal');" style="background:#2563eb;">
           Start Challenge
         </button>
@@ -6157,15 +6157,15 @@ function renderTrackingView() {
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #edf2e8;">
         <div>
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
-          <small style="color:#64748b;font-size:.78rem;">${w.date || today()}</small>
+          <small style="color:var(--glass-text-secondary);font-size:.78rem;">${w.date || today()}</small>
         </div>
-        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:#1e293b;font-weight:700;">
+        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:var(--glass-text-primary);font-weight:700;">
            Logged
         </span>
       </div>
     `).join('')
   ) : `
-    <div style="padding:20px;text-align:center;color:#64748b;font-size:.85rem;">
+    <div style="padding:20px;text-align:center;color:var(--glass-text-secondary);font-size:.85rem;">
       No workouts completed yet. Mark exercises complete or start a challenge routine!
     </div>
   `;
@@ -6175,32 +6175,32 @@ function renderTrackingView() {
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:16px;">
       <!-- STREAK & CONSISTENCY -->
-      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <span class="section-kicker">HABIT CONSISTENCY</span>
-        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e293b;font-weight:800;">Workout &amp; Streak Metrics</h4>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:var(--glass-text-primary);font-weight:800;">Workout &amp; Streak Metrics</h4>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
           <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
-            <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">CURRENT STREAK</span>
+            <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">CURRENT STREAK</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
           <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
-            <span style="font-size:.72rem;color:#64748b;font-weight:700;display:block;">TOTAL WORKOUTS</span>
+            <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">TOTAL WORKOUTS</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${totalWorkouts}</b>
           </div>
         </div>
-        <p style="font-size:.84rem;color:#64748b;margin:0;line-height:1.45;">
+        <p style="font-size:.84rem;color:var(--glass-text-secondary);margin:0;line-height:1.45;">
           ${curStreak.streakBroken ? ' Streak broken due to 2+ inactive days. Rebuild your streak today!' : 'Keep training consistently to lock in permanent muscle and metabolic adaptations.'}
         </p>
       </div>
 
       <!-- NUTRITION & HYDRATION COMPLIANCE -->
-      <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+      <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
         <span class="section-kicker">TODAY'S FUELING</span>
-        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:#1e293b;font-weight:800;">Nutrition &amp; Water Compliance</h4>
+        <h4 style="margin:2px 0 14px;font-size:1.1rem;color:var(--glass-text-primary);font-weight:800;">Nutrition &amp; Water Compliance</h4>
         <div style="display:flex;flex-direction:column;gap:12px;">
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#64748b;font-weight:600;">Calories Intake</span>
+              <span style="color:var(--glass-text-secondary);font-weight:600;">Calories Intake</span>
               <b>${todayKcal} / ${goalKcal} kcal</b>
             </div>
             <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
@@ -6210,7 +6210,7 @@ function renderTrackingView() {
 
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#64748b;font-weight:600;">Protein Target</span>
+              <span style="color:var(--glass-text-secondary);font-weight:600;">Protein Target</span>
               <b>${todayP} / ${goalP} g</b>
             </div>
             <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
@@ -6220,7 +6220,7 @@ function renderTrackingView() {
 
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;">
-              <span style="color:#64748b;font-weight:600;">Hydration</span>
+              <span style="color:var(--glass-text-secondary);font-weight:600;">Hydration</span>
               <b>${(waterMl/1000).toFixed(1)} / ${waterGoal} L</b>
             </div>
             <div style="background:#f8fafc;height:7px;border-radius:99px;overflow:hidden;">
@@ -6232,13 +6232,13 @@ function renderTrackingView() {
     </div>
 
     <!-- WORKOUT VOLUME HISTORY -->
-    <div style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:20px;margin-top:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+    <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-top:20px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div>
           <span class="section-kicker">COMPLETION LOG</span>
-          <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e293b;font-weight:800;">Recent Completed Workouts</h4>
+          <h4 style="margin:2px 0 0;font-size:1.1rem;color:var(--glass-text-primary);font-weight:800;">Recent Completed Workouts</h4>
         </div>
-        <span style="font-size:.82rem;color:#64748b;">Total: ${totalWorkouts} sessions</span>
+        <span style="font-size:.82rem;color:var(--glass-text-secondary);">Total: ${totalWorkouts} sessions</span>
       </div>
       <div style="display:flex;flex-direction:column;">
         ${recentWorkoutsHtml}
@@ -6862,7 +6862,7 @@ async function renderActivityHistory() {
     const sessions = await FF.getActivitySessions();
     if (!sessions || sessions.length === 0) {
       container.innerHTML = `
-        <div style="text-align:center;padding:24px 14px;color:#64748b;font-size:0.84rem;">
+        <div style="text-align:center;padding:24px 14px;color:var(--glass-text-secondary);font-size:0.84rem;">
           No saved GPS activity sessions yet. Start your first walk or run above!
         </div>
       `;
@@ -6893,7 +6893,7 @@ async function renderActivityHistory() {
       `;
     }).join('');
   } catch (e) {
-    container.innerHTML = '<div style="color:#64748b;font-size:0.84rem;padding:12px;">Local session store ready.</div>';
+    container.innerHTML = '<div style="color:var(--glass-text-secondary);font-size:0.84rem;padding:12px;">Local session store ready.</div>';
   }
 }
 
@@ -7475,7 +7475,7 @@ async function renderPostureHistory() {
     const sessions = await FF.getPostureSessions();
     if (!sessions || sessions.length === 0) {
       container.innerHTML = `
-        <div style="text-align:center;padding:24px 14px;color:#64748b;font-size:0.84rem;">
+        <div style="text-align:center;padding:24px 14px;color:var(--glass-text-secondary);font-size:0.84rem;">
           No posture sessions recorded yet. Start camera to check your form!
         </div>
       `;
@@ -7503,7 +7503,7 @@ async function renderPostureHistory() {
       `;
     }).join('');
   } catch (e) {
-    container.innerHTML = '<div style="color:#64748b;font-size:0.84rem;padding:12px;">Local session store ready.</div>';
+    container.innerHTML = '<div style="color:var(--glass-text-secondary);font-size:0.84rem;padding:12px;">Local session store ready.</div>';
   }
 }
 
@@ -7637,7 +7637,7 @@ if ($('#triggerMealAnalysisBtn')) {
 
     const resDiv = $('#mealAnalysisResult');
     resDiv.style.display = 'block';
-    resDiv.innerHTML = '<div style="color:#64748b;font-style:italic;">Analyzing plate ingredients with AI nutrition model...</div>';
+    resDiv.innerHTML = '<div style="color:var(--glass-text-secondary);font-style:italic;">Analyzing plate ingredients with AI nutrition model...</div>';
 
     try {
       const prompt = `Analyze this meal: "${text}". Provide accurate estimates for:
@@ -7668,7 +7668,7 @@ Format as JSON: {"name": string, "calories": number, "protein": number, "carbs":
           <span style="color:#16c79a;"><b>${parsed.carbs}g</b> Carbs</span>
           <span style="color:#8b5cf6;"><b>${parsed.fat}g</b> Fat</span>
         </div>
-        <p style="font-size:0.8rem;color:#64748b;margin:0;">${parsed.summary || ''}</p>
+        <p style="font-size:0.8rem;color:var(--glass-text-secondary);margin:0;">${parsed.summary || ''}</p>
       `;
       $('#logAnalyzedMealBtn').style.display = 'inline-flex';
     } catch (err) {
@@ -7706,7 +7706,7 @@ if ($('#triggerGenWorkoutBtn')) {
 
     const resDiv = $('#genWorkoutResult');
     resDiv.style.display = 'block';
-    resDiv.innerHTML = '<div style="color:#64748b;font-style:italic;">Designing customized periodized training split...</div>';
+    resDiv.innerHTML = '<div style="color:var(--glass-text-secondary);font-style:italic;">Designing customized periodized training split...</div>';
 
     try {
       const prompt = `Create a ${days}-day ${goal} workout program using ${equip}. List 4-5 core exercises per workout day with target sets and reps.`;

@@ -26,7 +26,10 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=4.0.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=5.2.0">
 </head>
 <body>
 <div class="app-shell">
@@ -589,7 +592,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <!-- Date Filter Pills -->
-            <div class="date-pills-bar" style="display:inline-flex;background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);border:1px solid var(--ff-glass-border-subtle);border-radius:99px;padding:3px;">
+            <div class="date-pills-bar" style="display:inline-flex;background:var(--glass-surface-subtle);backdrop-filter:blur(10px);border:1px solid var(--glass-border-subtle);border-radius:99px;padding:3px;">
               <button type="button" class="date-pill-btn active" data-dash-period="today" style="padding:6px 14px;border-radius:99px;border:none;background:#2563eb;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;">Today</button>
               <button type="button" class="date-pill-btn" data-dash-period="week" style="padding:6px 14px;border-radius:99px;border:none;background:transparent;color:var(--ff-text-secondary);font-size:.8rem;font-weight:600;cursor:pointer;">Week</button>
               <button type="button" class="date-pill-btn" data-dash-period="month" style="padding:6px 14px;border-radius:99px;border:none;background:transparent;color:var(--ff-text-secondary);font-size:.8rem;font-weight:600;cursor:pointer;">Month</button>
@@ -597,10 +600,10 @@
             <!-- Search bar -->
             <div style="position:relative;display:inline-flex;align-items:center;">
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;color:#94a3b8;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-              <input type="text" id="dashGlobalSearchInput" placeholder="Search meals, workouts..." style="padding:8px 14px 8px 34px;border:1px solid var(--ff-glass-border-subtle);border-radius:99px;font-size:.84rem;background:rgba(255,255,255,0.7);outline:none;width:210px;">
+              <input type="text" id="dashGlobalSearchInput" placeholder="Search meals, workouts..." style="padding:8px 14px 8px 34px;border:1px solid var(--glass-border-subtle);border-radius:99px;font-size:.84rem;background:var(--glass-surface-subtle);outline:none;width:210px;">
             </div>
             <!-- Notification Bell -->
-            <button type="button" class="icon-button" id="dashBellBtn" title="Notifications" style="position:relative;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.8);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            <button type="button" class="icon-button" id="dashBellBtn" title="Notifications" style="position:relative;width:38px;height:38px;border-radius:50%;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:center;cursor:pointer;">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
               <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;background:#ef4444;border-radius:50%;border:1.5px solid #fff;"></span>
             </button>
@@ -691,7 +694,7 @@
                   </span>
                   Weight
                 </span>
-                <span style="background:rgba(22,199,154,0.15);color:#0f766e;font-size:.72rem;font-weight:800;padding:2px 7px;border-radius:99px;" id="metricV2WeightTrend">
+                <span style="background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);font-size:.72rem;font-weight:800;padding:2px 7px;border-radius:99px;" id="metricV2WeightTrend">
                   -0.8 kg
                 </span>
               </div>
@@ -730,7 +733,7 @@
             <div style="position:relative;height:160px;margin:14px 0 6px;">
               <!-- Target baseline line (2,200 kcal) -->
               <div style="position:absolute;top:22%;left:0;right:0;border-top:1px dashed rgba(22,199,154,0.5);display:flex;justify-content:flex-end;">
-                <span style="font-size:.68rem;color:#0f766e;background:rgba(22,199,154,0.12);padding:1px 6px;border-radius:4px;font-weight:700;">Goal: 2,200 kcal</span>
+                <span style="font-size:.68rem;color:var(--glass-accent-mint);background:rgba(22,199,154,0.12);padding:1px 6px;border-radius:4px;font-weight:700;">Goal: 2,200 kcal</span>
               </div>
 
               <!-- 7 Days Dual Bars -->
@@ -814,7 +817,7 @@
                 <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">Macronutrient Distribution</h3>
                 <span style="font-size:.75rem;color:var(--ff-text-secondary);">Today's Macro Breakdown</span>
               </div>
-              <span style="font-size:0.74rem;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:700;padding:2px 8px;border-radius:99px;">Balanced</span>
+              <span style="font-size:0.74rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);font-weight:700;padding:2px 8px;border-radius:99px;">Balanced</span>
             </div>
 
             <!-- Donut with centered 1,850 kcal -->
@@ -869,21 +872,21 @@
               <img src="images/fitfuel-3d-male-body.png" alt="3D Male Anatomy Body Composition" style="height:155px;width:auto;object-fit:contain;filter:drop-shadow(0 6px 16px rgba(37,99,235,0.2));transition:transform .2s ease;" class="body-comp-figure">
               
               <!-- Floating Callout 1 (Left): Body Fat -->
-              <div style="position:absolute;top:10px;left:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
+              <div style="position:absolute;top:10px;left:0;background:var(--glass-surface-subtle);backdrop-filter:blur(8px);border:1px solid var(--glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
                 <span style="font-size:.65rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Body Fat</span>
                 <b style="font-size:.85rem;color:#2563eb;display:block;" id="bodyFatVal">16.5%</b>
                 <span style="font-size:.62rem;color:#16c79a;font-weight:600;">Athletic Range</span>
               </div>
 
               <!-- Floating Callout 2 (Right): Muscle Mass -->
-              <div style="position:absolute;top:30px;right:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
+              <div style="position:absolute;top:30px;right:0;background:var(--glass-surface-subtle);backdrop-filter:blur(8px);border:1px solid var(--glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
                 <span style="font-size:.65rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Muscle Mass</span>
                 <b style="font-size:.85rem;color:#8b5cf6;display:block;" id="muscleMassVal">58.2 kg</b>
                 <span style="font-size:.62rem;color:#8b5cf6;font-weight:600;">+0.4 kg this mo</span>
               </div>
 
               <!-- Floating Callout 3 (Bottom): Water -->
-              <div style="position:absolute;bottom:4px;left:8px;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:4px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+              <div style="position:absolute;bottom:4px;left:8px;background:var(--glass-surface-subtle);backdrop-filter:blur(8px);border:1px solid var(--glass-border-subtle);border-radius:10px;padding:4px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.04);">
                 <span style="font-size:.62rem;color:var(--ff-text-muted);display:block;font-weight:700;">Water: <b style="color:#0284c7;" id="bodyWaterVal">62.1%</b> (Optimal)</span>
               </div>
             </div>
@@ -905,23 +908,23 @@
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <!-- Task 1 -->
-              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   Oats with Banana &amp; Almonds
                 </span>
-                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:#0f766e;padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
+                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
               </div>
               <!-- Task 2 -->
-              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   Grilled Chicken &amp; Quinoa Bowl
                 </span>
-                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:#0f766e;padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
+                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
               </div>
               <!-- Task 3 -->
-              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
                   Workout: Back &amp; Biceps
@@ -929,7 +932,7 @@
                 <span style="font-size:0.7rem;background:rgba(37,99,235,0.12);color:#2563eb;padding:2px 7px;border-radius:99px;font-weight:800;">IN PROGRESS</span>
               </div>
               <!-- Task 4 -->
-              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
                   Dinner: Paneer &amp; Brown Rice
@@ -946,7 +949,7 @@
               <span style="font-size:0.75rem;color:#2563eb;font-weight:700;cursor:pointer;" id="dashViewAllActivityBtn">View All</span>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);">
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span style="width:26px;height:26px;border-radius:50%;background:rgba(22,199,154,0.12);display:flex;align-items:center;justify-content:center;color:#16c79a;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -959,7 +962,7 @@
                 <b style="font-size:.82rem;color:#f59e0b;">312 kcal</b>
               </div>
 
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);">
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span style="width:26px;height:26px;border-radius:50%;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#0284c7;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
@@ -972,7 +975,7 @@
                 <b style="font-size:.82rem;color:#0284c7;">2,400 ml</b>
               </div>
 
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);">
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span style="width:26px;height:26px;border-radius:50%;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;color:#8b5cf6;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
@@ -1132,7 +1135,7 @@
           </div>
 
           <!-- Weekly Streak Visual Card matching Formwise UI -->
-          <div class="streak-card-inner" style="background:#ffffff;border:1px solid #e3eadc;border-radius:16px;padding:18px 22px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
+          <div class="streak-card-inner" style="padding:18px 22px;box-shadow:0 2px 10px rgba(32,59,41,0.04);">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
               <div style="display:flex;align-items:center;gap:12px;">
                 <div style="width:42px;height:42px;border-radius:12px;background:#eef6e9;display:flex;align-items:center;justify-content:center;font-size:22px;">
@@ -1140,14 +1143,14 @@
                 </div>
                 <div>
                   <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:.76rem;font-weight:800;letter-spacing:0.06em;color:#64748b;text-transform:uppercase;">Weekly Streak &amp; Tracking</span>
+                    <span style="font-size:.76rem;font-weight:800;letter-spacing:0.06em;color:var(--glass-text-secondary);text-transform:uppercase;">Weekly Streak &amp; Tracking</span>
                     <span id="streakBadgePill" style="font-size:.72rem;font-weight:700;background:#eff6ff;color:#2563eb;padding:2px 9px;border-radius:99px;"> 4 Days</span>
                   </div>
-                  <h4 style="margin:2px 0 0;font-size:1.1rem;color:#1e293b;font-weight:700;" id="streakCongratsHeadline">A little progress adds up!</h4>
+                  <h4 style="margin:2px 0 0;font-size:1.1rem;color:var(--glass-text-primary);font-weight:700;" id="streakCongratsHeadline">A little progress adds up!</h4>
                 </div>
               </div>
               <div style="text-align:right;">
-                <span style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">THIS WEEK</span>
+                <span style="font-size:.72rem;font-weight:700;color:var(--glass-text-secondary);text-transform:uppercase;letter-spacing:.05em;">THIS WEEK</span>
                 <strong id="dashStreakFraction" style="font-size:1.35rem;color:#2563eb;font-weight:800;display:block;line-height:1.1;">4 / 5</strong>
               </div>
             </div>
@@ -1160,10 +1163,10 @@
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #f0f4ec;flex-wrap:wrap;gap:10px;">
-              <p id="dashStreakCheerMsg" style="margin:0;font-size:.86rem;color:#64748b;font-weight:500;">
+              <p id="dashStreakCheerMsg" style="margin:0;font-size:.86rem;color:var(--glass-text-secondary);font-weight:500;">
                 One more day to hit your weekly goal. Keep your focus on the next good choice!
               </p>
-              <button type="button" class="text-button" id="quickCheckInBtn" style="font-size:.82rem;font-weight:700;color:#1e293b;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;">
+              <button type="button" class="text-button" id="quickCheckInBtn" style="font-size:.82rem;font-weight:700;color:var(--glass-text-primary);padding:4px 8px;display:inline-flex;align-items:center;gap:4px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                 Quick Daily Check-In
               </button>
@@ -1256,7 +1259,7 @@
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
                 <div>
                   <span style="font-size:.72rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;">DAILY WATER ESTIMATE &amp; ADVISORY</span>
-                  <div style="font-size:1.05rem;font-weight:800;color:#1e293b;margin-top:2px;">
+                  <div style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin-top:2px;">
                     Target: <span id="frontCalculatedWaterL">2.8</span> L / day
                   </div>
                 </div>
@@ -1274,8 +1277,8 @@
                 <div class="front-water-pill">
                   <span>Creatine Amount</span>
                   <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
-                    <input type="number" id="frontCreatineGramsInput" min="0" max="30" step="1" value="5" style="width:52px;padding:2px 4px;font-weight:800;border: 1.5px solid #cbd5e1;border-radius:6px;font-size:.88rem;color:#1e293b;background:#fff;" title="Enter grams of creatine taken today" />
-                    <span style="font-size:.78rem;font-weight:700;color:#64748b;">g (<span id="waterBreakdownCreatine">+500</span>ml)</span>
+                    <input type="number" id="frontCreatineGramsInput" min="0" max="30" step="1" value="5" style="width:52px;padding:2px 4px;font-weight:800;border: 1.5px solid #cbd5e1;border-radius:6px;font-size:.88rem;color:var(--glass-text-primary);background:#fff;" title="Enter grams of creatine taken today" />
+                    <span style="font-size:.78rem;font-weight:700;color:var(--glass-text-secondary);">g (<span id="waterBreakdownCreatine">+500</span>ml)</span>
                   </div>
                 </div>
                 <div class="front-water-pill">
@@ -1392,7 +1395,7 @@
               </div>
               <div>
                 <span class="section-kicker" id="dailyTipCategory" style="color:#2563eb;font-weight:800;letter-spacing:0.06em;">DAILY NUTRITION &amp; MUSCLE SCIENCE</span>
-                <h3 style="margin:2px 0 0;font-size:1.1rem;color:#1e3a8a;font-weight:700;" id="dailyTipTitle">Target 1.6g to 2.2g Protein per kg Bodyweight</h3>
+                <h3 style="margin:2px 0 0;font-size:1.1rem;color:var(--glass-accent-blue);font-weight:700;" id="dailyTipTitle">Target 1.6g to 2.2g Protein per kg Bodyweight</h3>
               </div>
             </div>
             <button type="button" class="text-button" id="nextDailyTipBtn" style="font-size:.82rem;font-weight:700;color:#1e40af;display:inline-flex;align-items:center;gap:5px;background:#dbeafe;padding:6px 12px;border-radius:8px;">
@@ -1400,10 +1403,10 @@
               Next Tip
             </button>
           </div>
-          <p id="dailyTipContent" style="color:#64748b;font-size:.9rem;line-height:1.55;margin:0 0 14px;">
+          <p id="dailyTipContent" style="color:var(--glass-text-secondary);font-size:.9rem;line-height:1.55;margin:0 0 14px;">
             Consuming adequate protein throughout the day distributes leucine spikes to trigger muscle protein synthesis (MPS). Distribute your daily intake evenly over 3 to 4 meals to maximize recovery.
           </p>
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:#64748b;padding-top:10px;border-top:1px solid #e2e8f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.8rem;color:var(--glass-text-secondary);padding-top:10px;border-top:1px solid #e2e8f0;">
             <span id="dailyTipKeyTakeaway"><b>Key takeaway:</b> Aim for ~25-40g protein per meal.</span>
             <span id="dailyTipSource" style="font-style:italic;">Evidence-Based Sports Nutrition</span>
           </div>
@@ -2289,14 +2292,14 @@
           </div>
 
           <aside class="panel food-log-sidebar macro-target-card">
-            <span class="section-kicker" style="letter-spacing:1px;font-size:.78rem;color:#64748b;margin-bottom:14px;display:block;">TODAY'S MACRO TARGETS</span>
+            <span class="section-kicker" style="letter-spacing:1px;font-size:.78rem;color:var(--glass-text-secondary);margin-bottom:14px;display:block;">TODAY'S MACRO TARGETS</span>
             
             <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
               <!-- Calories -->
               <div class="macro-target-row">
                 <div class="macro-target-labels">
                   <span class="macro-target-name">Calories</span>
-                  <span class="macro-target-values"><b id="sideKcalCurrent">0</b> <small style="color:#64748b;">/ <span id="sideKcalGoal">2,000</span> kcal</small></span>
+                  <span class="macro-target-values"><b id="sideKcalCurrent">0</b> <small style="color:var(--glass-text-secondary);">/ <span id="sideKcalGoal">2,000</span> kcal</small></span>
                 </div>
                 <div class="macro-meter-track">
                   <div class="macro-meter-fill cal" id="meterCal" style="width:0%;"></div>
@@ -2307,7 +2310,7 @@
               <div class="macro-target-row">
                 <div class="macro-target-labels">
                   <span class="macro-target-name">Protein</span>
-                  <span class="macro-target-values"><b id="sidePCurrent">0</b> <small style="color:#64748b;">/ <span id="sidePGoal">165</span>g</small></span>
+                  <span class="macro-target-values"><b id="sidePCurrent">0</b> <small style="color:var(--glass-text-secondary);">/ <span id="sidePGoal">165</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
                   <div class="macro-meter-fill pro" id="meterP" style="width:0%;"></div>
@@ -2318,7 +2321,7 @@
               <div class="macro-target-row">
                 <div class="macro-target-labels">
                   <span class="macro-target-name">Carbs</span>
-                  <span class="macro-target-values"><b id="sideCCurrent">0</b> <small style="color:#64748b;">/ <span id="sideCGoal">139</span>g</small></span>
+                  <span class="macro-target-values"><b id="sideCCurrent">0</b> <small style="color:var(--glass-text-secondary);">/ <span id="sideCGoal">139</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
                   <div class="macro-meter-fill carb" id="meterC" style="width:0%;"></div>
@@ -2329,7 +2332,7 @@
               <div class="macro-target-row">
                 <div class="macro-target-labels">
                   <span class="macro-target-name">Fat</span>
-                  <span class="macro-target-values"><b id="sideFCurrent">0</b> <small style="color:#64748b;">/ <span id="sideFGoal">87</span>g</small></span>
+                  <span class="macro-target-values"><b id="sideFCurrent">0</b> <small style="color:var(--glass-text-secondary);">/ <span id="sideFGoal">87</span>g</small></span>
                 </div>
                 <div class="macro-meter-track">
                   <div class="macro-meter-fill fat" id="meterF" style="width:0%;"></div>
@@ -2337,7 +2340,7 @@
               </div>
             </div>
 
-            <button class="outline-button full" id="clearDayLogBtn" style="width:100%;font-size:.85rem;color:#64748b;border-color:#e4e9e1;">Clear today's log</button>
+            <button class="outline-button full" id="clearDayLogBtn" style="width:100%;font-size:.85rem;color:var(--glass-text-secondary);border-color:#e4e9e1;">Clear today's log</button>
           </aside>
         </div>
       </section>
@@ -2362,8 +2365,8 @@
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
                 <div>
                   <span class="section-kicker" id="planFocusBadge">GLUTES · BACK · CORE</span>
-                  <h3 id="planWorkoutTitle" style="font-size:1.4rem;color:#1e293b;margin:4px 0;">Full-body strength</h3>
-                  <p id="planBenefitText" style="color:#64748b;font-size:.92rem;">Build strength with compound movements that train your posterior chain and core together.</p>
+                  <h3 id="planWorkoutTitle" style="font-size:1.4rem;color:var(--glass-text-primary);margin:4px 0;">Full-body strength</h3>
+                  <p id="planBenefitText" style="color:var(--glass-text-secondary);font-size:.92rem;">Build strength with compound movements that train your posterior chain and core together.</p>
                 </div>
                 <button class="solid-button" id="markWorkoutDoneBtn">Mark completed</button>
               </div>
@@ -2381,7 +2384,7 @@
             <div>
               <span class="section-kicker">WORKOUT CUSTOMIZATION &amp; MULTI-SELECT FINDER</span>
               <h3 style="font-size:1.25rem;color:#2563eb;margin:3px 0 0;">Tailor Your Training Session</h3>
-              <p style="color:#64748b;font-size:.88rem;margin:4px 0 0;">
+              <p style="color:var(--glass-text-secondary);font-size:.88rem;margin:4px 0 0;">
                 Select your workout styles (Gym, Home, HIIT, Cardio, Stretching) and targeted body parts with customized sets, reps, and rest guidance.
               </p>
             </div>
@@ -2425,9 +2428,9 @@
           <div style="background:#f8fafc;border: 1px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
             <div style="display:flex;align-items:center;gap:10px;">
               <span style="font-size:20px;"></span>
-              <div style="font-size:.88rem;color:#1e293b;">
+              <div style="font-size:.88rem;color:var(--glass-text-primary);">
                 <b>Scientific Sets &amp; Reps Prescription:</b>
-                <span id="prescriptionRecommendationText" style="color:#64748b;margin-left:4px;">
+                <span id="prescriptionRecommendationText" style="color:var(--glass-text-secondary);margin-left:4px;">
                   3–4 sets × 8–12 reps (Hypertrophy / Muscle Building) with 45–60s rest between sets.
                 </span>
               </div>
@@ -2494,7 +2497,7 @@
           </div>
 
           <!-- Explanatory note -->
-          <div id="slCeilingNote" style="margin-top:16px;font-size:.82rem;color:var(--ff-text-secondary);line-height:1.55;background:rgba(207,229,255,0.25);border:1px solid var(--ff-glass-border-subtle);padding:12px 16px;border-radius:12px;"></div>
+          <div id="slCeilingNote" style="margin-top:16px;font-size:.82rem;color:var(--ff-text-secondary);line-height:1.55;background:rgba(207,229,255,0.25);border:1px solid var(--glass-border-subtle);padding:12px 16px;border-radius:12px;"></div>
           <p style="margin-top:14px;font-size:.78rem;color:var(--ff-text-muted);display:flex;align-items:center;gap:6px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             Ramp protocol: empty Olympic bar (20 kg) &rarr; 50–60% ceiling warmup &rarr; calibrated work sets at RPE 6–7.
@@ -2529,7 +2532,7 @@
         <div class="library-heading" style="margin:20px 0 12px;display:flex;justify-content:space-between;">
           <div>
             <span class="section-kicker" id="libFilterHeader">LEGS · QUADS / HAMSTRINGS / GLUTES</span>
-            <h3 style="font-size:1.15rem;color:#1e293b;">Exercises for you</h3>
+            <h3 style="font-size:1.15rem;color:var(--glass-text-primary);">Exercises for you</h3>
           </div>
           <span class="result-count" id="libResultCount">Filtered results</span>
         </div>
@@ -2679,8 +2682,8 @@
           <aside class="panel profile-tip">
             <div class="tip-mark"></div>
             <span class="section-kicker">A NOTE ON YOUR TARGETS</span>
-            <h3 style="font-size:1.1rem;color:#1e293b;margin:6px 0;">Consistency beats perfection</h3>
-            <p style="color:#64748b;font-size:.88rem;line-height:1.5;">Targets are guides, not strict rules. Hitting close to your protein and calorie target over time is what builds sustainable strength.</p>
+            <h3 style="font-size:1.1rem;color:var(--glass-text-primary);margin:6px 0;">Consistency beats perfection</h3>
+            <p style="color:var(--glass-text-secondary);font-size:.88rem;line-height:1.5;">Targets are guides, not strict rules. Hitting close to your protein and calorie target over time is what builds sustainable strength.</p>
             <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
               <button class="outline-button full" id="profileComplaintBtn" style="width:100%;font-size:.85rem;color:#2563eb;border-color:#38bdf8;background:#f8fbf6;font-weight:600;">
                 Report Issue / Suggestion
@@ -2766,28 +2769,28 @@
             <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">REGISTERED ACCOUNTS</span>
             <div style="display:flex;align-items:baseline;justify-content:space-between;">
               <strong id="admTotalUsers" style="font-size:1.8rem;font-weight:800;color:#2563eb;">0</strong>
-              <small style="color:#64748b;font-weight:600;">Total Members</small>
+              <small style="color:var(--glass-text-secondary);font-weight:600;">Total Members</small>
             </div>
           </div>
           <div class="panel" style="padding:16px 20px;border-left:4px solid #f59e0b;">
             <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">PENDING ISSUES</span>
             <div style="display:flex;align-items:baseline;justify-content:space-between;">
               <strong id="admPendingComplaints" style="font-size:1.8rem;font-weight:800;color:#f59e0b;">0</strong>
-              <small style="color:#64748b;font-weight:600;">Needs Resolution</small>
+              <small style="color:var(--glass-text-secondary);font-weight:600;">Needs Resolution</small>
             </div>
           </div>
           <div class="panel" style="padding:16px 20px;border-left:4px solid #10b981;">
             <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">SOLVED &amp; RESOLVED</span>
             <div style="display:flex;align-items:baseline;justify-content:space-between;">
               <strong id="admResolvedComplaints" style="font-size:1.8rem;font-weight:800;color:#10b981;">0</strong>
-              <small style="color:#64748b;font-weight:600;">Resolved</small>
+              <small style="color:var(--glass-text-secondary);font-weight:600;">Resolved</small>
             </div>
           </div>
           <div class="panel" style="padding:16px 20px;border-left:4px solid #6366f1;">
             <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">TOTAL SUBMISSIONS</span>
             <div style="display:flex;align-items:baseline;justify-content:space-between;">
               <strong id="admTotalComplaints" style="font-size:1.8rem;font-weight:800;color:#6366f1;">0</strong>
-              <small style="color:#64748b;font-weight:600;">Complaints &amp; Bugs</small>
+              <small style="color:var(--glass-text-secondary);font-weight:600;">Complaints &amp; Bugs</small>
             </div>
           </div>
         </div>
@@ -2811,7 +2814,7 @@
               <button type="button" class="filter-pill" data-cfilter="in_progress">In Progress</button>
               <button type="button" class="filter-pill" data-cfilter="resolved">Resolved</button>
             </div>
-            <div style="font-size:0.85rem;color:#64748b;" id="complaintCountIndicator">Loading issues...</div>
+            <div style="font-size:0.85rem;color:var(--glass-text-secondary);" id="complaintCountIndicator">Loading issues...</div>
           </div>
 
           <div id="adminComplaintsCardsGrid" style="display:flex;flex-direction:column;gap:12px;">
@@ -2823,7 +2826,7 @@
         <div id="adminUsersViewPane" style="display:none;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
             <input type="text" id="adminUserSearchInput" class="form-input" placeholder="Search user by name or email..." style="max-width:320px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:0.88rem;" />
-            <div style="font-size:0.85rem;color:#64748b;" id="adminUsersCountIndicator">Loading users...</div>
+            <div style="font-size:0.85rem;color:var(--glass-text-secondary);" id="adminUsersCountIndicator">Loading users...</div>
           </div>
           <div id="adminUsersCardsGrid" style="display:flex;flex-direction:column;gap:10px;">
             <!-- Rendered by renderAdminUsers() -->
@@ -2861,7 +2864,7 @@
             <!-- Chat Stream -->
             <div class="panel ai-coach-chat-stream" id="coachChatStream">
               <!-- Bot Welcome Message -->
-              <div class="ai-msg bot" style="background:rgba(255,255,255,0.85);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
+              <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
                   <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
                   <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
@@ -3029,15 +3032,15 @@
           <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
             <div style="max-width:540px;">
               <span class="section-kicker" style="color:#2563eb;font-weight:800;letter-spacing:.05em;">PRECISION BIOMETRICS</span>
-              <h2 style="font-size:1.9rem;font-weight:900;color:#1e293b;margin:4px 0 8px;letter-spacing:-.02em;">Activity &amp; Movement</h2>
-              <p style="color:#475569;font-size:.92rem;line-height:1.5;margin:0 0 16px;">
+              <h2 style="font-size:1.9rem;font-weight:900;color:var(--glass-text-primary);margin:4px 0 8px;letter-spacing:-.02em;">Activity &amp; Movement</h2>
+              <p style="color:var(--glass-text-secondary);font-size:.92rem;line-height:1.5;margin:0 0 16px;">
                 Track outdoor runs, walks, daily steps, and camera-verified form in real time with high-precision GPS and sensor telemetry.
               </p>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button type="button" class="solid-button" id="actHeroStartGpsBtn" style="background:#2563eb;padding:10px 22px;font-size:.9rem;">
                   Start Live GPS Track
                 </button>
-                <button type="button" class="outline-button" id="actHeroCheckPostureBtn" style="padding:10px 18px;font-size:.9rem;background:rgba(255,255,255,0.8);">
+                <button type="button" class="outline-button" id="actHeroCheckPostureBtn" style="padding:10px 18px;font-size:.9rem;background:var(--glass-surface-subtle);">
                   Camera Form Check
                 </button>
               </div>
@@ -3052,14 +3055,14 @@
         <!-- 4 Top Metric Cards (Image 5) -->
         <div class="dash-metrics-grid-v2" style="margin-bottom:20px;">
           <!-- Card 1: Today's Steps -->
-          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+          <div class="metric-card-v2" style="padding:18px 20px;">
             <div class="metric-info">
-              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--glass-text-secondary);text-transform:uppercase;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 Today's Steps
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="actStepsTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">8,432</span>
+                <span class="metric-val" id="actStepsTopVal" style="font-size:1.65rem;font-weight:900;color:var(--glass-text-primary);">8,432</span>
                 <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> / 10,000</span>
               </div>
               <span class="metric-sub" style="font-size:.76rem;color:#2563eb;font-weight:700;">1,568 steps remaining</span>
@@ -3069,19 +3072,19 @@
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207,229,255,0.4)" stroke-width="3.5" />
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-dasharray="84, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#1e293b;">84%</span>
+              <span class="pct-text" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--glass-text-primary);">84%</span>
             </div>
           </div>
 
           <!-- Card 2: Active Time -->
-          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+          <div class="metric-card-v2" style="padding:18px 20px;">
             <div class="metric-info">
-              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--glass-text-secondary);text-transform:uppercase;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Active Time
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="actActiveTimeTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">56</span>
+                <span class="metric-val" id="actActiveTimeTopVal" style="font-size:1.65rem;font-weight:900;color:var(--glass-text-primary);">56</span>
                 <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> min</span>
               </div>
               <span class="metric-sub" style="font-size:.76rem;color:#0284c7;font-weight:700;">+20% vs yesterday</span>
@@ -3092,14 +3095,14 @@
           </div>
 
           <!-- Card 3: Distance -->
-          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+          <div class="metric-card-v2" style="padding:18px 20px;">
             <div class="metric-info">
-              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--glass-text-secondary);text-transform:uppercase;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                 Distance
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="actDistanceTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">4.8</span>
+                <span class="metric-val" id="actDistanceTopVal" style="font-size:1.65rem;font-weight:900;color:var(--glass-text-primary);">4.8</span>
                 <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> km</span>
               </div>
               <span class="metric-sub" style="font-size:.76rem;color:#16c79a;font-weight:700;">Outdoor GPS tracked</span>
@@ -3110,14 +3113,14 @@
           </div>
 
           <!-- Card 4: Calories Burned -->
-          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+          <div class="metric-card-v2" style="padding:18px 20px;">
             <div class="metric-info">
-              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--glass-text-secondary);text-transform:uppercase;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                 Calories Burned
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="actCaloriesTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">312</span>
+                <span class="metric-val" id="actCaloriesTopVal" style="font-size:1.65rem;font-weight:900;color:var(--glass-text-primary);">312</span>
                 <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> kcal</span>
               </div>
               <span class="metric-sub" style="font-size:.76rem;color:#b45309;font-weight:700;">Active exercise burn</span>
@@ -3144,8 +3147,8 @@
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,0.1);color:#2563eb;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="4" r="2"/><path d="m15 9-3-2-4 3 2 5"/><path d="m5 17 3-3 4 1 3 6"/></svg>
             </div>
-            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Walk / Run</b>
-            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Track with GPS · Real-time pace, distance &amp; route map</p>
+            <b style="font-size:1rem;color:var(--glass-text-primary);display:block;margin-bottom:3px;">Walk / Run</b>
+            <p style="font-size:.82rem;color:var(--glass-text-secondary);margin:0;line-height:1.4;">Track with GPS · Real-time pace, distance &amp; route map</p>
           </div>
 
           <!-- QA 2: Step Counter -->
@@ -3153,8 +3156,8 @@
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(22,199,154,0.1);color:#16c79a;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
-            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Step Counter</b>
-            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Auto tracking · Sensor-based pedometer &amp; cadence</p>
+            <b style="font-size:1rem;color:var(--glass-text-primary);display:block;margin-bottom:3px;">Step Counter</b>
+            <p style="font-size:.82rem;color:var(--glass-text-secondary);margin:0;line-height:1.4;">Auto tracking · Sensor-based pedometer &amp; cadence</p>
           </div>
 
           <!-- QA 3: Camera Posture -->
@@ -3162,8 +3165,8 @@
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,0.1);color:#8b5cf6;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </div>
-            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Camera Posture</b>
-            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Check your form · Live AI angle &amp; spine alignment</p>
+            <b style="font-size:1rem;color:var(--glass-text-primary);display:block;margin-bottom:3px;">Camera Posture</b>
+            <p style="font-size:.82rem;color:var(--glass-text-secondary);margin:0;line-height:1.4;">Check your form · Live AI angle &amp; spine alignment</p>
           </div>
 
           <!-- QA 4: Exercise Form -->
@@ -3171,8 +3174,8 @@
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.1);color:#0284c7;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
             </div>
-            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Exercise Form</b>
-            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">AI feedback · Rep count &amp; range-of-motion analysis</p>
+            <b style="font-size:1rem;color:var(--glass-text-primary);display:block;margin-bottom:3px;">Exercise Form</b>
+            <p style="font-size:.82rem;color:var(--glass-text-secondary);margin:0;line-height:1.4;">AI feedback · Rep count &amp; range-of-motion analysis</p>
           </div>
         </div>
 
@@ -3183,8 +3186,8 @@
             <div class="panel" style="padding:22px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
               <div class="card-heading-v2" style="margin-bottom:14px;">
                 <div>
-                  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:0;">Live Tracking</h3>
-                  <span style="font-size:.76rem;color:#64748b;">GPS Sensor &amp; Breadcrumb Route Engine</span>
+                  <h3 style="font-size:1.1rem;font-weight:800;color:var(--glass-text-primary);margin:0;">Live Tracking</h3>
+                  <span style="font-size:.76rem;color:var(--glass-text-secondary);">GPS Sensor &amp; Breadcrumb Route Engine</span>
                 </div>
                 <span class="gps-status-pill searching" id="gpsLiveStatusBadge">
                   <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
@@ -3270,18 +3273,18 @@
             <!-- Route & Details Summary Card (Image 5) -->
             <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
               <div class="card-heading-v2" style="margin-bottom:12px;">
-                <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Route &amp; Details</h3>
+                <h3 style="font-size:1rem;font-weight:800;color:var(--glass-text-primary);margin:0;">Route &amp; Details</h3>
                 <span style="font-size:.74rem;background:rgba(37,99,235,0.1);color:#2563eb;padding:2px 8px;border-radius:99px;font-weight:700;">Completed Loop</span>
               </div>
               
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;">
-                  <span style="font-size:.72rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">Elevation Gain</span>
-                  <b style="font-size:1.15rem;color:#1e293b;">+42 m</b>
+                  <span style="font-size:.72rem;color:var(--glass-text-secondary);display:block;text-transform:uppercase;font-weight:700;">Elevation Gain</span>
+                  <b style="font-size:1.15rem;color:var(--glass-text-primary);">+42 m</b>
                 </div>
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;">
-                  <span style="font-size:.72rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">Avg Cadence</span>
-                  <b style="font-size:1.15rem;color:#1e293b;">158 spm</b>
+                  <span style="font-size:.72rem;color:var(--glass-text-secondary);display:block;text-transform:uppercase;font-weight:700;">Avg Cadence</span>
+                  <b style="font-size:1.15rem;color:var(--glass-text-primary);">158 spm</b>
                 </div>
               </div>
 
@@ -3294,8 +3297,8 @@
             <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
               <div class="card-heading-v2" style="margin-bottom:12px;">
                 <div>
-                  <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Step Counter Breakdown</h3>
-                  <span style="font-size:.74rem;color:#64748b;">Hourly Activity Cadence</span>
+                  <h3 style="font-size:1rem;font-weight:800;color:var(--glass-text-primary);margin:0;">Step Counter Breakdown</h3>
+                  <span style="font-size:.74rem;color:var(--glass-text-secondary);">Hourly Activity Cadence</span>
                 </div>
                 <span style="font-size:.74rem;color:#16c79a;font-weight:700;">7 Day Streak</span>
               </div>
@@ -3332,27 +3335,27 @@
             <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;">
               <div class="card-heading-v2" style="margin-bottom:10px;">
                 <div>
-                  <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Camera Posture &amp; Form</h3>
-                  <span style="font-size:.74rem;color:#64748b;">Live AI Skeletal Analysis</span>
+                  <h3 style="font-size:1rem;font-weight:800;color:var(--glass-text-primary);margin:0;">Camera Posture &amp; Form</h3>
+                  <span style="font-size:.74rem;color:var(--glass-text-secondary);">Live AI Skeletal Analysis</span>
                 </div>
-                <span style="font-size:.74rem;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:800;padding:2px 8px;border-radius:99px;">92% Score</span>
+                <span style="font-size:.74rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);font-weight:800;padding:2px 8px;border-radius:99px;">92% Score</span>
               </div>
               
               <!-- 4 Form Checkpoints Checklist -->
               <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--glass-text-secondary);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   <span>Back straight and neutral spine maintained</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--glass-text-secondary);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   <span>Knees tracking cleanly in line with toes</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--glass-text-secondary);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   <span>Good squat depth achieved (88° parallel)</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--glass-text-secondary);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   <span>Weight evenly balanced over midfoot</span>
                 </div>
@@ -3672,7 +3675,7 @@
 
       <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
         <button type="button" class="solid-button full" id="authSubmitBtn" style="width:100%;height:42px;">Sign In</button>
-        <p class="muted" style="font-size:.78rem;text-align:center;color:#64748b;margin:0;">
+        <p class="muted" style="font-size:.78rem;text-align:center;color:var(--glass-text-secondary);margin:0;">
           Data is synced in real-time to Turso cloud database across all your devices.
         </p>
         <div style="text-align:center;padding-top:10px;border-top:1px dashed #cbd5e1;margin-top:4px;">
@@ -3817,7 +3820,7 @@
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;" id="settingsAccountInfo">
         <b id="settingsUserName">Jordan Davis</b>
-        <p id="settingsUserEmail" style="color:#64748b;font-size:.88rem;margin-top:3px;">jordan.davis@example.com</p>
+        <p id="settingsUserEmail" style="color:var(--glass-text-secondary);font-size:.88rem;margin-top:3px;">jordan.davis@example.com</p>
         <span class="pref-badge" id="settingsRoleBadge" style="margin-top:8px;display:inline-block;">USER</span>
       </div>
 
@@ -3845,10 +3848,10 @@
       <!-- Admin-Only Database Sync Status -->
       <div class="admin-only-feature" id="settingsDatabaseSyncBox" style="display:none;border:1px solid #e2e8f0;border-radius:12px;padding:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <b style="color:#1e293b;font-size:.95rem;">Database Sync Status</b>
+          <b style="color:var(--glass-text-primary);font-size:.95rem;">Database Sync Status</b>
           <span style="font-size:0.7rem;background:rgba(239,68,68,0.15);color:#b91c1c;padding:2px 8px;border-radius:99px;font-weight:700;">ADMIN ONLY</span>
         </div>
-        <p style="color:#64748b;font-size:.85rem;margin:4px 0 10px;">
+        <p style="color:var(--glass-text-secondary);font-size:.85rem;margin:4px 0 10px;">
           Connected to Turso Cloud SQLite in Mumbai region. All changes are encrypted and backed up.
         </p>
         <button type="button" class="outline-button small" id="forceSyncBtn">Force Sync with Database</button>
@@ -3856,8 +3859,8 @@
 
       <!-- Visual Theme & Mode Selector -->
       <div style="border:1px solid #e2e8f0;border-radius:12px;padding:14px;background:#f8fafc;" id="settingsThemeBox">
-        <b style="color:#1e293b;font-size:.95rem;display:block;">Theme &amp; Visual Style</b>
-        <p style="color:#64748b;font-size:.84rem;margin:3px 0 10px;">Select light, dark, or automatic system default mode.</p>
+        <b style="color:var(--glass-text-primary);font-size:.95rem;display:block;">Theme &amp; Visual Style</b>
+        <p style="color:var(--glass-text-secondary);font-size:.84rem;margin:3px 0 10px;">Select light, dark, or automatic system default mode.</p>
         <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;" id="settingsThemeButtonGroup">
           <button type="button" class="setup-choice-card theme-choice-btn" data-theme-val="light" style="padding:10px 8px;justify-content:center;text-align:center;">
             <div><span style="font-size:1.2rem;display:block;margin-bottom:2px;"></span><b style="font-size:.85rem;">Light</b></div>
@@ -3884,16 +3887,16 @@
             </span>
           </div>
         </div>
-        <p style="color:#64748b;font-size:.82rem;margin:0 0 10px;line-height:1.4;">
+        <p style="color:var(--glass-text-secondary);font-size:.82rem;margin:0 0 10px;line-height:1.4;">
           FitFuel AI Chatbot is connected to live reasoning models for unscripted, dynamic answers. You can also configure your own <b>Google Gemini API Key</b> or <b>OpenRouter Key</b> for ultra-fast custom responses.
         </p>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div>
-            <label style="font-size:.78rem;font-weight:700;color:#1e293b;display:block;margin-bottom:3px;">Google Gemini API Key (Optional)</label>
+            <label style="font-size:.78rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:3px;">Google Gemini API Key (Optional)</label>
             <input type="password" id="customGeminiKeyInput" placeholder="AIzaSy..." style="width:100%;font-size:.85rem;padding:7px 10px;border-radius:7px;border:1px solid #cbd5e1;background:#fff;" />
           </div>
           <div>
-            <label style="font-size:.78rem;font-weight:700;color:#1e293b;display:block;margin-bottom:3px;">OpenRouter API Key (Optional)</label>
+            <label style="font-size:.78rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:3px;">OpenRouter API Key (Optional)</label>
             <input type="password" id="customOpenRouterKeyInput" placeholder="sk-or-v1-..." style="width:100%;font-size:.85rem;padding:7px 10px;border-radius:7px;border:1px solid #cbd5e1;background:#fff;" />
           </div>
           <button type="button" class="solid-button small" id="saveAiKeysBtn" style="margin-top:4px;align-self:flex-start;padding:6px 14px;">
@@ -3906,7 +3909,7 @@
       <div style="border:1px solid #dbeafe;background:#f8fafc;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <div>
           <b style="color:#2563eb;font-size:.92rem;display:block;">Feedback &amp; Complaints</b>
-          <p style="color:#64748b;font-size:.82rem;margin:2px 0 0;">Report bugs, suggest features, or ask for new exercises and foods.</p>
+          <p style="color:var(--glass-text-secondary);font-size:.82rem;margin:2px 0 0;">Report bugs, suggest features, or ask for new exercises and foods.</p>
         </div>
         <button type="button" class="solid-button small" id="openComplaintModalBtn" style="white-space:nowrap;">
           Send Feedback
@@ -3915,7 +3918,7 @@
 
       <div id="adminSection" style="display:none;border:1px solid #dbeafe;background:#f8fafc;border-radius:12px;padding:14px;">
         <b style="color:#2563eb;font-size:.95rem;">Admin Controls</b>
-        <p style="color:#64748b;font-size:.85rem;margin:4px 0 10px;">Manage registered accounts, inspect user complaints and database records.</p>
+        <p style="color:var(--glass-text-secondary);font-size:.85rem;margin:4px 0 10px;">Manage registered accounts, inspect user complaints and database records.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="solid-button small" id="viewAllUsersBtn">View Users</button>
           <button type="button" class="outline-button small" id="viewAllComplaintsBtn">View Complaints &amp; Suggestions</button>
@@ -3961,7 +3964,7 @@
     </div>
 
     <form id="aiPlanForm" onsubmit="return false;">
-      <p style="color:#64748b;font-size:.88rem;margin-bottom:14px;line-height:1.45;">
+      <p style="color:var(--glass-text-secondary);font-size:.88rem;margin-bottom:14px;line-height:1.45;">
         Our AI engine analyzes your exact bodyweight, goal, and preferences using OpenRouter's free AI models with automatic failover to build an accurate, custom diet and training plan.
       </p>
 
@@ -4001,7 +4004,7 @@
 
       <div id="aiPlanLoadingIndicator" style="display:none;margin-top:14px;padding:12px;background:#f8fafc;border:1px solid #bfdbfe;border-radius:10px;text-align:center;">
         <b style="color:#2563eb;font-size:.9rem;">AI is crafting your personalized plan...</b>
-        <p style="color:#64748b;font-size:.8rem;margin-top:4px;">Connecting to OpenRouter free models with automatic failover</p>
+        <p style="color:var(--glass-text-secondary);font-size:.8rem;margin-top:4px;">Connecting to OpenRouter free models with automatic failover</p>
       </div>
     </form>
   </div>
@@ -4085,7 +4088,7 @@
     </div>
 
     <form id="recipeBuilderForm" onsubmit="return false;">
-      <p style="color:#64748b;font-size:.86rem;margin-bottom:12px;line-height:1.4;">
+      <p style="color:var(--glass-text-secondary);font-size:.86rem;margin-bottom:12px;line-height:1.4;">
         Add your ingredients step-by-step (e.g. Rice + Vegetables + Spices + Paneer/Egg/Chicken). Nutrients calculate automatically!
       </p>
 
@@ -4106,7 +4109,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">
-        <b style="color:#1e293b;font-size:.9rem;">Ingredients List</b>
+        <b style="color:var(--glass-text-primary);font-size:.9rem;">Ingredients List</b>
         <button type="button" class="outline-button small" id="addIngredientRowBtn" style="font-size:.8rem;padding:4px 10px;">
           + Add Ingredient
         </button>
@@ -4143,7 +4146,7 @@
             <b id="recipeTotF">0g</b>
           </div>
         </div>
-        <p id="recipeAiTipText" style="color:#64748b;font-size:.8rem;margin-top:8px;display:none;"></p>
+        <p id="recipeAiTipText" style="color:var(--glass-text-secondary);font-size:.8rem;margin-top:8px;display:none;"></p>
       </div>
 
       <div style="margin-top:18px;display:flex;gap:10px;">
@@ -4171,15 +4174,15 @@
 
     <!-- Step 1: Capture / Upload -->
     <div id="camStep1">
-      <p style="color:#64748b;font-size:.88rem;margin-bottom:14px;">
+      <p style="color:var(--glass-text-secondary);font-size:.88rem;margin-bottom:14px;">
         Take a picture or upload a photo of your food plate. AI will analyze the dish and calculate calories and macros.
       </p>
 
       <div class="cam-dropzone" id="camDrop">
         <input type="file" id="camFileInput" accept="image/*" capture="environment" style="display:none;" />
         <div style="color:#2563eb;margin-bottom:8px;display:flex;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
-        <b style="color:#1e293b;font-size:1rem;display:block;">Capture or Drag &amp; Drop Photo</b>
-        <p style="color:#64748b;font-size:.82rem;margin-top:4px;">Supports JPG, PNG, WebP up to 10MB</p>
+        <b style="color:var(--glass-text-primary);font-size:1rem;display:block;">Capture or Drag &amp; Drop Photo</b>
+        <p style="color:var(--glass-text-secondary);font-size:.82rem;margin-top:4px;">Supports JPG, PNG, WebP up to 10MB</p>
 
         <div class="cam-action-buttons">
           <button type="button" class="cam-big-btn" id="camClickTakeBtn">
@@ -4205,8 +4208,8 @@
     <!-- Step 2: Loading State -->
     <div id="camStep2" style="display:none;text-align:center;padding:30px 10px;">
       <div style="color:#2563eb;animation:spin 1s linear infinite;display:flex;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-      <b style="color:#1e293b;font-size:1.05rem;display:block;margin-top:10px;" id="camAnalyzeStatusText">Detecting food visual...</b>
-      <p style="color:#64748b;font-size:.85rem;margin-top:4px;">Estimating portion size and nutrient breakdown</p>
+      <b style="color:var(--glass-text-primary);font-size:1.05rem;display:block;margin-top:10px;" id="camAnalyzeStatusText">Detecting food visual...</b>
+      <p style="color:var(--glass-text-secondary);font-size:.85rem;margin-top:4px;">Estimating portion size and nutrient breakdown</p>
     </div>
 
     <!-- Step 3: Result & Confirm -->
@@ -4214,8 +4217,8 @@
       <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f5f8f3;border:1px solid #bfdbfe;border-radius:12px;margin-bottom:14px;">
         <img id="camResultThumb" style="width:55px;height:55px;border-radius:10px;object-fit:cover;" alt="Food">
         <div>
-          <b style="color:#1e293b;font-size:1.05rem;" id="camResultName">Food Detected</b>
-          <p style="color:#64748b;font-size:.82rem;margin-top:2px;" id="camResultMacros">0 kcal · 0g P · 0g C · 0g F</p>
+          <b style="color:var(--glass-text-primary);font-size:1.05rem;" id="camResultName">Food Detected</b>
+          <p style="color:var(--glass-text-secondary);font-size:.82rem;margin-top:2px;" id="camResultMacros">0 kcal · 0g P · 0g C · 0g F</p>
         </div>
       </div>
 
@@ -4250,7 +4253,7 @@
 <div class="modal-backdrop" id="notificationModal">
   <div class="modal-card" style="max-width:440px;padding:0;overflow:hidden;border-radius:24px;">
     <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--ff-glass-border-subtle);background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--ff-glass-border-subtle);background:var(--glass-surface-subtle);backdrop-filter:blur(10px);">
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -4274,10 +4277,10 @@
         </div>
         <div style="flex:1;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-            <b style="font-size:0.86rem;color:#1e3a8a;">Hydration Reminder</b>
-            <span style="font-size:0.7rem;color:#64748b;">Live</span>
+            <b style="font-size:0.86rem;color:var(--glass-accent-blue);">Hydration Reminder</b>
+            <span style="font-size:0.7rem;color:var(--glass-text-secondary);">Live</span>
           </div>
-          <p style="margin:0 0 8px;font-size:0.8rem;color:#334155;line-height:1.4;">Keep cell hydration peaked: Drink a fresh 250ml water glass to sustain electrolyte balance.</p>
+          <p style="margin:0 0 8px;font-size:0.8rem;color:var(--glass-text-secondary);line-height:1.4;">Keep cell hydration peaked: Drink a fresh 250ml water glass to sustain electrolyte balance.</p>
           <button type="button" class="solid-button small" id="notifQuickDrinkBtn" style="font-size:0.75rem;padding:5px 12px;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer;">
             + Log 250ml Glass
           </button>
@@ -4292,9 +4295,9 @@
         <div style="flex:1;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
             <b style="font-size:0.86rem;color:#14532d;">Daily Steps Milestone</b>
-            <span style="font-size:0.7rem;color:#64748b;">Today</span>
+            <span style="font-size:0.7rem;color:var(--glass-text-secondary);">Today</span>
           </div>
-          <p style="margin:0 0 8px;font-size:0.8rem;color:#334155;line-height:1.4;">Aerobic tracking active: Track your outdoor run, walk, or treadmill session with GPS telemetry.</p>
+          <p style="margin:0 0 8px;font-size:0.8rem;color:var(--glass-text-secondary);line-height:1.4;">Aerobic tracking active: Track your outdoor run, walk, or treadmill session with GPS telemetry.</p>
           <button type="button" class="solid-button small" id="notifOpenActivityBtn" style="font-size:0.75rem;padding:5px 12px;background:#16a34a;color:#fff;border-radius:6px;cursor:pointer;">
             Track Activity &amp; GPS
           </button>
@@ -4309,9 +4312,9 @@
         <div style="flex:1;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
             <b style="font-size:0.86rem;color:#581c87;">Workout Scheduled</b>
-            <span style="font-size:0.7rem;color:#64748b;">42 min</span>
+            <span style="font-size:0.7rem;color:var(--glass-text-secondary);">42 min</span>
           </div>
-          <p style="margin:0 0 8px;font-size:0.8rem;color:#334155;line-height:1.4;">Full-body strength: Glutes, Back &amp; Core. Form camera and coaching cues primed.</p>
+          <p style="margin:0 0 8px;font-size:0.8rem;color:var(--glass-text-secondary);line-height:1.4;">Full-body strength: Glutes, Back &amp; Core. Form camera and coaching cues primed.</p>
           <button type="button" class="solid-button small" id="notifStartWorkoutBtn" style="font-size:0.75rem;padding:5px 12px;background:#9333ea;color:#fff;border-radius:6px;cursor:pointer;">
             Start Workout
           </button>
@@ -4329,7 +4332,7 @@
       <button type="button" class="modal-close" data-close aria-label="Close options" style="font-size:1.3rem;border:none;background:none;cursor:pointer;color:var(--ff-text-secondary);">&times;</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <button type="button" class="panel-action-row" id="qoOpenNutritionBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ff-glass-border-subtle);border-radius:12px;background:rgba(255,255,255,0.7);cursor:pointer;text-align:left;width:100%;">
+      <button type="button" class="panel-action-row" id="qoOpenNutritionBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--glass-border-subtle);border-radius:12px;background:var(--glass-surface-subtle);cursor:pointer;text-align:left;width:100%;">
         <span style="width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2v20M6 2v6a3 3 0 0 0 6 0V2"/></svg>
         </span>
@@ -4339,7 +4342,7 @@
         </div>
       </button>
 
-      <button type="button" class="panel-action-row" id="qoOpenWorkoutsBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ff-glass-border-subtle);border-radius:12px;background:rgba(255,255,255,0.7);cursor:pointer;text-align:left;width:100%;">
+      <button type="button" class="panel-action-row" id="qoOpenWorkoutsBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--glass-border-subtle);border-radius:12px;background:var(--glass-surface-subtle);cursor:pointer;text-align:left;width:100%;">
         <span style="width:32px;height:32px;border-radius:8px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;color:#8b5cf6;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
         </span>
@@ -4349,7 +4352,7 @@
         </div>
       </button>
 
-      <button type="button" class="panel-action-row" id="qoOpenBodyScanBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ff-glass-border-subtle);border-radius:12px;background:rgba(255,255,255,0.7);cursor:pointer;text-align:left;width:100%;">
+      <button type="button" class="panel-action-row" id="qoOpenBodyScanBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--glass-border-subtle);border-radius:12px;background:var(--glass-surface-subtle);cursor:pointer;text-align:left;width:100%;">
         <span style="width:32px;height:32px;border-radius:8px;background:rgba(2,132,199,0.1);display:flex;align-items:center;justify-content:center;color:#0284c7;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>
         </span>
@@ -4359,7 +4362,7 @@
         </div>
       </button>
 
-      <button type="button" class="panel-action-row" id="qoOpenAdjustGoalsBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--ff-glass-border-subtle);border-radius:12px;background:rgba(255,255,255,0.7);cursor:pointer;text-align:left;width:100%;">
+      <button type="button" class="panel-action-row" id="qoOpenAdjustGoalsBtn" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--glass-border-subtle);border-radius:12px;background:var(--glass-surface-subtle);cursor:pointer;text-align:left;width:100%;">
         <span style="width:32px;height:32px;border-radius:8px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:#10b981;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </span>
@@ -4416,7 +4419,7 @@
 
     <!-- Welcome Greeting Bubble (Image 4) -->
     <div style="padding:14px 16px 6px;">
-      <div style="background:rgba(239,246,255,0.85);border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;font-size:0.85rem;line-height:1.45;color:#1e293b;box-shadow:0 2px 8px rgba(37,99,235,0.04);">
+      <div style="background:rgba(239,246,255,0.85);border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;font-size:0.85rem;line-height:1.45;color:var(--glass-text-primary);box-shadow:0 2px 8px rgba(37,99,235,0.04);">
         <b style="color:#2563eb;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;">FitFuel AI Coach</b>
         Hi Utkarsh! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?
       </div>
@@ -4428,84 +4431,84 @@
         <span style="width:28px;height:28px;border-radius:8px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </span>
-        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Analyze My Meal</span>
+        <span style="font-size:.8rem;font-weight:700;color:var(--glass-text-primary);line-height:1.2;">Analyze My Meal</span>
       </button>
 
       <button type="button" class="floating-qa-card" data-fqa="workout-plan" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
         <span style="width:28px;height:28px;border-radius:8px;background:rgba(22,199,154,0.1);display:flex;align-items:center;justify-content:center;color:#16c79a;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1a5 5 0 0 0-7.07 0l-.71.71a5 5 0 0 1-7.07 0L4 19.5"/><path d="m3 3 1 1a5 5 0 0 0 7.07 0l.71-.71a5 5 0 0 1 7.07 0L20 4.5"/></svg>
         </span>
-        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Create Workout Plan</span>
+        <span style="font-size:.8rem;font-weight:700;color:var(--glass-text-primary);line-height:1.2;">Create Workout Plan</span>
       </button>
 
       <button type="button" class="floating-qa-card" data-fqa="analyze-body" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
         <span style="width:28px;height:28px;border-radius:8px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;color:#8b5cf6;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
         </span>
-        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Analyze My Body</span>
+        <span style="font-size:.8rem;font-weight:700;color:var(--glass-text-primary);line-height:1.2;">Analyze My Body</span>
       </button>
 
       <button type="button" class="floating-qa-card" data-fqa="track-progress" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
         <span style="width:28px;height:28px;border-radius:8px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;color:#0284c7;flex-shrink:0;">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </span>
-        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Track My Progress</span>
+        <span style="font-size:.8rem;font-weight:700;color:var(--glass-text-primary);line-height:1.2;">Track My Progress</span>
       </button>
     </div>
 
     <!-- Popular Questions List (Image 4: 5 Exact Questions) -->
     <div class="floating-popular-questions" style="padding:8px 16px;">
-      <div class="floating-pq-label" style="font-size:.72rem;font-weight:800;color:#64748b;letter-spacing:.05em;margin-bottom:8px;">POPULAR QUESTIONS</div>
+      <div class="floating-pq-label" style="font-size:.72rem;font-weight:800;color:var(--glass-text-secondary);letter-spacing:.05em;margin-bottom:8px;">POPULAR QUESTIONS</div>
       
-      <div class="floating-pq-item" data-q="How much protein should I eat daily to maximize muscle building?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
-        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">How much protein should I eat to build muscle?</span>
+      <div class="floating-pq-item" data-q="How much protein should I eat daily to maximize muscle building?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--glass-surface-subtle);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:var(--glass-text-primary);font-weight:600;">How much protein should I eat to build muscle?</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
 
-      <div class="floating-pq-item" data-q="What is the best pre-workout meal for sustained energy and endurance?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
-        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">What is the best pre-workout meal for energy?</span>
+      <div class="floating-pq-item" data-q="What is the best pre-workout meal for sustained energy and endurance?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--glass-surface-subtle);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:var(--glass-text-primary);font-weight:600;">What is the best pre-workout meal for energy?</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
 
-      <div class="floating-pq-item" data-q="Can you review my deadlift form cues and safety checkpoints?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
-        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">Can you review my deadlift form tips?</span>
+      <div class="floating-pq-item" data-q="Can you review my deadlift form cues and safety checkpoints?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--glass-surface-subtle);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:var(--glass-text-primary);font-weight:600;">Can you review my deadlift form tips?</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
 
-      <div class="floating-pq-item" data-q="Suggest a 20-minute fat-burning HIIT workout with no equipment needed." style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
-        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">Suggest a 20-minute fat-burning HIIT workout</span>
+      <div class="floating-pq-item" data-q="Suggest a 20-minute fat-burning HIIT workout with no equipment needed." style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--glass-surface-subtle);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:var(--glass-text-primary);font-weight:600;">Suggest a 20-minute fat-burning HIIT workout</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
 
-      <div class="floating-pq-item" data-q="How do I accurately calculate my daily calorie deficit for steady fat loss?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
-        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">How do I calculate my daily calorie deficit?</span>
+      <div class="floating-pq-item" data-q="How do I accurately calculate my daily calorie deficit for steady fat loss?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--glass-surface-subtle);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:var(--glass-text-primary);font-weight:600;">How do I calculate my daily calorie deficit?</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
     </div>
 
     <!-- Live Messages Stream -->
     <div class="floating-messages-stream" id="floatingAiMessages" style="padding:10px 16px;max-height:220px;overflow-y:auto;">
-      <div class="ai-msg bot" style="background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:10px 14px;font-size:0.84rem;line-height:1.45;color:#1e293b;">
+      <div class="ai-msg bot" style="border-radius:14px;padding:10px 14px;font-size:0.84rem;line-height:1.45;color:var(--glass-text-primary);">
         <b style="color:#2563eb;display:block;margin-bottom:2px;">FitFuel AI Coach:</b>
         Ready when you are! Ask me any fitness, nutrition, or workout question, or choose an action above.
       </div>
     </div>
 
     <!-- Panel Footer & Input Bar (Image 4: paperclip + mic + send pill) -->
-    <div class="floating-panel-footer" style="padding:12px 16px;border-top:1px solid #e2e8f0;background:rgba(255,255,255,0.9);">
+    <div class="floating-panel-footer" style="padding:12px 16px;border-top:1px solid #e2e8f0;background:var(--glass-surface-subtle);">
       <form id="floatingAiForm" onsubmit="return false;" style="margin:0;">
         <!-- Hidden file input for paperclip upload -->
         <input type="file" id="floatingAiFileInput" accept="image/*" style="display:none;">
         <div class="ai-chat-input-bar" style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #dbeafe;border-radius:99px;padding:4px 6px 4px 12px;">
           <!-- Paperclip button -->
-          <button type="button" class="ai-chat-icon-btn" id="floatingAiPaperclipBtn" title="Attach meal or form photo" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center;padding:4px;">
+          <button type="button" class="ai-chat-icon-btn" id="floatingAiPaperclipBtn" title="Attach meal or form photo" style="background:none;border:none;cursor:pointer;color:var(--glass-text-secondary);display:flex;align-items:center;justify-content:center;padding:4px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
           
-          <input type="text" class="ai-chat-input-field" id="floatingAiInput" placeholder="Ask your AI coach anything..." autocomplete="off" style="flex:1;border:none;background:transparent;outline:none;font-size:.88rem;color:#1e293b;">
+          <input type="text" class="ai-chat-input-field" id="floatingAiInput" placeholder="Ask your AI coach anything..." autocomplete="off" style="flex:1;border:none;background:transparent;outline:none;font-size:.88rem;color:var(--glass-text-primary);">
           
           <!-- Voice mic button -->
-          <button type="button" class="ai-chat-icon-btn" id="floatingAiMicBtn" title="Voice Input" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center;padding:4px;">
+          <button type="button" class="ai-chat-icon-btn" id="floatingAiMicBtn" title="Voice Input" style="background:none;border:none;cursor:pointer;color:var(--glass-text-secondary);display:flex;align-items:center;justify-content:center;padding:4px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
           </button>
           
@@ -4531,7 +4534,7 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <div style="display:flex;align-items:center;gap:16px;background:rgba(207,229,255,0.25);border:1px solid var(--ff-glass-border-subtle);border-radius:16px;padding:14px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(207,229,255,0.25);border:1px solid var(--glass-border-subtle);border-radius:16px;padding:14px;margin-bottom:16px;">
       <img src="images/fitfuel-meal-bowl.png" alt="Meal Bowl" style="width:70px;height:70px;object-fit:cover;border-radius:12px;">
       <div>
         <b style="font-size:0.95rem;color:var(--ff-text-primary);display:block;">Precision Macro AI Estimator</b>
@@ -4668,7 +4671,7 @@
         <div class="body-goal-card active" data-goal="lose_fat">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <b style="font-size:0.88rem;color:var(--ff-text-primary);">Lose Fat &amp; Cut</b>
-            <span style="font-size:0.65rem;background:rgba(22,199,154,0.2);color:#0f766e;padding:2px 6px;border-radius:99px;font-weight:800;">DEFICIT</span>
+            <span style="font-size:0.65rem;background:rgba(22,199,154,0.2);color:var(--glass-accent-mint);padding:2px 6px;border-radius:99px;font-weight:800;">DEFICIT</span>
           </div>
           <span style="font-size:0.74rem;color:var(--ff-text-secondary);line-height:1.35;">
             Shed visceral &amp; subcutaneous fat while preserving lean muscle mass and vascularity.
@@ -4836,7 +4839,7 @@
           <span style="font-size:0.72rem;letter-spacing:0.06em;color:var(--ff-emerald, #16c79a);font-weight:800;text-transform:uppercase;">AI ANTHROPOMETRIC DIAGNOSIS</span>
           <h3 style="font-size:1.15rem;margin:2px 0 0;color:var(--ff-text-primary);" id="reportGoalTitle">Physique &amp; Body Composition Report</h3>
         </div>
-        <span style="font-size:0.75rem;padding:4px 10px;border-radius:99px;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:800;" id="reportScanStatus">Verified</span>
+        <span style="font-size:0.75rem;padding:4px 10px;border-radius:99px;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);font-weight:800;" id="reportScanStatus">Verified</span>
       </div>
 
       <!-- Timeline to Goal Callout Banner -->
@@ -4877,7 +4880,7 @@
       </div>
 
       <!-- Daily Nutritional Target Prescriptions -->
-      <div style="background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+      <div style="background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
         <span style="font-size:0.75rem;font-weight:800;color:var(--ff-text-primary);display:block;margin-bottom:6px;text-transform:uppercase;">
           Prescribed Daily Nutritional Targets
         </span>
@@ -5004,7 +5007,7 @@
     <div class="modal-head" style="margin-bottom:14px;">
       <div>
         <span class="section-kicker" id="exModalSubBadge">CHEST · UPPER CHEST</span>
-        <h2 id="exModalTitle" style="font-size:1.45rem;color:#1e293b;margin:4px 0;">Exercise Name</h2>
+        <h2 id="exModalTitle" style="font-size:1.45rem;color:var(--glass-text-primary);margin:4px 0;">Exercise Name</h2>
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
@@ -5018,21 +5021,21 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
       <div style="background:#f8fafc;border:1px solid #bfdbfe;padding:12px;border-radius:12px;">
         <span style="font-size:.75rem;color:#0284c7;font-weight:700;display:block;text-transform:uppercase;">Prescribed Sets &amp; Reps</span>
-        <b id="exModalSetsReps" style="font-size:1.02rem;color:#1e293b;">3-4 sets × 8-10 reps</b>
+        <b id="exModalSetsReps" style="font-size:1.02rem;color:var(--glass-text-primary);">3-4 sets × 8-10 reps</b>
       </div>
       <div style="background:#f8fafc;border:1px solid #bfdbfe;padding:12px;border-radius:12px;">
         <span style="font-size:.75rem;color:#0284c7;font-weight:700;display:block;text-transform:uppercase;">Rep Tempo &amp; Rest</span>
-        <b id="exModalTempo" style="font-size:1.02rem;color:#1e293b;">Tempo: 2-1-1 · 90s rest</b>
+        <b id="exModalTempo" style="font-size:1.02rem;color:var(--glass-text-primary);">Tempo: 2-1-1 · 90s rest</b>
       </div>
     </div>
 
     <!-- Biomechanics & Execution Guide -->
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;">
-      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">Biomechanical Rationale:</b>
-      <p id="exModalWhy" style="color:#64748b;font-size:.88rem;line-height:1.45;margin-bottom:12px;"></p>
+      <b style="color:var(--glass-text-primary);font-size:.95rem;display:block;margin-bottom:6px;">Biomechanical Rationale:</b>
+      <p id="exModalWhy" style="color:var(--glass-text-secondary);font-size:.88rem;line-height:1.45;margin-bottom:12px;"></p>
 
-      <b style="color:#1e293b;font-size:.95rem;display:block;margin-bottom:6px;">Step-by-Step Execution:</b>
-      <p id="exModalSteps" style="color:#64748b;font-size:.88rem;line-height:1.45;margin:0;"></p>
+      <b style="color:var(--glass-text-primary);font-size:.95rem;display:block;margin-bottom:6px;">Step-by-Step Execution:</b>
+      <p id="exModalSteps" style="color:var(--glass-text-secondary);font-size:.88rem;line-height:1.45;margin:0;"></p>
     </div>
 
     <!-- AI Form Coach Live Generator -->
@@ -5040,13 +5043,13 @@
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Formwise AI Coach</b>
-          <span style="font-size:.8rem;color:#64748b;">Get customized form cues, modifications &amp; biomechanics</span>
+          <span style="font-size:.8rem;color:var(--glass-text-secondary);">Get customized form cues, modifications &amp; biomechanics</span>
         </div>
         <button type="button" class="solid-button small" id="exModalAiCoachBtn" style="font-size:.8rem;padding:6px 14px;background:#2563eb;white-space:nowrap;">
           AI Form Analysis
         </button>
       </div>
-      <div id="exModalAiAdvice" style="display:none;font-size:.86rem;color:#1e293b;line-height:1.45;background:#ffffff;padding:12px;border-radius:8px;border:1px solid #d4e2d0;margin-top:10px;">
+      <div id="exModalAiAdvice" style="display:none;font-size:.86rem;color:var(--glass-text-primary);line-height:1.45;background:#ffffff;padding:12px;border-radius:8px;border:1px solid #d4e2d0;margin-top:10px;">
         <!-- AI feedback rendered here -->
       </div>
     </div>
@@ -5072,47 +5075,47 @@
       <button class="close-btn" data-close>&times;</button>
     </div>
     <form id="complaintForm" style="display:flex;flex-direction:column;gap:14px;padding:8px 0 0;">
-      <p style="color:#64748b;font-size:.85rem;margin:0;line-height:1.45;">
+      <p style="color:var(--glass-text-secondary);font-size:.85rem;margin:0;line-height:1.45;">
         Facing a glitch, need a specific food/workout added, or have an idea to make FitFuel better? Send your thoughts directly to the admin team.
       </p>
 
       <div>
-        <label style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Feedback Category</label>
+        <label style="display:block;font-size:.82rem;font-weight:700;color:var(--glass-text-primary);margin-bottom:6px;">Feedback Category</label>
         <div id="cmpTypeSelector" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           <button type="button" class="cmp-type-btn active" data-type="complaint" style="padding:9px 12px;border:1px solid #38bdf8;background:#f8fafc;border-radius:10px;font-size:.84rem;font-weight:700;cursor:pointer;color:#2563eb;text-align:left;transition:all .15s;">
             Complaint / Issue
           </button>
-          <button type="button" class="cmp-type-btn" data-type="bug" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
+          <button type="button" class="cmp-type-btn" data-type="bug" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:var(--glass-text-secondary);text-align:left;transition:all .15s;">
             Bug Report
           </button>
-          <button type="button" class="cmp-type-btn" data-type="suggestion" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
+          <button type="button" class="cmp-type-btn" data-type="suggestion" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:var(--glass-text-secondary);text-align:left;transition:all .15s;">
             Feature Suggestion
           </button>
-          <button type="button" class="cmp-type-btn" data-type="food_workout" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:#64748b;text-align:left;transition:all .15s;">
+          <button type="button" class="cmp-type-btn" data-type="food_workout" style="padding:9px 12px;border:1px solid #dbeafe;background:#fff;border-radius:10px;font-size:.84rem;font-weight:600;cursor:pointer;color:var(--glass-text-secondary);text-align:left;transition:all .15s;">
             Food / Workout Request
           </button>
         </div>
       </div>
 
       <div>
-        <label for="cmpNameInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Your Name</label>
+        <label for="cmpNameInput" style="display:block;font-size:.82rem;font-weight:700;color:var(--glass-text-primary);margin-bottom:6px;">Your Name</label>
         <input type="text" id="cmpNameInput" class="form-input" placeholder="e.g. Jordan Davis" required style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;outline:none;" />
       </div>
 
       <div>
-        <label for="cmpEmailInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Your Email (for replies &amp; updates)</label>
+        <label for="cmpEmailInput" style="display:block;font-size:.82rem;font-weight:700;color:var(--glass-text-primary);margin-bottom:6px;">Your Email (for replies &amp; updates)</label>
         <input type="email" id="cmpEmailInput" class="form-input" placeholder="e.g. jordan.davis@example.com" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;outline:none;" />
       </div>
 
       <div>
-        <label for="cmpTextInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Details / Message</label>
+        <label for="cmpTextInput" style="display:block;font-size:.82rem;font-weight:700;color:var(--glass-text-primary);margin-bottom:6px;">Details / Message</label>
         <textarea id="cmpTextInput" class="form-input" rows="4" placeholder="Describe the problem, steps to reproduce, or feature idea..." required style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:.9rem;outline:none;resize:vertical;"></textarea>
       </div>
 
       <div>
-        <label for="cmpFileInput" style="display:block;font-size:.82rem;font-weight:700;color:#1e293b;margin-bottom:6px;">Attach Screenshots or Files (optional, up to 3)</label>
-        <input type="file" id="cmpFileInput" multiple accept="image/*,.pdf,.txt" style="font-size:.85rem;color:#64748b;width:100%;" />
-        <small style="display:block;color:#64748b;font-size:.74rem;margin-top:4px;">Supports PNG, JPG, WebP under 900 KB</small>
+        <label for="cmpFileInput" style="display:block;font-size:.82rem;font-weight:700;color:var(--glass-text-primary);margin-bottom:6px;">Attach Screenshots or Files (optional, up to 3)</label>
+        <input type="file" id="cmpFileInput" multiple accept="image/*,.pdf,.txt" style="font-size:.85rem;color:var(--glass-text-secondary);width:100%;" />
+        <small style="display:block;color:var(--glass-text-secondary);font-size:.74rem;margin-top:4px;">Supports PNG, JPG, WebP under 900 KB</small>
       </div>
 
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
@@ -5132,13 +5135,13 @@
       
     </div>
     <span class="section-kicker" style="color:#2563eb;letter-spacing:1px;font-weight:800;">DAILY MOTIVATION &amp; FOCUS</span>
-    <h3 style="font-size:1.25rem;color:#1e3a8a;font-weight:800;margin:8px 0 12px;line-height:1.45;" id="motivationQuoteText">
+    <h3 style="font-size:1.25rem;color:var(--glass-accent-blue);font-weight:800;margin:8px 0 12px;line-height:1.45;" id="motivationQuoteText">
       "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion."
     </h3>
-    <p style="color:#64748b;font-size:.92rem;font-weight:700;margin:0 0 16px;" id="motivationQuoteAuthor">
+    <p style="color:var(--glass-text-secondary);font-size:.92rem;font-weight:700;margin:0 0 16px;" id="motivationQuoteAuthor">
       — Arnold Schwarzenegger
     </p>
-    <div style="background:#f4f9ef;border:1px solid #dce8d4;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:.84rem;color:#1e293b;line-height:1.45;">
+    <div style="background:#f4f9ef;border:1px solid #dce8d4;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:.84rem;color:var(--glass-text-primary);line-height:1.45;">
       Welcome to FitFuel! Every rep, every healthy meal, and every glass of water builds your ultimate strength. Let’s make today exceptional!
     </div>
     <button type="button" class="solid-button full" id="dismissMotivationBtn" style="background:#2563eb;padding:12px;font-size:.95rem;font-weight:700;width:100%;">
@@ -5157,7 +5160,7 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <p style="color:#64748b;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
+    <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
       Select the primary focus of your training plan. Our AI will align your exercise selection, volume, and rest intervals accordingly.
     </p>
     <div style="display:flex;flex-direction:column;gap:10px;" id="motiveOptionsList">
@@ -5165,28 +5168,28 @@
         <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">01</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Burn Fat &amp; Lean Out</b>
-          <small style="color:#64748b;font-size:.82rem;">High metabolic density, compound supersets, and elevated caloric burn.</small>
+          <small style="color:var(--glass-text-secondary);font-size:.82rem;">High metabolic density, compound supersets, and elevated caloric burn.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Build Muscle &amp; Hypertrophy">
         <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">02</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Build Muscle &amp; Hypertrophy</b>
-          <small style="color:#64748b;font-size:.82rem;">Hypertrophy rep ranges (8-12 reps), time under tension, and progressive overload.</small>
+          <small style="color:var(--glass-text-secondary);font-size:.82rem;">Hypertrophy rep ranges (8-12 reps), time under tension, and progressive overload.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Maintain Weight &amp; Tone">
         <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">03</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Maintain Weight &amp; Athletic Tone</b>
-          <small style="color:#64748b;font-size:.82rem;">Balanced functional strength, postural stamina, and core stability.</small>
+          <small style="color:var(--glass-text-secondary);font-size:.82rem;">Balanced functional strength, postural stamina, and core stability.</small>
         </div>
       </div>
       <div class="setup-choice-card" data-motive="Raw Strength &amp; Power">
         <div class="setup-choice-icon" style="font-size:1rem;font-weight:700;color:#2563eb;">04</div>
         <div>
           <b style="color:#2563eb;font-size:.95rem;display:block;">Raw Strength &amp; Heavy Power</b>
-          <small style="color:#64748b;font-size:.82rem;">Heavy compound lifts, 4-6 rep strength schemes, and neuromuscular adaptation.</small>
+          <small style="color:var(--glass-text-secondary);font-size:.82rem;">Heavy compound lifts, 4-6 rep strength schemes, and neuromuscular adaptation.</small>
         </div>
       </div>
     </div>
@@ -5209,7 +5212,7 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <p style="color:#64748b;font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
+    <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
       Customize your workout styles, time commitment, and training intensity.
     </p>
 
@@ -5250,19 +5253,19 @@
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="chTimeOptionsList">
         <button type="button" class="setup-choice-card" data-minutes="20" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
           <b style="font-size:1rem;color:#2563eb;">20 min</b>
-          <small style="color:#64748b;font-size:.72rem;">Express</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">Express</small>
         </button>
         <button type="button" class="setup-choice-card" data-minutes="35" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
           <b style="font-size:1rem;color:#2563eb;">35 min</b>
-          <small style="color:#64748b;font-size:.72rem;">Balanced</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">Balanced</small>
         </button>
         <button type="button" class="setup-choice-card selected" data-minutes="45" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
           <b style="font-size:1rem;color:#2563eb;">45 min</b>
-          <small style="color:#64748b;font-size:.72rem;">Standard</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">Standard</small>
         </button>
         <button type="button" class="setup-choice-card" data-minutes="60" style="flex-direction:column;align-items:center;padding:10px 6px;text-align:center;">
           <b style="font-size:1rem;color:#2563eb;">60 min</b>
-          <small style="color:#64748b;font-size:.72rem;">Intensive</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">Intensive</small>
         </button>
       </div>
     </div>
@@ -5276,17 +5279,17 @@
         <button type="button" class="setup-choice-card" data-intensity="Mild" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
           <span style="font-size:.7rem;font-weight:700;color:#0284c7;letter-spacing:.04em;">EASY</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Mild / Easy</b>
-          <small style="color:#64748b;font-size:.72rem;">60-90s rest</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">60-90s rest</small>
         </button>
         <button type="button" class="setup-choice-card selected" data-intensity="Moderate" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
           <span style="font-size:.7rem;font-weight:700;color:#2563eb;letter-spacing:.04em;">MEDIUM</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Moderate</b>
-          <small style="color:#64748b;font-size:.72rem;">45-60s rest</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">45-60s rest</small>
         </button>
         <button type="button" class="setup-choice-card" data-intensity="Hard" style="flex-direction:column;align-items:center;padding:10px 8px;text-align:center;">
           <span style="font-size:.7rem;font-weight:700;color:#dc2626;letter-spacing:.04em;">HARD</span>
           <b style="font-size:.9rem;color:#2563eb;margin-top:2px;">Hard / High</b>
-          <small style="color:#64748b;font-size:.72rem;">30-45s rest (+water)</small>
+          <small style="color:var(--glass-text-secondary);font-size:.72rem;">30-45s rest (+water)</small>
         </button>
       </div>
     </div>
@@ -5310,7 +5313,7 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <p style="color:#64748b;font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
+    <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:8px 0 16px;line-height:1.45;">
       Choose your commitment window. The AI will generate a tailored schedule matching your duration, intensity, and hydration requirements.
     </p>
 
@@ -5318,7 +5321,7 @@
     <div style="background:#f8fafc;border:1px solid #dbead2;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <div>
         <span style="font-size:.72rem;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:.05em;">AI CONFIGURATION SUMMARY</span>
-        <div style="font-size:.88rem;color:#1e3a8a;font-weight:700;margin-top:2px;" id="challengeMetricsPreview">
+        <div style="font-size:.88rem;color:var(--glass-accent-blue);font-weight:700;margin-top:2px;" id="challengeMetricsPreview">
           45 Total Min/Day · Moderate Intensity · Gym Workout
         </div>
       </div>
@@ -5329,22 +5332,22 @@
       <div class="setup-choice-card" data-days="10" style="flex-direction:column;align-items:flex-start;padding:16px;">
         <span style="font-size:.85rem;font-weight:700;color:#2563eb;">7D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">10 Days Blitz</b>
-        <small style="color:#64748b;font-size:.8rem;">Rapid habit acceleration &amp; high intensity momentum.</small>
+        <small style="color:var(--glass-text-secondary);font-size:.8rem;">Rapid habit acceleration &amp; high intensity momentum.</small>
       </div>
       <div class="setup-choice-card selected" data-days="15" style="flex-direction:column;align-items:flex-start;padding:16px;">
         <span style="font-size:.85rem;font-weight:700;color:#2563eb;">14D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">15 Days Kickstart</b>
-        <small style="color:#64748b;font-size:.8rem;">Visible physical adaptation &amp; core discipline booster.</small>
+        <small style="color:var(--glass-text-secondary);font-size:.8rem;">Visible physical adaptation &amp; core discipline booster.</small>
       </div>
       <div class="setup-choice-card" data-days="25" style="flex-direction:column;align-items:flex-start;padding:16px;">
         <span style="font-size:.85rem;font-weight:700;color:#2563eb;">30D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">25 Days Transformation</b>
-        <small style="color:#64748b;font-size:.8rem;">Substantial hypertrophy, body composition, &amp; conditioning.</small>
+        <small style="color:var(--glass-text-secondary);font-size:.8rem;">Substantial hypertrophy, body composition, &amp; conditioning.</small>
       </div>
       <div class="setup-choice-card" data-days="30" style="flex-direction:column;align-items:flex-start;padding:16px;">
         <span style="font-size:.85rem;font-weight:700;color:#2563eb;">60D</span>
         <b style="font-size:1.05rem;color:#2563eb;margin:6px 0 2px;">30 Days Mastery</b>
-        <small style="color:#64748b;font-size:.8rem;">Full body transformation, endurance, &amp; elite habit lock-in.</small>
+        <small style="color:var(--glass-text-secondary);font-size:.8rem;">Full body transformation, endurance, &amp; elite habit lock-in.</small>
       </div>
     </div>
 
@@ -5368,7 +5371,7 @@
       <!-- Live avatar preview -->
     </div>
     <h4 id="avatarModalName" style="color:#2563eb;margin:0 0 4px;font-size:1.15rem;">Jordan Davis</h4>
-    <p id="avatarModalStatusText" style="color:#64748b;font-size:.86rem;margin:0 0 20px;">Active Profile Picture</p>
+    <p id="avatarModalStatusText" style="color:var(--glass-text-secondary);font-size:.86rem;margin:0 0 20px;">Active Profile Picture</p>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button type="button" class="solid-button" id="avatarModalSeePicBtn" style="background:#2563eb;width:100%;justify-content:center;">
         See Pic
@@ -5379,7 +5382,7 @@
       <button type="button" class="outline-button" id="avatarModalRemoveBtn" style="width:100%;justify-content:center;color:#ef4444;border-color:#fca5a5;">
          Remove Pic
       </button>
-      <button type="button" class="text-button" data-close style="color:#64748b;margin-top:4px;">Cancel</button>
+      <button type="button" class="text-button" data-close style="color:var(--glass-text-secondary);margin-top:4px;">Cancel</button>
     </div>
   </div>
 </div>
@@ -5394,18 +5397,18 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <p style="color:#64748b;font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
+    <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:8px 0 14px;line-height:1.45;">
       Temperature is automatically synced using real-time weather data and device location. You can also manually choose a preset below.
     </p>
 
     <!-- Auto Sync Status Card -->
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
       <div>
-        <b style="color:#1e293b;font-size:.88rem;display:flex;align-items:center;gap:6px;">
+        <b style="color:var(--glass-text-primary);font-size:.88rem;display:flex;align-items:center;gap:6px;">
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;"></span>
           Auto-Sync Active: <span id="autoWeatherStatusText">Real-Time Weather</span>
         </b>
-        <span style="font-size:.78rem;color:#64748b;display:block;margin-top:2px;" id="autoWeatherCityNote">Location-based weather</span>
+        <span style="font-size:.78rem;color:var(--glass-text-secondary);display:block;margin-top:2px;" id="autoWeatherCityNote">Location-based weather</span>
       </div>
       <button type="button" class="solid-button small" id="triggerAutoWeatherSyncBtn" style="background:#2563eb;padding:6px 12px;font-size:.78rem;white-space:nowrap;">
         Sync Now
@@ -5414,20 +5417,20 @@
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="weatherTempPresets">
       <button type="button" class="setup-choice-card" data-temp="18" data-label="Cool">
-        <span style="font-size:.75rem;font-weight:700;color:#64748b;letter-spacing:.05em;">COOL</span>
-        <div><b>18°C</b><small style="display:block;color:#64748b;">Cool / Normal</small></div>
+        <span style="font-size:.75rem;font-weight:700;color:var(--glass-text-secondary);letter-spacing:.05em;">COOL</span>
+        <div><b>18°C</b><small style="display:block;color:var(--glass-text-secondary);">Cool / Normal</small></div>
       </button>
       <button type="button" class="setup-choice-card" data-temp="24" data-label="Mild">
         <span style="font-size:.75rem;font-weight:700;color:#0284c7;letter-spacing:.05em;">MILD</span>
-        <div><b>24°C</b><small style="display:block;color:#64748b;">Mild Weather</small></div>
+        <div><b>24°C</b><small style="display:block;color:var(--glass-text-secondary);">Mild Weather</small></div>
       </button>
       <button type="button" class="setup-choice-card selected" data-temp="29" data-label="Warm (Summer)">
         <span style="font-size:.75rem;font-weight:700;color:#2563eb;letter-spacing:.05em;">WARM</span>
-        <div><b>29°C</b><small style="display:block;color:#64748b;">Warm (Summer)</small></div>
+        <div><b>29°C</b><small style="display:block;color:var(--glass-text-secondary);">Warm (Summer)</small></div>
       </button>
       <button type="button" class="setup-choice-card" data-temp="36" data-label="Hot Peak">
         <span style="font-size:.75rem;font-weight:700;color:#dc2626;letter-spacing:.05em;">HOT</span>
-        <div><b>36°C</b><small style="display:block;color:#64748b;">Hot Summer Peak</small></div>
+        <div><b>36°C</b><small style="display:block;color:var(--glass-text-secondary);">Hot Summer Peak</small></div>
       </button>
     </div>
     <div style="margin-top:16px;">
@@ -5453,7 +5456,7 @@
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.88rem;color:#1e293b;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.88rem;color:var(--glass-text-primary);">
       Replacing: <b id="swapTargetExName" style="color:#2563eb;">Incline Dumbbell Press</b>
     </div>
     <div style="margin-bottom:12px;">
@@ -5496,14 +5499,14 @@
       <div class="timer-display-box" id="timerBox">
         <span class="timer-phase-badge" id="timerPhaseBadge">ACTIVE SET</span>
         <div class="timer-clock-digits" id="timerClockDigits">00:45</div>
-        <p style="margin:0;font-size:.84rem;color:#64748b;" id="timerInstruction">Focus on form and tempo. Complete your reps!</p>
+        <p style="margin:0;font-size:.84rem;color:var(--glass-text-secondary);" id="timerInstruction">Focus on form and tempo. Complete your reps!</p>
       </div>
 
       <!-- Controls for Active Set Mode -->
       <div id="activeSetControls" style="display:flex;flex-direction:column;gap:10px;">
         <div class="timer-controls-row">
           <button type="button" class="timer-ctrl-btn" id="timerMinusTenBtn">-10s</button>
-          <button type="button" class="timer-ctrl-btn" id="timerPlayPauseBtn" style="background:#38bdf8;color:#1e293b;border-color:#38bdf8;font-weight:800;min-width:100px;">
+          <button type="button" class="timer-ctrl-btn" id="timerPlayPauseBtn" style="background:#38bdf8;color:var(--glass-text-primary);border-color:#38bdf8;font-weight:800;min-width:100px;">
             Pause
           </button>
           <button type="button" class="timer-ctrl-btn" id="timerPlusTenBtn">+10s</button>
@@ -5515,7 +5518,7 @@
 
       <!-- Controls for Rest Mode (Hidden during active set) -->
       <div id="restControls" style="display:none;flex-direction:column;gap:12px;">
-        <div style="font-size:.85rem;color:#64748b;font-weight:600;">
+        <div style="font-size:.85rem;color:var(--glass-text-secondary);font-weight:600;">
           Adjust your rest interval:
         </div>
         <div class="timer-controls-row">
@@ -5534,7 +5537,7 @@
       </div>
 
       <!-- Current Exercise Biomechanics Cue -->
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;text-align:left;font-size:.82rem;color:#64748b;" id="sessionBioTip">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;text-align:left;font-size:.82rem;color:var(--glass-text-secondary);" id="sessionBioTip">
         <b>Form Tip:</b> Keep chest tall, brace core throughout the movement, and maintain smooth cadence.
       </div>
     </div>

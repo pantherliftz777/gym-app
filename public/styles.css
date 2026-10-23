@@ -11,7 +11,7 @@
   display:flex;pointer-events:auto;
 }
 .modal-card{
-  background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:26px;
+  background:var(--ff-glass-bg-elevated);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--ff-glass-border);border-radius:22px;padding:26px;box-shadow:var(--ff-glass-shadow-lg);
   width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(30,44,34,0.22);
 }
 .modal-head{
@@ -50,12 +50,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  margin-bottom: 8px;
-  transition: border-color .15s, box-shadow .15s;
+  padding: 14px 18px;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--ff-glass-shadow);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .meal-item-card:hover {
   border-color: #bfdbfe;
@@ -90,9 +93,12 @@
 /* ===== Macro Targets Sidebar Refinements ===== */
 .macro-target-card {
   padding: 22px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 20px;
+  box-shadow: var(--ff-glass-shadow);
 }
 .macro-target-row {
   margin-bottom: 14px;
@@ -158,24 +164,26 @@
   padding: 8px 10px;
 }
 .ingredient-row select, .ingredient-row input {
-  height: 34px;
+  padding: 8px 12px;
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 10px;
   font-size: .85rem;
-  border: 1px solid #dbeafe;
-  border-radius: 7px;
-  padding: 0 8px;
-  background: #ffffff;
-  color: #1e293b;
-  outline: none;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--ff-text-primary);
 }
 .ingredient-row select:focus, .ingredient-row input:focus {
   border-color: #93c5fd;
   box-shadow: 0 0 0 2px #eff6ff;
 }
 .recipe-summary-box {
-  background: #f8fafc;
-  border: 1px solid #dce7d4;
-  border-radius: 12px;
-  padding: 14px;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  padding: 16px;
   margin-top: 14px;
 }
 .recipe-macro-grid {
@@ -186,10 +194,13 @@
   text-align: center;
 }
 .recipe-macro-stat {
-  background: #ffffff;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #edf0eb;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 12px;
+  padding: 10px 8px;
+  box-shadow: var(--ff-glass-shadow);
 }
 .recipe-macro-stat span {
   font-size: .75rem;
@@ -222,18 +233,15 @@
   margin-top: 14px;
 }
 .cam-big-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 14px 20px;
-  background: #ffffff;
-  border: 1px solid #dbeafe;
-  border-radius: 12px;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  padding: 18px;
   cursor: pointer;
-  font-weight: 600;
-  color: #1e293b;
-  transition: all .15s;
+  box-shadow: var(--ff-glass-shadow);
+  transition: all .2s ease;
 }
 .cam-big-btn:hover {
   background: #eff6ff;
@@ -470,20 +478,17 @@
   display: flex;
 }
 .muscle-tabs button {
-  color: #1e293b;
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 999px;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 6px 16px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  display: inline-flex;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 9999px;
+  padding: 7px 16px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--ff-text-secondary);
   cursor: pointer;
-  transition: all 0.18s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all .18s ease;
 }
 .muscle-tabs button:hover {
   background: #eff6ff;
@@ -658,14 +663,13 @@
 
 /* ===== Challenge View Components ===== */
 .challenge-empty-card {
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 18px;
-  padding: 36px 24px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  max-width: 680px;
-  margin: 20px auto;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 20px;
+  box-shadow: var(--ff-glass-shadow);
+  padding: 32px 24px;
 }
 .challenge-empty-icon-wrap {
   width: 64px;
@@ -730,16 +734,13 @@
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
 }
 .challenge-routine-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 14px;
   padding: 12px 16px;
-  border: 1.5px solid #cbd5e1;
-  background: #f8fafc;
-  border-radius: 12px;
-  gap: 12px;
-  flex-wrap: wrap;
-  transition: all 0.15s ease;
+  margin-bottom: 8px;
 }
 .challenge-routine-item:hover {
   background: #eff6ff;
@@ -770,14 +771,13 @@
   font-weight: 500;
 }
 .challenge-day-card {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: all 0.15s ease;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--ff-glass-shadow);
 }
 .challenge-day-card:hover {
   border-color: #2563eb;
@@ -822,11 +822,13 @@
 
 /* ===== Prescription & Sets/Reps Box in Exercises ===== */
 .exercise-prescription-box {
-  background: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin: 10px 0;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 12px 0;
 }
 .rx-header {
   display: flex;
@@ -965,18 +967,15 @@
 
 /* ===== Workouts Section Move Hover & Interactive Cards ===== */
 .workout-move-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 14px;
-  margin-bottom: 12px;
-  background: #ffffff;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  box-shadow: var(--ff-glass-shadow);
+  transition: all .2s ease;
 }
 .workout-move-item:hover {
   background: #f8fafc;
@@ -1166,17 +1165,15 @@
 
 /* Selection Cards (Motive & Duration) */
 .setup-choice-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1.5px solid #e2ebd9;
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--ff-glass-shadow);
   cursor: pointer;
-  transition: all 0.18s ease;
-  text-align: left;
-  width: 100%;
+  transition: all .2s ease;
 }
 .setup-choice-card:hover {
   border-color: #38bdf8;
@@ -1593,12 +1590,13 @@
 
 /* ================= FRONT SCREEN WATER ESTIMATE & WEATHER ADVISORY ================= */
 .front-water-advisory-card {
-  background: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(32, 59, 41, 0.03);
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 20px;
+  padding: 18px 22px;
+  box-shadow: var(--ff-glass-shadow);
 }
 .front-water-breakdown-row {
   display: grid;
@@ -1607,12 +1605,12 @@
   margin-top: 12px;
 }
 .front-water-pill {
-  background: #ffffff;
-  border: 1px solid #eff6ff;
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 0.78rem;
-  color: #495e50;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 9999px;
+  padding: 6px 14px;
 }
 .front-water-pill b {
   display: block;
@@ -1699,11 +1697,15 @@
 }
 
 .theme-choice-btn {
-  cursor: pointer;
-  border: 1.5px solid #dce8d6;
-  border-radius: 12px;
-  background: #ffffff;
-  transition: all 0.16s ease;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 14px;
+  padding: 12px 18px;
+  color: var(--ff-text-primary);
+  box-shadow: var(--ff-glass-shadow);
+  transition: all .2s ease;
 }
 .theme-choice-btn:hover {
   border-color: #93c5fd;
@@ -1810,1408 +1812,786 @@
   stroke: #2563eb !important;
 }
 
-/* ================= DARK THEME STYLESHEET (DARK BLUE & MIDNIGHT BLACK) ================= */
-html.dark, [data-theme="dark"] {
-  color-scheme: dark;
-  --color-bg: #080c14;
-  --background: #080c14;
-  --foreground: #f1f5f9;
-  --card: #0f172a;
-  --card-foreground: #f1f5f9;
-  --popover: #0f172a;
-  --popover-foreground: #f1f5f9;
-  --primary: #38bdf8;
-  --primary-foreground: #080c14;
-  --muted: #131d33;
-  --muted-foreground: #94a3b8;
-  --border: #1e293b;
-  --input: #0b1120;
-  --ring: #38bdf8;
-}
-
-html.dark body, [data-theme="dark"] body {
-  background-color: #080c14 !important;
-  color: #e2e8f0 !important;
-}
-
-html.dark .app-shell, [data-theme="dark"] .app-shell {
-  background: #080c14 !important;
-  color: #e2e8f0 !important;
-}
-
-/* Header & Navigation */
-html.dark .topbar, [data-theme="dark"] .topbar {
-  background: #0c1220 !important;
-  border-bottom: 1px solid #1a253a !important;
-}
-
-html.dark .topbar h1, [data-theme="dark"] .topbar h1,
-html.dark #userGreeting, [data-theme="dark"] #userGreeting {
-  color: #f8fafc !important;
-}
-
-html.dark .badge-dot, [data-theme="dark"] .badge-dot {
-  color: #475569 !important;
-}
-
-html.dark .topbar-sync-wrapper .sync-note,
-[data-theme="dark"] .topbar-sync-wrapper .sync-note {
-  background: #111a2e !important;
-  border-color: #1e293b !important;
-  color: #94a3b8 !important;
-}
-
-html.dark .sidebar, [data-theme="dark"] .sidebar {
-  background: #090e18 !important;
-  border-right: 1px solid #172033 !important;
-}
-
-html.dark .sidebar-label, [data-theme="dark"] .sidebar-label {
-  color: #64748b !important;
-}
-
-html.dark .brand span, [data-theme="dark"] .brand span {
-  color: #f8fafc !important;
-}
-
-html.dark .nav-link, [data-theme="dark"] .nav-link {
-  color: #94a3b8 !important;
-}
-
-html.dark .nav-link:hover, [data-theme="dark"] .nav-link:hover {
-  background: #131d33 !important;
-  color: #38bdf8 !important;
-}
-
-html.dark .nav-link.selected, [data-theme="dark"] .nav-link.selected {
-  background: #172544 !important;
-  color: #38bdf8 !important;
-  box-shadow: inset 3px 0 0 #38bdf8 !important;
-}
-
-/* Panels & Surfaces */
-html.dark .panel, [data-theme="dark"] .panel {
-  background: #0f172a !important;
-  border: 1px solid #1e293b !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
-}
-
-html.dark .panel h3, [data-theme="dark"] .panel h3 {
-  color: #f8fafc !important;
-}
-
-html.dark .section-kicker, [data-theme="dark"] .section-kicker {
-  color: #38bdf8 !important;
-}
-
-/* Header Live Weather & Clock */
-html.dark .header-weather-badge, [data-theme="dark"] .header-weather-badge {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #f1f5f9 !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-}
-
-html.dark #liveClockTime, [data-theme="dark"] #liveClockTime {
-  color: #38bdf8 !important;
-}
-
-html.dark .header-weather-temp, [data-theme="dark"] .header-weather-temp {
-  background: #162442 !important;
-  border-color: #243864 !important;
-  color: #60a5fa !important;
-}
-
-html.dark .header-weather-temp:hover, [data-theme="dark"] .header-weather-temp:hover {
-  background: #1c2e54 !important;
-  border-color: #38bdf8 !important;
-  color: #93c5fd !important;
-}
-
-/* Control Pills & Status */
-html.dark .theme-select-pill, [data-theme="dark"] .theme-select-pill {
-  background: #131d33 !important;
-  border-color: #233352 !important;
-  color: #e2e8f0 !important;
-}
-
-html.dark .theme-select-pill:hover, [data-theme="dark"] .theme-select-pill:hover {
-  border-color: #38bdf8 !important;
-  background: #1a2845 !important;
-}
-
-html.dark .sound-toggle-btn, [data-theme="dark"] .sound-toggle-btn {
-  background: #131d33 !important;
-  border-color: #233352 !important;
-  color: #e2e8f0 !important;
-}
-
-html.dark .sound-toggle-btn:hover, [data-theme="dark"] .sound-toggle-btn:hover {
-  border-color: #38bdf8 !important;
-  background: #1a2845 !important;
-}
-
-html.dark .sync-note, [data-theme="dark"] .sync-note {
-  background: #131d33 !important;
-  color: #94a3b8 !important;
-  border: 1px solid #233352 !important;
-}
-
-/* Front Screen Water Advisory */
-html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card {
-  background: #0c1424 !important;
-  border-color: #1a2742 !important;
-}
-
-html.dark .front-water-pill, [data-theme="dark"] .front-water-pill {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-  color: #94a3b8 !important;
-}
-
-html.dark .front-water-pill b, [data-theme="dark"] .front-water-pill b {
-  color: #38bdf8 !important;
-}
-
-html.dark #frontCalculatedWaterL, [data-theme="dark"] #frontCalculatedWaterL {
-  color: #38bdf8 !important;
-}
-
-/* Meals & Food Log */
-html.dark .meal-group-block, [data-theme="dark"] .meal-group-block {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-
-html.dark .meal-group-header, [data-theme="dark"] .meal-group-header {
-  border-bottom-color: #1e293b !important;
-}
-
-html.dark .meal-group-header h4, [data-theme="dark"] .meal-group-header h4 {
-  color: #f8fafc !important;
-}
-
-html.dark .meal-item-card, [data-theme="dark"] .meal-item-card {
-  background: #131d33 !important;
-  border-color: #1e2d4a !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark .meal-item-card:hover, [data-theme="dark"] .meal-item-card:hover {
-  border-color: #38bdf8 !important;
-  background: #16233d !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.3) !important;
-}
-
-html.dark .macro-target-card, [data-theme="dark"] .macro-target-card {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-
-/* Filter Pills & Buttons */
-html.dark .filter-pill, [data-theme="dark"] .filter-pill {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #cbd5e1 !important;
-}
-
-html.dark .filter-pill:hover, [data-theme="dark"] .filter-pill:hover {
-  background: #172442 !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-}
-
-html.dark .filter-pill.active, [data-theme="dark"] .filter-pill.active {
-  background: #2563eb !important;
-  border-color: #3b82f6 !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 10px rgba(37,99,235,0.4) !important;
-}
-
-/* Choice Selection Cards */
-html.dark .setup-choice-card, [data-theme="dark"] .setup-choice-card {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark .setup-choice-card:hover, [data-theme="dark"] .setup-choice-card:hover {
-  background: #162442 !important;
-  border-color: #38bdf8 !important;
-}
-
-html.dark .setup-choice-card.selected, [data-theme="dark"] .setup-choice-card.selected {
-  background: #172544 !important;
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 1px #38bdf8 !important;
-}
-
-html.dark .setup-choice-icon, [data-theme="dark"] .setup-choice-icon {
-  background: #131d33 !important;
-  color: #38bdf8 !important;
-}
-
-html.dark .theme-choice-btn, [data-theme="dark"] .theme-choice-btn {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark .theme-choice-btn:hover, [data-theme="dark"] .theme-choice-btn:hover {
-  background: #162442 !important;
-  border-color: #38bdf8 !important;
-}
-
-html.dark .theme-choice-btn.selected, [data-theme="dark"] .theme-choice-btn.selected {
-  background: #172544 !important;
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 1px #38bdf8 !important;
-}
-
-/* Modals & Dialogs */
-html.dark .modal-backdrop, [data-theme="dark"] .modal-backdrop {
-  background: rgba(3, 7, 18, 0.8) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-html.dark .modal-card, [data-theme="dark"] .modal-card {
-  background: #0f172a !important;
-  border: 1px solid #1e293b !important;
-  color: #f1f5f9 !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75) !important;
-}
-
-html.dark .modal-head, [data-theme="dark"] .modal-head {
-  border-bottom-color: #1e293b !important;
-}
-
-html.dark .modal-head h2, [data-theme="dark"] .modal-head h2 {
-  color: #f8fafc !important;
-}
-
-html.dark .close-btn, [data-theme="dark"] .close-btn {
-  color: #94a3b8 !important;
-}
-
-html.dark .close-btn:hover, [data-theme="dark"] .close-btn:hover {
-  color: #f8fafc !important;
-  background: #1e293b !important;
-}
-
-/* Form Inputs, Dropdowns & Textareas */
-html.dark input, html.dark select, html.dark textarea,
-[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
-  background: #090e18 !important;
-  border: 1px solid #1e293b !important;
-  color: #f8fafc !important;
-}
-
-html.dark input:focus, html.dark select:focus, html.dark textarea:focus,
-[data-theme="dark"] input:focus, [data-theme="dark"] select:focus, [data-theme="dark"] textarea:focus {
-  border-color: #38bdf8 !important;
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
-}
-
-html.dark ::placeholder, [data-theme="dark"] ::placeholder {
-  color: #64748b !important;
-}
-
-/* Composite Input Wrappers in Dark Mode (Eliminates nested black/white box contrast bugs) */
-html.dark .input-unit, [data-theme="dark"] .input-unit {
-  background: #090e18 !important;
-  border: 1px solid #1e293b !important;
-  color: #f8fafc !important;
-}
-
-html.dark .input-unit input, [data-theme="dark"] .input-unit input {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  color: #f8fafc !important;
-}
-
-html.dark .input-unit span, [data-theme="dark"] .input-unit span {
-  color: #94a3b8 !important;
-  background: transparent !important;
-}
-
-html.dark .input-unit:focus-within, [data-theme="dark"] .input-unit:focus-within {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
-}
-
-html.dark .search-wrap, [data-theme="dark"] .search-wrap {
-  background: #090e18 !important;
-  border: 1px solid #1e293b !important;
-  color: #f8fafc !important;
-}
-
-html.dark .search-wrap input, [data-theme="dark"] .search-wrap input {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  color: #f8fafc !important;
-}
-
-html.dark .search-wrap svg, [data-theme="dark"] .search-wrap svg {
-  color: #94a3b8 !important;
-  stroke: #94a3b8 !important;
-}
-
-html.dark .search-wrap:focus-within, [data-theme="dark"] .search-wrap:focus-within {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
-}
-
-html.dark .search-wrap:focus-within svg, [data-theme="dark"] .search-wrap:focus-within svg {
-  color: #38bdf8 !important;
-  stroke: #38bdf8 !important;
-}
-
-html.dark #customWorkoutSearchInput, [data-theme="dark"] #customWorkoutSearchInput {
-  background: #090e18 !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
-}
-
-html.dark #customWorkoutSearchInput:focus, [data-theme="dark"] #customWorkoutSearchInput:focus {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
-}
-
-/* Metric / Imperial Unit Switch & Segmented Controls in Dark Mode */
-html.dark .unit-switch, [data-theme="dark"] .unit-switch,
-html.dark .segmented, [data-theme="dark"] .segmented,
-html.dark .weight-mode, [data-theme="dark"] .weight-mode {
-  background: #090e18 !important;
-  border: 1px solid #1e293b !important;
-}
-
-html.dark .unit-switch button, [data-theme="dark"] .unit-switch button,
-html.dark .segmented button, [data-theme="dark"] .segmented button,
-html.dark .weight-mode button, [data-theme="dark"] .weight-mode button {
-  color: #94a3b8 !important;
-}
-
-html.dark .unit-switch button.active, [data-theme="dark"] .unit-switch button.active,
-html.dark .segmented button.active, [data-theme="dark"] .segmented button.active,
-html.dark .weight-mode button.active, [data-theme="dark"] .weight-mode button.active {
-  background: #1e293b !important;
-  color: #38bdf8 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Profile Avatar Action Buttons & Remove Pic Styling */
-html.dark .avatar-action-btn.upload, [data-theme="dark"] .avatar-action-btn.upload {
-  background: #172554 !important;
-  color: #38bdf8 !important;
-  border-color: #1e40af !important;
-}
-
-html.dark .avatar-action-btn.remove, [data-theme="dark"] .avatar-action-btn.remove {
-  background: #330b0e !important;
-  color: #fca5a5 !important;
-  border-color: #7f1d1d !important;
-}
-
-html.dark #avatarModalRemoveBtn, [data-theme="dark"] #avatarModalRemoveBtn {
-  background: #330b0e !important;
-  color: #fca5a5 !important;
-  border-color: #7f1d1d !important;
-}
-
-html.dark #avatarModalRemoveBtn:hover, [data-theme="dark"] #avatarModalRemoveBtn:hover {
-  background: #450a0a !important;
-  border-color: #ef4444 !important;
-  color: #ffffff !important;
-}
-
-html.dark #avatarModalPreviewBox, [data-theme="dark"] #avatarModalPreviewBox {
-  background: #090e18 !important;
-  border-color: #38bdf8 !important;
-}
-
-/* Core Buttons */
-html.dark .solid-button, [data-theme="dark"] .solid-button {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-
-html.dark .solid-button:hover, [data-theme="dark"] .solid-button:hover {
-  background: #1d4ed8 !important;
-}
-
-html.dark .outline-button, [data-theme="dark"] .outline-button {
-  background: transparent !important;
-  border: 1px solid #334155 !important;
-  color: #cbd5e1 !important;
-}
-
-html.dark .outline-button:hover, [data-theme="dark"] .outline-button:hover {
-  background: #1e293b !important;
-  border-color: #475569 !important;
-  color: #ffffff !important;
-}
-
-html.dark .text-button, [data-theme="dark"] .text-button {
-  color: #38bdf8 !important;
-}
-
-/* AI Drawer & Chatbot */
-html.dark .ai-chat-drawer, [data-theme="dark"] .ai-chat-drawer {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6) !important;
-}
-
-html.dark .ai-chat-header, [data-theme="dark"] .ai-chat-header {
-  background: #090e18 !important;
-  border-bottom: 1px solid #1e293b !important;
-}
-
-html.dark .ai-chat-body, [data-theme="dark"] .ai-chat-body {
-  background: #070a12 !important;
-}
-
-html.dark .ai-chat-chips, [data-theme="dark"] .ai-chat-chips {
-  background: #0c1220 !important;
-  border-top-color: #1a253a !important;
-}
-
-html.dark .ai-chip, [data-theme="dark"] .ai-chip {
-  background: #131d33 !important;
-  border-color: #233352 !important;
-  color: #cbd5e1 !important;
-}
-
-html.dark .ai-chip:hover, [data-theme="dark"] .ai-chip:hover {
-  background: #1a2947 !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-}
-
-html.dark .ai-chat-footer, [data-theme="dark"] .ai-chat-footer {
-  background: #0c1220 !important;
-  border-top-color: #1a253a !important;
-}
-
-html.dark .ai-chat-input, [data-theme="dark"] .ai-chat-input {
-  background: #070a12 !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
-}
-
-html.dark .ai-msg.bot, [data-theme="dark"] .ai-msg.bot {
-  background: #131d33 !important;
-  border-color: #1e2d4a !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark .ai-msg.user, [data-theme="dark"] .ai-msg.user {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-
-/* Ingredients, Recipes & Camera */
-html.dark .ingredient-row, [data-theme="dark"] .ingredient-row {
-  background: #0c1424 !important;
-  border-color: #1a2742 !important;
-}
-
-html.dark .ingredient-row select, html.dark .ingredient-row input,
-[data-theme="dark"] .ingredient-row select, [data-theme="dark"] .ingredient-row input {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-  color: #f8fafc !important;
-}
-
-html.dark .recipe-summary-box, [data-theme="dark"] .recipe-summary-box {
-  background: #0c1424 !important;
-  border-color: #1a2742 !important;
-}
-
-html.dark .recipe-macro-stat, [data-theme="dark"] .recipe-macro-stat {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-}
-
-html.dark .recipe-macro-stat b, [data-theme="dark"] .recipe-macro-stat b {
-  color: #38bdf8 !important;
-}
-
-/* AI Verify, Welcome Check-in & Daily Motivation Cards */
-html.dark .welcome-strip, [data-theme="dark"] .welcome-strip {
-  background: linear-gradient(135deg, #0e1e3e 0%, #152952 50%, #091224 100%) !important;
-  border: 1px solid #1e3a8a !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
-}
-
-html.dark .daily-motivation-panel, [data-theme="dark"] .daily-motivation-panel {
-  background: linear-gradient(135deg, #0b1a36 0%, #13274f 50%, #081122 100%) !important;
-  border: 1px solid #1e3a8a !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
-}
-
-html.dark .motivation-tag, [data-theme="dark"] .motivation-tag {
-  color: #38bdf8 !important;
-}
-
-html.dark .motivation-quote-text, [data-theme="dark"] .motivation-quote-text {
-  color: #f8fafc !important;
-}
-
-html.dark .motivation-author, [data-theme="dark"] .motivation-author {
-  color: #94a3b8 !important;
-}
-
-html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card {
-  background: linear-gradient(135deg, #0a1224 0%, #121e38 100%) !important;
-  border-color: #1e2f54 !important;
-}
-
-html.dark .ai-verify-icon, [data-theme="dark"] .ai-verify-icon {
-  background: #1e293b !important;
-  color: #38bdf8 !important;
-}
-
-html.dark .ai-verify-text b, [data-theme="dark"] .ai-verify-text b {
-  color: #f8fafc !important;
-}
-
-html.dark .ai-verify-text p, [data-theme="dark"] .ai-verify-text p {
-  color: #94a3b8 !important;
-}
-
-html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box {
-  background: #0c1424 !important;
-  border-color: #1a2742 !important;
-}
-
-html.dark .toast-notice, [data-theme="dark"] .toast-notice {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.7) !important;
-}
-
-/* Images, Visuals & Thumbnails */
-html.dark .food-thumb, [data-theme="dark"] .food-thumb {
-  background: #090e18 !important;
-  border: 1px solid #1e293b !important;
-}
-
-html.dark .cam-dropzone, [data-theme="dark"] .cam-dropzone {
-  background: #090e18 !important;
-  border-color: #1e293b !important;
-  color: #94a3b8 !important;
-}
-
-html.dark .cam-dropzone:hover, [data-theme="dark"] .cam-dropzone:hover {
-  background: #0f172a !important;
-  border-color: #38bdf8 !important;
-}
-
-html.dark .cam-big-btn, [data-theme="dark"] .cam-big-btn {
-  background: #131d33 !important;
-  border-color: #1e2d4a !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark .cam-big-btn:hover, [data-theme="dark"] .cam-big-btn:hover {
-  background: #1a2947 !important;
-  border-color: #38bdf8 !important;
-}
-
-/* Image Visual Adjustments */
-html.dark img, [data-theme="dark"] img {
-  filter: brightness(0.97) contrast(1.03);
-}
-
-html.dark #lightboxImage, [data-theme="dark"] #lightboxImage {
-  filter: none !important;
-}
 
 /* ==========================================================================
-   DARK THEME COMPREHENSIVE TEXT VISIBILITY & CONTRAST SYSTEM
-   Guarantees 100% readable, high-contrast, crystal-clear text on dark midnight backgrounds
-   ========================================================================== */
-
-/* Universal Dark Mode Base Typography */
-html.dark,
-[data-theme="dark"],
-html.dark body,
-[data-theme="dark"] body {
-  color-scheme: dark;
-  --background: #080c14;
-  --foreground: #f8fafc;
-  --color-bg: #080c14;
-  --color-text: #f8fafc;
-  --color-muted: #94a3b8;
-  --card: #0f172a;
-  --card-foreground: #f8fafc;
-  background-color: #080c14 !important;
-  color: #f1f5f9 !important;
-}
-
-/* All headings, titles, labels, bold values on dark mode */
-html.dark h1, [data-theme="dark"] h1,
-html.dark h2, [data-theme="dark"] h2,
-html.dark h3, [data-theme="dark"] h3,
-html.dark h4, [data-theme="dark"] h4,
-html.dark h5, [data-theme="dark"] h5,
-html.dark h6, [data-theme="dark"] h6,
-html.dark strong, [data-theme="dark"] strong,
-html.dark b:not([class*="badge"]):not([class*="btn"]):not([class*="button"]),
-[data-theme="dark"] b:not([class*="badge"]):not([class*="btn"]):not([class*="button"]),
-html.dark th, [data-theme="dark"] th {
-  color: #f8fafc !important;
-}
-
-/* All body text, descriptions, lists, table cells on dark mode */
-html.dark p, [data-theme="dark"] p,
-html.dark label, [data-theme="dark"] label,
-html.dark li, [data-theme="dark"] li,
-html.dark td, [data-theme="dark"] td {
-  color: #e2e8f0 !important;
-}
-
-/* Secondary, meta, units, and muted small text on dark mode */
-html.dark small, [data-theme="dark"] small,
-html.dark .text-muted, [data-theme="dark"] .text-muted,
-html.dark .muted, [data-theme="dark"] .muted,
-html.dark .stat-label, [data-theme="dark"] .stat-label,
-html.dark .sync-note, [data-theme="dark"] .sync-note,
-html.dark .subtext, [data-theme="dark"] .subtext,
-html.dark .unit, [data-theme="dark"] .unit,
-html.dark .meta, [data-theme="dark"] .meta {
-  color: #94a3b8 !important;
-}
-
-/* Form inputs, select menus, dropdowns, and textareas */
-html.dark input, [data-theme="dark"] input,
-html.dark select, [data-theme="dark"] select,
-html.dark textarea, [data-theme="dark"] textarea {
-  background: #090e18 !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
-}
-html.dark option, [data-theme="dark"] option {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-}
-html.dark input::placeholder, [data-theme="dark"] input::placeholder,
-html.dark textarea::placeholder, [data-theme="dark"] textarea::placeholder {
-  color: #64748b !important;
-}
-
-/* ================= INLINE COLOR OVERRIDES IN DARK MODE ================= */
-
-/* Override dark slate / dark charcoal / black inline text (#1e293b, #000, etc.) -> bright crisp white (#f8fafc) */
-html.dark [style*="color:#1e293b"], html.dark [style*="color: #1e293b"],
-html.dark [style*="color:#0f172a"], html.dark [style*="color: #0f172a"],
-html.dark [style*="color:#111827"], html.dark [style*="color: #111827"],
-html.dark [style*="color:#000"], html.dark [style*="color: #000"],
-html.dark [style*="color:#000000"], html.dark [style*="color: #000000"],
-[data-theme="dark"] [style*="color:#1e293b"], [data-theme="dark"] [style*="color: #1e293b"],
-[data-theme="dark"] [style*="color:#0f172a"], [data-theme="dark"] [style*="color: #0f172a"],
-[data-theme="dark"] [style*="color:#111827"], [data-theme="dark"] [style*="color: #111827"],
-[data-theme="dark"] [style*="color:#000"], [data-theme="dark"] [style*="color: #000"],
-[data-theme="dark"] [style*="color:#000000"], [data-theme="dark"] [style*="color: #000000"] {
-  color: #f8fafc !important;
-}
-
-/* Override muted slate-500 inline text (#64748b, #4a5568, #cbd5e0) -> readable bright slate-400 (#94a3b8) */
-html.dark [style*="color:#64748b"], html.dark [style*="color: #64748b"],
-html.dark [style*="color:#4a5568"], html.dark [style*="color: #4a5568"],
-html.dark [style*="color:#cbd5e0"], html.dark [style*="color: #cbd5e0"],
-[data-theme="dark"] [style*="color:#64748b"], [data-theme="dark"] [style*="color: #64748b"],
-[data-theme="dark"] [style*="color:#4a5568"], [data-theme="dark"] [style*="color: #4a5568"],
-[data-theme="dark"] [style*="color:#cbd5e0"], [data-theme="dark"] [style*="color: #cbd5e0"] {
-  color: #94a3b8 !important;
-}
-
-/* Override royal/sapphire blue inline text (#2563eb, #1d4ed8, #1e3a8a, #0284c7) -> vibrant sky blue (#38bdf8) */
-html.dark [style*="color:#2563eb"], html.dark [style*="color: #2563eb"],
-html.dark [style*="color:#1d4ed8"], html.dark [style*="color: #1d4ed8"],
-html.dark [style*="color:#1e3a8a"], html.dark [style*="color: #1e3a8a"],
-html.dark [style*="color:#0284c7"], html.dark [style*="color: #0284c7"],
-[data-theme="dark"] [style*="color:#2563eb"], [data-theme="dark"] [style*="color: #2563eb"],
-[data-theme="dark"] [style*="color:#1d4ed8"], [data-theme="dark"] [style*="color: #1d4ed8"],
-[data-theme="dark"] [style*="color:#1e3a8a"], [data-theme="dark"] [style*="color: #1e3a8a"],
-[data-theme="dark"] [style*="color:#0284c7"], [data-theme="dark"] [style*="color: #0284c7"] {
-  color: #38bdf8 !important;
-}
-
-/* Warnings / Inactive Streaks / Mission Failed in Dark Mode */
-html.dark [style*="color:#c53030"], html.dark [style*="color: #c53030"],
-html.dark [style*="color:#9b2c2c"], html.dark [style*="color: #9b2c2c"],
-html.dark [style*="color:#742a2a"], html.dark [style*="color: #742a2a"],
-html.dark [style*="color:#7b341e"], html.dark [style*="color: #7b341e"],
-html.dark [style*="color:#9c4221"], html.dark [style*="color: #9c4221"],
-html.dark [style*="color:#c05621"], html.dark [style*="color: #c05621"],
-html.dark [style*="color:#b23"], html.dark [style*="color: #b23"],
-[data-theme="dark"] [style*="color:#c53030"], [data-theme="dark"] [style*="color: #c53030"],
-[data-theme="dark"] [style*="color:#9b2c2c"], [data-theme="dark"] [style*="color: #9b2c2c"],
-[data-theme="dark"] [style*="color:#742a2a"], [data-theme="dark"] [style*="color: #742a2a"],
-[data-theme="dark"] [style*="color:#7b341e"], [data-theme="dark"] [style*="color: #7b341e"],
-[data-theme="dark"] [style*="color:#9c4221"], [data-theme="dark"] [style*="color: #9c4221"],
-[data-theme="dark"] [style*="color:#c05621"], [data-theme="dark"] [style*="color: #c05621"],
-[data-theme="dark"] [style*="color:#b23"], [data-theme="dark"] [style*="color: #b23"] {
-  color: #fca5a5 !important;
-}
-
-/* Safe Button Text Preservation */
-html.dark .solid-button, [data-theme="dark"] .solid-button,
-html.dark button[style*="background:#2563eb"], [data-theme="dark"] button[style*="background:#2563eb"],
-html.dark button[style*="background: #2563eb"], [data-theme="dark"] button[style*="background: #2563eb"],
-html.dark button[style*="background:#c53030"], [data-theme="dark"] button[style*="background:#c53030"],
-html.dark button[style*="background: #c53030"], [data-theme="dark"] button[style*="background: #c53030"] {
-  color: #ffffff !important;
-}
-
-/* ================= INVERT LIGHT BACKGROUNDS IN DARK MODE ================= */
-html.dark [style*="background:#f8fafc"], html.dark [style*="background: #f8fafc"],
-html.dark [style*="background:#eff6ff"], html.dark [style*="background: #eff6ff"],
-html.dark [style*="background:#dbeafe"], html.dark [style*="background: #dbeafe"],
-html.dark [style*="background:#ffffff"], html.dark [style*="background: #ffffff"],
-html.dark [style*="background:#fff"], html.dark [style*="background: #fff"],
-html.dark [style*="background:white"], html.dark [style*="background: white"],
-[data-theme="dark"] [style*="background:#f8fafc"], [data-theme="dark"] [style*="background: #f8fafc"],
-[data-theme="dark"] [style*="background:#eff6ff"], [data-theme="dark"] [style*="background: #eff6ff"],
-[data-theme="dark"] [style*="background:#dbeafe"], [data-theme="dark"] [style*="background: #dbeafe"],
-[data-theme="dark"] [style*="background:#ffffff"], [data-theme="dark"] [style*="background: #ffffff"],
-[data-theme="dark"] [style*="background:#fff"], [data-theme="dark"] [style*="background: #fff"],
-[data-theme="dark"] [style*="background:white"], [data-theme="dark"] [style*="background: white"] {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-
-/* Dark mode alert box backgrounds */
-html.dark [style*="background:#fff5f5"], html.dark [style*="background: #fff5f5"],
-html.dark [style*="background:#fed7d7"], html.dark [style*="background: #fed7d7"],
-html.dark [style*="background:#feb2b2"], html.dark [style*="background: #feb2b2"],
-[data-theme="dark"] [style*="background:#fff5f5"], [data-theme="dark"] [style*="background: #fff5f5"],
-[data-theme="dark"] [style*="background:#fed7d7"], [data-theme="dark"] [style*="background: #fed7d7"],
-[data-theme="dark"] [style*="background:#feb2b2"], [data-theme="dark"] [style*="background: #feb2b2"] {
-  background: #3b1114 !important;
-  border-color: #7f1d1d !important;
-}
-
-html.dark [style*="background:#fffaf0"], html.dark [style*="background: #fffaf0"],
-html.dark [style*="background:#fbd38d"], html.dark [style*="background: #fbd38d"],
-[data-theme="dark"] [style*="background:#fffaf0"], [data-theme="dark"] [style*="background: #fffaf0"],
-[data-theme="dark"] [style*="background:#fbd38d"], [data-theme="dark"] [style*="background: #fbd38d"] {
-  background: #331f0c !important;
-  border-color: #7c2d12 !important;
-}
-
-/* Invert borders that were light */
-html.dark [style*="border: 1px solid #e2e8f0"], html.dark [style*="border:1px solid #e2e8f0"],
-html.dark [style*="border: 1px solid #cbd5e1"], html.dark [style*="border:1px solid #cbd5e1"],
-html.dark [style*="border: 1.5px solid #cbd5e1"], html.dark [style*="border:1.5px solid #cbd5e1"],
-html.dark [style*="border: 1px dashed #cbd5e1"], html.dark [style*="border:1px dashed #cbd5e1"],
-html.dark [style*="border: 1px solid #dbeafe"], html.dark [style*="border:1px solid #dbeafe"],
-[data-theme="dark"] [style*="border: 1px solid #e2e8f0"], [data-theme="dark"] [style*="border:1px solid #e2e8f0"],
-[data-theme="dark"] [style*="border: 1px solid #cbd5e1"], [data-theme="dark"] [style*="border:1px solid #cbd5e1"],
-[data-theme="dark"] [style*="border: 1.5px solid #cbd5e1"], [data-theme="dark"] [style*="border:1.5px solid #cbd5e1"],
-[data-theme="dark"] [style*="border: 1px dashed #cbd5e1"], [data-theme="dark"] [style*="border:1px dashed #cbd5e1"],
-[data-theme="dark"] [style*="border: 1px solid #dbeafe"], [data-theme="dark"] [style*="border:1px solid #dbeafe"] {
-  border-color: #1e293b !important;
-}
-
-/* SVG icons visibility */
-html.dark svg {
-  color-interpolation-filters: sRGB;
-}
-html.dark .brand-mark svg {
-  stroke: #38bdf8 !important;
-}
-
-/* ================= DARK MODE OVERRIDES FOR CARDS, RINGS, TABS & BOXES ================= */
-
-/* Calorie Ring & Numbers in Dark Mode */
-html.dark .ring-inner,
-[data-theme="dark"] .ring-inner {
-  background: #0b1329 !important;
-  color: #38bdf8 !important;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.7) !important;
-}
-html.dark .ring-inner strong,
-[data-theme="dark"] .ring-inner strong {
-  color: #ffffff !important;
-}
-html.dark .ring-inner span,
-[data-theme="dark"] .ring-inner span {
-  color: #94a3b8 !important;
-}
-html.dark .ring-inner svg,
-[data-theme="dark"] .ring-inner svg {
-  color: #38bdf8 !important;
-  stroke: #38bdf8 !important;
-}
-html.dark .calories-number strong,
-[data-theme="dark"] .calories-number strong {
-  color: #ffffff !important;
-}
-html.dark .calories-number > div:first-child > span,
-[data-theme="dark"] .calories-number > div:first-child > span {
-  color: #94a3b8 !important;
-}
-html.dark .calorie-meter,
-[data-theme="dark"] .calorie-meter {
-  background: #1e293b !important;
-}
-
-/* Water Cups in Dark Mode */
-html.dark .water-cup,
-[data-theme="dark"] .water-cup {
-  background: #0f172a !important;
-  border: 1.5px solid #1e293b !important;
-  color: #64748b !important;
-  box-shadow: none !important;
-}
-html.dark .water-cup:hover,
-[data-theme="dark"] .water-cup:hover {
-  background: #172544 !important;
-  border-color: #38bdf8 !important;
-  color: #38bdf8 !important;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25) !important;
-}
-html.dark .water-cup.filled,
-[data-theme="dark"] .water-cup.filled {
-  background: #1e3a8a !important;
-  border-color: #38bdf8 !important;
-  color: #38bdf8 !important;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35) !important;
-}
-html.dark .water-readout strong,
-[data-theme="dark"] .water-readout strong {
-  color: #ffffff !important;
-}
-html.dark .water-readout span,
-[data-theme="dark"] .water-readout span {
-  color: #94a3b8 !important;
-}
-
-/* Movement Library Tabs & Sub-Tags in Dark Mode */
-html.dark .muscle-tabs,
-[data-theme="dark"] .muscle-tabs {
-  border-bottom-color: #1e293b !important;
-}
-html.dark .muscle-tabs button,
-[data-theme="dark"] .muscle-tabs button {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  color: #cbd5e1 !important;
-  box-shadow: none !important;
-}
-html.dark .muscle-tabs button:hover,
-[data-theme="dark"] .muscle-tabs button:hover {
-  background: #1e293b !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-}
-html.dark .muscle-tabs button.active,
-[data-theme="dark"] .muscle-tabs button.active {
-  background: #2563eb !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4) !important;
-}
-
-html.dark .muscle-tags button,
-html.dark .muscle-tags button.chosen,
-[data-theme="dark"] .muscle-tags button,
-[data-theme="dark"] .muscle-tags button.chosen {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-  color: #94a3b8 !important;
-  box-shadow: none !important;
-}
-html.dark .muscle-tags button:hover,
-html.dark .muscle-tags button.chosen:hover,
-[data-theme="dark"] .muscle-tags button:hover,
-[data-theme="dark"] .muscle-tags button.chosen:hover {
-  background: #1e293b !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-}
-html.dark .muscle-tags button.active,
-html.dark .muscle-tags button.chosen.active,
-[data-theme="dark"] .muscle-tags button.active,
-[data-theme="dark"] .muscle-tags button.chosen.active {
-  background: #2563eb !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35) !important;
-}
-
-/* Workout Move Items in Dark Mode */
-html.dark .workout-move-item,
-[data-theme="dark"] .workout-move-item {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
-}
-html.dark .workout-move-item:hover,
-[data-theme="dark"] .workout-move-item:hover {
-  background: #111c30 !important;
-  border-color: #38bdf8 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
-}
-html.dark .move-index-badge,
-[data-theme="dark"] .move-index-badge {
-  background: #1e293b !important;
-  color: #38bdf8 !important;
-}
-html.dark .move-name-title,
-[data-theme="dark"] .move-name-title {
-  color: #ffffff !important;
-}
-html.dark .move-sub-badge,
-[data-theme="dark"] .move-sub-badge {
-  background: #1e293b !important;
-  border-color: #334155 !important;
-  color: #38bdf8 !important;
-}
-html.dark .move-sets-text,
-[data-theme="dark"] .move-sets-text {
-  color: #38bdf8 !important;
-}
-html.dark .move-tip-text,
-[data-theme="dark"] .move-tip-text {
-  color: #cbd5e1 !important;
-}
-html.dark .move-hover-cta,
-[data-theme="dark"] .move-hover-cta {
-  background: #172554 !important;
-  border-color: #2563eb !important;
-  color: #38bdf8 !important;
-}
-html.dark .workout-move-item:hover .move-hover-cta,
-[data-theme="dark"] .workout-move-item:hover .move-hover-cta {
-  background: #2563eb !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-}
-html.dark .move-hover-details,
-[data-theme="dark"] .move-hover-details {
-  border-top-color: #1e293b !important;
-  color: #cbd5e1 !important;
-}
-html.dark .move-detail-target,
-[data-theme="dark"] .move-detail-target {
-  color: #ffffff !important;
-}
-html.dark .move-detail-tempo,
-[data-theme="dark"] .move-detail-tempo {
-  color: #38bdf8 !important;
-}
-html.dark .move-detail-why,
-[data-theme="dark"] .move-detail-why {
-  color: #94a3b8 !important;
-}
-
-/* Prescription Box & Tempo in Dark Mode */
-html.dark .exercise-prescription-box,
-[data-theme="dark"] .exercise-prescription-box {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-html.dark .rx-sets-reps,
-[data-theme="dark"] .rx-sets-reps {
-  color: #38bdf8 !important;
-}
-html.dark .rx-tempo,
-[data-theme="dark"] .rx-tempo {
-  background: #1e293b !important;
-  border-color: #38bdf8 !important;
-  color: #38bdf8 !important;
-}
-html.dark .rx-why,
-[data-theme="dark"] .rx-why {
-  color: #cbd5e1 !important;
-}
-html.dark .rx-why b,
-[data-theme="dark"] .rx-why b {
-  color: #ffffff !important;
-}
-html.dark .exercise-card h4,
-[data-theme="dark"] .exercise-card h4 {
-  color: #ffffff !important;
-}
-html.dark .exercise-sub-tag,
-[data-theme="dark"] .exercise-sub-tag {
-  background: #1e293b !important;
-  border-color: #334155 !important;
-  color: #38bdf8 !important;
-}
-
-/* Challenge View in Dark Mode */
-html.dark .challenge-empty-card,
-[data-theme="dark"] .challenge-empty-card {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45) !important;
-}
-html.dark .challenge-empty-icon-wrap,
-[data-theme="dark"] .challenge-empty-icon-wrap {
-  background: #172554 !important;
-  border-color: #2563eb !important;
-  color: #38bdf8 !important;
-}
-html.dark .challenge-empty-title,
-[data-theme="dark"] .challenge-empty-title {
-  color: #ffffff !important;
-}
-html.dark .challenge-empty-desc,
-[data-theme="dark"] .challenge-empty-desc {
-  color: #cbd5e1 !important;
-}
-html.dark .challenge-feature-box,
-[data-theme="dark"] .challenge-feature-box {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-}
-html.dark .challenge-feature-box:hover,
-[data-theme="dark"] .challenge-feature-box:hover {
-  border-color: #38bdf8 !important;
-  background: #162442 !important;
-}
-html.dark .challenge-feature-box b,
-[data-theme="dark"] .challenge-feature-box b {
-  color: #38bdf8 !important;
-}
-html.dark .challenge-feature-box small,
-[data-theme="dark"] .challenge-feature-box small {
-  color: #94a3b8 !important;
-}
-
-/* Dark Mode Overrides for Challenge Active Plan Dashboard */
-html.dark .challenge-dash-card,
-[data-theme="dark"] .challenge-dash-card {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-}
-html.dark .challenge-dash-card h3,
-[data-theme="dark"] .challenge-dash-card h3 {
-  color: #ffffff !important;
-}
-html.dark .challenge-routine-item,
-[data-theme="dark"] .challenge-routine-item {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-}
-html.dark .challenge-routine-item:hover,
-[data-theme="dark"] .challenge-routine-item:hover {
-  background: #162442 !important;
-  border-color: #38bdf8 !important;
-}
-html.dark .challenge-routine-idx,
-[data-theme="dark"] .challenge-routine-idx {
-  background: #1e293b !important;
-  color: #38bdf8 !important;
-}
-html.dark .challenge-routine-name,
-[data-theme="dark"] .challenge-routine-name {
-  color: #38bdf8 !important;
-}
-html.dark .challenge-routine-meta,
-[data-theme="dark"] .challenge-routine-meta {
-  color: #94a3b8 !important;
-}
-html.dark .challenge-day-card,
-[data-theme="dark"] .challenge-day-card {
-  background: #0c1424 !important;
-  border-color: #1e293b !important;
-}
-html.dark .challenge-day-card:hover,
-[data-theme="dark"] .challenge-day-card:hover {
-  border-color: #38bdf8 !important;
-  background: #111c30 !important;
-}
-html.dark .challenge-day-card.current,
-[data-theme="dark"] .challenge-day-card.current {
-  background: #172554 !important;
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35) !important;
-}
-html.dark .challenge-day-card.completed,
-[data-theme="dark"] .challenge-day-card.completed {
-  background: #062a1c !important;
-  border-color: #059669 !important;
-}
-html.dark .challenge-day-num,
-[data-theme="dark"] .challenge-day-num {
-  color: #38bdf8 !important;
-}
-html.dark .challenge-day-title,
-[data-theme="dark"] .challenge-day-title {
-  color: #ffffff !important;
-}
-html.dark .challenge-day-meta,
-[data-theme="dark"] .challenge-day-meta {
-  color: #94a3b8 !important;
-}
-
-/* ================= DEDICATED ADMIN PORTAL STYLING ================= */
-#view-admin .panel {
-  transition: all 0.2s ease;
-}
-html.dark #adminComplaintsCardsGrid article,
-[data-theme="dark"] #adminComplaintsCardsGrid article {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-html.dark #adminComplaintsCardsGrid article [style*="background:#f8fafc"],
-[data-theme="dark"] #adminComplaintsCardsGrid article [style*="background:#f8fafc"],
-html.dark #adminComplaintsCardsGrid article [style*="background: #f8fafc"],
-[data-theme="dark"] #adminComplaintsCardsGrid article [style*="background: #f8fafc"] {
-  background: #090e18 !important;
-  border-color: #1e293b !important;
-}
-html.dark #adminSubTabs,
-[data-theme="dark"] #adminSubTabs {
-  border-bottom-color: #1e293b !important;
-}
-html.dark #adminSubTabs button.solid-button,
-[data-theme="dark"] #adminSubTabs button.solid-button {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-html.dark #adminSubTabs button.outline-button,
-[data-theme="dark"] #adminSubTabs button.outline-button {
-  background: #111c30 !important;
-  border-color: #1e2d4a !important;
-  color: #94a3b8 !important;
-}
-html.dark #adminUsersCardsGrid .panel,
-[data-theme="dark"] #adminUsersCardsGrid .panel {
-  background: #0f172a !important;
-  border-color: #1e293b !important;
-}
-
-
-
-
-
-/* ==========================================================================
-   FITFUEL PREMIUM LIGHT GLASSMORPHISM DESIGN SYSTEM (REFERENCE IMAGES 1, 2, 3)
+   FITFUEL PREMIUM REALISTIC GLASSMORPHISM DESIGN SYSTEM
+   Featuring 20px backdrop blur, luminous border reflections, multi-layer depth,
+   and ambient lighting canvas (Blue, Purple, Cyan mesh).
    ========================================================================== */
 
 :root {
-  --ff-bg-primary: #F4F8FF;
-  --ff-bg-secondary: #EEF3FF;
-  --ff-bg-lavender: #EDEBFF;
-  --ff-text-primary: #172B4D;
-  --ff-text-secondary: #61718B;
-  --ff-text-muted: #8993A4;
-  --ff-mint: #48E5B1;
-  --ff-emerald: #16C79A;
-  --ff-light-blue: #CFE5FF;
-  --ff-soft-teal: #B7F4E6;
-  --ff-lavender: #C9C2FF;
-  --ff-accent: #16C79A;
-  --ff-accent-glow: rgba(22, 199, 154, 0.35);
-  --ff-glass-bg: rgba(255, 255, 255, 0.72);
-  --ff-glass-bg-hover: rgba(255, 255, 255, 0.88);
-  --ff-glass-border: rgba(255, 255, 255, 0.85);
-  --ff-glass-border-subtle: rgba(207, 229, 255, 0.55);
-  --ff-glass-shadow: 0 10px 30px rgba(47, 73, 117, 0.08);
-  --ff-glass-shadow-lg: 0 20px 45px rgba(47, 73, 117, 0.12);
+  /* Ambient Canvas Colors (Light Mode) */
+  --ff-canvas-bg: #f0f4fd;
+  --ff-canvas-gradient:
+    radial-gradient(circle at 12% 16%, rgba(56, 189, 248, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 88% 14%, rgba(139, 92, 246, 0.20) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 82% 86%, rgba(20, 184, 166, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 16% 84%, rgba(168, 85, 247, 0.15) 0%, transparent 42%),
+    linear-gradient(135deg, #f8faff 0%, #edf2fe 45%, #f4f1ff 100%);
+
+  /* Typography & Core Accents */
+  --ff-text-primary: #0f172a;
+  --ff-text-secondary: #475569;
+  --ff-text-muted: #64748b;
+  --ff-blue: #2563eb;
+  --ff-cyan: #0284c7;
+  --ff-purple: #8b5cf6;
+  --ff-emerald: #10b981;
+  --ff-mint: #16c79a;
+  --ff-amber: #f59e0b;
+  --ff-rose: #f43f5e;
+
+  /* Glassmorphism Surface Tokens (Light Mode) */
+  --ff-glass-bg: rgba(255, 255, 255, 0.62);
+  --ff-glass-bg-hover: rgba(255, 255, 255, 0.82);
+  --ff-glass-bg-elevated: rgba(255, 255, 255, 0.78);
+  --ff-glass-bg-subtle: rgba(255, 255, 255, 0.40);
+  --ff-glass-border: rgba(255, 255, 255, 0.50);
+  --ff-glass-border-subtle: rgba(255, 255, 255, 0.28);
+  --ff-glass-border-highlight: rgba(255, 255, 255, 0.85);
+  --ff-glass-shadow:
+    0 8px 32px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  --ff-glass-shadow-lg:
+    0 20px 50px rgba(15, 23, 42, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  --ff-glass-blur: blur(20px);
   --ff-radius-sm: 10px;
   --ff-radius-md: 16px;
-  --ff-radius-lg: 22px;
+  --ff-radius-lg: 20px;
+  --ff-radius-xl: 26px;
   --ff-radius-full: 9999px;
-  --ff-blur: blur(18px);
+  --ff-surface: var(--ff-glass-bg);
 }
 
-html[data-theme="dark"], html.dark {
-  --ff-bg-primary: #0A0F1D;
-  --ff-bg-secondary: #10172A;
-  --ff-bg-lavender: #151D33;
-  --ff-text-primary: #F8FAFC;
-  --ff-text-secondary: #94A3B8;
-  --ff-text-muted: #64748B;
-  --ff-glass-bg: rgba(16, 23, 42, 0.75);
-  --ff-glass-bg-hover: rgba(24, 34, 58, 0.88);
-  --ff-glass-border: rgba(255, 255, 255, 0.12);
+/* Dark Mode Tokens & Overrides */
+html.dark, [data-theme="dark"] {
+  color-scheme: dark;
+  --ff-canvas-bg: #070b14;
+  --ff-canvas-gradient:
+    radial-gradient(circle at 12% 16%, rgba(14, 165, 233, 0.24) 0%, transparent 48%),
+    radial-gradient(circle at 88% 14%, rgba(168, 85, 247, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 82% 86%, rgba(20, 184, 166, 0.20) 0%, transparent 46%),
+    radial-gradient(circle at 16% 84%, rgba(236, 72, 153, 0.16) 0%, transparent 42%),
+    linear-gradient(145deg, #070b14 0%, #0d1527 50%, #080c17 100%);
+
+  --ff-text-primary: #f8fafc;
+  --ff-text-secondary: #cbd5e1;
+  --ff-text-muted: #94a3b8;
+
+  --ff-glass-bg: rgba(15, 23, 42, 0.65);
+  --ff-glass-bg-hover: rgba(24, 36, 64, 0.78);
+  --ff-glass-bg-elevated: rgba(15, 23, 42, 0.82);
+  --ff-glass-bg-subtle: rgba(15, 23, 42, 0.45);
+  --ff-glass-border: rgba(255, 255, 255, 0.15);
   --ff-glass-border-subtle: rgba(255, 255, 255, 0.08);
-  --ff-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --ff-glass-shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.5);
+  --ff-glass-border-highlight: rgba(255, 255, 255, 0.25);
+  --ff-glass-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  --ff-glass-shadow-lg:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  --ff-surface: var(--ff-glass-bg);
 }
 
-/* Base Body & App Shell Overrides for Light Glassmorphism */
-body {
-  background: var(--ff-bg-primary) !important;
-  color: var(--ff-text-primary) !important;
+/* ==========================================================================
+   FOUNDATIONAL .glass-card (PRESERVING EXACT USER SPECIFIED DECLARATIONS)
+   ========================================================================== */
+.glass-card {
+  width: 240px;
+  height: 360px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+  pointer-events: none !important;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+  pointer-events: none !important;
+}
+
+/* Dark mode variation for foundational .glass-card */
+html.dark .glass-card, [data-theme="dark"] .glass-card {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 20px 10px rgba(15, 23, 42, 0.6);
+}
+
+html.dark .glass-card::before, [data-theme="dark"] .glass-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+}
+
+html.dark .glass-card::after, [data-theme="dark"] .glass-card::after {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35),
+    transparent,
+    rgba(255, 255, 255, 0.1)
+  );
+}
+
+/* ==========================================================================
+   GLOBAL LAYOUT & AMBIENT CANVAS
+   ========================================================================== */
+html, body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: var(--ff-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  transition: background 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--ff-canvas-bg) !important;
+  background-image: var(--ff-canvas-gradient) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .app-shell {
-  background: var(--ff-bg-primary) !important;
+  background: transparent !important;
+  min-height: 100vh;
 }
 
-.main-area, .page-content {
+.main-area,
+.page-content {
   background: transparent !important;
 }
 
-/* Glassmorphism Panels */
-.panel, .welcome-strip, .daily-motivation-panel, .streak-card-inner, .ai-verify-card {
+/* ==========================================================================
+   REUSABLE SYSTEMIC GLASSMORPHISM CLASSES & CONTAINERS
+   ========================================================================== */
+.glass-panel,
+.panel,
+.metric-card-v2,
+.sy-side-card,
+.sy-bottom-card,
+.stat-card,
+.meal-item-card,
+.macro-target-card,
+.sl-load-card,
+.ex-card,
+.exercise-prescription-box,
+.ai-verify-card,
+.notif-card,
+.welcome-strip,
+.daily-motivation-panel,
+.front-water-advisory-card,
+.challenge-empty-card,
+.track-summary-card,
+.ba-card,
+.workout-session-container,
+.streak-card-inner {
   background: var(--ff-glass-bg) !important;
-  backdrop-filter: var(--ff-blur) !important;
-  -webkit-backdrop-filter: var(--ff-blur) !important;
-  border: 1px solid var(--ff-glass-border) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   border-radius: var(--ff-radius-lg) !important;
+  border: 1px solid var(--ff-glass-border) !important;
   box-shadow: var(--ff-glass-shadow) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.22s ease,
+              background 0.22s ease;
 }
 
-.panel:hover {
+/* Luminous top specular reflection */
+.glass-panel::before,
+.panel::before,
+.metric-card-v2::before,
+.sy-side-card::before,
+.sy-bottom-card::before,
+.welcome-strip::before,
+.daily-motivation-panel::before,
+.modal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ff-glass-border-highlight),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Luminous left edge specular reflection */
+.glass-panel::after,
+.panel::after,
+.metric-card-v2::after,
+.sy-side-card::after,
+.sy-bottom-card::after,
+.welcome-strip::after,
+.daily-motivation-panel::after,
+.modal-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--ff-glass-border-highlight),
+    transparent,
+    var(--ff-glass-border-subtle)
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.panel:hover,
+.metric-card-v2:hover,
+.sy-side-card:hover,
+.sy-bottom-card:hover,
+.meal-item-card:hover,
+.ex-card:hover {
+  transform: translateY(-2px);
   box-shadow: var(--ff-glass-shadow-lg) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
 }
 
-/* Brand styling with glowing mint logo */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.brand-mark {
-  background: linear-gradient(135deg, #16C79A, #48E5B1) !important;
-  color: #0A0F1D !important;
-  box-shadow: 0 0 16px rgba(72, 229, 177, 0.5) !important;
-  border-radius: 12px !important;
-}
-.brand-title {
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--ff-text-primary);
-}
-.brand-title .mint {
-  color: var(--ff-emerald);
-}
-
-/* Sidebar Glassmorphism */
+/* ==========================================================================
+   SIDEBAR & NAVIGATION
+   ========================================================================== */
 .sidebar {
   background: var(--ff-glass-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
   border-right: 1px solid var(--ff-glass-border) !important;
-  box-shadow: 4px 0 24px rgba(47, 73, 117, 0.04) !important;
+  box-shadow: 4px 0 32px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.dark .sidebar, [data-theme="dark"] .sidebar {
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+.brand-mark {
+  background: linear-gradient(135deg, #16c79a, #38bdf8) !important;
+  color: #070b14 !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.45) !important;
+  border-radius: 12px !important;
+}
+
+.sidebar-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  color: var(--ff-text-muted) !important;
+  padding: 0 12px;
+  margin-bottom: 6px;
 }
 
 .primary-nav .nav-link {
   border-radius: 14px !important;
-  transition: all 0.18s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--ff-text-secondary) !important;
   font-weight: 600 !important;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 10px 14px;
 }
 
 .primary-nav .nav-link:hover {
-  background: rgba(207, 229, 255, 0.4) !important;
+  background: var(--ff-glass-bg-hover) !important;
+  backdrop-filter: blur(12px) !important;
+  border-color: var(--ff-glass-border) !important;
   color: var(--ff-text-primary) !important;
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
 }
 
 .primary-nav .nav-link.selected {
-  background: linear-gradient(135deg, rgba(22, 199, 154, 0.18), rgba(72, 229, 177, 0.12)) !important;
-  color: #0d9488 !important;
-  border: 1px solid rgba(22, 199, 154, 0.35) !important;
-}
-html.dark .primary-nav .nav-link.selected {
-  color: #48E5B1 !important;
-}
-
-/* Topbar Modern Glass & Pill Ticker */
-.topbar {
-  background: var(--ff-glass-bg) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid var(--ff-glass-border) !important;
-  box-shadow: 0 4px 20px rgba(47, 73, 117, 0.03) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--ff-glass-border-highlight) !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  box-shadow:
+    0 4px 20px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
-.topbar-search-wrap {
-  position: relative;
-  max-width: 340px;
-  width: 100%;
+html.dark .primary-nav .nav-link.selected, [data-theme="dark"] .primary-nav .nav-link.selected {
+  background: rgba(30, 58, 138, 0.45) !important;
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  color: #38bdf8 !important;
+  box-shadow:
+    0 4px 20px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
-.topbar-search-input {
-  width: 100%;
-  padding: 8px 14px 8px 36px;
-  border-radius: var(--ff-radius-full);
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--ff-glass-border-subtle);
-  font-size: 0.85rem;
-  color: var(--ff-text-primary);
-  outline: none;
+
+.weekly-mini {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--ff-glass-border-subtle) !important;
+  border-radius: 16px !important;
+  box-shadow: inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+}
+
+.profile-shortcut {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--ff-glass-border-subtle) !important;
+  border-radius: 16px !important;
   transition: all 0.2s ease;
 }
-.topbar-search-input:focus {
-  background: #ffffff;
-  border-color: var(--ff-emerald);
-  box-shadow: 0 0 12px var(--ff-accent-glow);
-}
-.topbar-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--ff-text-muted);
-  pointer-events: none;
+
+.profile-shortcut:hover {
+  background: var(--ff-glass-bg-hover) !important;
+  border-color: var(--ff-glass-border) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
-/* Header Live Date & Time Pills (Reference Image 1 & 2) */
-.header-weather-badge, .header-live-time-pill {
+/* ==========================================================================
+   TOPBAR & HEADER CONTROLS
+   ========================================================================== */
+.topbar {
+  background: var(--ff-glass-bg) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid var(--ff-glass-border) !important;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.dark .topbar, [data-theme="dark"] .topbar {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.topbar h1, #userGreeting {
+  color: var(--ff-text-primary) !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.topbar-search-wrap,
+.header-weather-badge,
+.theme-select-pill,
+.sound-toggle-btn,
+.icon-button,
+.top-avatar,
+.topbar-sync-wrapper .sync-note {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+  border-radius: 9999px;
+  color: var(--ff-text-primary) !important;
+  transition: all 0.2s ease;
+}
+
+.topbar-search-wrap:focus-within {
+  background: var(--ff-glass-bg-hover) !important;
+  border-color: rgba(56, 189, 248, 0.7) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+.topbar-search-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--ff-text-primary) !important;
+}
+
+/* ==========================================================================
+   MODALS, DIALOGS & OVERLAYS
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 28, 0.52) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-backdrop.open {
+  display: flex !important;
+}
+
+.modal-card {
+  background: var(--ff-glass-bg-elevated) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  box-shadow: var(--ff-glass-shadow-lg) !important;
+  padding: 26px !important;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  color: var(--ff-text-primary) !important;
+}
+
+.modal-head {
+  border-bottom: 1px solid var(--ff-glass-border-subtle) !important;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-head h2,
+.modal-head h3 {
+  color: var(--ff-text-primary) !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.close-btn,
+.modal-close {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--ff-glass-border-subtle) !important;
+  border-radius: 50% !important;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.75) !important;
-  border: 1px solid var(--ff-glass-border-subtle) !important;
-  border-radius: var(--ff-radius-full) !important;
-  padding: 6px 14px !important;
-  font-size: 0.82rem !important;
-  color: var(--ff-text-primary) !important;
-  font-weight: 600 !important;
-  box-shadow: 0 2px 10px rgba(47, 73, 117, 0.04) !important;
-}
-html.dark .header-weather-badge, html.dark .header-live-time-pill {
-  background: rgba(16, 23, 42, 0.75) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  justify-content: center;
+  color: var(--ff-text-secondary) !important;
+  transition: all 0.18s ease;
 }
 
-/* Buttons */
-.solid-button, .btn-mint {
-  background: linear-gradient(135deg, #16C79A, #48E5B1) !important;
-  color: #0A0F1D !important;
-  border: none !important;
-  font-weight: 700 !important;
-  border-radius: var(--ff-radius-full) !important;
-  box-shadow: 0 4px 14px rgba(22, 199, 154, 0.35) !important;
-  transition: all 0.2s ease !important;
-}
-.solid-button:hover, .btn-mint:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(22, 199, 154, 0.45) !important;
+.close-btn:hover,
+.modal-close:hover {
+  background: var(--ff-glass-bg-hover) !important;
+  color: var(--ff-text-primary) !important;
+  transform: rotate(90deg);
 }
 
-.outline-button, .btn-glass {
-  background: rgba(255, 255, 255, 0.65) !important;
-  color: var(--ff-text-primary) !important;
+/* ==========================================================================
+   FORMS, INPUTS & DROPDOWNS
+   ========================================================================== */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="date"],
+select,
+textarea,
+.search-wrap,
+.sy-hero-search {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
   border: 1px solid var(--ff-glass-border) !important;
-  border-radius: var(--ff-radius-full) !important;
-  backdrop-filter: blur(8px) !important;
-  transition: all 0.2s ease !important;
+  border-radius: 12px;
+  color: var(--ff-text-primary) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 2px 6px rgba(15, 23, 42, 0.02) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.outline-button:hover, .btn-glass:hover {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: var(--ff-emerald) !important;
+
+input:focus,
+select:focus,
+textarea:focus {
+  background: var(--ff-glass-bg-hover) !important;
+  border-color: rgba(56, 189, 248, 0.75) !important;
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+  outline: none;
+}
+
+/* ==========================================================================
+   BUTTONS (SOLID, OUTLINE, TEXT, ICON)
+   ========================================================================== */
+.solid-button,
+.sy-cta-btn,
+.ba-primary-btn {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.90), rgba(2, 132, 199, 0.90)) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow:
+    0 6px 20px rgba(37, 99, 235, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 14px;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.solid-button:hover,
+.sy-cta-btn:hover,
+.ba-primary-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 10px 28px rgba(37, 99, 235, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  filter: brightness(1.06);
+}
+
+.solid-button:active,
+.sy-cta-btn:active,
+.ba-primary-btn:active {
+  transform: translateY(0.5px);
+}
+
+.outline-button,
+.ba-secondary-btn {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+  color: var(--ff-text-primary) !important;
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+.outline-button:hover,
+.ba-secondary-btn:hover {
+  background: var(--ff-glass-bg-hover) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  color: var(--ff-blue) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+}
+
+/* ==========================================================================
+   TABS, BADGES, PILLS & CHIPS
+   ========================================================================== */
+.date-pill-btn,
+.muscle-tab,
+.sub-muscle-pill,
+.filter-pill,
+.sy-quick-pill,
+.badge-pill,
+.section-kicker {
+  background: var(--ff-glass-bg-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  border-radius: 9999px;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+  color: var(--ff-text-secondary) !important;
+  transition: all 0.18s ease;
+}
+
+.date-pill-btn.active,
+.muscle-tab.active,
+.sub-muscle-pill.active,
+.filter-pill.active {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(2, 132, 199, 0.9)) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 4px 16px rgba(37, 99, 235, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ==========================================================================
+   THE STRONGER YOU HERO BANNER & IMAGE 3 STANDARD
+   ========================================================================== */
+.stronger-you-hero-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72) 0%, rgba(238, 246, 255, 0.62) 50%, rgba(243, 240, 255, 0.58) 100%) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid var(--ff-glass-border-highlight) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--ff-glass-shadow-lg) !important;
+}
+
+html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.75) 0%, rgba(13, 27, 49, 0.7) 50%, rgba(20, 16, 43, 0.65) 100%) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+}
+
+/* ==========================================================================
+   GLOBAL CHATBOT, FLOATING PANELS & TOAST NOTIFICATIONS
+   ========================================================================== */
+.floating-chat-panel,
+.ai-chat-window,
+.chat-thread-container {
+  background: var(--ff-glass-bg-elevated) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--ff-glass-shadow-lg) !important;
+}
+
+.ai-msg.bot {
+  background: var(--ff-glass-bg) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--ff-glass-border) !important;
+  border-radius: 18px 18px 18px 4px !important;
+  color: var(--ff-text-primary) !important;
+  box-shadow:
+    0 4px 16px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 var(--ff-glass-border-highlight) !important;
+}
+
+.ai-msg.user {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.88), rgba(2, 132, 199, 0.88)) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 18px 18px 4px 18px !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 4px 20px rgba(37, 99, 235, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.toast-notice {
+  background: rgba(15, 23, 42, 0.82) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  color: #f8fafc !important;
+  border-radius: 16px !important;
+}
+
+/* ==========================================================================
+   FALLBACK STYLES FOR BROWSERS WITHOUT BACKDROP-FILTER SUPPORT
+   ========================================================================== */
+@supports not ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  .glass-card,
+  .glass-panel,
+  .panel,
+  .sidebar,
+  .topbar,
+  .modal-card,
+  .metric-card-v2,
+  .sy-side-card,
+  .sy-bottom-card,
+  .stat-card,
+  .meal-item-card,
+  .macro-target-card,
+  .sl-load-card,
+  .ex-card,
+  .exercise-prescription-box,
+  .ai-verify-card,
+  .notif-card,
+  .welcome-strip,
+  .daily-motivation-panel,
+  .front-water-advisory-card,
+  .challenge-empty-card,
+  .track-summary-card,
+  .ba-card,
+  .workout-session-container,
+  .stronger-you-hero-card,
+  .floating-chat-panel,
+  .ai-msg.bot {
+    background: #f8fafc !important;
+  }
+
+  html.dark .glass-card, [data-theme="dark"] .glass-card,
+  html.dark .glass-panel, [data-theme="dark"] .glass-panel,
+  html.dark .panel, [data-theme="dark"] .panel,
+  html.dark .sidebar, [data-theme="dark"] .sidebar,
+  html.dark .topbar, [data-theme="dark"] .topbar,
+  html.dark .modal-card, [data-theme="dark"] .modal-card,
+  html.dark .metric-card-v2, [data-theme="dark"] .metric-card-v2,
+  html.dark .sy-side-card, [data-theme="dark"] .sy-side-card,
+  html.dark .sy-bottom-card, [data-theme="dark"] .sy-bottom-card,
+  html.dark .stat-card, [data-theme="dark"] .stat-card,
+  html.dark .meal-item-card, [data-theme="dark"] .meal-item-card,
+  html.dark .macro-target-card, [data-theme="dark"] .macro-target-card,
+  html.dark .sl-load-card, [data-theme="dark"] .sl-load-card,
+  html.dark .ex-card, [data-theme="dark"] .ex-card,
+  html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
+  html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card,
+  html.dark .notif-card, [data-theme="dark"] .notif-card,
+  html.dark .welcome-strip, [data-theme="dark"] .welcome-strip,
+  html.dark .daily-motivation-panel, [data-theme="dark"] .daily-motivation-panel,
+  html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
+  html.dark .challenge-empty-card, [data-theme="dark"] .challenge-empty-card,
+  html.dark .track-summary-card, [data-theme="dark"] .track-summary-card,
+  html.dark .ba-card, [data-theme="dark"] .ba-card,
+  html.dark .workout-session-container, [data-theme="dark"] .workout-session-container,
+  html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card,
+  html.dark .floating-chat-panel, [data-theme="dark"] .floating-chat-panel,
+  html.dark .ai-msg.bot, [data-theme="dark"] .ai-msg.bot {
+    background: #0f172a !important;
+  }
 }
 
 /* ==========================================================================
@@ -6239,15 +5619,13 @@ html.dark .ba-goal-card {
 }
 
 .ba-form-textarea {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  font-size: 0.85rem;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 14px;
+  padding: 12px 16px;
   color: var(--ff-text-primary);
-  outline: none;
-  resize: vertical;
 }
 
 .ba-form-textarea:focus {
@@ -6327,14 +5705,13 @@ html.dark .ba-pref-card {
 }
 
 .ba-form-input {
-  width: 100%;
-  padding: 9px 12px;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  font-size: 0.84rem;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 12px;
+  padding: 10px 14px;
   color: var(--ff-text-primary);
-  outline: none;
 }
 
 .ba-form-input:focus {
@@ -7083,15 +6460,13 @@ html.dark .ba-workout-day-card {
 }
 
 .ba-exercise-item {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  background: var(--ff-glass-bg-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--ff-glass-shadow);
 }
 
 html[data-theme="dark"] .ba-exercise-item,
@@ -7227,10 +6602,13 @@ html.dark .ba-macro-box {
 }
 
 .ba-meal-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 12px;
+  background: var(--ff-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--ff-glass-shadow);
 }
 
 html[data-theme="dark"] .ba-meal-card,
@@ -7438,3 +6816,1284 @@ html.dark .ba-rec-card {
   object-fit: contain;
 }
 
+
+
+
+/* ==========================================================================
+   USER'S EXACT FOUNDATIONAL GLASS-CARD STYLES (PRESERVED VERBATIM)
+   ========================================================================== */
+.glass-card {
+  width: 240px;
+  height: 360px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 20px 10px rgba(255, 255, 255, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+  pointer-events: none !important;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+  pointer-events: none !important;
+}
+
+
+/* ==========================================================================
+   MASTER GLASSMORPHISM DESIGN SYSTEM & SYSTEMIC TOKENS
+   ========================================================================== */
+:root {
+  /* Ambient canvas background gradients (Light mode) */
+  --glass-canvas-bg: #edf2fc;
+  --glass-canvas-mesh:
+    radial-gradient(circle at 12% 16%, rgba(56, 189, 248, 0.24) 0%, transparent 45%),
+    radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.14) 0%, transparent 50%),
+    radial-gradient(circle at 82% 86%, rgba(20, 184, 166, 0.20) 0%, transparent 45%),
+    radial-gradient(circle at 16% 84%, rgba(168, 85, 247, 0.18) 0%, transparent 42%),
+    linear-gradient(135deg, #f8faff 0%, #edf3fe 45%, #f4f0ff 100%);
+
+  /* Surface transparency tokens */
+  --glass-surface-bg: rgba(255, 255, 255, 0.60);
+  --glass-surface-hover: rgba(255, 255, 255, 0.78);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.76);
+  --glass-surface-subtle: rgba(255, 255, 255, 0.38);
+  --glass-surface-input: rgba(255, 255, 255, 0.48);
+
+  /* Luminous borders & reflections */
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-subtle: rgba(255, 255, 255, 0.25);
+  --glass-border-glow: rgba(56, 189, 248, 0.5);
+  --glass-reflection-top: rgba(255, 255, 255, 0.85);
+  --glass-reflection-side: rgba(255, 255, 255, 0.35);
+
+  /* Shadows with inner glow reflections */
+  --glass-shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --glass-shadow:
+    0 8px 32px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+  --glass-shadow-lg:
+    0 24px 60px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+
+  /* Typography */
+  --glass-text-primary: #0f172a;
+  --glass-text-secondary: #475569;
+  --glass-text-muted: #64748b;
+
+  /* Accents */
+  --glass-accent-blue: #2563eb;
+  --glass-accent-cyan: #0284c7;
+  --glass-accent-purple: #8b5cf6;
+  --glass-accent-mint: #10b981;
+}
+
+/* Dark Mode Master Tokens */
+html.dark, [data-theme="dark"] {
+  color-scheme: dark;
+  --glass-canvas-bg: #070b14;
+  --glass-canvas-mesh:
+    radial-gradient(circle at 12% 16%, rgba(14, 165, 233, 0.24) 0%, transparent 48%),
+    radial-gradient(circle at 88% 12%, rgba(168, 85, 247, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 82% 86%, rgba(20, 184, 166, 0.20) 0%, transparent 46%),
+    radial-gradient(circle at 16% 84%, rgba(236, 72, 153, 0.16) 0%, transparent 42%),
+    linear-gradient(145deg, #070b14 0%, #0d1527 50%, #080c17 100%);
+
+  --glass-surface-bg: rgba(15, 23, 42, 0.65);
+  --glass-surface-hover: rgba(24, 36, 64, 0.78);
+  --glass-surface-elevated: rgba(15, 23, 42, 0.82);
+  --glass-surface-subtle: rgba(15, 23, 42, 0.45);
+  --glass-surface-input: rgba(15, 23, 42, 0.55);
+
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-subtle: rgba(255, 255, 255, 0.08);
+  --glass-border-glow: rgba(56, 189, 248, 0.4);
+  --glass-reflection-top: rgba(255, 255, 255, 0.28);
+  --glass-reflection-side: rgba(255, 255, 255, 0.12);
+
+  --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --glass-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  --glass-shadow-lg:
+    0 24px 60px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+
+  --glass-text-primary: #f8fafc;
+  --glass-text-secondary: #cbd5e1;
+  --glass-text-muted: #94a3b8;
+}
+
+/* ==========================================================================
+   AMBIENT BACKGROUNDS
+   ========================================================================== */
+body, html {
+  min-height: 100vh;
+}
+
+body {
+  background-color: var(--glass-canvas-bg) !important;
+  background-image: var(--glass-canvas-mesh) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  color: var(--glass-text-primary) !important;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.app-shell,
+.main-area,
+.page-content {
+  background: transparent !important;
+}
+
+/* ==========================================================================
+   SYSTEMIC GLASS PANELS & CARDS (APPLIED ACROSS ALL PAGES)
+   ========================================================================== */
+.glass-panel,
+.panel,
+.metric-card-v2,
+.sy-side-card,
+.sy-bottom-card,
+.stat-card,
+.meal-item-card,
+.macro-target-card,
+.sl-load-card,
+.ex-card,
+.exercise-prescription-box,
+.ai-verify-card,
+.notif-card,
+.welcome-strip,
+.daily-motivation-panel,
+.front-water-advisory-card,
+.challenge-empty-card,
+.challenge-dash-card,
+.challenge-day-card,
+.track-summary-card,
+.ba-card,
+.workout-session-container,
+.streak-card-inner,
+.workout-move-item,
+.setup-choice-card,
+.ba-meal-card,
+.ba-exercise-item {
+  background: var(--glass-surface-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.22s ease,
+              background 0.22s ease;
+}
+
+/* Specular top reflection */
+.glass-panel::before,
+.panel::before,
+.metric-card-v2::before,
+.sy-side-card::before,
+.sy-bottom-card::before,
+.welcome-strip::before,
+.daily-motivation-panel::before,
+.modal-card::before,
+.ba-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--glass-reflection-top),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Specular left edge reflection */
+.glass-panel::after,
+.panel::after,
+.metric-card-v2::after,
+.sy-side-card::after,
+.sy-bottom-card::after,
+.welcome-strip::after,
+.daily-motivation-panel::after,
+.modal-card::after,
+.ba-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--glass-reflection-top),
+    transparent,
+    var(--glass-reflection-side)
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hover lift and luminous focus glow */
+.panel:hover,
+.metric-card-v2:hover,
+.sy-side-card:hover,
+.sy-bottom-card:hover,
+.meal-item-card:hover,
+.ex-card:hover,
+.ba-meal-card:hover,
+.workout-move-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-lg) !important;
+  border-color: var(--glass-border-glow) !important;
+}
+
+/* ==========================================================================
+   NAVIGATION, SIDEBAR & HEADER BARS
+   ========================================================================== */
+.sidebar {
+  background: var(--glass-surface-bg) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-right: 1px solid var(--glass-border) !important;
+  box-shadow: 4px 0 32px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.dark .sidebar, [data-theme="dark"] .sidebar {
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.topbar {
+  background: var(--glass-surface-bg) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.dark .topbar, [data-theme="dark"] .topbar {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.primary-nav .nav-link {
+  background: transparent;
+  border-radius: 14px !important;
+  border: 1px solid transparent;
+  color: var(--glass-text-secondary) !important;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 10px 14px;
+}
+
+.primary-nav .nav-link:hover {
+  background: var(--glass-surface-hover) !important;
+  backdrop-filter: blur(12px) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--glass-text-primary) !important;
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+}
+
+.primary-nav .nav-link.selected {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-reflection-top) !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  box-shadow:
+    0 4px 20px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+html.dark .primary-nav .nav-link.selected, [data-theme="dark"] .primary-nav .nav-link.selected {
+  background: rgba(30, 58, 138, 0.45) !important;
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  color: #38bdf8 !important;
+  box-shadow:
+    0 4px 20px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.topbar-search-wrap,
+.header-weather-badge,
+.theme-select-pill,
+.sound-toggle-btn,
+.icon-button,
+.top-avatar,
+.topbar-sync-wrapper .sync-note {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+  border-radius: 9999px;
+  color: var(--glass-text-primary) !important;
+  transition: all 0.2s ease;
+}
+
+.topbar-search-wrap:focus-within {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.75) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* ==========================================================================
+   MODALS, DIALOGS, DRAWER & POPUPS
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 28, 0.52) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-backdrop.open {
+  display: flex !important;
+}
+
+.modal-card {
+  background: var(--glass-surface-elevated) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+  padding: 26px !important;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  color: var(--glass-text-primary) !important;
+}
+
+.modal-head {
+  border-bottom: 1px solid var(--glass-border-subtle) !important;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-head h2,
+.modal-head h3 {
+  color: var(--glass-text-primary) !important;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   FORMS, INPUTS, SELECTS & SEARCH BARS
+   ========================================================================== */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="date"],
+select,
+textarea,
+.search-wrap,
+.sy-hero-search,
+.input-unit {
+  background: var(--glass-surface-input) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px;
+  color: var(--glass-text-primary) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 2px 6px rgba(15, 23, 42, 0.02) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.search-wrap:focus-within {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.8) !important;
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+  outline: none;
+}
+
+/* ==========================================================================
+   BUTTONS (SOLID, OUTLINE, TEXT, ICON)
+   ========================================================================== */
+.solid-button,
+.sy-cta-btn,
+.ba-primary-btn {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.90), rgba(2, 132, 199, 0.90)) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow:
+    0 6px 20px rgba(37, 99, 235, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 14px;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.solid-button:hover,
+.sy-cta-btn:hover,
+.ba-primary-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 10px 28px rgba(37, 99, 235, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  filter: brightness(1.06);
+}
+
+.solid-button:active,
+.sy-cta-btn:active,
+.ba-primary-btn:active {
+  transform: translateY(0.5px);
+}
+
+.outline-button,
+.ba-secondary-btn {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+  color: var(--glass-text-primary) !important;
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+.outline-button:hover,
+.ba-secondary-btn:hover {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  color: var(--glass-accent-blue) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+}
+
+/* ==========================================================================
+   TABS, BADGES, PILLS & CHIPS (TACTILE MOUSE & POINTER CONTROL)
+   ========================================================================== */
+.date-pill-btn,
+.muscle-tab,
+.sub-muscle-pill,
+.filter-pill,
+.sy-quick-pill,
+.badge-pill,
+.section-kicker,
+.front-water-pill,
+.exercise-sub-tag,
+.admin-only-btn,
+.admin-only-link,
+.water-cup,
+.tab-btn,
+.theme-choice-btn,
+.activity-mode-pill,
+.ba-day-tab-btn,
+.ai-prompt-pill-btn {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 9999px;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+  color: var(--glass-text-secondary) !important;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.18s ease,
+              background 0.18s ease,
+              color 0.18s ease;
+}
+
+.date-pill-btn:hover,
+.muscle-tab:hover,
+.sub-muscle-pill:hover,
+.filter-pill:hover,
+.sy-quick-pill:hover,
+.badge-pill:hover,
+.front-water-pill:hover,
+.exercise-sub-tag:hover,
+.admin-only-btn:hover,
+.theme-choice-btn:hover,
+.activity-mode-pill:hover,
+.ba-day-tab-btn:hover,
+.ai-prompt-pill-btn:hover {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.75) !important;
+  color: var(--glass-accent-blue) !important;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 6px 18px rgba(56, 189, 248, 0.28),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+}
+
+.date-pill-btn:active,
+.muscle-tab:active,
+.sub-muscle-pill:active,
+.filter-pill:active,
+.sy-quick-pill:active,
+.badge-pill:active,
+.front-water-pill:active,
+.exercise-sub-tag:active,
+.admin-only-btn:active,
+.theme-choice-btn:active,
+.activity-mode-pill:active,
+.ba-day-tab-btn:active,
+.ai-prompt-pill-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.date-pill-btn.active,
+.muscle-tab.active,
+.sub-muscle-pill.active,
+.filter-pill.active,
+.tab-btn.active,
+.activity-mode-pill.active,
+.ba-day-tab-btn.active {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(2, 132, 199, 0.9)) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 4px 16px rgba(37, 99, 235, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ==========================================================================
+   INTERACTIVE WATER CUPS (12 GLASSES)
+   ========================================================================== */
+.water-cup {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 var(--glass-reflection-top) !important;
+  color: var(--glass-text-secondary) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.water-cup:hover {
+  background: var(--glass-surface-hover) !important;
+  border-color: #38bdf8 !important;
+  color: #0284c7 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25) !important;
+}
+
+.water-cup.filled {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.85), rgba(56, 189, 248, 0.85)) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ==========================================================================
+   THE STRONGER YOU HERO BANNER
+   ========================================================================== */
+.stronger-you-hero-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72) 0%, rgba(238, 246, 255, 0.62) 50%, rgba(243, 240, 255, 0.58) 100%) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid var(--glass-reflection-top) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+
+html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.75) 0%, rgba(13, 27, 49, 0.7) 50%, rgba(20, 16, 43, 0.65) 100%) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+/* ==========================================================================
+   GLOBAL CHATBOT, FLOATING PANELS & TOAST NOTIFICATIONS
+   ========================================================================== */
+.floating-chat-panel,
+.ai-chat-window,
+.chat-thread-container {
+  background: var(--glass-surface-elevated) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+
+.ai-msg.bot {
+  background: var(--glass-surface-bg) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 18px 18px 18px 4px !important;
+  color: var(--glass-text-primary) !important;
+  box-shadow:
+    0 4px 16px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 var(--glass-reflection-top) !important;
+}
+
+.ai-msg.user {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.88), rgba(2, 132, 199, 0.88)) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 18px 18px 4px 18px !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 4px 20px rgba(37, 99, 235, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.toast-notice {
+  background: rgba(15, 23, 42, 0.82) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  color: #f8fafc !important;
+  border-radius: 16px !important;
+}
+
+/* ==========================================================================
+   BROWSER FALLBACKS FOR BACKDROP-FILTER
+   ========================================================================== */
+@supports not ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  .glass-card,
+  .glass-panel,
+  .panel,
+  .sidebar,
+  .topbar,
+  .modal-card,
+  .metric-card-v2,
+  .sy-side-card,
+  .sy-bottom-card,
+  .stat-card,
+  .meal-item-card,
+  .macro-target-card,
+  .sl-load-card,
+  .ex-card,
+  .exercise-prescription-box,
+  .ai-verify-card,
+  .notif-card,
+  .welcome-strip,
+  .daily-motivation-panel,
+  .front-water-advisory-card,
+  .challenge-empty-card,
+  .track-summary-card,
+  .ba-card,
+  .workout-session-container,
+  .stronger-you-hero-card,
+  .floating-chat-panel,
+  .ai-msg.bot {
+    background: #f8fafc !important;
+  }
+
+  html.dark .glass-card, [data-theme="dark"] .glass-card,
+  html.dark .glass-panel, [data-theme="dark"] .glass-panel,
+  html.dark .panel, [data-theme="dark"] .panel,
+  html.dark .sidebar, [data-theme="dark"] .sidebar,
+  html.dark .topbar, [data-theme="dark"] .topbar,
+  html.dark .modal-card, [data-theme="dark"] .modal-card,
+  html.dark .metric-card-v2, [data-theme="dark"] .metric-card-v2,
+  html.dark .sy-side-card, [data-theme="dark"] .sy-side-card,
+  html.dark .sy-bottom-card, [data-theme="dark"] .sy-bottom-card,
+  html.dark .stat-card, [data-theme="dark"] .stat-card,
+  html.dark .meal-item-card, [data-theme="dark"] .meal-item-card,
+  html.dark .macro-target-card, [data-theme="dark"] .macro-target-card,
+  html.dark .sl-load-card, [data-theme="dark"] .sl-load-card,
+  html.dark .ex-card, [data-theme="dark"] .ex-card,
+  html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
+  html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card,
+  html.dark .notif-card, [data-theme="dark"] .notif-card,
+  html.dark .welcome-strip, [data-theme="dark"] .welcome-strip,
+  html.dark .daily-motivation-panel, [data-theme="dark"] .daily-motivation-panel,
+  html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
+  html.dark .challenge-empty-card, [data-theme="dark"] .challenge-empty-card,
+  html.dark .track-summary-card, [data-theme="dark"] .track-summary-card,
+  html.dark .ba-card, [data-theme="dark"] .ba-card,
+  html.dark .workout-session-container, [data-theme="dark"] .workout-session-container,
+  html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card,
+  html.dark .floating-chat-panel, [data-theme="dark"] .floating-chat-panel,
+  html.dark .ai-msg.bot, [data-theme="dark"] .ai-msg.bot {
+    background: #0f172a !important;
+  }
+}
+
+
+/* ==========================================================================
+   MASTER TYPOGRAPHY & DARK MODE CONTRAST ENFORCEMENT
+   Ensures 100% font clarity, readability, and contrast across all elements.
+   ========================================================================== */
+:root {
+  --glass-text-primary: #0f172a;
+  --glass-text-secondary: #475569;
+  --glass-text-muted: #64748b;
+  --glass-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+}
+
+body, button, input, select, textarea {
+  font-family: var(--glass-font-family) !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark, [data-theme="dark"] {
+  --glass-text-primary: #f8fafc !important;
+  --glass-text-secondary: #cbd5e1 !important;
+  --glass-text-muted: #94a3b8 !important;
+  --ff-text-primary: #f8fafc !important;
+  --ff-text-secondary: #cbd5e1 !important;
+  --ff-text-muted: #94a3b8 !important;
+  color: #f8fafc !important;
+}
+
+/* Master Dark Mode Font Contrast for Headings, Titles & Stat Numbers */
+html.dark h1, [data-theme="dark"] h1,
+html.dark h2, [data-theme="dark"] h2,
+html.dark h3, [data-theme="dark"] h3,
+html.dark h4, [data-theme="dark"] h4,
+html.dark h5, [data-theme="dark"] h5,
+html.dark h6, [data-theme="dark"] h6,
+html.dark strong, [data-theme="dark"] strong,
+html.dark b, [data-theme="dark"] b,
+html.dark th, [data-theme="dark"] th,
+html.dark .sy-headline, [data-theme="dark"] .sy-headline,
+html.dark .sy-bcard-title, [data-theme="dark"] .sy-bcard-title,
+html.dark .metric-val, [data-theme="dark"] .metric-val,
+html.dark .pct-text, [data-theme="dark"] .pct-text,
+html.dark .modal-head h2, [data-theme="dark"] .modal-head h2,
+html.dark .modal-head h3, [data-theme="dark"] .modal-head h3,
+html.dark .water-readout strong, [data-theme="dark"] .water-readout strong,
+html.dark .ring-inner strong, [data-theme="dark"] .ring-inner strong,
+html.dark #userGreeting, [data-theme="dark"] #userGreeting,
+html.dark .brand-title, [data-theme="dark"] .brand-title,
+html.dark .card-title, [data-theme="dark"] .card-title,
+html.dark .panel-title, [data-theme="dark"] .panel-title {
+  color: #f8fafc !important;
+}
+
+/* Master Dark Mode Font Contrast for Body text, Labels, Paragraphs, Subheads */
+html.dark p, [data-theme="dark"] p,
+html.dark .metric-label, [data-theme="dark"] .metric-label,
+html.dark .metric-sub, [data-theme="dark"] .metric-sub,
+html.dark .sy-subheadline, [data-theme="dark"] .sy-subheadline,
+html.dark .sy-bcard-sub, [data-theme="dark"] .sy-bcard-sub,
+html.dark .sy-card-label, [data-theme="dark"] .sy-card-label,
+html.dark .sidebar-label, [data-theme="dark"] .sidebar-label,
+html.dark small, [data-theme="dark"] small,
+html.dark span.section-kicker, [data-theme="dark"] span.section-kicker,
+html.dark .macro-target-name, [data-theme="dark"] .macro-target-name,
+html.dark .macro-target-values, [data-theme="dark"] .macro-target-values,
+html.dark .water-readout span, [data-theme="dark"] .water-readout span,
+html.dark .recipe-macro-stat small, [data-theme="dark"] .recipe-macro-stat small,
+html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
+html.dark .exercise-card-sub, [data-theme="dark"] .exercise-card-sub,
+html.dark .workout-move-name, [data-theme="dark"] .workout-move-name,
+html.dark .sub-target-label, [data-theme="dark"] .sub-target-label,
+html.dark td, [data-theme="dark"] td {
+  color: #cbd5e1 !important;
+}
+
+/* Catch remaining inline hardcoded dark colors in Dark Mode */
+html.dark [style*="color:#1e293b"], [data-theme="dark"] [style*="color:#1e293b"],
+html.dark [style*="color: #1e293b"], [data-theme="dark"] [style*="color: #1e293b"],
+html.dark [style*="color:#0f172a"], [data-theme="dark"] [style*="color:#0f172a"],
+html.dark [style*="color: #0f172a"], [data-theme="dark"] [style*="color: #0f172a"],
+html.dark [style*="color:#000000"], [data-theme="dark"] [style*="color:#000000"],
+html.dark [style*="color: #000000"], [data-theme="dark"] [style*="color: #000000"],
+html.dark [style*="color:#000"], [data-theme="dark"] [style*="color:#000"],
+html.dark [style*="color: #000"], [data-theme="dark"] [style*="color: #000"] {
+  color: #f8fafc !important;
+}
+
+html.dark [style*="color:#64748b"], [data-theme="dark"] [style*="color:#64748b"],
+html.dark [style*="color: #64748b"], [data-theme="dark"] [style*="color: #64748b"],
+html.dark [style*="color:#475569"], [data-theme="dark"] [style*="color:#475569"],
+html.dark [style*="color: #475569"], [data-theme="dark"] [style*="color: #475569"],
+html.dark [style*="color:#334155"], [data-theme="dark"] [style*="color:#334155"],
+html.dark [style*="color: #334155"], [data-theme="dark"] [style*="color: #334155"],
+html.dark [style*="color:#1f2937"], [data-theme="dark"] [style*="color:#1f2937"],
+html.dark [style*="color: #1f2937"], [data-theme="dark"] [style*="color: #1f2937"],
+html.dark [style*="color:#374151"], [data-theme="dark"] [style*="color:#374151"],
+html.dark [style*="color: #374151"], [data-theme="dark"] [style*="color: #374151"],
+html.dark [style*="color:#4a5568"], [data-theme="dark"] [style*="color:#4a5568"],
+html.dark [style*="color: #4a5568"], [data-theme="dark"] [style*="color: #4a5568"],
+html.dark [style*="color:#6d7d72"], [data-theme="dark"] [style*="color:#6d7d72"],
+html.dark [style*="color: #6d7d72"], [data-theme="dark"] [style*="color: #6d7d72"] {
+  color: #cbd5e1 !important;
+}
+
+/* Dark mode form inputs, selects, textareas & placeholders */
+html.dark input, [data-theme="dark"] input,
+html.dark textarea, [data-theme="dark"] textarea,
+html.dark select, [data-theme="dark"] select {
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+html.dark input::placeholder, [data-theme="dark"] input::placeholder,
+html.dark textarea::placeholder, [data-theme="dark"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.dark select option, [data-theme="dark"] select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Dark mode buttons, pills & icon states */
+html.dark .outline-button, [data-theme="dark"] .outline-button,
+html.dark .text-button, [data-theme="dark"] .text-button {
+  color: #cbd5e1 !important;
+}
+
+html.dark .outline-button:hover, [data-theme="dark"] .outline-button:hover,
+html.dark .text-button:hover, [data-theme="dark"] .text-button:hover {
+  color: #38bdf8 !important;
+}
+
+html.dark .date-pill-btn:not(.active), [data-theme="dark"] .date-pill-btn:not(.active),
+html.dark .muscle-tab:not(.active), [data-theme="dark"] .muscle-tab:not(.active),
+html.dark .sub-muscle-pill:not(.active), [data-theme="dark"] .sub-muscle-pill:not(.active),
+html.dark .filter-pill:not(.active), [data-theme="dark"] .filter-pill:not(.active),
+html.dark .tab-btn:not(.active), [data-theme="dark"] .tab-btn:not(.active) {
+  color: #cbd5e1 !important;
+}
+
+html.dark .date-pill-btn.active, [data-theme="dark"] .date-pill-btn.active,
+html.dark .muscle-tab.active, [data-theme="dark"] .muscle-tab.active,
+html.dark .sub-muscle-pill.active, [data-theme="dark"] .sub-muscle-pill.active,
+html.dark .filter-pill.active, [data-theme="dark"] .filter-pill.active,
+html.dark .tab-btn.active, [data-theme="dark"] .tab-btn.active {
+  color: #ffffff !important;
+}
+
+
+/* ==========================================================================
+   NESTED GLASSMORPHISM SUB-CARDS, PILLS & STATUS BADGES (DARK & LIGHT)
+   Guarantees 100% font clarity and prevents solid white boxes in Dark Mode.
+   ========================================================================== */
+
+.plan-item-v2,
+.dash-bottom-grid-v2 .panel > div > div,
+.personalized-insight-card,
+.recent-activity-row {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  border-radius: 12px !important;
+  color: var(--glass-text-primary) !important;
+  transition: all 0.18s ease;
+}
+
+.plan-item-v2:hover,
+.recent-activity-row:hover,
+.dash-bottom-grid-v2 .panel > div > div:hover {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  transform: translateX(2px);
+}
+
+/* Status Badges: DONE, IN PROGRESS, UPCOMING */
+.plan-item-v2 span:last-child {
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* In Dark Mode: Translucent dark glass for all nested sub-cards */
+html.dark .plan-item-v2, [data-theme="dark"] .plan-item-v2,
+html.dark .dash-bottom-grid-v2 .panel > div > div, [data-theme="dark"] .dash-bottom-grid-v2 .panel > div > div {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .plan-item-v2 span, [data-theme="dark"] .plan-item-v2 span,
+html.dark .dash-bottom-grid-v2 .panel b, [data-theme="dark"] .dash-bottom-grid-v2 .panel b,
+html.dark .dash-bottom-grid-v2 .panel strong, [data-theme="dark"] .dash-bottom-grid-v2 .panel strong {
+  color: #f8fafc !important;
+}
+
+html.dark .dash-bottom-grid-v2 .panel small, [data-theme="dark"] .dash-bottom-grid-v2 .panel small,
+html.dark .dash-bottom-grid-v2 .panel p, [data-theme="dark"] .dash-bottom-grid-v2 .panel p {
+  color: #cbd5e1 !important;
+}
+
+/* Empty meal box in Meals & Snacks (Image 2 fix) */
+#dashMealList > div {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px dashed var(--glass-border) !important;
+  border-radius: 16px !important;
+}
+
+html.dark #dashMealList > div, [data-theme="dark"] #dashMealList > div {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark #dashMealList > div b, [data-theme="dark"] #dashMealList > div b {
+  color: #38bdf8 !important;
+}
+
+html.dark #dashMealList > div p, [data-theme="dark"] #dashMealList > div p {
+  color: #cbd5e1 !important;
+}
+
+/* Universal safeguard: Convert ANY light/white background in dark mode to translucent dark glass */
+html.dark [style*="background:#f8fafc"], [data-theme="dark"] [style*="background:#f8fafc"],
+html.dark [style*="background: #f8fafc"], [data-theme="dark"] [style*="background: #f8fafc"],
+html.dark [style*="background:#fff"], [data-theme="dark"] [style*="background:#fff"],
+html.dark [style*="background: #fff"], [data-theme="dark"] [style*="background: #fff"],
+html.dark [style*="background:#ffffff"], [data-theme="dark"] [style*="background:#ffffff"],
+html.dark [style*="background: #ffffff"], [data-theme="dark"] [style*="background: #ffffff"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+
+/* ==========================================================================
+   COMPREHENSIVE ALL-SECTIONS GLASSMORPHISM & DARK CONTRAST SYSTEM
+   Applies authentic frosted glass and 100% readable typography across every page:
+   AI Coach, Body Analysis, Activity GPS, Posture AI, Food Log, Workouts,
+   Challenges, Tracking, Admin, and Floating Chat.
+   ========================================================================== */
+
+/* 1. DEDICATED AI COACH PAGE (#view-ai-coach) */
+.ai-coach-header-card,
+.ai-coach-visual-card,
+.ai-plan-preview-card,
+.ai-card-pill-item,
+.ai-quick-action-item,
+.ai-coach-speech-bubble,
+.coach-cmd-chip-btn,
+.ai-chat-btn-mini {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.ai-quick-action-item:hover,
+.ai-chat-btn-mini:hover,
+.coach-cmd-chip-btn:hover {
+  background: var(--glass-surface-hover) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.18) !important;
+}
+
+html.dark .ai-coach-header-card, [data-theme="dark"] .ai-coach-header-card,
+html.dark .ai-coach-visual-card, [data-theme="dark"] .ai-coach-visual-card,
+html.dark .ai-plan-preview-card, [data-theme="dark"] .ai-plan-preview-card,
+html.dark .ai-card-pill-item, [data-theme="dark"] .ai-card-pill-item,
+html.dark .ai-quick-action-item, [data-theme="dark"] .ai-quick-action-item,
+html.dark .ai-coach-speech-bubble, [data-theme="dark"] .ai-coach-speech-bubble,
+html.dark .coach-cmd-chip-btn, [data-theme="dark"] .coach-cmd-chip-btn,
+html.dark .ai-chat-btn-mini:not(.primary), [data-theme="dark"] .ai-chat-btn-mini:not(.primary) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .ai-quick-action-item b, [data-theme="dark"] .ai-quick-action-item b,
+html.dark .ai-card-pill-item b, [data-theme="dark"] .ai-card-pill-item b,
+html.dark .ai-coach-speech-bubble, [data-theme="dark"] .ai-coach-speech-bubble,
+html.dark .coach-cmd-chip-btn span, [data-theme="dark"] .coach-cmd-chip-btn span,
+html.dark .ai-chat-btn-mini, [data-theme="dark"] .ai-chat-btn-mini {
+  color: #f8fafc !important;
+}
+
+html.dark .ai-quick-action-item small, [data-theme="dark"] .ai-quick-action-item small,
+html.dark .ai-card-pill-item, [data-theme="dark"] .ai-card-pill-item,
+html.dark .ai-coach-header-info p, [data-theme="dark"] .ai-coach-header-info p {
+  color: #cbd5e1 !important;
+}
+
+.ai-chat-btn-mini.primary {
+  background: linear-gradient(135deg, #10b981, #06b6d4) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  font-weight: 700 !important;
+}
+
+/* 2. BODY COMPOSITION & 4D ANALYSIS (#view-body-analysis) */
+.ba-hero-header,
+.ba-stepper-bar,
+.ba-goal-card,
+.ba-custom-goal-box,
+.ba-pref-card,
+.ba-photo-card,
+.ba-review-thumb-card,
+.ba-consent-card,
+.ba-loading-card,
+.ba-report-top-strip,
+.ba-results-section,
+.ba-history-card,
+.ba-overload-tip,
+.ba-day-tab-btn,
+.body-comp-stat-box,
+.body-comp-slot-btn,
+.ba-stage-pill,
+.ba-action-pill,
+.ba-ex-pill,
+.ba-slot-status-badge {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+  transition: all 0.2s ease !important;
+}
+
+html.dark .ba-hero-header, [data-theme="dark"] .ba-hero-header,
+html.dark .ba-stepper-bar, [data-theme="dark"] .ba-stepper-bar,
+html.dark .ba-goal-card, [data-theme="dark"] .ba-goal-card,
+html.dark .ba-custom-goal-box, [data-theme="dark"] .ba-custom-goal-box,
+html.dark .ba-pref-card, [data-theme="dark"] .ba-pref-card,
+html.dark .ba-photo-card, [data-theme="dark"] .ba-photo-card,
+html.dark .ba-review-thumb-card, [data-theme="dark"] .ba-review-thumb-card,
+html.dark .ba-consent-card, [data-theme="dark"] .ba-consent-card,
+html.dark .ba-loading-card, [data-theme="dark"] .ba-loading-card,
+html.dark .ba-report-top-strip, [data-theme="dark"] .ba-report-top-strip,
+html.dark .ba-results-section, [data-theme="dark"] .ba-results-section,
+html.dark .ba-history-card, [data-theme="dark"] .ba-history-card,
+html.dark .ba-overload-tip, [data-theme="dark"] .ba-overload-tip,
+html.dark .ba-day-tab-btn:not(.active), [data-theme="dark"] .ba-day-tab-btn:not(.active),
+html.dark .body-comp-stat-box, [data-theme="dark"] .body-comp-stat-box,
+html.dark .body-comp-slot-btn, [data-theme="dark"] .body-comp-slot-btn,
+html.dark .ba-stage-pill, [data-theme="dark"] .ba-stage-pill,
+html.dark .ba-action-pill, [data-theme="dark"] .ba-action-pill,
+html.dark .ba-ex-pill, [data-theme="dark"] .ba-ex-pill,
+html.dark .ba-slot-status-badge, [data-theme="dark"] .ba-slot-status-badge {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .ba-goal-card h3, [data-theme="dark"] .ba-goal-card h3,
+html.dark .ba-goal-card b, [data-theme="dark"] .ba-goal-card b,
+html.dark .ba-pref-card b, [data-theme="dark"] .ba-pref-card b,
+html.dark .ba-history-card b, [data-theme="dark"] .ba-history-card b,
+html.dark .ba-report-top-strip b, [data-theme="dark"] .ba-report-top-strip b,
+html.dark .ba-day-tab-btn, [data-theme="dark"] .ba-day-tab-btn {
+  color: #f8fafc !important;
+}
+
+html.dark .ba-goal-card p, [data-theme="dark"] .ba-goal-card p,
+html.dark .ba-pref-card p, [data-theme="dark"] .ba-pref-card p,
+html.dark .ba-history-card p, [data-theme="dark"] .ba-history-card p,
+html.dark .ba-results-section p, [data-theme="dark"] .ba-results-section p {
+  color: #cbd5e1 !important;
+}
+
+/* 3. ACTIVITY & LIVE GPS TRACKER (#view-activity) */
+.activity-hud-item,
+.activity-mode-pill,
+.session-history-item {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+}
+
+html.dark .activity-hud-item, [data-theme="dark"] .activity-hud-item,
+html.dark .activity-mode-pill:not(.active), [data-theme="dark"] .activity-mode-pill:not(.active),
+html.dark .session-history-item, [data-theme="dark"] .session-history-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .activity-hud-item b, [data-theme="dark"] .activity-hud-item b,
+html.dark .session-history-item b, [data-theme="dark"] .session-history-item b {
+  color: #f8fafc !important;
+}
+
+html.dark .activity-hud-item small, [data-theme="dark"] .activity-hud-item small,
+html.dark .session-history-item small, [data-theme="dark"] .session-history-item small {
+  color: #cbd5e1 !important;
+}
+
+/* 4. AI CAMERA POSTURE TRACKER (#view-posture) */
+.posture-angle-gauge,
+.posture-feedback-card,
+.posture-metric-tile {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+}
+
+html.dark .posture-angle-gauge, [data-theme="dark"] .posture-angle-gauge,
+html.dark .posture-feedback-card, [data-theme="dark"] .posture-feedback-card,
+html.dark .posture-metric-tile, [data-theme="dark"] .posture-metric-tile {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+/* 5. WORKOUTS, EXERCISE LIBRARY & PROGRESSIVE LOAD (#view-workouts, #view-exercise-library, #view-starting-load) */
+.exercise-sub-tag,
+.exercise-custom-card,
+.exercise-prescription-box,
+.workout-move-item {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+}
+
+html.dark .exercise-sub-tag, [data-theme="dark"] .exercise-sub-tag,
+html.dark .exercise-custom-card, [data-theme="dark"] .exercise-custom-card,
+html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
+html.dark .workout-move-item, [data-theme="dark"] .workout-move-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .workout-move-item b, [data-theme="dark"] .workout-move-item b,
+html.dark .exercise-custom-card b, [data-theme="dark"] .exercise-custom-card b {
+  color: #f8fafc !important;
+}
+
+html.dark .workout-move-item p, [data-theme="dark"] .workout-move-item p,
+html.dark .exercise-custom-card p, [data-theme="dark"] .exercise-custom-card p {
+  color: #cbd5e1 !important;
+}
+
+/* 6. CHALLENGES & TRACKING (#view-challenge, #view-tracking) */
+.challenge-dash-card,
+.challenge-day-card,
+.challenge-routine-item,
+.theme-pick-card {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+}
+
+html.dark .challenge-dash-card, [data-theme="dark"] .challenge-dash-card,
+html.dark .challenge-day-card, [data-theme="dark"] .challenge-day-card,
+html.dark .challenge-routine-item, [data-theme="dark"] .challenge-routine-item,
+html.dark .theme-pick-card:not(.active), [data-theme="dark"] .theme-pick-card:not(.active) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+/* 7. GLOBAL FLOATING CHATBOT & LIGHTBOX */
+.floating-qa-card,
+.floating-pq-item,
+.floating-panel-footer {
+  background: var(--glass-surface-subtle) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--glass-border-subtle) !important;
+  color: var(--glass-text-primary) !important;
+}
+
+html.dark .floating-qa-card, [data-theme="dark"] .floating-qa-card,
+html.dark .floating-pq-item, [data-theme="dark"] .floating-pq-item,
+html.dark .floating-panel-footer, [data-theme="dark"] .floating-panel-footer {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .floating-qa-card b, [data-theme="dark"] .floating-qa-card b,
+html.dark .floating-pq-item b, [data-theme="dark"] .floating-pq-item b {
+  color: #f8fafc !important;
+}
+
+html.dark .floating-qa-card small, [data-theme="dark"] .floating-qa-card small,
+html.dark .floating-pq-item small, [data-theme="dark"] .floating-pq-item small {
+  color: #cbd5e1 !important;
+}
