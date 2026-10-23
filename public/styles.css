@@ -4451,3 +4451,356 @@ html.dark .theme-pick-card.active {
 .switch-input input:checked + .switch-slider:before {
   transform: translateX(20px);
 }
+
+/* ==========================================================================
+   ACTIVITY TRACKING & LIVE GPS TRACKER (#view-activity)
+   ========================================================================== */
+
+#view-activity {
+  display: none;
+}
+#view-activity.active {
+  display: block;
+}
+
+.activity-layout-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (max-width: 980px) {
+  .activity-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.activity-hud-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+@media (max-width: 600px) {
+  .activity-hud-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.activity-hud-item {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--ff-glass-border-subtle);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+html.dark .activity-hud-item {
+  background: rgba(16, 23, 42, 0.6);
+}
+.activity-hud-item:hover {
+  border-color: var(--ff-emerald);
+  transform: translateY(-2px);
+}
+.activity-hud-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ff-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.activity-hud-val {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--ff-text-primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.activity-hud-unit {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ff-text-muted);
+}
+
+.activity-mode-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.activity-mode-pill {
+  padding: 8px 16px;
+  border-radius: var(--ff-radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--ff-glass-border-subtle);
+  color: var(--ff-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+.activity-mode-pill:hover {
+  background: #ffffff;
+  color: var(--ff-text-primary);
+}
+.activity-mode-pill.active {
+  background: var(--ff-emerald);
+  color: #0A0F1D;
+  border-color: var(--ff-emerald);
+  box-shadow: 0 4px 14px rgba(22, 199, 154, 0.35);
+}
+
+.gps-canvas-card {
+  position: relative;
+  background: #0f172a;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: var(--ff-glass-shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+.gps-canvas-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  z-index: 2;
+}
+.gps-status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(22, 199, 154, 0.2);
+  color: #48E5B1;
+  border: 1px solid rgba(22, 199, 154, 0.4);
+}
+.gps-status-pill.searching {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+#gpsRouteCanvas {
+  width: 100%;
+  height: 320px;
+  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+  display: block;
+}
+
+.activity-ctrl-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/* ==========================================================================
+   AI CAMERA POSTURE TRACKER & FORM CHECKER (#view-posture)
+   ========================================================================== */
+
+#view-posture {
+  display: none;
+}
+#view-posture.active {
+  display: block;
+}
+
+.posture-layout-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (max-width: 980px) {
+  .posture-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.posture-viewport-card {
+  position: relative;
+  background: #090d16;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: var(--ff-glass-shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.posture-video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  max-height: 480px;
+  background: #050811;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#postureVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror selfie view */
+}
+
+#postureCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.posture-overlay-hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.posture-rep-bubble {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(22, 199, 154, 0.5);
+  border-radius: 16px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.posture-rep-num {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #48E5B1;
+  line-height: 1;
+}
+.posture-rep-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.posture-state-pill {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.posture-state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16C79A;
+  box-shadow: 0 0 8px #16C79A;
+}
+
+.posture-bottom-cue-banner {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 10px 16px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 5;
+}
+.posture-cue-main {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #48E5B1;
+}
+.posture-angle-gauge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.posture-camera-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+  gap: 14px;
+}
+
+/* History session cards list */
+.session-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.session-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid var(--ff-glass-border-subtle);
+  transition: all 0.18s ease;
+}
+html.dark .session-history-item {
+  background: rgba(16, 23, 42, 0.65);
+}
+.session-history-item:hover {
+  background: #ffffff;
+  border-color: var(--ff-emerald);
+  transform: translateX(3px);
+}
+

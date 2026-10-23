@@ -135,6 +135,55 @@ const FF = {
   /* complaints */
   async sendComplaint(name, email, type, text, files) { await this.req('POST', '/api/complaint', { name, email, type, text, files }); },
 
+  /* activity & GPS tracking sessions */
+  async saveActivitySession(sessionData) {
+    if (this.online && this.token) {
+      return await this.req('POST', '/api/activity/session', sessionData);
+    }
+    // Local fallback
+    try {
+      const list = JSON.parse(localStorage.getItem('ff_activity_sessions') || '[]');
+      list.unshift({ ...sessionData, id: 'local_' + Date.now(), created: Date.now() });
+      localStorage.setItem('ff_activity_sessions', JSON.stringify(list.slice(0, 50)));
+    } catch (e) {}
+    return { ok: true, offline: true };
+  },
+  async getActivitySessions() {
+    if (this.online && this.token) {
+      try {
+        const r = await this.req('GET', '/api/activity/sessions');
+        return r.sessions || [];
+      } catch (e) {}
+    }
+    try {
+      return JSON.parse(localStorage.getItem('ff_activity_sessions') || '[]');
+    } catch (e) { return []; }
+  },
+
+  /* posture & form check sessions */
+  async savePostureSession(sessionData) {
+    if (this.online && this.token) {
+      return await this.req('POST', '/api/posture/session', sessionData);
+    }
+    try {
+      const list = JSON.parse(localStorage.getItem('ff_posture_sessions') || '[]');
+      list.unshift({ ...sessionData, id: 'local_' + Date.now(), created: Date.now() });
+      localStorage.setItem('ff_posture_sessions', JSON.stringify(list.slice(0, 50)));
+    } catch (e) {}
+    return { ok: true, offline: true };
+  },
+  async getPostureSessions() {
+    if (this.online && this.token) {
+      try {
+        const r = await this.req('GET', '/api/posture/sessions');
+        return r.sessions || [];
+      } catch (e) {}
+    }
+    try {
+      return JSON.parse(localStorage.getItem('ff_posture_sessions') || '[]');
+    } catch (e) { return []; }
+  },
+
   /* data erasure & account deletion */
   async eraseData() {
     if (this.online && this.token) {
@@ -147,6 +196,9 @@ const FF = {
       localStorage.removeItem('ff_plan');
       localStorage.removeItem('ff_weights');
       localStorage.removeItem('ff_workouts');
+      localStorage.removeItem('ff_activity_sessions');
+      localStorage.removeItem('ff_posture_sessions');
+      localStorage.removeItem('ff_steps');
     }
     return true;
   },

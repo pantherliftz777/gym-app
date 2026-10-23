@@ -278,11 +278,69 @@ const routes = {
     json(res, 200, { ok: true });
   },
 
+  /* ---------- activity & live GPS sessions ---------- */
+  'GET /api/activity/sessions': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const rows = await db.all('SELECT * FROM activity_sessions WHERE user_id=? ORDER BY start_time DESC LIMIT 100', [u.id]);
+    json(res, 200, { sessions: rows });
+  },
+  'POST /api/activity/session': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const body = await readBody(req);
+    const { activity_type, start_time, end_time, duration_sec, distance_meters, avg_speed_kmh, avg_pace_min_km, calories, steps, route_data } = body;
+    const info = await db.run(
+      'INSERT INTO activity_sessions(user_id,activity_type,start_time,end_time,duration_sec,distance_meters,avg_speed_kmh,avg_pace_min_km,calories,steps,route_data,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+      [
+        u.id,
+        String(activity_type || 'walking'),
+        Number(start_time) || Date.now(),
+        Number(end_time) || Date.now(),
+        Number(duration_sec) || 0,
+        Number(distance_meters) || 0,
+        Number(avg_speed_kmh) || 0,
+        Number(avg_pace_min_km) || 0,
+        Number(calories) || 0,
+        Number(steps) || 0,
+        typeof route_data === 'object' ? JSON.stringify(route_data) : String(route_data || ''),
+        Date.now()
+      ]
+    );
+    json(res, 200, { ok: true, id: info.lastInsertRowid });
+  },
+
+  /* ---------- posture & form check sessions ---------- */
+  'GET /api/posture/sessions': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const rows = await db.all('SELECT * FROM posture_sessions WHERE user_id=? ORDER BY created DESC LIMIT 60', [u.id]);
+    json(res, 200, { sessions: rows });
+  },
+  'POST /api/posture/session': async (req, res) => {
+    const u = await getUser(req);
+    if (!u) return json(res, 401, { error: 'Not logged in' });
+    const body = await readBody(req);
+    const { exercise, reps, score, feedback } = body;
+    const info = await db.run(
+      'INSERT INTO posture_sessions(user_id,exercise,reps,score,feedback,created) VALUES(?,?,?,?,?,?)',
+      [
+        u.id,
+        String(exercise || 'Squats'),
+        Number(reps) || 0,
+        Number(score) || 0,
+        typeof feedback === 'object' ? JSON.stringify(feedback) : String(feedback || ''),
+        Date.now()
+      ]
+    );
+    json(res, 200, { ok: true, id: info.lastInsertRowid });
+  },
+
   /* ---------- data erasure & account deletion ---------- */
   'POST /api/user/erase-data': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
-    const tables = ['log_entries', 'water', 'custom_foods', 'plans', 'weights', 'workouts_done', 'saved_plans'];
+    const tables = ['log_entries', 'water', 'custom_foods', 'plans', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions'];
     const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
     await db.batch(statements);
     json(res, 200, { ok: true, message: 'All user data erased successfully' });
@@ -290,7 +348,7 @@ const routes = {
   'POST /api/user/delete-account': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
-    const tables = ['sessions', 'profile', 'log_entries', 'water', 'custom_foods', 'plans', 'settings', 'weights', 'workouts_done', 'saved_plans'];
+    const tables = ['sessions', 'profile', 'log_entries', 'water', 'custom_foods', 'plans', 'settings', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions'];
     const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
     statements.push({ sql: 'DELETE FROM users WHERE id=?', args: [u.id] });
     await db.batch(statements);
