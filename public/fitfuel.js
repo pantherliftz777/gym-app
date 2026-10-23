@@ -2421,10 +2421,24 @@ if ($('#openCameraBtn')) $('#openCameraBtn').onclick = () => openCameraScanner()
 
 if ($('#camClickTakeBtn')) {
   $('#camClickTakeBtn').onclick = () => {
-    const inp = $('#camFileInput');
-    if (inp) {
-      inp.setAttribute('capture', 'environment');
-      inp.click();
+    if (typeof openUniversalCamera === 'function') {
+      openUniversalCamera('Scan Meal with Camera', (dataUrl) => {
+        camPhotoData = dataUrl;
+        const pv = $('#camImagePreview');
+        if (pv) {
+          pv.src = dataUrl;
+          pv.style.display = 'block';
+        }
+        if ($('#camDrop')) $('#camDrop').style.display = 'none';
+        if ($('#startCamAnalyzeBtn')) $('#startCamAnalyzeBtn').style.display = 'block';
+        openModal('#cameraModal');
+      });
+    } else {
+      const inp = $('#camFileInput');
+      if (inp) {
+        inp.setAttribute('capture', 'environment');
+        inp.click();
+      }
     }
   };
 }
@@ -6439,7 +6453,7 @@ if ($('#floatingAiMicBtn')) {
 }
 
 // 2x2 Quick Action Cards (Reference Image 4)
-$('.floating-qa-card').forEach(card => {
+$$('.floating-qa-card').forEach(card => {
   card.onclick = () => {
     const type = card.dataset.fqa;
     let query = '';
@@ -6451,7 +6465,8 @@ $('.floating-qa-card').forEach(card => {
       query = 'Create a tailored workout plan and periodized split based on my current training goals.';
     }
     if (type === 'analyze-body') {
-      openModal('#bodyAnalysisModal');
+      if ($('#floatingAiPanel')) $('#floatingAiPanel').classList.remove('open');
+      switchView('body-analysis');
       return;
     }
     if (type === 'track-progress' || type === 'recovery') {
@@ -6464,7 +6479,7 @@ $('.floating-qa-card').forEach(card => {
 });
 
 // Popular questions clicks (Image 4)
-$('.floating-pq-item').forEach(item => {
+$$('.floating-pq-item').forEach(item => {
   item.onclick = () => {
     const q = item.dataset.q;
     if (q) handleUserAiQuery(q);
@@ -7971,9 +7986,9 @@ if ($('#btnApply4DMetrics')) {
   };
 }
 
-// Modal open triggers sync
-if ($('#bodyCompScanBadge')) $('#bodyCompScanBadge').onclick = () => { syncBodyModalInputs(); openModal('#bodyAnalysisModal'); };
-if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => { syncBodyModalInputs(); openModal('#bodyAnalysisModal'); };
+// Dedicated AI Body Analysis & Transformation Planner triggers
+if ($('#bodyCompScanBadge')) $('#bodyCompScanBadge').onclick = (e) => { e.preventDefault(); if (soundFX && soundFX.pop) soundFX.pop(); switchView('body-analysis'); };
+if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = (e) => { e.preventDefault(); if (soundFX && soundFX.pop) soundFX.pop(); switchView('body-analysis'); };
 
 // 4. Voice Mode Overlay
 let speechRecognitionInstance = null;
@@ -8114,7 +8129,15 @@ function initInteractiveHeroAndAppButtons() {
         e.preventDefault();
         e.stopPropagation();
         if (soundFX && soundFX.pop) soundFX.pop();
-        if (typeof toast === 'function') toast('Quick Actions: Select a feature card to customize metrics and routines.');
+        const sideCard = menuDots.closest('.sy-side-card, .sy-bottom-card');
+        const titleEl = $('#quickOptionsTitle');
+        if (titleEl && sideCard) {
+          if (sideCard.classList.contains('sy-card-calories')) titleEl.textContent = 'Calories Quick Actions';
+          else if (sideCard.classList.contains('sy-card-workout')) titleEl.textContent = 'Workout Quick Actions';
+          else if (sideCard.classList.contains('sy-card-protein')) titleEl.textContent = 'Protein Quick Actions';
+          else titleEl.textContent = 'FitFuel Quick Actions';
+        }
+        openModal('#quickOptionsModal');
         return;
       }
 
@@ -8195,10 +8218,10 @@ function initInteractiveHeroAndAppButtons() {
       }
 
       // 7. Notification Bells & Profile
-      if (e.target.closest('#syHeroBellBtn, #dashBellBtn')) {
+      if (e.target.closest('#syHeroBellBtn, #dashBellBtn, #topNotificationBtn')) {
         e.preventDefault();
         if (soundFX && soundFX.pop) soundFX.pop();
-        if (typeof toast === 'function') toast('Notifications: AI recommendations & daily targets updated.');
+        openModal('#notificationModal');
         return;
       }
       if (e.target.closest('#syHeroProfilePill')) {
@@ -8244,6 +8267,7 @@ function initInteractiveHeroAndAppButtons() {
       const periodBtn = e.target.closest('.date-pills-bar [data-dash-period]');
       if (periodBtn) {
         e.preventDefault();
+        const period = periodBtn.dataset.dashPeriod;
         $$('.date-pills-bar [data-dash-period]').forEach(b => {
           b.classList.remove('active');
           b.style.background = 'transparent';
@@ -8253,6 +8277,30 @@ function initInteractiveHeroAndAppButtons() {
         periodBtn.style.background = '#2563eb';
         periodBtn.style.color = '#fff';
         if (soundFX && soundFX.pop) soundFX.pop();
+
+        // Update Dashboard V2 metric numbers for selected period
+        if (period === 'today') {
+          if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = '1,850';
+          if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = '350 kcal remaining';
+          if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = '142g';
+          if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = '38g to 180g goal';
+          if ($('#metricV2WorkoutVal')) $('#metricV2WorkoutVal').textContent = '1 / 1';
+          if ($('#metricV2WorkoutSub')) $('#metricV2WorkoutSub').textContent = 'Full-body strength complete';
+        } else if (period === 'week') {
+          if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = '1,980';
+          if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = 'Daily avg (94% target hit)';
+          if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = '162g';
+          if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = 'Daily avg across 7 days';
+          if ($('#metricV2WorkoutVal')) $('#metricV2WorkoutVal').textContent = '4 / 5';
+          if ($('#metricV2WorkoutSub')) $('#metricV2WorkoutSub').textContent = 'Sessions this week';
+        } else if (period === 'month') {
+          if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = '2,040';
+          if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = '30-day consistent avg';
+          if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = '158g';
+          if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = 'Monthly avg protein';
+          if ($('#metricV2WorkoutVal')) $('#metricV2WorkoutVal').textContent = '18 / 20';
+          if ($('#metricV2WorkoutSub')) $('#metricV2WorkoutSub').textContent = 'Monthly volume achieved';
+        }
         if (typeof toast === 'function') toast(`Switched dashboard period to: ${periodBtn.textContent.trim()}`);
         return;
       }
@@ -8264,6 +8312,75 @@ function initInteractiveHeroAndAppButtons() {
         return;
       }
     });
+
+    // Wire Notification Modal Interactive Actions
+    const notifDrink = $('#notifQuickDrinkBtn');
+    if (notifDrink) {
+      notifDrink.onclick = () => {
+        const cur = Number(localStorage.getItem('fitfuel_water_logged') || 1.0);
+        const nxt = parseFloat((cur + 0.25).toFixed(2));
+        localStorage.setItem('fitfuel_water_logged', nxt);
+        if ($('#waterDisplay')) $('#waterDisplay').innerHTML = `${nxt.toFixed(1)}<small> L</small>`;
+        if ($('#notifWaterCurrent')) $('#notifWaterCurrent').textContent = nxt.toFixed(1);
+        if (soundFX && soundFX.complete) soundFX.complete();
+        toast('Logged 250ml water! Hydration status updated.');
+        closeModal('#notificationModal');
+      };
+    }
+    const notifAct = $('#notifOpenActivityBtn');
+    if (notifAct) {
+      notifAct.onclick = () => {
+        closeModal('#notificationModal');
+        switchView('activity');
+      };
+    }
+    const notifWk = $('#notifStartWorkoutBtn');
+    if (notifWk) {
+      notifWk.onclick = () => {
+        closeModal('#notificationModal');
+        switchView('workouts');
+      };
+    }
+    const notifMark = $('#markAllNotifsReadBtn');
+    if (notifMark) {
+      notifMark.onclick = () => {
+        $$('.sy-notif-badge').forEach(b => b.style.display = 'none');
+        const dDot = $('#dashBellBtn span');
+        if (dDot) dDot.style.display = 'none';
+        if ($('#notifStatusSummary')) $('#notifStatusSummary').textContent = 'All caught up! 0 unread alerts';
+        toast('All notifications marked as read.');
+      };
+    }
+
+    // Wire Quick Options Modal Actions
+    const qoNutr = $('#qoOpenNutritionBtn');
+    if (qoNutr) {
+      qoNutr.onclick = () => {
+        closeModal('#quickOptionsModal');
+        switchView('food-log');
+      };
+    }
+    const qoWk = $('#qoOpenWorkoutsBtn');
+    if (qoWk) {
+      qoWk.onclick = () => {
+        closeModal('#quickOptionsModal');
+        switchView('workouts');
+      };
+    }
+    const qoBody = $('#qoOpenBodyScanBtn');
+    if (qoBody) {
+      qoBody.onclick = () => {
+        closeModal('#quickOptionsModal');
+        switchView('body-analysis');
+      };
+    }
+    const qoGoals = $('#qoOpenAdjustGoalsBtn');
+    if (qoGoals) {
+      qoGoals.onclick = () => {
+        closeModal('#quickOptionsModal');
+        openModal('#settingsModal');
+      };
+    }
   }
 
   // Direct element handlers for topbar search inputs

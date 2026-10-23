@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <!-- Background Radial / Linear Gradient -->
+    <linearGradient id="ffGradBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="45%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="ffGradGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="ffBoltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#bbf7d0" />
+    </linearGradient>
+    <!-- Filter for subtle drop glow -->
+    <filter id="ffGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#10b981" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Outer Ring Accent -->
+  <circle cx="60" cy="60" r="58" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+
+  <!-- Base Circle -->
+  <circle cx="60" cy="60" r="54" fill="url(#ffGradBg)" />
+
+  <!-- Inner Soft Translucent Glass Ring -->
+  <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" />
+
+  <!-- AI Neural Network Nodes & Constellation Lines -->
+  <g opacity="0.6">
+    <line x1="28" y1="36" x2="60" y2="20" stroke="#bae6fd" stroke-width="1.5" stroke-dasharray="2 3" />
+    <line x1="92" y1="36" x2="60" y2="20" stroke="#bae6fd" stroke-width="1.5" stroke-dasharray="2 3" />
+    <line x1="28" y1="84" x2="60" y2="100" stroke="#a7f3d0" stroke-width="1.5" stroke-dasharray="2 3" />
+    <line x1="92" y1="84" x2="60" y2="100" stroke="#a7f3d0" stroke-width="1.5" stroke-dasharray="2 3" />
+    <circle cx="28" cy="36" r="3.5" fill="#38bdf8" />
+    <circle cx="92" cy="36" r="3.5" fill="#60a5fa" />
+    <circle cx="28" cy="84" r="3.5" fill="#34d399" />
+    <circle cx="92" cy="84" r="3.5" fill="#10b981" />
+  </g>
+
+  <!-- Center FitFuel Energy Lightning Bolt -->
+  <path d="M67 18 L34 62 H59 L53 102 L86 56 H63 Z" fill="url(#ffBoltGrad)" filter="url(#ffGlow)" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
+
+  <!-- Sparkle Accent in top-right -->
+  <path d="M85 24 Q85 30 91 30 Q85 30 85 36 Q85 30 79 30 Q85 30 85 24 Z" fill="#ffffff" opacity="0.85" />
+</svg>
