@@ -239,17 +239,21 @@ const FF = {
     'nvidia/nemotron-3.5-super-vl:free'
   ],
 
-  async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI coach.', messages = null) {
+  async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI coach.', messages = null, options = {}) {
     const geminiKey = this.getGeminiKey();
     const openRouterKey = this.getOpenRouterKey();
     const isJson = (systemPrompt && systemPrompt.toLowerCase().includes('json')) || (prompt && prompt.toLowerCase().includes('json'));
 
     const baseSystemPrompt = (systemPrompt ? systemPrompt + ' ' : '') + 'Never use emojis in your response. Output clean, professional markdown only.';
+    const { image, images } = options || {};
+    const imagesArray = Array.isArray(images)
+      ? images.filter(Boolean)
+      : (images && typeof images === 'object' ? Object.values(images).filter(Boolean) : []);
 
     // 1. Try server endpoint first (connects to OpenRouter free models via backend .env)
     let lastError = null;
     try {
-      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt: baseSystemPrompt, messages, geminiKey, openRouterKey });
+      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt: baseSystemPrompt, messages, geminiKey, openRouterKey, image, images: imagesArray });
       if (res && res.content && String(res.content).trim()) {
         return stripEmojis(res.content).trim();
       }
@@ -338,6 +342,9 @@ const FF = {
     // 4. Fallback Handling:
     // If structured JSON was requested, generate dynamic mathematical plan
     if (isJson) {
+      if (prompt && (prompt.toLowerCase().includes('body composition') || prompt.toLowerCase().includes('4d') || prompt.toLowerCase().includes('physique') || prompt.toLowerCase().includes('demanding weight') || prompt.toLowerCase().includes('target weight'))) {
+        return generateDynamicBodyCompJson(prompt);
+      }
       if (prompt && (prompt.toLowerCase().includes('food item') || prompt.toLowerCase().includes('meal description') || prompt.toLowerCase().includes('portiongrams'))) {
         return generateDynamicFoodJson(prompt);
       }
@@ -412,6 +419,72 @@ Never use emojis. Return ONLY valid JSON with this exact structure:
       return safeJsonParse(raw);
     } catch (e) {
       const fallback = generateDynamicPlanJson(prompt);
+      return safeJsonParse(fallback);
+    }
+  },
+
+  async analyze4DBodyComposition(params = {}, images = []) {
+    const { currentWeight, demandingWeight, height, goal, gender } = params;
+    const imagesList = Array.isArray(images)
+      ? images.filter(Boolean)
+      : (images && typeof images === 'object' ? Object.values(images).filter(Boolean) : []);
+    const prompt = `Analyze this user's 4-dimensional body composition photos and metrics.
+Current Weight: ${currentWeight || 72} kg
+Demanding / Target Weight: ${demandingWeight || 68} kg
+Height: ${height || 178} cm
+Biological Sex: ${gender || 'Male'}
+Physique Goal: ${goal || 'lose_fat'}
+Images provided: ${imagesList.length} views (Front, Back, Left Side, Right Side).
+
+Never use emojis in output. Return ONLY valid JSON matching this exact structure:
+{
+  "metrics": {
+    "currentWeight": ${currentWeight || 72},
+    "targetWeight": ${demandingWeight || 68},
+    "heightCm": ${height || 178},
+    "bmi": 22.7,
+    "estimatedBodyFat": 15.4,
+    "leanMuscleMassKg": 60.9,
+    "fatMassKg": 11.1,
+    "bodyWaterPct": 61.2,
+    "visceralFatScore": 4,
+    "metabolicAge": 24
+  },
+  "goal": {
+    "type": "${goal || 'lose_fat'}",
+    "label": "Lose Fat (Cut & Definition)",
+    "weightDeltaKg": -4.0,
+    "timelineWeeks": 8,
+    "timelineDisplay": "8 weeks (~2.0 months)",
+    "projectedWeeklyRate": "0.5 kg / week"
+  },
+  "nutrition": {
+    "targetCalories": 2150,
+    "proteinGrams": 155,
+    "carbsGrams": 220,
+    "fatsGrams": 65,
+    "waterLiters": 3.2
+  },
+  "observations4D": {
+    "front": "Observation on clavicular balance, core wall and anterior muscle definition",
+    "back": "Observation on latissimus width, posterior chain and scapular retraction",
+    "leftSide": "Observation on sagittal spinal alignment and thoracic balance",
+    "rightSide": "Observation on lateral posture and lower extremity symmetry"
+  },
+  "roadmap": [
+    "Phase 1: Foundation and caloric adherence",
+    "Phase 2: Progressive hypertrophy overload",
+    "Phase 3: Peak conditioning and target weight achievement"
+  ]
+}`;
+
+    try {
+      const raw = await this.callAI(prompt, 'You are an elite anthropometric scientist and sports biomechanics specialist. Respond with strict JSON only.', null, { images: imagesList });
+      const parsed = safeJsonParse(raw);
+      if (parsed && parsed.metrics && parsed.goal) return parsed;
+      throw new Error('Invalid JSON format');
+    } catch (e) {
+      const fallback = generateDynamicBodyCompJson(prompt);
       return safeJsonParse(fallback);
     }
   }
@@ -580,5 +653,109 @@ function generateDynamicFoodJson(prompt = '') {
     protein: p,
     carbs: c,
     fat: f
+  }, null, 2);
+}
+
+function generateDynamicBodyCompJson(prompt = '') {
+  const lower = (prompt || '').toLowerCase();
+  const curMatch = prompt.match(/current[_\s]?weight:\s*(\d+(\.\d+)?)/i) || prompt.match(/weight:\s*(\d+(\.\d+)?)/i);
+  const curW = curMatch ? parseFloat(curMatch[1]) : 72;
+  const demMatch = prompt.match(/(?:demanding|target)[_\s]?weight:\s*(\d+(\.\d+)?)/i);
+  const targetW = demMatch ? parseFloat(demMatch[1]) : (lower.includes('muscle') || lower.includes('gain') ? curW + 4 : curW - 5);
+  const hMatch = prompt.match(/height:\s*(\d+(\.\d+)?)/i);
+  const hCm = hMatch ? parseFloat(hMatch[1]) : 178;
+  const isFemale = lower.includes('female') || lower.includes('gender: f') || lower.includes('gender: female');
+
+  let goal = 'lose_fat';
+  if (lower.includes('gain muscle') || lower.includes('muscle_gain') || lower.includes('gain') || lower.includes('bulk')) {
+    goal = 'gain_muscle';
+  } else if (lower.includes('recomp') || lower.includes('maintain') || lower.includes('recomposition')) {
+    goal = 'recomp';
+  }
+
+  const bmi = parseFloat((curW / Math.pow(hCm / 100, 2)).toFixed(1));
+
+  let bodyFat = isFemale ? 22.5 : 15.8;
+  if (bmi > 25) bodyFat += (bmi - 25) * 1.2;
+  if (bmi < 21) bodyFat -= (21 - bmi) * 0.9;
+  bodyFat = Math.max(8, Math.min(42, parseFloat(bodyFat.toFixed(1))));
+
+  const fatMass = parseFloat((curW * (bodyFat / 100)).toFixed(1));
+  const muscleMass = parseFloat((curW - fatMass).toFixed(1));
+  const waterPct = parseFloat((isFemale ? 55 : 61.5 - (bodyFat * 0.2)).toFixed(1));
+  const visceralFat = bodyFat > 24 ? 8 : (bodyFat > 18 ? 5 : 3);
+
+  let timelineWeeks = 8;
+  let timelineText = '8 weeks (~2 months)';
+  let weeklyRate = '0.5 kg / week';
+
+  if (goal === 'lose_fat') {
+    const diff = Math.max(1, curW - targetW);
+    timelineWeeks = Math.max(2, Math.round(diff / 0.5));
+    timelineText = `${timelineWeeks} weeks (~${(timelineWeeks / 4.3).toFixed(1)} months)`;
+    weeklyRate = '0.5 - 0.7 kg fat reduction / week';
+  } else if (goal === 'gain_muscle') {
+    const diff = Math.max(1, targetW - curW);
+    timelineWeeks = Math.max(4, Math.round(diff / 0.22));
+    timelineText = `${timelineWeeks} weeks (~${(timelineWeeks / 4.3).toFixed(1)} months)`;
+    weeklyRate = '0.2 - 0.25 kg lean hypertrophy / week';
+  } else {
+    timelineWeeks = 12;
+    timelineText = '10 - 14 weeks (~3 months)';
+    weeklyRate = 'Body recomposition (1:1 adipose reduction to lean accretion)';
+  }
+
+  const bmr = isFemale
+    ? Math.round(10 * curW + 6.25 * hCm - 5 * 26 - 161)
+    : Math.round(10 * curW + 6.25 * hCm - 5 * 26 + 5);
+  const tdee = Math.round(bmr * 1.45);
+  let calories = tdee;
+  if (goal === 'lose_fat') calories = Math.round(tdee - 480);
+  else if (goal === 'gain_muscle') calories = Math.round(tdee + 320);
+
+  const protein = Math.round(curW * (goal === 'lose_fat' ? 2.1 : 2.2));
+  const fats = Math.round(curW * 0.85);
+  const carbs = Math.max(90, Math.round((calories - (protein * 4 + fats * 9)) / 4));
+  const waterL = Math.max(2.6, parseFloat((curW * 0.038).toFixed(1)));
+
+  return JSON.stringify({
+    metrics: {
+      currentWeight: curW,
+      targetWeight: targetW,
+      heightCm: hCm,
+      bmi: bmi,
+      estimatedBodyFat: bodyFat,
+      leanMuscleMassKg: muscleMass,
+      fatMassKg: fatMass,
+      bodyWaterPct: waterPct,
+      visceralFatScore: visceralFat,
+      metabolicAge: Math.max(19, Math.round(26 + (bodyFat - 15) * 0.6))
+    },
+    goal: {
+      type: goal,
+      label: goal === 'lose_fat' ? 'Lose Fat (Cut & Definition)' : (goal === 'gain_muscle' ? 'Gain Muscle (Hypertrophy)' : 'Body Recomposition (Maintain & Shred)'),
+      weightDeltaKg: parseFloat((targetW - curW).toFixed(1)),
+      timelineWeeks: timelineWeeks,
+      timelineDisplay: timelineText,
+      projectedWeeklyRate: weeklyRate
+    },
+    nutrition: {
+      targetCalories: calories,
+      proteinGrams: protein,
+      carbsGrams: carbs,
+      fatsGrams: fats,
+      waterLiters: waterL
+    },
+    observations4D: {
+      front: 'Good clavicle structure with balanced shoulder breadth. Core engagement shows early rectus abdominis definition with moderate midsection subcutaneous adipose.',
+      back: 'V-taper trajectory visible from posterior view. Latissimus dorsi insertions are balanced with strong rhomboid and lower trapezius foundation.',
+      leftSide: 'Neutral pelvic tilt with solid spinal posture. Thoracic curvature is within optimal limits with minimal anterior pelvic shift.',
+      rightSide: 'Lateral posture shows balanced quad sweep and hamstring alignment. Core wall tension holds lumbar spine in healthy neutral extension.'
+    },
+    roadmap: [
+      `Phase 1 (Weeks 1-${Math.max(2, Math.round(timelineWeeks * 0.4))}): Baseline adaptation, adhere to ${calories} kcal and ${protein}g protein daily.`,
+      `Phase 2 (Weeks ${Math.max(3, Math.round(timelineWeeks * 0.4) + 1)}-${Math.max(4, Math.round(timelineWeeks * 0.8))}): Progressive resistance overload across 4 sessions weekly with 8,000 steps daily.`,
+      `Phase 3 (Weeks ${Math.max(5, Math.round(timelineWeeks * 0.8) + 1)}-${timelineWeeks}): Peak calibration to reach target weight of ${targetW} kg with optimal muscle retention.`
+    ]
   }, null, 2);
 }

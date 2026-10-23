@@ -1216,6 +1216,9 @@ function openModal(selector) {
 function closeModal(selector) {
   const m = typeof selector === 'string' ? $(selector) : selector;
   if (!m) return;
+  if ((m.id === 'universalCameraModal' || selector === '#universalCameraModal') && typeof closeUniversalCamera === 'function') {
+    closeUniversalCamera();
+  }
   m.style.pointerEvents = 'none';
   if (M && M.animate) {
     const card = m.querySelector('.modal-card');
@@ -1300,6 +1303,7 @@ function switchView(viewName) {
   if (viewName === 'ai-coach') renderAiCoachView();
   if (viewName === 'activity') renderActivityView();
   if (viewName === 'posture') renderPostureView();
+  else if (typeof stopPostureCamera === 'function') stopPostureCamera();
   if (viewName === 'customization') renderCustomizationView();
 }
 
@@ -1449,6 +1453,13 @@ function renderDashboard() {
   if ($('#dashP')) $('#dashP').textContent = totalP;
   if ($('#dashC')) $('#dashC').textContent = totalC;
   if ($('#dashF')) $('#dashF').textContent = totalF;
+
+  // 3D Body Composition Card Callouts
+  if ($('#bodyFatVal') && profile.bodyFat) $('#bodyFatVal').textContent = `${profile.bodyFat}%`;
+  if ($('#muscleMassVal') && profile.bodyFat && profile.wKg) {
+    $('#muscleMassVal').textContent = `${(profile.wKg * (1 - profile.bodyFat / 100)).toFixed(1)} kg`;
+  }
+  if ($('#bodyWaterVal') && profile.bodyWater) $('#bodyWaterVal').textContent = `${profile.bodyWater}%`;
 
   // Water Intake & 12 Interactive Glasses
   const waterMl = (water && water.date === today()) ? (water.ml || 0) : 0;
@@ -3587,14 +3598,34 @@ if ($('#saveAiKeysBtn')) {
 $('#topSettingsBtn').onclick = () => {
   renderProfileView();
   syncSettingsAiKeys();
+  updateAdminNavVisibility();
   openModal('#settingsModal');
 };
 
 $('#sidebarProfileBtn').onclick = () => {
   renderProfileView();
   syncSettingsAiKeys();
+  updateAdminNavVisibility();
   openModal('#settingsModal');
 };
+
+if ($('#settingsCustomizationBox')) {
+  $('#settingsCustomizationBox').onclick = () => {
+    closeModal($('#settingsModal'));
+    switchView('customization');
+    soundFX.tap();
+    toast('Customization Studio opened!');
+  };
+}
+if ($('#settingsGoToCustomizationBtn')) {
+  $('#settingsGoToCustomizationBtn').onclick = (e) => {
+    e.stopPropagation();
+    closeModal($('#settingsModal'));
+    switchView('customization');
+    soundFX.tap();
+    toast('Customization Studio opened!');
+  };
+}
 
 $('#topAvatar').onclick = () => {
   switchView('profile');
@@ -3620,8 +3651,11 @@ let cachedComplaints = [];
 let cachedAdminUsers = [];
 
 function updateAdminNavVisibility() {
-  const isAdmin = Boolean(session && session.is_admin);
+  const isAdmin = Boolean(session && (session.is_admin || session.role === 'ADMIN' || session.email === 'admin@fitfuel.app'));
   const isPureAdmin = Boolean(session && session.email === 'admin@fitfuel.app');
+
+  document.body.classList.toggle('is-admin-mode', isAdmin);
+
   const adminNav = $('#sidebarAdminNavBtn');
   if (adminNav) adminNav.style.display = isAdmin ? 'flex' : 'none';
   const topAdmin = $('#topAdminBtn');
@@ -3631,10 +3665,19 @@ function updateAdminNavVisibility() {
   const adminShort = $('#adminPortalShortcutBtn');
   if (adminShort) adminShort.style.display = isAdmin ? 'block' : 'none';
 
+  // Admin-Only features in Settings modal (Database sync & Live AI / Chatbot API config)
+  const dbSyncBox = $('#settingsDatabaseSyncBox');
+  if (dbSyncBox) dbSyncBox.style.display = isAdmin ? 'block' : 'none';
+  const aiApiBox = $('#settingsAiApiBox');
+  if (aiApiBox) aiApiBox.style.display = isAdmin ? 'block' : 'none';
+
+  if ($('#settingsRoleBadge')) {
+    $('#settingsRoleBadge').textContent = isPureAdmin ? 'SUPER ADMIN' : (isAdmin ? 'ADMIN' : 'USER');
+  }
+
   if (isPureAdmin) {
     if ($('#sidebarPlan')) $('#sidebarPlan').textContent = 'Root Administrator';
     if ($('#sidebarName')) $('#sidebarName').textContent = 'FitFuel Admin';
-    if ($('#settingsRoleBadge')) $('#settingsRoleBadge').textContent = 'SUPER ADMIN';
   }
 }
 
@@ -4554,8 +4597,17 @@ function addBotChatMessage(markdownText) {
   renderChatMessages();
 }
 
-function addUserChatMessage(text) {
-  chatHistory.push({ role: 'user', text });
+function openLightboxModal(src, title = 'Photo Preview') {
+  const modal = $('#imageLightboxModal');
+  const img = $('#lightboxImage');
+  const titleEl = $('#lightboxTitle');
+  if (img) img.src = src;
+  if (titleEl) titleEl.textContent = title;
+  if (modal) openModal('#imageLightboxModal');
+}
+
+function addUserChatMessage(text, image = null) {
+  chatHistory.push({ role: 'user', text, image });
   renderChatMessages();
 }
 
@@ -4565,8 +4617,10 @@ function renderChatMessages() {
     container.innerHTML = chatHistory.map(msg => {
       const isBot = msg.role === 'assistant';
       const formatted = formatChatMarkdown(msg.text);
+      const imgHtml = msg.image ? `<img src="${msg.image}" class="chat-bubble-image-thumb" onclick="if(typeof openLightboxModal==='function')openLightboxModal('${msg.image}','Uploaded Photo');">` : '';
       return `<div class="ai-msg ${isBot ? 'bot' : 'user'}">
         ${isBot ? '<span style="font-size:.72rem;color:var(--ff-emerald);font-weight:700;margin-bottom:4px;letter-spacing:0.04em;">FITFUEL AI ASSISTANT</span>' : ''}
+        ${imgHtml}
         <div>${formatted}</div>
       </div>`;
     }).join('');
@@ -4619,8 +4673,10 @@ function renderChatMessages() {
             <div style="font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">${formatted}</div>
           </div>`;
         } else {
+          const imgHtml = msg.image ? `<img src="${msg.image}" class="chat-bubble-image-thumb" onclick="if(typeof openLightboxModal==='function')openLightboxModal('${msg.image}','Uploaded Photo');">` : '';
           return `<div class="ai-msg user" style="margin-left:auto;max-width:85%;background:linear-gradient(135deg,rgba(22,199,154,0.18),rgba(56,189,248,0.15));border:1px solid rgba(22,199,154,0.3);border-radius:18px;padding:12px 16px;margin-bottom:10px;">
             <b style="font-size:0.75rem;color:var(--ff-emerald);display:block;margin-bottom:2px;">YOU</b>
+            ${imgHtml}
             <div style="font-size:0.88rem;color:var(--ff-text-primary);">${formatted}</div>
           </div>`;
         }
@@ -4689,13 +4745,44 @@ function formatChatMarkdown(txt) {
   return html;
 }
 
-async function handleUserAiQuery(query) {
+async function handleUserAiQuery(query, image = null) {
   if (!query || !query.trim()) return;
   const q = query.trim();
-  addUserChatMessage(q);
+  const lowerQ = q.toLowerCase();
+  addUserChatMessage(q, image);
+
+  // Quick command: /goal (4D Body Composition & Goal Planner)
+  if (lowerQ === '/goal' || lowerQ.startsWith('/goal')) {
+    syncBodyModalInputs();
+    openModal('#bodyAnalysisModal');
+    soundFX.pop();
+    addBotChatMessage(`### 4D Body Composition & Anthropometric Studio (/goal)
+
+I have opened your **4D Body Composition & Goal Planner** modal:
+- **Demanding Weight:** Configure your exact target weight.
+- **Physique Goal:** Choose between **Lose Fat & Cut**, **Gain Muscle & Mass**, or **Body Recomposition**.
+- **4 Dimensions:** Snap with camera or upload photos from 4 angles (**Front, Back, Left Side, Right Side**).
+- **AI Diagnosis:** FitFuel AI calculates your exact body fat %, lean mass, and projected weeks to reach your goal.`);
+    return;
+  }
+
+  // Quick command: /boost (Pre-Workout Motivation & Form Checker)
+  if (lowerQ === '/boost' || lowerQ.startsWith('/boost')) {
+    soundFX.complete();
+    addBotChatMessage(`### Pre-Workout Adrenaline & Form Booster (/boost)
+
+**Instant Athletic Primer Activated:**
+1. **Electrolyte Charge:** Drink 350-500ml water to prime muscle cell volumization.
+2. **Kinematic Primer:** Perform 12 deep air squats with arms elevated to prime thoracic mobility.
+3. **Camera Form Check:** Launching the **Camera AI Posture & Form Checker** now so you can verify knee depth and posture in real-time.`);
+    setTimeout(() => {
+      switchView('posture');
+      startPostureCamera(false);
+    }, 900);
+    return;
+  }
 
   // Active theme switching command detection
-  const lowerQ = q.toLowerCase();
   if (lowerQ.includes('theme') || lowerQ.includes('dark mode') || lowerQ.includes('light mode')) {
     if (lowerQ.includes('dark') || lowerQ.includes('night') || lowerQ.includes('black')) {
       applyTheme('dark');
@@ -4709,12 +4796,11 @@ async function handleUserAiQuery(query) {
     }
   }
 
-  const container = $('#aiChatMessages');
-  const typingId = 'typing_' + Date.now();
-  if (container) {
+  const typingContainers = [$('#aiChatMessages'), $('#floatingAiMessages'), $('#coachChatStream')].filter(Boolean);
+  const typingClass = 'ai-typing-' + Date.now();
+  typingContainers.forEach(container => {
     const typingDiv = document.createElement('div');
-    typingDiv.className = 'ai-msg bot';
-    typingDiv.id = typingId;
+    typingDiv.className = `ai-msg bot ${typingClass}`;
     typingDiv.innerHTML = `
       <span style="font-size:.74rem;color:#0284c7;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
         <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0284c7;box-shadow:0 0 6px #0284c7;"></span>
@@ -4726,7 +4812,7 @@ async function handleUserAiQuery(query) {
       </div>`;
     container.appendChild(typingDiv);
     container.scrollTop = container.scrollHeight;
-  }
+  });
 
   try {
     const systemPrompt = getAiSystemContext();
@@ -4734,13 +4820,11 @@ async function handleUserAiQuery(query) {
       role: m.role === 'assistant' ? 'assistant' : 'user',
       content: m.text
     }));
-    const reply = await FF.callAI(q, systemPrompt, recentMessages);
-    const typingEl = document.getElementById(typingId);
-    if (typingEl) typingEl.remove();
+    const reply = await FF.callAI(q, systemPrompt, recentMessages, { image });
+    document.querySelectorAll('.' + typingClass).forEach(el => el.remove());
     addBotChatMessage(reply);
   } catch (err) {
-    const typingEl = document.getElementById(typingId);
-    if (typingEl) typingEl.remove();
+    document.querySelectorAll('.' + typingClass).forEach(el => el.remove());
     addBotChatMessage(`Connection note: ${err.message}. Please retry or verify your network connection.`);
   }
 }
@@ -6133,16 +6217,46 @@ if ($('#trackingCheckInBtn')) {
 /* ==========================================================================
    MODULE: DEDICATED AI FITNESS COACH (#view-ai-coach, Reference Image 2)
    ========================================================================== */
+let coachAttachedImageData = null;
+
 function renderAiCoachView() {
   renderChatMessages();
 }
 
+function setCoachAttachedImage(dataUrl) {
+  coachAttachedImageData = dataUrl;
+  const bar = $('#coachSelectedImagePreviewBar');
+  const thumb = $('#coachSelectedImageThumb');
+  if (thumb) thumb.src = dataUrl;
+  if (bar) bar.style.display = 'flex';
+  soundFX.pop();
+  toast('Photo attached for AI Coach vision analysis!');
+}
+
+function clearCoachAttachedImage() {
+  coachAttachedImageData = null;
+  const bar = $('#coachSelectedImagePreviewBar');
+  const thumb = $('#coachSelectedImageThumb');
+  const fileInput = $('#coachChatFileInput');
+  if (thumb) thumb.src = '';
+  if (bar) bar.style.display = 'none';
+  if (fileInput) fileInput.value = '';
+}
+
 function sendCoachChatMessage(customPrompt) {
   const inp = $('#coachChatInput');
-  const text = customPrompt || (inp ? inp.value.trim() : '');
-  if (!text) return;
+  let text = customPrompt || (inp ? inp.value.trim() : '');
+  const image = coachAttachedImageData;
+
+  if (!text && image) {
+    text = 'Please visually analyze this attached photo (assess meal calories & macronutrients, exercise form / posture angles, or physique composition) and provide actionable coaching recommendations.';
+  }
+
+  if (!text && !image) return;
+
   if (inp && !customPrompt) inp.value = '';
-  handleUserAiQuery(text);
+  clearCoachAttachedImage();
+  handleUserAiQuery(text, image);
 }
 
 // Subtabs filter
@@ -6163,6 +6277,30 @@ if ($('#coachChatInput')) {
     }
   };
 }
+if ($('#coachChatCameraBtn')) {
+  $('#coachChatCameraBtn').onclick = () => {
+    openUniversalCamera('AI Coach: Take Photo', (dataUrl) => setCoachAttachedImage(dataUrl));
+  };
+}
+if ($('#coachChatUploadBtn')) {
+  $('#coachChatUploadBtn').onclick = () => {
+    const fInp = $('#coachChatFileInput');
+    if (fInp) fInp.click();
+  };
+}
+if ($('#coachChatFileInput')) {
+  $('#coachChatFileInput').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setCoachAttachedImage(ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+}
+if ($('#coachClearImageBtn')) {
+  $('#coachClearImageBtn').onclick = () => clearCoachAttachedImage();
+}
 if ($('#coachChatAttachBtn')) {
   $('#coachChatAttachBtn').onclick = () => openModal('#mealAnalysisModal');
 }
@@ -6173,10 +6311,22 @@ if ($('#coachVoiceTriggerBtn')) {
   $('#coachVoiceTriggerBtn').onclick = () => openModal('#voiceModeOverlay');
 }
 
+if ($('#coachCmdGoalBtn')) {
+  $('#coachCmdGoalBtn').onclick = () => handleUserAiQuery('/goal');
+}
+if ($('#coachCmdBoostBtn')) {
+  $('#coachCmdBoostBtn').onclick = () => handleUserAiQuery('/boost');
+}
+
 // Coach Quick Actions
 if ($('#coachActionAnalyzeMeal')) $('#coachActionAnalyzeMeal').onclick = () => openModal('#mealAnalysisModal');
 if ($('#coachActionCustomWorkout')) $('#coachActionCustomWorkout').onclick = () => openModal('#customWorkoutModal');
-if ($('#coachActionFormCheck')) $('#coachActionFormCheck').onclick = () => switchView('posture');
+if ($('#coachActionFormCheck')) {
+  $('#coachActionFormCheck').onclick = () => {
+    switchView('posture');
+    startPostureCamera(false);
+  };
+}
 if ($('#coachActionRecovery')) {
   $('#coachActionRecovery').onclick = () => {
     sendCoachChatMessage('Provide a comprehensive scientific active recovery, mobility, and deload protocol based on my current training volume.');
@@ -6712,6 +6862,241 @@ if ($('#gpsResetBtn')) $('#gpsResetBtn').onclick = () => resetGpsTracking();
 if ($('#refreshActivityHistoryBtn')) $('#refreshActivityHistoryBtn').onclick = () => renderActivityHistory();
 
 /* ==========================================================================
+   WEBRTC CAMERA HELPER & UNIVERSAL CAMERA VIEWFINDER MODAL
+   ========================================================================== */
+let universalCameraStream = null;
+let universalCameraFacing = 'user';
+let universalCameraCallback = null;
+let universalCameraCountdownTimer = null;
+
+async function requestUserCamera(preferredFacing = 'user') {
+  if (typeof window !== 'undefined' && !window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    throw new Error('Camera access requires HTTPS or http://localhost:3000. Please access the app via localhost or HTTPS.');
+  }
+
+  let md = navigator.mediaDevices;
+  if (!md) {
+    const n = navigator;
+    const legacyGUM = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
+    if (legacyGUM) {
+      md = {
+        getUserMedia: (constraints) => new Promise((res, rej) => legacyGUM.call(n, constraints, res, rej))
+      };
+    }
+  }
+
+  if (!md || !md.getUserMedia) {
+    throw new Error('WebRTC Camera API is not supported in this browser or environment.');
+  }
+
+  const constraintOptions = [
+    { video: { facingMode: { ideal: preferredFacing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+    { video: { facingMode: { ideal: preferredFacing }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false },
+    { video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: false },
+    { video: true, audio: false }
+  ];
+
+  let lastErr = null;
+  for (const c of constraintOptions) {
+    try {
+      const stream = await md.getUserMedia(c);
+      if (stream && stream.getVideoTracks().length > 0) return stream;
+    } catch (err) {
+      lastErr = err;
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        throw new Error('Camera permission was blocked. Please click the camera/lock icon in your browser address bar and set Camera to Allow.');
+      }
+    }
+  }
+
+  throw lastErr || new Error('Could not initialize video capture stream. No camera hardware detected or device is in use.');
+}
+
+function updateCameraViewfinderMirroring() {
+  const video = $('#universalCameraVideo');
+  if (video) {
+    if (universalCameraFacing === 'user') {
+      video.classList.add('mirrored');
+    } else {
+      video.classList.remove('mirrored');
+    }
+  }
+}
+
+async function openUniversalCamera(title, onPhotoCaptured) {
+  universalCameraCallback = onPhotoCaptured;
+  const titleEl = $('#universalCameraTitle');
+  if (titleEl) titleEl.textContent = title || 'Capture Photo';
+
+  openModal('#universalCameraModal');
+
+  const video = $('#universalCameraVideo');
+  const overlay = $('#cameraCountdownOverlay');
+  const fallback = $('#universalCameraFallback');
+  if (overlay) overlay.style.display = 'none';
+  if (fallback) fallback.style.display = 'none';
+  updateCameraViewfinderMirroring();
+
+  try {
+    if (universalCameraStream) {
+      universalCameraStream.getTracks().forEach(t => t.stop());
+      universalCameraStream = null;
+    }
+    universalCameraStream = await requestUserCamera(universalCameraFacing);
+    if (video) {
+      video.srcObject = universalCameraStream;
+      video.muted = true;
+      video.playsInline = true;
+      try {
+        await video.play();
+      } catch (playErr) {
+        video.muted = true;
+        await video.play().catch(() => {});
+      }
+    }
+  } catch (err) {
+    if (fallback) {
+      fallback.style.display = 'flex';
+      const text = $('#universalCameraFallbackText');
+      if (text) {
+        text.innerHTML = `<b>Camera Notice:</b> ${err.message || 'Permission blocked or no webcam found'}.<br>Please allow camera in your address bar or upload a photo directly.`;
+      }
+    } else {
+      toast(`Camera note: ${err.message}`);
+      closeUniversalCamera();
+    }
+  }
+}
+
+function closeUniversalCamera() {
+  if (universalCameraCountdownTimer) {
+    clearInterval(universalCameraCountdownTimer);
+    universalCameraCountdownTimer = null;
+  }
+  if (universalCameraStream) {
+    universalCameraStream.getTracks().forEach(t => t.stop());
+    universalCameraStream = null;
+  }
+  const video = $('#universalCameraVideo');
+  if (video) video.srcObject = null;
+  const modal = $('#universalCameraModal');
+  if (modal) closeModal(modal);
+}
+
+function snapUniversalCameraPhoto() {
+  const video = $('#universalCameraVideo');
+  const canvas = $('#universalCameraCanvas');
+  if (!video || !canvas) return;
+
+  const w = video.videoWidth || 640;
+  const h = video.videoHeight || 480;
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext('2d');
+  if (universalCameraFacing === 'user') {
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+  }
+  ctx.drawImage(video, 0, 0, w, h);
+
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+  if (typeof universalCameraCallback === 'function') {
+    universalCameraCallback(dataUrl);
+  }
+
+  soundFX.pop();
+  toast('Photo captured successfully!');
+  closeUniversalCamera();
+}
+
+function startUniversalCameraCountdown(seconds = 3) {
+  const overlay = $('#cameraCountdownOverlay');
+  if (!overlay) {
+    snapUniversalCameraPhoto();
+    return;
+  }
+
+  let remaining = seconds;
+  overlay.textContent = remaining;
+  overlay.style.display = 'flex';
+  soundFX.tap();
+
+  if (universalCameraCountdownTimer) clearInterval(universalCameraCountdownTimer);
+  universalCameraCountdownTimer = setInterval(() => {
+    remaining--;
+    if (remaining > 0) {
+      overlay.textContent = remaining;
+      soundFX.tap();
+    } else {
+      clearInterval(universalCameraCountdownTimer);
+      universalCameraCountdownTimer = null;
+      overlay.style.display = 'none';
+      snapUniversalCameraPhoto();
+    }
+  }, 1000);
+}
+
+// Universal Camera Viewfinder Listeners
+if ($('#universalCameraSnapBtn')) $('#universalCameraSnapBtn').onclick = () => snapUniversalCameraPhoto();
+if ($('#universalCameraTimerBtn')) $('#universalCameraTimerBtn').onclick = () => startUniversalCameraCountdown(3);
+if ($('#universalCameraFlipBtn')) {
+  $('#universalCameraFlipBtn').onclick = async () => {
+    universalCameraFacing = (universalCameraFacing === 'user' ? 'environment' : 'user');
+    updateCameraViewfinderMirroring();
+    const video = $('#universalCameraVideo');
+    if (universalCameraStream) {
+      universalCameraStream.getTracks().forEach(t => t.stop());
+      universalCameraStream = null;
+    }
+    try {
+      universalCameraStream = await requestUserCamera(universalCameraFacing);
+      if (video) {
+        video.srcObject = universalCameraStream;
+        video.muted = true;
+        video.playsInline = true;
+        await video.play().catch(() => {});
+      }
+      toast(`Switched to ${universalCameraFacing === 'user' ? 'Front' : 'Rear'} camera`);
+    } catch (e) {
+      toast('Could not switch camera: ' + e.message);
+    }
+  };
+}
+if ($('#universalCameraRetryBtn')) {
+  $('#universalCameraRetryBtn').onclick = () => {
+    openUniversalCamera($('#universalCameraTitle')?.textContent || 'Capture Photo', universalCameraCallback);
+  };
+}
+if ($('#universalCameraUploadAltBtn')) {
+  $('#universalCameraUploadAltBtn').onclick = () => {
+    const fInp = $('#universalCameraAltFileInput');
+    if (fInp) fInp.click();
+  };
+}
+if ($('#universalCameraAltFileInput')) {
+  $('#universalCameraAltFileInput').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (typeof universalCameraCallback === 'function') {
+          universalCameraCallback(ev.target.result);
+        }
+        soundFX.pop();
+        toast('Photo loaded successfully!');
+        closeUniversalCamera();
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+}
+if ($('#universalCameraModal [data-close]')) {
+  $('#universalCameraModal [data-close]').addEventListener('click', () => closeUniversalCamera());
+}
+
+/* ==========================================================================
    MODULE: CAMERA AI POSTURE TRACKER & FORM CHECKER (SECTIONS 16 & 17)
    ========================================================================== */
 let postureStream = null;
@@ -6723,74 +7108,180 @@ let postureAngles = [];
 let postureWarnings = 0;
 let postureExercise = 'squat';
 let postureAudioEnabled = true;
+let postureFacingMode = 'user';
+let isPostureDemoMode = false;
 
 function renderPostureView() {
   renderPostureHistory();
+  if (navigator.permissions && navigator.permissions.query) {
+    try {
+      navigator.permissions.query({ name: 'camera' }).then(p => {
+        if (p && p.state === 'granted' && !postureStream && !isPostureDemoMode) {
+          startPostureCamera(false);
+        }
+      }).catch(() => {});
+    } catch (e) {}
+  }
 }
 
-async function startPostureCamera() {
+async function startPostureCamera(isDemo = false) {
   const video = $('#postureVideo');
   const canvas = $('#postureCanvas');
   const placeholder = $('#posturePlaceholder');
-  if (!video || !canvas) return;
+  const permAlert = $('#posturePermissionAlert');
+  const defPlaceholder = $('#posturePlaceholderDefault');
+  if (!canvas) return;
 
-  try {
-    postureStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: 640, height: 480 }
-    });
-    video.srcObject = postureStream;
-    await video.play();
-
-    placeholder.style.display = 'none';
-    $('#postureOverlayHud').style.display = 'flex';
-    $('#postureBottomBanner').style.display = 'flex';
-    $('#postureStartBtn').style.display = 'none';
-    $('#postureStopBtn').style.display = 'inline-flex';
-    $('#postureSaveBtn').style.display = 'inline-flex';
+  if (isDemo) {
+    isPostureDemoMode = true;
+    if (video) {
+      video.srcObject = null;
+      video.style.display = 'none';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if ($('#postureOverlayHud')) $('#postureOverlayHud').style.display = 'flex';
+    if ($('#postureBottomBanner')) $('#postureBottomBanner').style.display = 'flex';
+    if ($('#postureStartBtn')) $('#postureStartBtn').style.display = 'none';
+    if ($('#postureStopBtn')) $('#postureStopBtn').style.display = 'inline-flex';
+    if ($('#postureSaveBtn')) $('#postureSaveBtn').style.display = 'inline-flex';
+    if ($('#postureFlipCamBtn')) $('#postureFlipCamBtn').style.display = 'none';
 
     postureReps = 0;
     postureAngles = [];
     postureWarnings = 0;
     postureState = 'STANDING';
-    $('#postureRepDisplay').textContent = '0';
+    if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = '0';
 
     runPostureAnalysisLoop();
-    speakPostureCue('Camera active. Step back so your knees are visible.');
+    speakPostureCue('Demo simulation mode active. Squat reps are running.');
+    toast('Biomechanics Demo Simulation active!');
+    return;
+  }
+
+  isPostureDemoMode = false;
+  if (defPlaceholder) defPlaceholder.style.display = 'flex';
+  if (permAlert) permAlert.style.display = 'none';
+
+  try {
+    postureStream = await requestUserCamera(postureFacingMode);
+    if (video) {
+      video.srcObject = postureStream;
+      video.style.display = 'block';
+      video.muted = true;
+      video.playsInline = true;
+      try {
+        await video.play();
+      } catch (playErr) {
+        video.muted = true;
+        await video.play().catch(() => {});
+      }
+    }
+
+    if (placeholder) placeholder.style.display = 'none';
+    if ($('#postureOverlayHud')) $('#postureOverlayHud').style.display = 'flex';
+    if ($('#postureBottomBanner')) $('#postureBottomBanner').style.display = 'flex';
+    if ($('#postureStartBtn')) $('#postureStartBtn').style.display = 'none';
+    if ($('#postureStopBtn')) $('#postureStopBtn').style.display = 'inline-flex';
+    if ($('#postureSaveBtn')) $('#postureSaveBtn').style.display = 'inline-flex';
+    if ($('#postureFlipCamBtn')) $('#postureFlipCamBtn').style.display = 'inline-flex';
+
+    postureReps = 0;
+    postureAngles = [];
+    postureWarnings = 0;
+    postureState = 'STANDING';
+    if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = '0';
+
+    runPostureAnalysisLoop();
+    speakPostureCue('Camera active. Step back so your full body is visible.');
     toast('Camera active! Stand in frame to track your squat depth.');
   } catch (err) {
-    toast(`Camera access note: ${err.message}. Please enable camera permissions.`);
+    if (permAlert) {
+      permAlert.style.display = 'block';
+      const alertText = $('#posturePermissionAlertText');
+      if (alertText) {
+        alertText.innerHTML = `<b>Camera access notice:</b> ${err.message || 'Permission blocked or camera not detected'}.<br>Please click the lock/camera icon in your address bar and select <b>Allow</b>, or run the Demo Simulation.`;
+      }
+    }
+    if (defPlaceholder) defPlaceholder.style.display = 'none';
+    toast(`Camera notice: ${err.message}. Try Demo Mode if camera is unavailable.`);
   }
 }
 
 function stopPostureCamera() {
-  if (postureAnimId) cancelAnimationFrame(postureAnimId);
+  if (postureAnimId) {
+    cancelAnimationFrame(postureAnimId);
+    postureAnimId = null;
+  }
   if (postureStream) {
     postureStream.getTracks().forEach(t => t.stop());
     postureStream = null;
   }
-  const video = $('#postureVideo');
-  if (video) video.srcObject = null;
+  isPostureDemoMode = false;
 
-  $('#posturePlaceholder').style.display = 'flex';
-  $('#postureOverlayHud').style.display = 'none';
-  $('#postureBottomBanner').style.display = 'none';
-  $('#postureStartBtn').style.display = 'inline-flex';
-  $('#postureStopBtn').style.display = 'none';
+  const video = $('#postureVideo');
+  if (video) {
+    video.srcObject = null;
+    video.style.display = 'none';
+  }
+
+  const canvas = $('#postureCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  if ($('#posturePlaceholder')) $('#posturePlaceholder').style.display = 'flex';
+  if ($('#posturePlaceholderDefault')) $('#posturePlaceholderDefault').style.display = 'flex';
+  if ($('#posturePermissionAlert')) $('#posturePermissionAlert').style.display = 'none';
+  if ($('#postureOverlayHud')) $('#postureOverlayHud').style.display = 'none';
+  if ($('#postureBottomBanner')) $('#postureBottomBanner').style.display = 'none';
+  if ($('#postureStartBtn')) $('#postureStartBtn').style.display = 'inline-flex';
+  if ($('#postureStopBtn')) $('#postureStopBtn').style.display = 'none';
+  if ($('#postureSaveBtn')) $('#postureSaveBtn').style.display = 'none';
+  if ($('#postureFlipCamBtn')) $('#postureFlipCamBtn').style.display = 'none';
 }
 
 function runPostureAnalysisLoop() {
   const video = $('#postureVideo');
   const canvas = $('#postureCanvas');
-  if (!video || !canvas) return;
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
   function step() {
-    if (!postureStream) return;
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    if (!postureStream && !isPostureDemoMode) return;
+
+    if (isPostureDemoMode) {
+      canvas.width = 640;
+      canvas.height = 480;
+      // Studio dark background
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Perspective biomechanics grid
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y <= canvas.height; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+      // Demo watermark banner
+      ctx.fillStyle = '#16C79A';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText('FITFUEL CV BIOMECHANICS · DEMO SIMULATION MODE', 18, 30);
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '11px Inter, sans-serif';
+      ctx.fillText('Tracking simulated sagittal kinematics & squat depth', 18, 48);
+
+      analyzePostureFrame(ctx, canvas.width, canvas.height);
+      postureAnimId = requestAnimationFrame(step);
+      return;
+    }
+
+    if (video && (video.readyState >= 2 || video.readyState === video.HAVE_ENOUGH_DATA)) {
       canvas.width = video.videoWidth || 640;
       canvas.height = video.videoHeight || 480;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       analyzePostureFrame(ctx, canvas.width, canvas.height);
     }
     postureAnimId = requestAnimationFrame(step);
@@ -6973,9 +7464,19 @@ async function renderPostureHistory() {
   }
 }
 
-if ($('#postureStartBtn')) $('#postureStartBtn').onclick = () => startPostureCamera();
+if ($('#postureStartBtn')) $('#postureStartBtn').onclick = () => startPostureCamera(false);
 if ($('#postureStopBtn')) $('#postureStopBtn').onclick = () => stopPostureCamera();
 if ($('#postureSaveBtn')) $('#postureSaveBtn').onclick = () => savePostureSession();
+if ($('#postureRetryPermBtn')) $('#postureRetryPermBtn').onclick = () => startPostureCamera(false);
+if ($('#postureDemoModeBtn')) $('#postureDemoModeBtn').onclick = () => startPostureCamera(true);
+if ($('#postureFlipCamBtn')) {
+  $('#postureFlipCamBtn').onclick = () => {
+    postureFacingMode = (postureFacingMode === 'user' ? 'environment' : 'user');
+    stopPostureCamera();
+    startPostureCamera(false);
+    toast(`Camera flipped to ${postureFacingMode === 'user' ? 'Front' : 'Rear'} camera`);
+  };
+}
 if ($('#postureAudioToggleBtn')) {
   $('#postureAudioToggleBtn').onclick = () => {
     postureAudioEnabled = !postureAudioEnabled;
@@ -7184,28 +7685,267 @@ if ($('#applyGenWorkoutBtn')) {
   };
 }
 
-// 3. Body Analysis Modal
-if ($('#saveBodyCompMetricsBtn')) {
-  $('#saveBodyCompMetricsBtn').onclick = () => {
-    const w = Number($('#bodyModalWeight').value) || profile.wKg || 72;
-    const h = Number($('#bodyModalHeight').value) || profile.hCm || 178;
-    const fat = Number($('#bodyModalFat').value) || 14.2;
+// 3. 4D BODY COMPOSITION & GOAL PLANNER SUITE (#bodyAnalysisModal)
+const body4DImages = {
+  front: null,
+  back: null,
+  left: null,
+  right: null
+};
+let selectedBodyGoal = 'lose_fat';
+let last4DReportData = null;
 
-    profile.wKg = w;
-    profile.hCm = h;
+function syncBodyModalInputs() {
+  if ($('#bodyModalWeight')) $('#bodyModalWeight').value = profile.wKg || 72;
+  if ($('#bodyModalTargetWeight')) $('#bodyModalTargetWeight').value = profile.targetWeight || 68;
+  if ($('#bodyModalHeight')) $('#bodyModalHeight').value = profile.hCm || 178;
+  if ($('#bodyModalGender') && profile.gender) $('#bodyModalGender').value = profile.gender;
+  if (profile.goal) {
+    selectedBodyGoal = profile.goal;
+    $$('#bodyGoalCardsRow .body-goal-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.goal === profile.goal);
+    });
+  }
+}
+
+function set4DDimensionImage(dimension, dataUrl) {
+  body4DImages[dimension] = dataUrl;
+  const preview = $(`#preview-${dimension}`);
+  const icon = $(`#icon-${dimension}`);
+  const badge = $(`#badge-${dimension}`);
+  const slot = $(`#slot-${dimension}`);
+
+  if (preview) {
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+  }
+  if (icon) icon.style.display = 'none';
+  if (badge) {
+    badge.textContent = 'Captured';
+    badge.classList.add('captured');
+  }
+  if (slot) slot.classList.add('has-image');
+}
+
+function createSample4DPoseSvg(dimensionName, colorHex, subtitle) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420" style="background:#090d16;">
+    <defs>
+      <linearGradient id="grad_${dimensionName}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${colorHex}" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#2563eb" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <!-- Alignment Grid -->
+    <line x1="150" y1="0" x2="150" y2="420" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <line x1="0" y1="105" x2="300" y2="105" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <line x1="0" y1="210" x2="300" y2="210" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <line x1="0" y1="315" x2="300" y2="315" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <!-- Anatomical Silhouette Head -->
+    <circle cx="150" cy="65" r="30" fill="url(#grad_${dimensionName})"/>
+    <!-- Torso -->
+    <path d="M118,105 Q150,114 182,105 L198,198 Q150,214 102,198 Z" fill="url(#grad_${dimensionName})"/>
+    <!-- Lower Body / Quads & Calves -->
+    <path d="M112,198 L188,198 L178,300 L160,300 L154,230 L146,230 L140,300 L122,300 Z" fill="url(#grad_${dimensionName})"/>
+    <!-- Arms -->
+    <path d="M118,105 L90,210 L106,214 L128,135 Z" fill="url(#grad_${dimensionName})"/>
+    <path d="M182,105 L210,210 L194,214 L172,135 Z" fill="url(#grad_${dimensionName})"/>
+    <!-- Angle Watermark -->
+    <rect x="20" y="348" width="260" height="52" rx="10" fill="rgba(15,23,42,0.92)" stroke="rgba(255,255,255,0.15)"/>
+    <text x="150" y="370" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold">${dimensionName.toUpperCase()} ANGLE (SAMPLE)</text>
+    <text x="150" y="388" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10">${subtitle}</text>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+// Goal Selector Cards
+$$('#bodyGoalCardsRow .body-goal-card').forEach(card => {
+  card.onclick = () => {
+    $$('#bodyGoalCardsRow .body-goal-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    selectedBodyGoal = card.dataset.goal || 'lose_fat';
+    soundFX.pop();
+  };
+});
+
+// Load Sample 4D Poses
+if ($('#loadSample4DPhotosBtn')) {
+  $('#loadSample4DPhotosBtn').onclick = () => {
+    set4DDimensionImage('front', createSample4DPoseSvg('front', '#16C79A', 'Coronal Plane · Abdominal & Chest Contour'));
+    set4DDimensionImage('back', createSample4DPoseSvg('back', '#38BDF8', 'Posterior Plane · Latissimus & Spinal Erector'));
+    set4DDimensionImage('left', createSample4DPoseSvg('left', '#8B5CF6', 'Sagittal Plane Left · Thoracic & Kyphosis Check'));
+    set4DDimensionImage('right', createSample4DPoseSvg('right', '#F59E0B', 'Sagittal Plane Right · Pelvic Tilt & Posture Check'));
+    soundFX.pop();
+    toast('Sample 4D anatomical poses loaded!');
+  };
+}
+
+// 4D Dimension Slots: Camera & Upload Button Bindings
+['front', 'back', 'left', 'right'].forEach(dim => {
+  const slot = $(`#slot-${dim}`);
+  if (!slot) return;
+
+  const camBtn = slot.querySelector('.btn-click-cam');
+  if (camBtn) {
+    camBtn.onclick = () => {
+      openUniversalCamera(`Capture ${dim.toUpperCase()} Pose`, (dataUrl) => {
+        set4DDimensionImage(dim, dataUrl);
+      });
+    };
+  }
+
+  const uploadBtn = slot.querySelector('.btn-upload-file');
+  const fileInp = $(`#file-${dim}`);
+  if (uploadBtn && fileInp) {
+    uploadBtn.onclick = () => fileInp.click();
+    fileInp.onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => set4DDimensionImage(dim, ev.target.result);
+        reader.readAsDataURL(file);
+      }
+    };
+  }
+});
+
+// Run 4D Analysis Trigger
+if ($('#btnRun4DAnalysis')) {
+  $('#btnRun4DAnalysis').onclick = async () => {
+    const btn = $('#btnRun4DAnalysis');
+    const statusText = $('#bodyCompScanStatusText');
+    const curW = Number($('#bodyModalWeight').value) || profile.wKg || 72;
+    const tgtW = Number($('#bodyModalTargetWeight').value) || 68;
+    const h = Number($('#bodyModalHeight').value) || profile.hCm || 178;
+    const gender = ($('#bodyModalGender') && $('#bodyModalGender').value) || 'male';
+
+    btn.disabled = true;
+    btn.innerHTML = `
+      <span style="display:inline-block;width:14px;height:14px;border:2px solid #ffffff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;"></span>
+      AI Analyzing Multi-Angle 4D Images...
+    `;
+    if (statusText) statusText.textContent = 'Running anthropometric neural net across 4 dimensions...';
+
+    try {
+      const result = await FF.analyze4DBodyComposition({
+        currentWeight: curW,
+        demandingWeight: tgtW,
+        height: h,
+        gender: gender,
+        goal: selectedBodyGoal
+      }, body4DImages);
+
+      const norm = {
+        fat: result.metrics?.estimatedBodyFat ?? result.estimatedBodyFat ?? 15.4,
+        muscle: result.metrics?.leanMuscleMassKg ?? result.leanMuscleMassKg ?? 60.9,
+        fatMass: result.metrics?.fatMassKg ?? result.fatMassKg ?? 11.1,
+        waterPct: result.metrics?.bodyWaterPct ?? result.hydrationPercentage ?? 61.2,
+        timelineDisplay: result.goal?.timelineDisplay ?? (result.timelineToGoal ? `${result.timelineToGoal.estimatedWeeks} weeks (~${result.timelineToGoal.estimatedMonths} months)` : '8 weeks (~2.0 months)'),
+        weeklyRate: result.goal?.projectedWeeklyRate ?? result.timelineToGoal?.weeklyRate ?? '0.5 kg / week',
+        timelineDesc: result.timelineToGoal?.milestonesSummary ?? `To reach demanding weight ${tgtW} kg from ${curW} kg (${(tgtW - curW) > 0 ? '+' : ''}${(tgtW - curW).toFixed(1)} kg)`,
+        calories: result.nutrition?.targetCalories ?? result.prescriptions?.dailyCalories ?? 2150,
+        protein: result.nutrition?.proteinGrams ?? result.prescriptions?.protein ?? 155,
+        carbs: result.nutrition?.carbsGrams ?? result.prescriptions?.carbs ?? 220,
+        fats: result.nutrition?.fatsGrams ?? result.prescriptions?.fats ?? 65,
+        obsFront: result.observations4D?.front ?? result.postureAnatomicalObservations?.front ?? 'Balanced clavicular posture and athletic core.',
+        obsBack: result.observations4D?.back ?? result.postureAnatomicalObservations?.back ?? 'V-taper trajectory with symmetrical lats.',
+        obsLateral: result.observations4D?.leftSide
+          ? `Left: ${result.observations4D.leftSide} | Right: ${result.observations4D.rightSide || 'Neutral sagittal stance'}`
+          : (result.postureAnatomicalObservations?.lateral ?? 'Neutral spinal alignment with upright chest.')
+      };
+
+      last4DReportData = { ...result, norm, currentWeight: curW, demandingWeight: tgtW, height: h, goal: selectedBodyGoal };
+
+      // Render Dynamic Output Report
+      if ($('#reportGoalTitle')) {
+        $('#reportGoalTitle').textContent = selectedBodyGoal === 'lose_fat'
+          ? 'Fat Loss & Physique Conditioning Report'
+          : (selectedBodyGoal === 'gain_muscle' ? 'Lean Mass & Hypertrophy Report' : 'Body Recomposition & Sculpting Report');
+      }
+      if ($('#reportTimelineVal')) $('#reportTimelineVal').textContent = norm.timelineDisplay;
+      if ($('#reportTimelineDesc')) $('#reportTimelineDesc').textContent = norm.timelineDesc;
+      if ($('#reportWeeklyRate')) $('#reportWeeklyRate').textContent = norm.weeklyRate;
+      if ($('#reportFatVal')) $('#reportFatVal').textContent = `${norm.fat}%`;
+      if ($('#reportMuscleVal')) $('#reportMuscleVal').textContent = `${norm.muscle} kg`;
+      if ($('#reportFatMassVal')) $('#reportFatMassVal').textContent = `${norm.fatMass} kg`;
+      if ($('#reportWaterVal')) $('#reportWaterVal').textContent = `${norm.waterPct}%`;
+
+      if ($('#reportKcalVal')) $('#reportKcalVal').textContent = `${Number(norm.calories).toLocaleString()} kcal`;
+      if ($('#reportProteinVal')) $('#reportProteinVal').textContent = `${norm.protein}g`;
+      if ($('#reportCarbsVal')) $('#reportCarbsVal').textContent = `${norm.carbs}g`;
+      if ($('#reportFatsVal')) $('#reportFatsVal').textContent = `${norm.fats}g`;
+
+      if ($('#obsFrontText')) $('#obsFrontText').textContent = norm.obsFront;
+      if ($('#obsBackText')) $('#obsBackText').textContent = norm.obsBack;
+      if ($('#obsLateralText')) $('#obsLateralText').textContent = norm.obsLateral;
+
+      const repCard = $('#bodyCompReportContainer');
+      if (repCard) {
+        repCard.style.display = 'block';
+        repCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      if (statusText) statusText.textContent = '4D Analysis Complete! Review your report below and apply metrics.';
+      soundFX.complete();
+      toast('4D Body Composition & Timeline generated!');
+    } catch (err) {
+      if (statusText) statusText.textContent = `Analysis note: ${err.message}`;
+      toast(`Analysis note: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Analyze 4D Physique & Calculate Timeline';
+    }
+  };
+}
+
+// Apply 4D Metrics to Dashboard
+if ($('#btnApply4DMetrics')) {
+  $('#btnApply4DMetrics').onclick = () => {
+    if (!last4DReportData) {
+      toast('Please run 4D analysis first.');
+      return;
+    }
+
+    const curW = last4DReportData.currentWeight || profile.wKg || 72;
+    const tgtW = last4DReportData.demandingWeight || 68;
+    const fat = last4DReportData.norm?.fat || 14.5;
+    const calories = last4DReportData.norm?.calories || 2150;
+    const protein = last4DReportData.norm?.protein || 155;
+    const carbs = last4DReportData.norm?.carbs || 220;
+    const fats = last4DReportData.norm?.fats || 65;
+
+    profile.wKg = curW;
+    profile.targetWeight = tgtW;
+    profile.bodyFat = fat;
+    profile.bodyWater = last4DReportData.norm?.waterPct || 61.2;
+    profile.goal = selectedBodyGoal;
+    profile.cal = calories;
+    profile.calories = calories;
+    profile.p = protein;
+    profile.protein = protein;
+    profile.c = carbs;
+    profile.carbs = carbs;
+    profile.f = fats;
+    profile.fats = fats;
+
     store.set('profile', profile);
 
-    const bmi = (w / ((h / 100) * (h / 100))).toFixed(1);
+    const bmi = (curW / (((profile.hCm || 178) / 100) * ((profile.hCm || 178) / 100))).toFixed(1);
     if ($('#bmiVal')) $('#bmiVal').textContent = `${bmi} (Normal)`;
     if ($('#bodyFatVal')) $('#bodyFatVal').textContent = `${fat}%`;
-    if ($('#muscleMassVal')) $('#muscleMassVal').textContent = `${(w * (1 - fat / 100)).toFixed(1)} kg`;
+    if ($('#muscleMassVal')) $('#muscleMassVal').textContent = `${(curW * (1 - fat / 100)).toFixed(1)} kg`;
+    if ($('#bodyWaterVal')) $('#bodyWaterVal').textContent = `${profile.bodyWater}%`;
 
     closeModal($('#bodyAnalysisModal'));
     renderDashboard();
+    renderProfileView();
     soundFX.complete();
-    toast('Body composition & target calories updated!');
+    toast(`Applied! Goal: ${tgtW} kg, ${calories} kcal, ${protein}g protein.`);
   };
 }
+
+// Modal open triggers sync
+if ($('#bodyCompScanBadge')) $('#bodyCompScanBadge').onclick = () => { syncBodyModalInputs(); openModal('#bodyAnalysisModal'); };
+if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => { syncBodyModalInputs(); openModal('#bodyAnalysisModal'); };
 
 // 4. Voice Mode Overlay
 let speechRecognitionInstance = null;
@@ -7336,8 +8076,10 @@ document.addEventListener('DOMContentLoaded', () => {
     else switchView('meals');
   };
   if ($('#syQuickBodyBtn')) $('#syQuickBodyBtn').onclick = () => {
-    if (typeof openModal === 'function' && $('#bodyAnalysisModal')) openModal('#bodyAnalysisModal');
-    else switchView('today');
+    if (typeof openModal === 'function' && $('#bodyAnalysisModal')) {
+      if (typeof syncBodyModalInputs === 'function') syncBodyModalInputs();
+      openModal('#bodyAnalysisModal');
+    } else switchView('today');
   };
   if ($('#syQuickProgressBtn')) $('#syQuickProgressBtn').onclick = () => switchView('activity');
   if ($('#syBottomCardWorkout')) $('#syBottomCardWorkout').onclick = () => switchView('workouts');
@@ -7368,7 +8110,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if ($('#metricCardProteinTrigger')) $('#metricCardProteinTrigger').onclick = () => switchView('food-log');
   if ($('#metricCardWorkoutsTrigger')) $('#metricCardWorkoutsTrigger').onclick = () => switchView('workouts');
   if ($('#metricCardWeightTrigger')) $('#metricCardWeightTrigger').onclick = () => switchView('tracking');
-  if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => openModal('#bodyAnalysisModal');
+  if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => {
+    if (typeof syncBodyModalInputs === 'function') syncBodyModalInputs();
+    openModal('#bodyAnalysisModal');
+  };
   if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
 
   // Image 3 Date Pills

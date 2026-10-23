@@ -1997,9 +1997,34 @@
               </div>
             </div>
 
+            <!-- In-Chat Attached Image Preview Pill -->
+            <div class="coach-selected-image-bar" id="coachSelectedImagePreviewBar" style="display:none;margin-top:12px;">
+              <img id="coachSelectedImageThumb" class="coach-attached-thumb" src="" alt="Photo preview">
+              <div style="flex:1;">
+                <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Photo Attached for AI Analysis</b>
+                <span style="font-size:0.74rem;color:var(--ff-text-secondary);">Coach will visually analyze meals, exercise form, or physique</span>
+              </div>
+              <button type="button" class="ai-chat-icon-btn" id="coachClearImageBtn" title="Remove photo" style="width:28px;height:28px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+
+            <!-- Quick Command Shortcuts (/goal, /boost) -->
+            <div class="coach-quick-commands-bar" style="display:flex;align-items:center;gap:8px;margin-top:12px;margin-bottom:2px;flex-wrap:wrap;">
+              <span style="font-size:0.72rem;font-weight:800;color:var(--ff-text-muted);text-transform:uppercase;letter-spacing:0.04em;">Commands:</span>
+              <button type="button" class="coach-cmd-chip-btn" id="coachCmdGoalBtn" title="Launch 4D Body Composition &amp; Goal Studio">
+                <span class="cmd-tag">/goal</span>
+                <span>4D Body &amp; Goal Studio</span>
+              </button>
+              <button type="button" class="coach-cmd-chip-btn" id="coachCmdBoostBtn" title="Pre-Workout Adrenaline &amp; Form Checker">
+                <span class="cmd-tag">/boost</span>
+                <span>Pre-Workout Form Booster</span>
+              </button>
+            </div>
+
             <!-- Input Bar -->
-            <div class="ai-chat-input-bar" style="margin-top:14px;">
-              <button type="button" class="ai-chat-icon-btn" id="coachChatAttachBtn" title="Upload meal photo or form video">
+            <div class="ai-chat-input-bar" style="margin-top:8px;">
+              <button type="button" class="ai-chat-icon-btn" id="coachChatCameraBtn" title="Click Photo with Camera"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button><button type="button" class="ai-chat-icon-btn" id="coachChatUploadBtn" title="Upload Photo from Device"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg></button><input type="file" id="coachChatFileInput" accept="image/*" style="display:none;"><button type="button" class="ai-chat-icon-btn" id="coachChatAttachBtn" title="Upload meal photo or form video">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
               </button>
               <input type="text" id="coachChatInput" class="ai-chat-input-field" placeholder="Ask coach about form, macros, workouts, or recovery..." autocomplete="off">
@@ -2461,20 +2486,32 @@
           <div>
             <div class="posture-viewport-card">
               <div class="posture-video-container">
-                <video id="postureVideo" playsinline autoplay muted style="display:none;"></video>
+                <video id="postureVideo" playsinline autoplay muted></video>
                 <canvas id="postureCanvas" width="640" height="480"></canvas>
 
-                <!-- Initial Idle Placeholder -->
+                <!-- Initial Idle / Permission Guidance Placeholder -->
                 <div class="posture-camera-placeholder" id="posturePlaceholder">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="1.8">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
-                  <div>
-                    <b style="font-size:1.05rem;color:#ffffff;display:block;">Camera Is Currently Off</b>
-                    <span style="font-size:0.82rem;color:#94a3b8;display:block;margin-top:4px;">
-                      Click "Start Camera" below to begin real-time posture analysis.<br>Step back 2-3 meters so your full body is in frame.
-                    </span>
+                  <div id="posturePlaceholderDefault" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="1.8">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <div>
+                      <b style="font-size:1.05rem;color:#ffffff;display:block;">Camera Is Currently Off</b>
+                      <span style="font-size:0.82rem;color:#94a3b8;display:block;margin-top:4px;">
+                        Click "Start Camera" below to grant camera access and track your posture.<br>Step back 2-3 meters so your full body is in frame.
+                      </span>
+                    </div>
+                  </div>
+                  <div id="posturePermissionAlert" style="display:none;background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.45);border-radius:14px;padding:16px;max-width:420px;text-align:center;">
+                    <b style="color:#f87171;font-size:0.95rem;display:block;margin-bottom:4px;">Camera Permission Notice</b>
+                    <p id="posturePermissionAlertText" style="color:#cbd5e1;font-size:0.8rem;margin:0 0 10px;line-height:1.45;">
+                      Please click the lock or camera icon next to <code>http://localhost:3000</code> in your browser address bar, set Camera to <b>Allow</b>, and retry.
+                    </p>
+                    <div style="display:flex;gap:8px;justify-content:center;">
+                      <button type="button" class="solid-button small" id="postureRetryPermBtn" style="padding:6px 14px;background:#ef4444;font-size:0.82rem;">Request Permission Again</button>
+                      <button type="button" class="outline-button small" id="postureDemoModeBtn" style="padding:6px 14px;color:#ffffff;border-color:rgba(255,255,255,0.3);font-size:0.82rem;">Run Demo Simulation</button>
+                    </div>
                   </div>
                 </div>
 
@@ -2512,6 +2549,9 @@
                 <div style="display:flex;gap:8px;align-items:center;">
                   <button type="button" class="solid-button" id="postureStartBtn" style="padding:8px 18px;font-size:0.86rem;">
                     Start Camera
+                  </button>
+                  <button type="button" class="outline-button" id="postureFlipCamBtn" style="padding:8px 12px;font-size:0.84rem;color:#ffffff;display:none;" title="Switch Front/Rear Camera">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.055 4.17 2.7 5.46L4 20h6v-6l-2.4 2.4C6.38 15.22 5.5 13.72 5.5 12c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5c0 1.72-.88 3.22-2.1 4.4L18 18.8c1.645-1.29 2.7-3.25 2.7-5.46z"/><circle cx="12" cy="12" r="2"/></svg>
                   </button>
                   <button type="button" class="outline-button" id="postureStopBtn" style="padding:8px 14px;font-size:0.86rem;color:#ffffff;display:none;">
                     Stop
@@ -2886,8 +2926,33 @@
         <span class="pref-badge" id="settingsRoleBadge" style="margin-top:8px;display:inline-block;">USER</span>
       </div>
 
-      <div style="border:1px solid #e2e8f0;border-radius:12px;padding:14px;">
-        <b style="color:#1e293b;font-size:.95rem;">Database Sync Status</b>
+      <!-- Customization Studio Card -->
+      <div class="settings-customization-card" id="settingsCustomizationBox" style="border:1.5px solid #16C79A;background:linear-gradient(135deg, rgba(22,199,154,0.08), rgba(56,189,248,0.06));border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(22,199,154,0.18);display:flex;align-items:center;justify-content:center;color:#16C79A;flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <div>
+            <b style="color:var(--ff-text-primary);font-size:.92rem;display:block;">App &amp; Theme Customization</b>
+            <p style="color:var(--ff-text-secondary);font-size:.8rem;margin:3px 0 0;line-height:1.35;">
+              Personalize brand accent colors, dark/light OLED themes, units &amp; widget visibility.
+            </p>
+          </div>
+        </div>
+        <button type="button" class="solid-button small" id="settingsGoToCustomizationBtn" style="white-space:nowrap;padding:7px 14px;font-size:0.82rem;">
+          Open Studio
+        </button>
+      </div>
+
+      <!-- Admin-Only Database Sync Status -->
+      <div class="admin-only-feature" id="settingsDatabaseSyncBox" style="display:none;border:1px solid #e2e8f0;border-radius:12px;padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <b style="color:#1e293b;font-size:.95rem;">Database Sync Status</b>
+          <span style="font-size:0.7rem;background:rgba(239,68,68,0.15);color:#b91c1c;padding:2px 8px;border-radius:99px;font-weight:700;">ADMIN ONLY</span>
+        </div>
         <p style="color:#64748b;font-size:.85rem;margin:4px 0 10px;">
           Connected to Turso Cloud SQLite in Mumbai region. All changes are encrypted and backed up.
         </p>
@@ -2911,15 +2976,18 @@
         </div>
       </div>
 
-      <!-- AI Engine & Live API Configuration -->
-      <div style="border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:14px;" id="settingsAiApiBox">
+      <!-- Admin-Only AI Engine & Live API Configuration -->
+      <div class="admin-only-feature" style="display:none;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:14px;" id="settingsAiApiBox">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <b style="color:#2563eb;font-size:.95rem;display:flex;align-items:center;gap:6px;">
             AI Live Intelligence &amp; Chatbot API
           </b>
-          <span style="font-size:.72rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700;border:1px solid #93c5fd;" id="aiStatusPill">
-            Live Connected
-          </span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:0.7rem;background:rgba(239,68,68,0.15);color:#b91c1c;padding:2px 8px;border-radius:99px;font-weight:700;">ADMIN ONLY</span>
+            <span style="font-size:.72rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700;border:1px solid #93c5fd;" id="aiStatusPill">
+              Live Connected
+            </span>
+          </div>
         </div>
         <p style="color:#64748b;font-size:.82rem;margin:0 0 10px;line-height:1.4;">
           FitFuel AI Chatbot is connected to live reasoning models for unscripted, dynamic answers. You can also configure your own <b>Google Gemini API Key</b> or <b>OpenRouter Key</b> for ultra-fast custom responses.
@@ -3525,48 +3593,348 @@
   </div>
 </div>
 
-<!-- 3. BODY ANALYSIS MODAL (SECTION 11) -->
+<!-- 3. 4D BODY COMPOSITION & GOAL PLANNER MODAL (IMAGE 1 REFERENCE) -->
 <div class="modal-backdrop" id="bodyAnalysisModal">
-  <div class="modal-card" style="max-width:540px;">
+  <div class="modal-card body-comp-modal-card">
     <div class="modal-head">
       <div>
-        <span class="section-kicker">3D ANATOMICAL COMPOSITION</span>
-        <h2>Body Composition Analysis</h2>
+        <span class="section-kicker">4D COMPUTER VISION &amp; ANATOMICAL COMPOSITION</span>
+        <h2>4D Body Composition &amp; Goal Planner</h2>
       </div>
       <button class="close-btn" data-close>&times;</button>
     </div>
-    <div style="display:flex;align-items:center;gap:16px;background:rgba(207,229,255,0.3);border-radius:16px;padding:14px;margin-bottom:14px;">
-      <img src="images/fitfuel-3d-male-body.png" alt="Body Composition" style="width:65px;height:120px;object-fit:contain;">
+
+    <!-- Intro Banner -->
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(207,229,255,0.25);border:1px solid rgba(37,99,235,0.2);border-radius:16px;padding:14px;margin-bottom:16px;">
+      <img src="images/fitfuel-3d-male-body.png" alt="Body Composition" style="width:60px;height:105px;object-fit:contain;flex-shrink:0;">
       <div>
-        <b style="font-size:0.95rem;color:var(--ff-text-primary);display:block;">Anatomical Muscle &amp; Fat Mapping</b>
-        <span style="font-size:0.8rem;color:var(--ff-text-secondary);display:block;margin-top:2px;">
-          Update your body metrics below to recalibrate maintenance calories, macro targets, and body fat percentage.
+        <b style="font-size:0.95rem;color:var(--ff-text-primary);display:block;">4-Dimensional Multi-Angle Scan &amp; Goal Timeline</b>
+        <span style="font-size:0.8rem;color:var(--ff-text-secondary);display:block;margin-top:3px;line-height:1.45;">
+          Capture or upload photos from 4 dimensions (Front, Back, Left Side, Right Side). FitFuel AI analyzes your body fat %, lean mass, visceral adiposity, and projects the exact timeline to reach your demanding weight.
         </span>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+
+    <!-- 1. Demanding Weight & Metrics -->
+    <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin-bottom:14px;" id="bodyMetricsGrid">
       <label>
-        <span>Current Weight (kg)</span>
-        <input type="number" id="bodyModalWeight" value="72" step="0.5" class="form-input" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--ff-text-secondary);display:block;">Current Weight (kg)</span>
+        <input type="number" id="bodyModalWeight" value="72" step="0.5" class="form-input" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;">
       </label>
       <label>
-        <span>Height (cm)</span>
-        <input type="number" id="bodyModalHeight" value="178" class="form-input" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--ff-emerald, #16c79a);display:block;">Demanding Weight (kg)</span>
+        <input type="number" id="bodyModalTargetWeight" value="68" step="0.5" class="form-input" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;border:1.5px solid var(--ff-emerald, #16c79a);background:rgba(22,199,154,0.05);" title="The weight you want to get">
       </label>
       <label>
-        <span>Estimated Body Fat %</span>
-        <input type="number" id="bodyModalFat" value="14.2" step="0.1" class="form-input" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--ff-text-secondary);display:block;">Height (cm)</span>
+        <input type="number" id="bodyModalHeight" value="178" class="form-input" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;">
       </label>
       <label>
-        <span>Waist Circumference (cm)</span>
-        <input type="number" id="bodyModalWaist" value="79" step="0.5" class="form-input" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--ff-text-secondary);display:block;">Biological Sex</span>
+        <select id="bodyModalGender" class="form-input" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;">
+          <option value="male" selected>Male</option>
+          <option value="female">Female</option>
+        </select>
       </label>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;">
-      <button type="button" class="outline-button" data-close>Cancel</button>
-      <button type="button" class="solid-button" id="saveBodyCompMetricsBtn" style="padding:10px 20px;">
-        Update Metrics
+
+    <!-- 2. Desired Physique Goal -->
+    <div style="margin-bottom:16px;">
+      <span style="font-size:0.8rem;font-weight:800;color:var(--ff-text-primary);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
+        What Type of Physique Do You Want to Get?
+      </span>
+      <div class="body-comp-goal-selector" id="bodyGoalCardsRow">
+        <div class="body-goal-card active" data-goal="lose_fat">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <b style="font-size:0.88rem;color:var(--ff-text-primary);">Lose Fat &amp; Cut</b>
+            <span style="font-size:0.65rem;background:rgba(22,199,154,0.2);color:#0f766e;padding:2px 6px;border-radius:99px;font-weight:800;">DEFICIT</span>
+          </div>
+          <span style="font-size:0.74rem;color:var(--ff-text-secondary);line-height:1.35;">
+            Shed visceral &amp; subcutaneous fat while preserving lean muscle mass and vascularity.
+          </span>
+        </div>
+        <div class="body-goal-card" data-goal="gain_muscle">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <b style="font-size:0.88rem;color:var(--ff-text-primary);">Gain Muscle &amp; Mass</b>
+            <span style="font-size:0.65rem;background:rgba(56,189,248,0.2);color:#0369a1;padding:2px 6px;border-radius:99px;font-weight:800;">SURPLUS</span>
+          </div>
+          <span style="font-size:0.74rem;color:var(--ff-text-secondary);line-height:1.35;">
+            Controlled lean hypertrophy surplus with progressive resistance overload to build density.
+          </span>
+        </div>
+        <div class="body-goal-card" data-goal="recomp">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <b style="font-size:0.88rem;color:var(--ff-text-primary);">Body Recomposition</b>
+            <span style="font-size:0.65rem;background:rgba(139,92,246,0.2);color:#6d28d9;padding:2px 6px;border-radius:99px;font-weight:800;">RECOMP</span>
+          </div>
+          <span style="font-size:0.74rem;color:var(--ff-text-secondary);line-height:1.35;">
+            Maintain body weight while simultaneously burning stubborn fat and packing on muscle.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 4-Dimensional Multi-Angle Photo Studio -->
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <span style="font-size:0.82rem;font-weight:800;color:var(--ff-text-primary);display:block;text-transform:uppercase;letter-spacing:0.04em;">
+            4-Dimensional Photo Studio (Front, Back, Left Side, Right Side)
+          </span>
+          <span style="font-size:0.74rem;color:var(--ff-text-secondary);">Click photo with camera or upload image for each dimension</span>
+        </div>
+        <button type="button" class="outline-button small" id="loadSample4DPhotosBtn" style="font-size:0.74rem;padding:4px 10px;">
+          Load Sample 4D Poses
+        </button>
+      </div>
+
+      <div class="body-comp-4d-grid">
+        <!-- SLOT 1: FRONT -->
+        <div class="body-comp-slot" id="slot-front" data-dimension="front">
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
+            <span style="font-size:0.76rem;font-weight:800;color:var(--ff-text-primary);">1. FRONT</span>
+            <span class="body-comp-slot-badge" id="badge-front">Awaiting</span>
+          </div>
+          <div class="body-comp-slot-preview-wrap">
+            <img id="preview-front" class="body-comp-slot-img" style="display:none;" alt="Front body photo">
+            <div id="icon-front" class="body-comp-slot-placeholder-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"/></svg>
+              <span style="font-size:0.7rem;font-weight:700;">Front View</span>
+            </div>
+          </div>
+          <div class="body-comp-slot-actions">
+            <button type="button" class="body-comp-slot-btn btn-click-cam" data-angle="front" title="Snap with Camera">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Camera
+            </button>
+            <button type="button" class="body-comp-slot-btn btn-upload-file" data-angle="front" title="Upload from Device">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload
+            </button>
+          </div>
+          <input type="file" id="file-front" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- SLOT 2: BACK -->
+        <div class="body-comp-slot" id="slot-back" data-dimension="back">
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
+            <span style="font-size:0.76rem;font-weight:800;color:var(--ff-text-primary);">2. BACK</span>
+            <span class="body-comp-slot-badge" id="badge-back">Awaiting</span>
+          </div>
+          <div class="body-comp-slot-preview-wrap">
+            <img id="preview-back" class="body-comp-slot-img" style="display:none;" alt="Back body photo">
+            <div id="icon-back" class="body-comp-slot-placeholder-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"/><path d="M12 11v6"/></svg>
+              <span style="font-size:0.7rem;font-weight:700;">Back View</span>
+            </div>
+          </div>
+          <div class="body-comp-slot-actions">
+            <button type="button" class="body-comp-slot-btn btn-click-cam" data-angle="back" title="Snap with Camera">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Camera
+            </button>
+            <button type="button" class="body-comp-slot-btn btn-upload-file" data-angle="back" title="Upload from Device">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload
+            </button>
+          </div>
+          <input type="file" id="file-back" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- SLOT 3: LEFT SIDE -->
+        <div class="body-comp-slot" id="slot-left" data-dimension="left">
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
+            <span style="font-size:0.76rem;font-weight:800;color:var(--ff-text-primary);">3. LEFT SIDE</span>
+            <span class="body-comp-slot-badge" id="badge-left">Awaiting</span>
+          </div>
+          <div class="body-comp-slot-preview-wrap">
+            <img id="preview-left" class="body-comp-slot-img" style="display:none;" alt="Left side body photo">
+            <div id="icon-left" class="body-comp-slot-placeholder-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="7" r="4"/><path d="M6 21v-3a5 5 0 0 1 9-2v5"/></svg>
+              <span style="font-size:0.7rem;font-weight:700;">Left Profile</span>
+            </div>
+          </div>
+          <div class="body-comp-slot-actions">
+            <button type="button" class="body-comp-slot-btn btn-click-cam" data-angle="left" title="Snap with Camera">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Camera
+            </button>
+            <button type="button" class="body-comp-slot-btn btn-upload-file" data-angle="left" title="Upload from Device">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload
+            </button>
+          </div>
+          <input type="file" id="file-left" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- SLOT 4: RIGHT SIDE -->
+        <div class="body-comp-slot" id="slot-right" data-dimension="right">
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;">
+            <span style="font-size:0.76rem;font-weight:800;color:var(--ff-text-primary);">4. RIGHT SIDE</span>
+            <span class="body-comp-slot-badge" id="badge-right">Awaiting</span>
+          </div>
+          <div class="body-comp-slot-preview-wrap">
+            <img id="preview-right" class="body-comp-slot-img" style="display:none;" alt="Right side body photo">
+            <div id="icon-right" class="body-comp-slot-placeholder-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="14" cy="7" r="4"/><path d="M9 21v-5a5 5 0 0 1 9 2v3"/></svg>
+              <span style="font-size:0.7rem;font-weight:700;">Right Profile</span>
+            </div>
+          </div>
+          <div class="body-comp-slot-actions">
+            <button type="button" class="body-comp-slot-btn btn-click-cam" data-angle="right" title="Snap with Camera">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Camera
+            </button>
+            <button type="button" class="body-comp-slot-btn btn-upload-file" data-angle="right" title="Upload from Device">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload
+            </button>
+          </div>
+          <input type="file" id="file-right" accept="image/*" style="display:none;">
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Analysis Trigger Bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <span style="font-size:0.78rem;color:var(--ff-text-secondary);" id="bodyCompScanStatusText">
+        Ready for AI multi-angle body composition &amp; timeline analysis.
+      </span>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="outline-button" data-close>Cancel</button>
+        <button type="button" class="solid-button" id="btnRun4DAnalysis" style="padding:10px 22px;background:#2563eb;font-weight:700;">
+          Analyze 4D Physique &amp; Calculate Timeline
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. FINAL AI BODY COMPOSITION REPORT (Populated dynamically) -->
+    <div id="bodyCompReportContainer" class="body-comp-report-card" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ff-glass-border-subtle);padding-bottom:12px;margin-bottom:14px;">
+        <div>
+          <span style="font-size:0.72rem;letter-spacing:0.06em;color:var(--ff-emerald, #16c79a);font-weight:800;text-transform:uppercase;">AI ANTHROPOMETRIC DIAGNOSIS</span>
+          <h3 style="font-size:1.15rem;margin:2px 0 0;color:var(--ff-text-primary);" id="reportGoalTitle">Physique &amp; Body Composition Report</h3>
+        </div>
+        <span style="font-size:0.75rem;padding:4px 10px;border-radius:99px;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:800;" id="reportScanStatus">Verified</span>
+      </div>
+
+      <!-- Timeline to Goal Callout Banner -->
+      <div style="background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(22,199,154,0.12));border:1.5px solid rgba(22,199,154,0.35);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span style="font-size:0.72rem;text-transform:uppercase;font-weight:800;color:#0284c7;display:block;">Target Goal Timeline</span>
+          <b style="font-size:1.25rem;color:var(--ff-text-primary);display:block;margin-top:2px;" id="reportTimelineVal">8 weeks (~2.0 months)</b>
+          <span style="font-size:0.78rem;color:var(--ff-text-secondary);" id="reportTimelineDesc">To reach demanding weight 68 kg from 72 kg (-4.0 kg)</span>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-size:0.72rem;text-transform:uppercase;font-weight:800;color:var(--ff-text-muted);display:block;">Safe Progress Rate</span>
+          <b style="font-size:0.95rem;color:var(--ff-emerald, #16c79a);" id="reportWeeklyRate">0.5 kg / week</b>
+        </div>
+      </div>
+
+      <!-- 4 Core Metric Badges -->
+      <div class="body-comp-stat-badge-grid">
+        <div class="body-comp-stat-box">
+          <span style="font-size:0.7rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Estimated Body Fat</span>
+          <b style="font-size:1.2rem;color:#2563eb;display:block;margin:2px 0;" id="reportFatVal">15.4%</b>
+          <span style="font-size:0.68rem;color:#16c79a;font-weight:700;">Athletic Range</span>
+        </div>
+        <div class="body-comp-stat-box">
+          <span style="font-size:0.7rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Lean Muscle Mass</span>
+          <b style="font-size:1.2rem;color:#8b5cf6;display:block;margin:2px 0;" id="reportMuscleVal">60.9 kg</b>
+          <span style="font-size:0.68rem;color:#8b5cf6;font-weight:700;">Skeletal Muscle</span>
+        </div>
+        <div class="body-comp-stat-box">
+          <span style="font-size:0.7rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Total Fat Mass</span>
+          <b style="font-size:1.2rem;color:#f59e0b;display:block;margin:2px 0;" id="reportFatMassVal">11.1 kg</b>
+          <span style="font-size:0.68rem;color:#f59e0b;font-weight:700;">Adipose Tissue</span>
+        </div>
+        <div class="body-comp-stat-box">
+          <span style="font-size:0.7rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Body Hydration</span>
+          <b style="font-size:1.2rem;color:#0284c7;display:block;margin:2px 0;" id="reportWaterVal">61.2%</b>
+          <span style="font-size:0.68rem;color:#0284c7;font-weight:700;">Optimal</span>
+        </div>
+      </div>
+
+      <!-- Daily Nutritional Target Prescriptions -->
+      <div style="background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+        <span style="font-size:0.75rem;font-weight:800;color:var(--ff-text-primary);display:block;margin-bottom:6px;text-transform:uppercase;">
+          Prescribed Daily Nutritional Targets
+        </span>
+        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;text-align:center;">
+          <div><span style="font-size:0.68rem;color:var(--ff-text-muted);display:block;">Daily Energy</span><b style="font-size:0.95rem;color:var(--ff-text-primary);" id="reportKcalVal">2,150 kcal</b></div>
+          <div><span style="font-size:0.68rem;color:var(--ff-text-muted);display:block;">Protein</span><b style="font-size:0.95rem;color:#2563eb;" id="reportProteinVal">155g</b></div>
+          <div><span style="font-size:0.68rem;color:var(--ff-text-muted);display:block;">Carbs</span><b style="font-size:0.95rem;color:#0284c7;" id="reportCarbsVal">220g</b></div>
+          <div><span style="font-size:0.68rem;color:var(--ff-text-muted);display:block;">Fats</span><b style="font-size:0.95rem;color:#f59e0b;" id="reportFatsVal">65g</b></div>
+        </div>
+      </div>
+
+      <!-- 4D Observations -->
+      <div style="margin-bottom:14px;">
+        <span style="font-size:0.78rem;font-weight:800;color:var(--ff-text-primary);display:block;margin-bottom:6px;text-transform:uppercase;">
+          Multi-Angle Anatomical Observations
+        </span>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.8rem;color:var(--ff-text-secondary);line-height:1.45;" id="reportObservationsBox">
+          <div><b>Front View:</b> <span id="obsFrontText">Symmetrical clavicular structure, athletic rectus abdominis contours.</span></div>
+          <div><b>Back View:</b> <span id="obsBackText">V-taper trajectory, balanced rhomboids and erector spinae foundation.</span></div>
+          <div><b>Left &amp; Right Lateral Views:</b> <span id="obsLateralText">Neutral sagittal posture with healthy thoracic spinal curvature.</span></div>
+        </div>
+      </div>
+
+      <!-- Action Button to Apply to App -->
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px;">
+        <button type="button" class="solid-button" id="btnApply4DMetrics" style="width:100%;justify-content:center;padding:10px;background:#16C79A;">
+          Apply New Metrics to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UNIVERSAL LIVE CAMERA VIEWFINDER MODAL -->
+<div class="modal-backdrop" id="universalCameraModal">
+  <div class="modal-card" style="max-width:560px;background:#0f172a;color:#ffffff;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <span style="font-size:0.7rem;letter-spacing:0.06em;color:#38bdf8;font-weight:800;text-transform:uppercase;">LIVE WEBCAM VIEW</span>
+        <h3 id="universalCameraTitle" style="font-size:1.15rem;margin:2px 0 0;color:#ffffff;">Capture Photo</h3>
+      </div>
+      <button class="close-btn" data-close style="color:#ffffff;">&times;</button>
+    </div>
+
+    <!-- Live Viewfinder Box -->
+    <div class="camera-viewfinder-box" style="position:relative;">
+      <video id="universalCameraVideo" playsinline autoplay muted class="camera-viewfinder-video"></video>
+      <canvas id="universalCameraCanvas" style="display:none;"></canvas>
+      <div class="camera-countdown-overlay" id="cameraCountdownOverlay" style="display:none;">3</div>
+
+      <!-- In-Modal Permission Guidance & Fallback Panel -->
+      <div id="universalCameraFallback" style="display:none;position:absolute;inset:0;padding:24px;background:#0f172a;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;z-index:5;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <b style="color:#ffffff;font-size:0.95rem;">Camera Permission or Hardware Notice</b>
+        <p id="universalCameraFallbackText" style="color:#94a3b8;font-size:0.8rem;margin:0;line-height:1.45;max-width:380px;">
+          Please grant camera permission in your browser address bar, or upload an image directly.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;">
+          <button type="button" class="solid-button small" id="universalCameraRetryBtn" style="padding:6px 14px;background:#2563eb;font-size:0.82rem;">Retry Camera</button>
+          <button type="button" class="outline-button small" id="universalCameraUploadAltBtn" style="padding:6px 14px;color:#ffffff;border-color:rgba(255,255,255,0.3);font-size:0.82rem;">Upload File Instead</button>
+          <input type="file" id="universalCameraAltFileInput" accept="image/*" style="display:none;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <button type="button" class="outline-button" id="universalCameraFlipBtn" style="color:#ffffff;border-color:rgba(255,255,255,0.25);font-size:0.84rem;padding:8px 14px;">
+        Flip Camera
       </button>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="outline-button" id="universalCameraTimerBtn" style="color:#ffffff;border-color:rgba(255,255,255,0.25);font-size:0.84rem;padding:8px 14px;">
+          3s Timer
+        </button>
+        <button type="button" class="solid-button" id="universalCameraSnapBtn" style="background:#16C79A;font-weight:700;font-size:0.88rem;padding:8px 20px;">
+          Snap Photo
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -4158,10 +4526,10 @@
   <span style="font-size:1.15rem;margin-left:8px;opacity:0.8;line-height:1;" aria-label="Dismiss">&times;</span>
 </div>
 
-<script src="data.js?v=4.0.0"></script>
+<script src="data.js?v=4.2.0"></script>
 <script src="motion.min.js"></script>
-<script src="api.js?v=4.0.0"></script>
-<script src="algo.js?v=4.0.0"></script>
-<script src="fitfuel.js?v=4.0.0"></script>
+<script src="api.js?v=4.2.0"></script>
+<script src="algo.js?v=4.2.0"></script>
+<script src="fitfuel.js?v=4.2.0"></script>
 </body>
 </html>
