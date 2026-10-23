@@ -372,318 +372,471 @@
           </div>
         </div>
 
-        <!-- 4 DASHBOARD METRICS CARDS (REFERENCE IMAGE 1) -->
+        <!-- IMAGE 3: TOP GREETING & DATE FILTER BAR -->
+        <div class="dash-image3-header-bar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin:22px 0 18px;">
+          <div>
+            <h1 style="font-size:1.85rem;font-weight:900;color:var(--ff-text-primary);margin:0 0 4px;letter-spacing:-.03em;" id="dashImage3Greeting">
+              Good Morning, Utkarsh!
+            </h1>
+            <p style="font-size:.88rem;color:var(--ff-text-secondary);margin:0;" id="dashImage3DateSub">
+              Thursday, Oct 24, 2026 · Ready to crush today's fitness goals?
+            </p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <!-- Date Filter Pills -->
+            <div class="date-pills-bar" style="display:inline-flex;background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);border:1px solid var(--ff-glass-border-subtle);border-radius:99px;padding:3px;">
+              <button type="button" class="date-pill-btn active" data-dash-period="today" style="padding:6px 14px;border-radius:99px;border:none;background:#2563eb;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;">Today</button>
+              <button type="button" class="date-pill-btn" data-dash-period="week" style="padding:6px 14px;border-radius:99px;border:none;background:transparent;color:var(--ff-text-secondary);font-size:.8rem;font-weight:600;cursor:pointer;">Week</button>
+              <button type="button" class="date-pill-btn" data-dash-period="month" style="padding:6px 14px;border-radius:99px;border:none;background:transparent;color:var(--ff-text-secondary);font-size:.8rem;font-weight:600;cursor:pointer;">Month</button>
+            </div>
+            <!-- Search bar -->
+            <div style="position:relative;display:inline-flex;align-items:center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;color:#94a3b8;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="dashGlobalSearchInput" placeholder="Search meals, workouts..." style="padding:8px 14px 8px 34px;border:1px solid var(--ff-glass-border-subtle);border-radius:99px;font-size:.84rem;background:rgba(255,255,255,0.7);outline:none;width:210px;">
+            </div>
+            <!-- Notification Bell -->
+            <button type="button" class="icon-button" id="dashBellBtn" title="Notifications" style="position:relative;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.8);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              <span style="position:absolute;top:7px;right:7px;width:7px;height:7px;background:#ef4444;border-radius:50%;border:1.5px solid #fff;"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 DASHBOARD METRICS CARDS (REFERENCE IMAGE 3) -->
         <div class="dash-metrics-grid-v2" id="dashMetricsGridV2">
           <!-- CARD 1: CALORIES -->
-          <div class="metric-card-v2">
+          <div class="metric-card-v2" id="metricCardCalTrigger" style="cursor:pointer;" title="Click to view calorie log">
             <div class="metric-info">
-              <span class="metric-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
+                <span style="width:24px;height:24px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                </span>
                 Calories
               </span>
-              <span class="metric-val" id="metricV2CalVal">1,840</span>
-              <span class="metric-sub" id="metricV2CalSub">Goal: 2,200 kcal</span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="metricV2CalVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">1,850</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / 2,200 kcal</span>
+              </div>
+              <span class="metric-sub" id="metricV2CalSub" style="font-size:.76rem;color:#2563eb;font-weight:700;">350 kcal remaining</span>
             </div>
-            <div class="progress-circle-wrap">
-              <svg viewBox="0 0 36 36">
+            <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
+              <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2CalCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#16C79A" stroke-width="3.5" stroke-dasharray="84, 100" stroke-linecap="round" />
+                <path id="metricV2CalCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-dasharray="84, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" id="metricV2CalPct">84%</span>
+              <span class="pct-text" id="metricV2CalPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">84%</span>
             </div>
           </div>
 
-          <!-- CARD 2: ACTIVE TIME -->
-          <div class="metric-card-v2">
+          <!-- CARD 2: PROTEIN -->
+          <div class="metric-card-v2" id="metricCardProteinTrigger" style="cursor:pointer;" title="Click to view macro targets">
             <div class="metric-info">
-              <span class="metric-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Active Time
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
+                <span style="width:24px;height:24px;border-radius:50%;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;color:#8b5cf6;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+                Protein
               </span>
-              <span class="metric-val" id="metricV2TimeVal">48 <small style="font-size:0.9rem;font-weight:600;">min</small></span>
-              <span class="metric-sub" id="metricV2TimeSub" style="color:#38bdf8;">Goal: 60 min</span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="metricV2ProteinVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">120</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / 180 g</span>
+              </div>
+              <span class="metric-sub" id="metricV2ProteinSub" style="font-size:.76rem;color:#8b5cf6;font-weight:700;">60 g left to reach target</span>
             </div>
-            <div class="progress-circle-wrap">
-              <svg viewBox="0 0 36 36">
+            <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
+              <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2TimeCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#38BDF8" stroke-width="3.5" stroke-dasharray="80, 100" stroke-linecap="round" />
+                <path id="metricV2ProteinCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#8b5cf6" stroke-width="3.5" stroke-dasharray="67, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" id="metricV2TimePct">80%</span>
+              <span class="pct-text" id="metricV2ProteinPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">67%</span>
             </div>
           </div>
 
-          <!-- CARD 3: WATER INTAKE -->
-          <div class="metric-card-v2">
+          <!-- CARD 3: WORKOUTS -->
+          <div class="metric-card-v2" id="metricCardWorkoutsTrigger" style="cursor:pointer;" title="Click to view weekly workouts">
             <div class="metric-info">
-              <span class="metric-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                Hydration
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
+                <span style="width:24px;height:24px;border-radius:50%;background:rgba(22,199,154,0.12);display:flex;align-items:center;justify-content:center;color:#16c79a;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1a5 5 0 0 0-7.07 0l-.71.71a5 5 0 0 1-7.07 0L4 19.5"/><path d="m3 3 1 1a5 5 0 0 0 7.07 0l.71-.71a5 5 0 0 1 7.07 0L20 4.5"/></svg>
+                </span>
+                Workouts
               </span>
-              <span class="metric-val" id="metricV2WaterVal">2.1 <small style="font-size:0.9rem;font-weight:600;">L</small></span>
-              <span class="metric-sub" id="metricV2WaterSub" style="color:#60a5fa;">Goal: 2.8 L</span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="metricV2WorkoutsVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">4</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / 5 this week</span>
+              </div>
+              <span class="metric-sub" id="metricV2WorkoutsSub" style="font-size:.76rem;color:#16c79a;font-weight:700;">1 session to weekly goal</span>
             </div>
-            <div class="progress-circle-wrap">
-              <svg viewBox="0 0 36 36">
+            <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
+              <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2WaterCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#60A5FA" stroke-width="3.5" stroke-dasharray="75, 100" stroke-linecap="round" />
+                <path id="metricV2WorkoutsCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#16c79a" stroke-width="3.5" stroke-dasharray="80, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" id="metricV2WaterPct">75%</span>
+              <span class="pct-text" id="metricV2WorkoutsPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">80%</span>
             </div>
           </div>
 
-          <!-- CARD 4: DAILY STEPS -->
-          <div class="metric-card-v2" id="metricCardStepsTrigger" style="cursor:pointer;" title="Click to open Activity & GPS Tracker">
-            <div class="metric-info">
-              <span class="metric-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                Daily Steps
-              </span>
-              <span class="metric-val" id="metricV2StepsVal">7,420</span>
-              <span class="metric-sub" id="metricV2StepsSub" style="color:#8b5cf6;">Goal: 10,000 steps</span>
+          <!-- CARD 4: WEIGHT (SPARKLINE) -->
+          <div class="metric-card-v2" id="metricCardWeightTrigger" style="cursor:pointer;" title="Click to open weight & progress tracking">
+            <div class="metric-info" style="flex:1;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
+                  <span style="width:24px;height:24px;border-radius:50%;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#0284c7;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+                  </span>
+                  Weight
+                </span>
+                <span style="background:rgba(22,199,154,0.15);color:#0f766e;font-size:.72rem;font-weight:800;padding:2px 7px;border-radius:99px;" id="metricV2WeightTrend">
+                  -0.8 kg
+                </span>
+              </div>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="metricV2WeightVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">72.5</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> kg</span>
+              </div>
+              <span class="metric-sub" id="metricV2WeightSub" style="font-size:.76rem;color:var(--ff-text-muted);font-weight:600;">Target: 70.0 kg</span>
             </div>
-            <div class="progress-circle-wrap">
-              <svg viewBox="0 0 36 36">
-                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2StepsCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#8B5CF6" stroke-width="3.5" stroke-dasharray="74, 100" stroke-linecap="round" />
+            <!-- Mini SVG Sparkline -->
+            <div style="width:68px;height:42px;margin-left:8px;">
+              <svg viewBox="0 0 68 42" style="width:100%;height:100%;overflow:visible;">
+                <path d="M 2 10 Q 18 16, 32 24 T 66 36" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="66" cy="36" r="3.5" fill="#2563eb" />
               </svg>
-              <span class="pct-text" id="metricV2StepsPct">74%</span>
             </div>
           </div>
         </div>
 
-        <!-- DASHBOARD MIDDLE ANALYTICS ROW (REFERENCE IMAGE 1) -->
+        <!-- DASHBOARD MIDDLE ANALYTICS ROW (IMAGE 3) -->
         <div class="dash-analytics-row-v2" id="dashAnalyticsRowV2">
-          <!-- CARD 1: CALORIE INTAKE & BURN (BAR CHART) -->
-          <div class="panel" style="padding:18px 20px;">
-            <div class="card-heading-v2">
-              <h3>Calorie Intake &amp; Burn</h3>
-              <select class="card-dropdown-pill" id="calChartTimeframe">
-                <option value="week" selected>This Week</option>
-                <option value="month">This Month</option>
-              </select>
-            </div>
-            <div style="display:flex;align-items:flex-end;justify-content:space-between;height:140px;padding:10px 4px;border-bottom:1px solid var(--ff-glass-border-subtle);gap:8px;" id="dashCalWeeklyBars">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:65%;background:linear-gradient(180deg,#16C79A,#48E5B1);border-radius:6px;" title="Mon: 1,920 kcal"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">M</span>
+          <!-- CARD 1: CALORIE INTAKE VS GOAL (BAR CHART) -->
+          <div class="panel" style="padding:20px 22px;">
+            <div class="card-heading-v2" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">Calorie Intake vs Goal</h3>
+                <span style="font-size:.75rem;color:var(--ff-text-secondary);">Oct 14 – 20 · Daily Tracking</span>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:80%;background:linear-gradient(180deg,#16C79A,#48E5B1);border-radius:6px;" title="Tue: 2,150 kcal"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">T</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:72%;background:linear-gradient(180deg,#16C79A,#48E5B1);border-radius:6px;" title="Wed: 1,980 kcal"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">W</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:88%;background:linear-gradient(180deg,#16C79A,#48E5B1);border-radius:6px;" title="Thu: 2,240 kcal"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">T</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:84%;background:linear-gradient(180deg,#16C79A,#48E5B1);border-radius:6px;box-shadow:0 0 10px rgba(22,199,154,0.5);" title="Fri: 2,100 kcal (Today)"></div>
-                <span style="font-size:0.72rem;color:var(--ff-emerald);font-weight:800;">F</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:20%;background:rgba(207,229,255,0.4);border-radius:6px;" title="Sat: Planned"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">S</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">
-                <div style="width:14px;height:20%;background:rgba(207,229,255,0.4);border-radius:6px;" title="Sun: Rest"></div>
-                <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">S</span>
+              <div style="display:flex;align-items:center;gap:12px;font-size:.74rem;font-weight:700;">
+                <span style="display:flex;align-items:center;gap:5px;color:var(--ff-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#2563eb;"></span>Intake</span>
+                <span style="display:flex;align-items:center;gap:5px;color:var(--ff-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#16c79a;"></span>Goal</span>
               </div>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:0.78rem;color:var(--ff-text-secondary);">
-              <span>Daily Avg: <b style="color:var(--ff-text-primary);">2,078 kcal</b></span>
-              <span style="color:var(--ff-emerald);font-weight:700;">Target Adherence: 94%</span>
+
+            <!-- Dual Bars SVG Container -->
+            <div style="position:relative;height:160px;margin:14px 0 6px;">
+              <!-- Target baseline line (2,200 kcal) -->
+              <div style="position:absolute;top:22%;left:0;right:0;border-top:1px dashed rgba(22,199,154,0.5);display:flex;justify-content:flex-end;">
+                <span style="font-size:.68rem;color:#0f766e;background:rgba(22,199,154,0.12);padding:1px 6px;border-radius:4px;font-weight:700;">Goal: 2,200 kcal</span>
+              </div>
+
+              <!-- 7 Days Dual Bars -->
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;height:100%;padding:0 4px;gap:8px;">
+                <!-- Mon Oct 14 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:88%;background:#2563eb;border-radius:4px 4px 0 0;" title="Mon Oct 14: 1,950 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">14</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">M</span>
+                </div>
+                <!-- Tue Oct 15 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:95%;background:#2563eb;border-radius:4px 4px 0 0;" title="Tue Oct 15: 2,100 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">15</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">T</span>
+                </div>
+                <!-- Wed Oct 16 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:82%;background:#2563eb;border-radius:4px 4px 0 0;" title="Wed Oct 16: 1,820 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">16</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">W</span>
+                </div>
+                <!-- Thu Oct 17 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:102%;background:#2563eb;border-radius:4px 4px 0 0;" title="Thu Oct 17: 2,250 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">17</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">T</span>
+                </div>
+                <!-- Fri Oct 18 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:93%;background:#2563eb;border-radius:4px 4px 0 0;" title="Fri Oct 18: 2,050 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">18</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">F</span>
+                </div>
+                <!-- Sat Oct 19 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:99%;background:#2563eb;border-radius:4px 4px 0 0;" title="Sat Oct 19: 2,180 kcal"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">19</span>
+                  <span style="font-size:.64rem;color:var(--ff-text-muted);">S</span>
+                </div>
+                <!-- Sun Oct 20 (Today) -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
+                    <div style="width:10px;height:84%;background:#2563eb;border-radius:4px 4px 0 0;box-shadow:0 0 8px rgba(37,99,235,0.4);" title="Sun Oct 20: 1,850 kcal (Today)"></div>
+                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  </div>
+                  <span style="font-size:.7rem;color:#2563eb;font-weight:800;">20</span>
+                  <span style="font-size:.64rem;color:#2563eb;font-weight:700;">S</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--ff-glass-border-subtle);font-size:0.78rem;color:var(--ff-text-secondary);">
+              <span>Daily Avg: <b style="color:var(--ff-text-primary);">2,028 kcal</b></span>
+              <span style="color:#16c79a;font-weight:700;">Target Adherence: 94%</span>
             </div>
           </div>
 
           <!-- CARD 2: MACRONUTRIENT DISTRIBUTION (DONUT) -->
-          <div class="panel" style="padding:18px 20px;">
-            <div class="card-heading-v2">
-              <h3>Macronutrients</h3>
-              <span style="font-size:0.74rem;color:var(--ff-emerald);font-weight:700;">Balanced</span>
+          <div class="panel" style="padding:20px 22px;">
+            <div class="card-heading-v2" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">Macronutrient Distribution</h3>
+                <span style="font-size:.75rem;color:var(--ff-text-secondary);">Today's Macro Breakdown</span>
+              </div>
+              <span style="font-size:0.74rem;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:700;padding:2px 8px;border-radius:99px;">Balanced</span>
             </div>
-            <div style="display:flex;align-items:center;gap:18px;margin-top:6px;">
-              <div class="progress-circle-wrap" style="width:84px;height:84px;">
-                <svg viewBox="0 0 36 36" style="width:84px;height:84px;">
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#38BDF8" stroke-width="4.5" stroke-dasharray="35, 100" stroke-dashoffset="0" />
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#16C79A" stroke-width="4.5" stroke-dasharray="45, 100" stroke-dashoffset="-35" />
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#F59E0B" stroke-width="4.5" stroke-dasharray="20, 100" stroke-dashoffset="-80" />
+
+            <!-- Donut with centered 1,850 kcal -->
+            <div style="display:flex;align-items:center;justify-content:center;margin:10px 0;">
+              <div class="progress-circle-wrap" style="width:130px;height:130px;position:relative;">
+                <svg viewBox="0 0 36 36" style="width:130px;height:130px;">
+                  <!-- Background ring -->
+                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(207,229,255,0.3)" stroke-width="4.5" />
+                  <!-- Protein: 26% (Blue) -->
+                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#2563eb" stroke-width="4.5" stroke-dasharray="26, 100" stroke-dashoffset="0" />
+                  <!-- Carbs: 48% (Mint) -->
+                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#16c79a" stroke-width="4.5" stroke-dasharray="48, 100" stroke-dashoffset="-26" />
+                  <!-- Fats: 26% (Amber) -->
+                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="26, 100" stroke-dashoffset="-74" />
                 </svg>
-                <span class="pct-text" style="font-size:0.82rem;">Macros</span>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                  <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#38BDF8;"></span>Protein</span>
-                  <b id="donutProteinVal">140g (35%)</b>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                  <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#16C79A;"></span>Carbs</span>
-                  <b id="donutCarbsVal">180g (45%)</b>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                  <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#F59E0B;"></span>Fats</span>
-                  <b id="donutFatsVal">45g (20%)</b>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+                  <span style="font-size:1.25rem;font-weight:900;color:var(--ff-text-primary);line-height:1;" id="donutCenterKcal">1,850</span>
+                  <span style="font-size:.68rem;color:var(--ff-text-muted);font-weight:600;margin-top:2px;">kcal</span>
                 </div>
               </div>
             </div>
-            <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--ff-glass-border-subtle);font-size:0.76rem;color:var(--ff-text-muted);">
-              Optimal distribution for lean muscle synthesis &amp; steady insulin sensitivity.
+
+            <!-- Legend strip -->
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#2563eb;"></span>Protein (26%)</span>
+                <b id="donutProteinVal" style="color:var(--ff-text-primary);">120g / 180g</b>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#16c79a;"></span>Carbs (48%)</span>
+                <b id="donutCarbsVal" style="color:var(--ff-text-primary);">222g / 240g</b>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>Fats (26%)</span>
+                <b id="donutFatsVal" style="color:var(--ff-text-primary);">53g / 65g</b>
+              </div>
             </div>
           </div>
 
-          <!-- CARD 3: 3D ANATOMICAL BODY COMPOSITION (REFERENCE IMAGE 1) -->
-          <div class="panel" style="padding:18px 20px;">
-            <div class="card-heading-v2">
-              <h3>Body Composition</h3>
+          <!-- CARD 3: 3D BODY COMPOSITION & ANATOMY -->
+          <div class="panel" style="padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="card-heading-v2" style="margin-bottom:8px;">
+              <div>
+                <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">3D Body Composition</h3>
+                <span style="font-size:.75rem;color:var(--ff-text-secondary);">Anatomical Mesh &amp; Tissue Metrics</span>
+              </div>
               <span class="card-dropdown-pill" id="bodyCompScanBadge" style="cursor:pointer;" title="Inspect 3D Anatomical Map">3D Model</span>
             </div>
-            <div class="body-comp-card">
-              <img src="images/fitfuel-3d-male-body.png" alt="3D Male Anatomy Body Composition" class="body-comp-figure" title="3D Anatomical Composition Model">
-              <div class="body-comp-metrics">
-                <div class="body-comp-item">
-                  <div class="body-comp-item-header">
-                    <span>Body Fat</span>
-                    <span class="body-comp-item-val" id="bodyFatVal">14.2%</span>
-                  </div>
-                  <div class="body-comp-bar"><div class="body-comp-fill" style="width:42%;"></div></div>
-                </div>
-                <div class="body-comp-item">
-                  <div class="body-comp-item-header">
-                    <span>Muscle Mass</span>
-                    <span class="body-comp-item-val" id="muscleMassVal">42.8 kg</span>
-                  </div>
-                  <div class="body-comp-bar"><div class="body-comp-fill" style="width:78%;background:linear-gradient(90deg,#38BDF8,#8B5CF6);"></div></div>
-                </div>
-                <div class="body-comp-item">
-                  <div class="body-comp-item-header">
-                    <span>Visceral Fat</span>
-                    <span class="body-comp-item-val" id="visceralFatVal">Level 4</span>
-                  </div>
-                  <div class="body-comp-bar"><div class="body-comp-fill" style="width:25%;background:#16C79A;"></div></div>
-                </div>
-                <div class="body-comp-item">
-                  <div class="body-comp-item-header">
-                    <span>BMI</span>
-                    <span class="body-comp-item-val" id="bmiVal">22.4 (Normal)</span>
-                  </div>
-                  <div class="body-comp-bar"><div class="body-comp-fill" style="width:55%;"></div></div>
-                </div>
+
+            <!-- 3D Model with Floating Callouts -->
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;padding:10px 0;min-height:165px;">
+              <img src="images/fitfuel-3d-male-body.png" alt="3D Male Anatomy Body Composition" style="height:155px;width:auto;object-fit:contain;filter:drop-shadow(0 6px 16px rgba(37,99,235,0.2));transition:transform .2s ease;" class="body-comp-figure">
+              
+              <!-- Floating Callout 1 (Left): Body Fat -->
+              <div style="position:absolute;top:10px;left:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
+                <span style="font-size:.65rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Body Fat</span>
+                <b style="font-size:.85rem;color:#2563eb;display:block;" id="bodyFatVal">16.5%</b>
+                <span style="font-size:.62rem;color:#16c79a;font-weight:600;">Athletic Range</span>
+              </div>
+
+              <!-- Floating Callout 2 (Right): Muscle Mass -->
+              <div style="position:absolute;top:30px;right:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.04);max-width:115px;">
+                <span style="font-size:.65rem;color:var(--ff-text-muted);display:block;text-transform:uppercase;font-weight:700;">Muscle Mass</span>
+                <b style="font-size:.85rem;color:#8b5cf6;display:block;" id="muscleMassVal">58.2 kg</b>
+                <span style="font-size:.62rem;color:#8b5cf6;font-weight:600;">+0.4 kg this mo</span>
+              </div>
+
+              <!-- Floating Callout 3 (Bottom): Water -->
+              <div style="position:absolute;bottom:4px;left:8px;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--ff-glass-border-subtle);border-radius:10px;padding:4px 8px;box-shadow:0 4px 12px rgba(0,0,0,0.04);">
+                <span style="font-size:.62rem;color:var(--ff-text-muted);display:block;font-weight:700;">Water: <b style="color:#0284c7;" id="bodyWaterVal">62.1%</b> (Optimal)</span>
               </div>
             </div>
+
+            <!-- Details Button -->
+            <button type="button" class="solid-button small" id="viewBodyDetailsBtn" style="width:100%;justify-content:center;font-size:.82rem;padding:7px;margin-top:6px;">
+              View Full Analysis
+            </button>
           </div>
         </div>
 
-        <!-- DASHBOARD BOTTOM GRID: TODAY'S PLAN, STREAK, ACTIVITY, INSIGHTS (REFERENCE IMAGE 1) -->
+        <!-- DASHBOARD BOTTOM GRID: TODAY'S PLAN, RECENT ACTIVITY, STREAK, INSIGHTS (IMAGE 3) -->
         <div class="dash-bottom-grid-v2" id="dashBottomGridV2">
           <!-- 1. TODAY'S PLAN -->
           <div class="panel" style="padding:18px 20px;">
-            <div class="card-heading-v2">
-              <h3>Today's Plan</h3>
-              <span style="font-size:0.75rem;color:var(--ff-emerald);font-weight:700;">4 Tasks</span>
+            <div class="card-heading-v2" style="margin-bottom:10px;">
+              <h3 style="font-size:1.05rem;font-weight:800;margin:0;">Today's Plan</h3>
+              <span style="font-size:0.75rem;color:#16c79a;font-weight:700;">4 Tasks</span>
             </div>
-            <div class="plan-item-v2">
-              <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                High-Protein Breakfast
-              </span>
-              <span style="font-size:0.72rem;background:rgba(22,199,154,0.15);color:#0d9488;padding:2px 7px;border-radius:99px;font-weight:700;">DONE</span>
-            </div>
-            <div class="plan-item-v2">
-              <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                Upper Body Strength
-              </span>
-              <span style="font-size:0.72rem;background:rgba(56,189,248,0.15);color:#0284c7;padding:2px 7px;border-radius:99px;font-weight:700;">45 MIN</span>
-            </div>
-            <div class="plan-item-v2">
-              <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                Post-Workout Walk (GPS)
-              </span>
-              <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">2.5 KM</span>
-            </div>
-            <div class="plan-item-v2">
-              <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                Hydration Goal (2.8 L)
-              </span>
-              <span style="font-size:0.72rem;color:var(--ff-text-muted);font-weight:600;">0.7 L LEFT</span>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <!-- Task 1 -->
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Oats with Banana &amp; Almonds
+                </span>
+                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:#0f766e;padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
+              </div>
+              <!-- Task 2 -->
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Grilled Chicken &amp; Quinoa Bowl
+                </span>
+                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:#0f766e;padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
+              </div>
+              <!-- Task 3 -->
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                  Workout: Back &amp; Biceps
+                </span>
+                <span style="font-size:0.7rem;background:rgba(37,99,235,0.12);color:#2563eb;padding:2px 7px;border-radius:99px;font-weight:800;">IN PROGRESS</span>
+              </div>
+              <!-- Task 4 -->
+              <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                  Dinner: Paneer &amp; Brown Rice
+                </span>
+                <span style="font-size:0.7rem;color:var(--ff-text-muted);font-weight:600;">UPCOMING</span>
+              </div>
             </div>
           </div>
 
-          <!-- 2. STREAK CARD -->
-          <div class="panel streak-big-card">
-            <span class="section-kicker" style="margin-bottom:4px;">DISCIPLINE</span>
-            <div class="streak-big-flame">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- 2. RECENT ACTIVITY -->
+          <div class="panel" style="padding:18px 20px;">
+            <div class="card-heading-v2" style="margin-bottom:10px;">
+              <h3 style="font-size:1.05rem;font-weight:800;margin:0;">Recent Activity</h3>
+              <span style="font-size:0.75rem;color:#2563eb;font-weight:700;cursor:pointer;" id="dashViewAllActivityBtn">View All</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:26px;height:26px;border-radius:50%;background:rgba(22,199,154,0.12);display:flex;align-items:center;justify-content:center;color:#16c79a;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </span>
+                  <div>
+                    <b style="font-size:.82rem;display:block;">Morning Run</b>
+                    <small style="font-size:.7rem;color:var(--ff-text-muted);">4.8 km · 28 min</small>
+                  </div>
+                </div>
+                <b style="font-size:.82rem;color:#f59e0b;">312 kcal</b>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:26px;height:26px;border-radius:50%;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#0284c7;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  </span>
+                  <div>
+                    <b style="font-size:.82rem;display:block;">Hydration Log</b>
+                    <small style="font-size:.7rem;color:var(--ff-text-muted);">Optimal tracking</small>
+                  </div>
+                </div>
+                <b style="font-size:.82rem;color:#0284c7;">2,400 ml</b>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,0.6);border:1px solid var(--ff-glass-border-subtle);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:26px;height:26px;border-radius:50%;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;color:#8b5cf6;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                  </span>
+                  <div>
+                    <b style="font-size:.82rem;display:block;">Sleep Recovery</b>
+                    <small style="font-size:.7rem;color:var(--ff-text-muted);">Deep Sleep: 2h 10m</small>
+                  </div>
+                </div>
+                <b style="font-size:.82rem;color:#8b5cf6;">7h 45m</b>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. STREAK CARD -->
+          <div class="panel streak-big-card" style="padding:18px 20px;text-align:center;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span class="section-kicker" style="margin:0;">CONSISTENCY</span>
+              <span style="font-size:.72rem;background:rgba(245,158,11,0.15);color:#b45309;padding:2px 7px;border-radius:99px;font-weight:800;">ACTIVE</span>
+            </div>
+            <div class="streak-big-flame" style="margin:8px auto;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
               </svg>
             </div>
-            <div class="streak-big-num" id="dashBigStreakNum">4</div>
-            <div class="streak-big-lbl">Days Active Streak</div>
-            <div class="streak-dots-row">
-              <span class="streak-dot-pill active" title="Monday"></span>
-              <span class="streak-dot-pill active" title="Tuesday"></span>
-              <span class="streak-dot-pill active" title="Wednesday"></span>
-              <span class="streak-dot-pill active" title="Thursday"></span>
-              <span class="streak-dot-pill" title="Friday"></span>
-              <span class="streak-dot-pill" title="Saturday"></span>
-              <span class="streak-dot-pill" title="Sunday"></span>
+            <div class="streak-big-num" id="dashBigStreakNum" style="font-size:2rem;font-weight:900;line-height:1;color:var(--ff-text-primary);">12</div>
+            <div class="streak-big-lbl" style="font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);margin-top:2px;">Days Active Streak!</div>
+            
+            <!-- 7-day dot trail -->
+            <div class="streak-dots-row" style="display:flex;justify-content:center;gap:6px;margin:12px 0 8px;">
+              <span class="streak-dot-pill active" title="Monday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill active" title="Tuesday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill active" title="Wednesday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill active" title="Thursday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill active" title="Friday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill active" title="Saturday" style="width:14px;height:14px;border-radius:50%;background:#2563eb;"></span>
+              <span class="streak-dot-pill" title="Sunday" style="width:14px;height:14px;border-radius:50%;background:#cbd5e1;"></span>
             </div>
-            <small style="color:var(--ff-text-secondary);font-size:0.74rem;margin-top:10px;">1 day until your 5-day milestone!</small>
-          </div>
-
-          <!-- 3. ACTIVITY TRACKER QUICK LAUNCHER -->
-          <div class="panel" style="padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-              <div class="card-heading-v2">
-                <h3>Activity &amp; GPS</h3>
-                <span class="gps-status-pill">Ready</span>
-              </div>
-              <div style="display:flex;align-items:baseline;justify-content:space-between;margin:10px 0;">
-                <div>
-                  <span style="font-size:1.6rem;font-weight:900;color:var(--ff-text-primary);" id="dashStepsQuickVal">7,420</span>
-                  <span style="font-size:0.75rem;color:var(--ff-text-muted);display:block;">steps taken</span>
-                </div>
-                <div style="text-align:right;">
-                  <span style="font-size:1.1rem;font-weight:800;color:var(--ff-emerald);" id="dashDistQuickVal">5.2 km</span>
-                  <span style="font-size:0.75rem;color:var(--ff-text-muted);display:block;">distance</span>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="solid-button" id="dashOpenActivityBtn" style="width:100%;padding:10px;font-size:0.85rem;justify-content:center;">
-              Open GPS Tracker
-            </button>
+            <small style="color:var(--ff-text-muted);font-size:0.74rem;">Best streak: 18 days. Keep it up!</small>
           </div>
 
           <!-- 4. AI FITNESS INSIGHTS -->
           <div class="panel" style="padding:18px 20px;">
-            <div class="card-heading-v2">
-              <h3>AI Coach Insights</h3>
-              <span style="font-size:0.75rem;color:#38bdf8;font-weight:700;">Live</span>
+            <div class="card-heading-v2" style="margin-bottom:10px;">
+              <h3 style="font-size:1.05rem;font-weight:800;margin:0;">Personalized Insights</h3>
+              <span style="font-size:0.75rem;color:#2563eb;font-weight:700;">Live Coach</span>
             </div>
-            <div class="insight-card-item">
-              <div class="insight-icon-bubble">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="insight-card-item" style="display:flex;gap:10px;align-items:flex-start;">
+                <div class="insight-icon-bubble" style="width:28px;height:28px;border-radius:50%;background:rgba(37,99,235,0.12);display:flex;align-items:center;justify-content:center;color:#2563eb;flex-shrink:0;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div>
+                  <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Protein Target Gap</b>
+                  <span style="font-size:0.76rem;color:var(--ff-text-secondary);line-height:1.4;display:block;">
+                    You're 60g short on protein today. Add Greek yogurt or a whey shake post-workout to hit your target.
+                  </span>
+                </div>
               </div>
-              <div>
-                <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Protein Distribution</b>
-                <span style="font-size:0.76rem;color:var(--ff-text-secondary);line-height:1.35;display:block;">
-                  40g remaining for dinner to maximize overnight MPS recovery.
-                </span>
-              </div>
-            </div>
-            <div class="insight-card-item">
-              <div class="insight-icon-bubble" style="background:rgba(56,189,248,0.15);color:#0284c7;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m12 6 4 6H8z"/></svg>
-              </div>
-              <div>
-                <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Squat Depth Feedback</b>
-                <span style="font-size:0.76rem;color:var(--ff-text-secondary);line-height:1.35;display:block;">
-                  Knee angle reached 88° on set 3. Perfect depth achieved!
-                </span>
+              <div class="insight-card-item" style="display:flex;gap:10px;align-items:flex-start;">
+                <div class="insight-icon-bubble" style="width:28px;height:28px;border-radius:50%;background:rgba(22,199,154,0.12);display:flex;align-items:center;justify-content:center;color:#16c79a;flex-shrink:0;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div>
+                  <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Recovery Score (91%)</b>
+                  <span style="font-size:0.76rem;color:var(--ff-text-secondary);line-height:1.4;display:block;">
+                    Great recovery score. Today is ideal for your scheduled Back &amp; Biceps hypertrophy volume.
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -1264,32 +1417,59 @@
 
       <!-- ================= Starting Load Calculator (1RM-free) ================= -->
       <section class="view" id="view-starting-load">
-        <div class="view-intro">
+        <div class="view-intro" style="text-align:center;max-width:720px;margin:0 auto 20px;">
           <div>
-            <span class="section-kicker">SMART START</span>
-            <h2>Your first working weight</h2>
-            <p>No max test needed. Get a safe, buildable starting load from your bodyweight.</p>
+            <span class="section-kicker">SMART START · AUTONOMOUS CALIBRATION</span>
+            <h2>Your Precision Starting Working Weight</h2>
+            <p>Scientific, 1RM-free baseline calibration based on your bodyweight, sex, and experience level.</p>
           </div>
         </div>
-        <div class="panel starting-load-card" style="max-width:460px;margin:0 auto 30px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;">
+        <div class="panel starting-load-card" style="max-width:720px;margin:0 auto 36px;padding:26px 30px;box-shadow:0 12px 36px rgba(15,23,42,0.06);border-radius:18px;">
+          <!-- Level Selection Row -->
+          <div style="margin-bottom:20px;">
+            <label style="font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">
+              1. Training Experience Level
+            </label>
+            <div class="filter-pills-row" id="slLevelPills" style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="filter-pill active" data-sl-level="beginner" style="flex:1;min-width:120px;text-align:center;">Beginner</button>
+              <button type="button" class="filter-pill" data-sl-level="medium" style="flex:1;min-width:120px;text-align:center;">Medium (Novice)</button>
+              <button type="button" class="filter-pill" data-sl-level="intermediate" style="flex:1;min-width:120px;text-align:center;">Intermediate</button>
+              <button type="button" class="filter-pill" data-sl-level="hard" style="flex:1;min-width:120px;text-align:center;">Hard (Advanced)</button>
+            </div>
+            <div id="slLevelDesc" style="font-size:.78rem;color:var(--ff-text-muted);margin-top:6px;">
+              Safe, buildable baseline for lifters learning compound mechanics (1.0x baseline).
+            </div>
+          </div>
+
+          <!-- Parameters Row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;margin-bottom:20px;">
             <div style="display:flex;flex-direction:column;gap:6px;">
-              <label style="font-size:.82rem;color:#475569;">Bodyweight (kg)</label>
-              <input type="number" id="slBodyweight" value="70" min="30" max="200" step="1" style="padding:8px 10px;border:1.5px solid #d4ded2;border-radius:10px;outline:none;font-size:.9rem;">
+              <label style="font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.05em;">2. Bodyweight (kg)</label>
+              <input type="number" id="slBodyweight" value="70" min="30" max="200" step="1" style="padding:10px 14px;border:1.5px solid var(--ff-glass-border-subtle);border-radius:12px;outline:none;font-size:.95rem;background:var(--ff-surface);">
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;">
-              <label style="font-size:.82rem;color:#475569;">Sex</label>
-              <select id="slSex" style="padding:8px 10px;border:1.5px solid #d4ded2;border-radius:10px;outline:none;font-size:.9rem;">
-                <option value="male">Male</option>
+              <label style="font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.05em;">3. Biological Sex</label>
+              <select id="slSex" style="padding:10px 14px;border:1.5px solid var(--ff-glass-border-subtle);border-radius:12px;outline:none;font-size:.95rem;background:var(--ff-surface);">
+                <option value="male" selected>Male</option>
                 <option value="female">Female</option>
               </select>
             </div>
           </div>
-          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;" id="slLoadsGrid">
+
+          <!-- Lifts Grid -->
+          <div style="font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">
+            4. Recommended Starting Working Weights
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;" id="slLoadsGrid">
             <!-- Populated by JS -->
           </div>
-          <div id="slCeilingNote" style="margin-top:10px;font-size:.82rem;color:#64748b;line-height:1.5;"></div>
-          <p style="margin-top:12px;font-size:.78rem;color:#94a3b8;">Ramp: empty bar → ~50-60% of ceiling → single small jumps until RPE 6-7. Never go to failure on session 1.</p>
+
+          <!-- Explanatory note -->
+          <div id="slCeilingNote" style="margin-top:16px;font-size:.82rem;color:var(--ff-text-secondary);line-height:1.55;background:rgba(207,229,255,0.25);border:1px solid var(--ff-glass-border-subtle);padding:12px 16px;border-radius:12px;"></div>
+          <p style="margin-top:14px;font-size:.78rem;color:var(--ff-text-muted);display:flex;align-items:center;gap:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Ramp protocol: empty Olympic bar (20 kg) &rarr; 50–60% ceiling warmup &rarr; calibrated work sets at RPE 6–7.
+          </p>
         </div>
       </section>
 
@@ -1788,163 +1968,345 @@
         </div>
       </section>
 
-      <!-- ================= VIEW: ACTIVITY & LIVE GPS TRACKER (SECTIONS 13 & 14) ================= -->
+      <!-- ================= VIEW: ACTIVITY & MOVEMENT (IMAGE 5) ================= -->
       <section class="view" id="view-activity">
-        <div class="view-intro">
-          <div>
-            <span class="section-kicker">REAL-TIME MOVEMENT &amp; SENSORS</span>
-            <h2>Activity &amp; Live GPS Tracker</h2>
-            <p>Pedometer step analytics, outdoor running/walking GPS route breadcrumbs, live pace, and calorie expenditure.</p>
+        <!-- Hero Banner with Athlete Visual (Image 5) -->
+        <div class="panel" style="position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(239,246,255,0.85), rgba(219,234,254,0.7));border:1.5px solid #bfdbfe;border-radius:22px;padding:26px 30px;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
+            <div style="max-width:540px;">
+              <span class="section-kicker" style="color:#2563eb;font-weight:800;letter-spacing:.05em;">PRECISION BIOMETRICS</span>
+              <h2 style="font-size:1.9rem;font-weight:900;color:#1e293b;margin:4px 0 8px;letter-spacing:-.02em;">Activity &amp; Movement</h2>
+              <p style="color:#475569;font-size:.92rem;line-height:1.5;margin:0 0 16px;">
+                Track outdoor runs, walks, daily steps, and camera-verified form in real time with high-precision GPS and sensor telemetry.
+              </p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="solid-button" id="actHeroStartGpsBtn" style="background:#2563eb;padding:10px 22px;font-size:.9rem;">
+                  Start Live GPS Track
+                </button>
+                <button type="button" class="outline-button" id="actHeroCheckPostureBtn" style="padding:10px 18px;font-size:.9rem;background:rgba(255,255,255,0.8);">
+                  Camera Form Check
+                </button>
+              </div>
+            </div>
+            <!-- High-Res Athlete Hero Illustration -->
+            <div style="display:flex;align-items:center;justify-content:center;position:relative;">
+              <img src="images/fitfuel-athlete-hero.png" alt="Activity & Movement Athlete" style="height:150px;width:auto;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(37,99,235,0.25));">
+            </div>
           </div>
         </div>
 
-        <div class="activity-layout-grid">
-          <!-- LEFT: LIVE GPS SESSION & INTERACTIVE ROUTE CANVAS -->
+        <!-- 4 Top Metric Cards (Image 5) -->
+        <div class="dash-metrics-grid-v2" style="margin-bottom:20px;">
+          <!-- Card 1: Today's Steps -->
+          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+            <div class="metric-info">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Today's Steps
+              </span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="actStepsTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">8,432</span>
+                <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> / 10,000</span>
+              </div>
+              <span class="metric-sub" style="font-size:.76rem;color:#2563eb;font-weight:700;">1,568 steps remaining</span>
+            </div>
+            <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
+              <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207,229,255,0.4)" stroke-width="3.5" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-dasharray="84, 100" stroke-linecap="round" />
+              </svg>
+              <span class="pct-text" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#1e293b;">84%</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Active Time -->
+          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+            <div class="metric-info">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Active Time
+              </span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="actActiveTimeTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">56</span>
+                <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> min</span>
+              </div>
+              <span class="metric-sub" style="font-size:.76rem;color:#0284c7;font-weight:700;">+20% vs yesterday</span>
+            </div>
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#0284c7;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+          </div>
+
+          <!-- Card 3: Distance -->
+          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+            <div class="metric-info">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                Distance
+              </span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="actDistanceTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">4.8</span>
+                <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> km</span>
+              </div>
+              <span class="metric-sub" style="font-size:.76rem;color:#16c79a;font-weight:700;">Outdoor GPS tracked</span>
+            </div>
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(22,199,154,0.12);display:flex;align-items:center;justify-content:center;color:#16c79a;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            </div>
+          </div>
+
+          <!-- Card 4: Calories Burned -->
+          <div class="metric-card-v2" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:18px;padding:18px 20px;">
+            <div class="metric-info">
+              <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:#64748b;text-transform:uppercase;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                Calories Burned
+              </span>
+              <div style="margin:6px 0 2px;">
+                <span class="metric-val" id="actCaloriesTopVal" style="font-size:1.65rem;font-weight:900;color:#1e293b;">312</span>
+                <span style="font-size:.85rem;color:#94a3b8;font-weight:600;"> kcal</span>
+              </div>
+              <span class="metric-sub" style="font-size:.76rem;color:#b45309;font-weight:700;">Active exercise burn</span>
+            </div>
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;color:#f59e0b;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Subtabs Bar (Image 5) -->
+        <div class="filter-pills-row" id="actSubTabsBar" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+          <button type="button" class="filter-pill active" data-act-tab="quick-actions">Quick Actions</button>
+          <button type="button" class="filter-pill" data-act-tab="live-tracking">Live Tracking</button>
+          <button type="button" class="filter-pill" data-act-tab="history">Activity History</button>
+          <button type="button" class="filter-pill" data-act-tab="goals">Goals</button>
+          <button type="button" class="filter-pill" data-act-tab="insights">Insights</button>
+        </div>
+
+        <!-- 4 Quick Action Cards (Image 5) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:24px;">
+          <!-- QA 1: Walk / Run -->
+          <div class="panel" id="actQaWalkRun" style="padding:16px 18px;border:1.5px solid #dbeafe;border-radius:16px;cursor:pointer;background:#ffffff;box-shadow:0 2px 10px rgba(37,99,235,0.03);transition:transform .15s ease;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,0.1);color:#2563eb;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="4" r="2"/><path d="m15 9-3-2-4 3 2 5"/><path d="m5 17 3-3 4 1 3 6"/></svg>
+            </div>
+            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Walk / Run</b>
+            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Track with GPS · Real-time pace, distance &amp; route map</p>
+          </div>
+
+          <!-- QA 2: Step Counter -->
+          <div class="panel" id="actQaStepCounter" style="padding:16px 18px;border:1.5px solid #dbeafe;border-radius:16px;cursor:pointer;background:#ffffff;box-shadow:0 2px 10px rgba(37,99,235,0.03);transition:transform .15s ease;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(22,199,154,0.1);color:#16c79a;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Step Counter</b>
+            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Auto tracking · Sensor-based pedometer &amp; cadence</p>
+          </div>
+
+          <!-- QA 3: Camera Posture -->
+          <div class="panel" id="actQaCameraPosture" style="padding:16px 18px;border:1.5px solid #dbeafe;border-radius:16px;cursor:pointer;background:#ffffff;box-shadow:0 2px 10px rgba(37,99,235,0.03);transition:transform .15s ease;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,0.1);color:#8b5cf6;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Camera Posture</b>
+            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">Check your form · Live AI angle &amp; spine alignment</p>
+          </div>
+
+          <!-- QA 4: Exercise Form -->
+          <div class="panel" id="actQaExerciseForm" style="padding:16px 18px;border:1.5px solid #dbeafe;border-radius:16px;cursor:pointer;background:#ffffff;box-shadow:0 2px 10px rgba(37,99,235,0.03);transition:transform .15s ease;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.1);color:#0284c7;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <b style="font-size:1rem;color:#1e293b;display:block;margin-bottom:3px;">Exercise Form</b>
+            <p style="font-size:.82rem;color:#64748b;margin:0;line-height:1.4;">AI feedback · Rep count &amp; range-of-motion analysis</p>
+          </div>
+        </div>
+
+        <!-- Main 2-Column Section (Image 5) -->
+        <div class="activity-layout-grid" style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;">
+          <!-- LEFT: LIVE TRACKING CARD & INTERACTIVE ROUTE MAP -->
           <div>
-            <div class="panel" style="padding:20px;margin-bottom:16px;">
-              <div class="card-heading-v2" style="margin-bottom:12px;">
-                <h3>Live GPS Workout Session</h3>
+            <div class="panel" style="padding:22px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
+              <div class="card-heading-v2" style="margin-bottom:14px;">
+                <div>
+                  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:0;">Live Tracking</h3>
+                  <span style="font-size:.76rem;color:#64748b;">GPS Sensor &amp; Breadcrumb Route Engine</span>
+                </div>
                 <span class="gps-status-pill searching" id="gpsLiveStatusBadge">
                   <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-                  <span id="gpsLiveStatusText">GPS Idle</span>
+                  <span id="gpsLiveStatusText">GPS Ready</span>
                 </span>
               </div>
 
-              <!-- Activity Mode Pills -->
-              <div class="activity-mode-pills" id="gpsActivityModePills">
+              <!-- Mode Selector Buttons -->
+              <div class="activity-mode-pills" id="gpsActivityModePills" style="margin-bottom:16px;">
                 <button type="button" class="activity-mode-pill active" data-actmode="walking">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="m14 12-2-4-2 4 2 8"/><path d="m6 10 3 3-2 5"/></svg>
-                  Walking (3.8 MET)
-                </button>
-                <button type="button" class="activity-mode-pill" data-actmode="running">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="4" r="2"/><path d="m15 9-3-2-4 3 2 5"/><path d="m5 17 3-3 4 1 3 6"/></svg>
-                  Running (8.5 MET)
+                  Walking / Running
                 </button>
                 <button type="button" class="activity-mode-pill" data-actmode="cycling">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
-                  Cycling (6.8 MET)
+                  Cycling
                 </button>
                 <button type="button" class="activity-mode-pill" data-actmode="hiking">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
-                  Hiking (5.3 MET)
+                  Hiking
+                </button>
+                <button type="button" class="activity-mode-pill" data-actmode="other">
+                  Other
                 </button>
               </div>
 
-              <!-- Live Stats HUD -->
-              <div class="activity-hud-grid">
+              <!-- Interactive Route Map Canvas -->
+              <div class="gps-canvas-card" style="border:1.5px solid #e2e8f0;border-radius:14px;overflow:hidden;background:#0f172a;margin-bottom:16px;">
+                <div class="gps-canvas-header" style="background:rgba(15,23,42,0.9);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:#16c79a;"></span>
+                    <b style="font-size:0.82rem;color:#f8fafc;">Live Route Map</b>
+                  </div>
+                  <span style="font-size:0.72rem;color:#94a3b8;" id="gpsCoordsText">GPS Coordinates: 28.6139° N, 77.2090° E</span>
+                </div>
+                <canvas id="gpsRouteCanvas" width="600" height="280" style="display:block;width:100%;height:auto;background:#0b1120;"></canvas>
+              </div>
+
+              <!-- Live HUD Strip (Image 5: Duration, Distance, Pace, Calories) -->
+              <div class="activity-hud-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
                 <div class="activity-hud-item">
-                  <span class="activity-hud-lbl">Active Time</span>
-                  <span class="activity-hud-val" id="gpsHudTime">00:00:00</span>
+                  <span class="activity-hud-lbl">Duration</span>
+                  <span class="activity-hud-val" id="gpsHudTime" style="font-size:1.3rem;">00:25:32</span>
                   <span class="activity-hud-unit">hh:mm:ss</span>
                 </div>
                 <div class="activity-hud-item">
                   <span class="activity-hud-lbl">Distance</span>
-                  <span class="activity-hud-val" id="gpsHudDist" style="color:var(--ff-emerald);">0.00</span>
-                  <span class="activity-hud-unit">kilometers</span>
+                  <span class="activity-hud-val" id="gpsHudDist" style="color:#2563eb;font-size:1.3rem;">3.42</span>
+                  <span class="activity-hud-unit">km</span>
+                </div>
+                <div class="activity-hud-item">
+                  <span class="activity-hud-lbl">Pace</span>
+                  <span class="activity-hud-val" id="gpsHudCurrentPace" style="color:#16c79a;font-size:1.3rem;">7'28"</span>
+                  <span class="activity-hud-unit">/ km</span>
                 </div>
                 <div class="activity-hud-item">
                   <span class="activity-hud-lbl">Calories</span>
-                  <span class="activity-hud-val" id="gpsHudCal" style="color:#f59e0b;">0</span>
-                  <span class="activity-hud-unit">active kcal</span>
-                </div>
-                <div class="activity-hud-item">
-                  <span class="activity-hud-lbl">Current Pace</span>
-                  <span class="activity-hud-val" id="gpsHudCurrentPace">0'00"</span>
-                  <span class="activity-hud-unit">min / km</span>
-                </div>
-                <div class="activity-hud-item">
-                  <span class="activity-hud-lbl">Avg Pace</span>
-                  <span class="activity-hud-val" id="gpsHudAvgPace">0'00"</span>
-                  <span class="activity-hud-unit">min / km</span>
-                </div>
-                <div class="activity-hud-item">
-                  <span class="activity-hud-lbl">Live Speed</span>
-                  <span class="activity-hud-val" id="gpsHudSpeed" style="color:#38bdf8;">0.0</span>
-                  <span class="activity-hud-unit">km / hour</span>
+                  <span class="activity-hud-val" id="gpsHudCal" style="color:#f59e0b;font-size:1.3rem;">246</span>
+                  <span class="activity-hud-unit">kcal</span>
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="activity-ctrl-row">
-                <button type="button" class="solid-button" id="gpsStartBtn" style="padding:10px 22px;font-size:0.95rem;">
-                  Start Live Activity
+              <!-- Action Controls: Pause, Stop (red), Lap -->
+              <div class="activity-ctrl-row" style="display:flex;gap:10px;">
+                <button type="button" class="solid-button" id="gpsStartBtn" style="flex:1;background:#2563eb;justify-content:center;padding:11px 18px;">
+                  Start Live Session
                 </button>
-                <button type="button" class="outline-button" id="gpsPauseBtn" style="padding:10px 18px;display:none;">
+                <button type="button" class="outline-button" id="gpsPauseBtn" style="padding:11px 18px;display:none;">
                   Pause
                 </button>
-                <button type="button" class="solid-button" id="gpsResumeBtn" style="padding:10px 18px;display:none;">
+                <button type="button" class="solid-button" id="gpsResumeBtn" style="padding:11px 18px;display:none;">
                   Resume
                 </button>
-                <button type="button" class="solid-button" id="gpsFinishBtn" style="background:#2563eb;padding:10px 20px;display:none;">
-                  Finish &amp; Save
+                <button type="button" class="solid-button" id="gpsFinishBtn" style="background:#ef4444;color:#fff;padding:11px 22px;display:none;">
+                  Stop &amp; Save
                 </button>
-                <button type="button" class="outline-button" id="gpsResetBtn" style="padding:10px 14px;">
-                  Reset
+                <button type="button" class="outline-button" id="gpsLapBtn" style="padding:11px 16px;">
+                  Lap
                 </button>
               </div>
-            </div>
-
-            <!-- Route Canvas -->
-            <div class="gps-canvas-card">
-              <div class="gps-canvas-header">
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-                  <b style="font-size:0.86rem;">Interactive Route Breadcrumb Map</b>
-                </div>
-                <span style="font-size:0.75rem;color:#94a3b8;" id="gpsCoordsText">Latitude / Longitude: Waiting...</span>
-              </div>
-              <canvas id="gpsRouteCanvas" width="600" height="320"></canvas>
             </div>
           </div>
 
-          <!-- RIGHT: PEDOMETER RING & ACTIVITY SESSIONS HISTORY -->
+          <!-- RIGHT: ROUTE DETAILS, STEP COUNTER HOURLY, POSTURE CHECK -->
           <div>
-            <!-- Pedometer Card -->
-            <div class="panel" style="padding:22px 20px;margin-bottom:16px;text-align:center;">
-              <div class="card-heading-v2" style="margin-bottom:14px;">
-                <h3>Daily Step Pedometer</h3>
-                <span style="font-size:0.75rem;color:var(--ff-emerald);font-weight:700;">Sensor Active</span>
+            <!-- Route & Details Summary Card (Image 5) -->
+            <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
+              <div class="card-heading-v2" style="margin-bottom:12px;">
+                <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Route &amp; Details</h3>
+                <span style="font-size:.74rem;background:rgba(37,99,235,0.1);color:#2563eb;padding:2px 8px;border-radius:99px;font-weight:700;">Completed Loop</span>
               </div>
-              <div style="display:flex;justify-content:center;margin:16px 0;">
-                <div class="progress-circle-wrap" style="width:130px;height:130px;">
-                  <svg viewBox="0 0 36 36" style="width:130px;height:130px;">
-                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3" />
-                    <path id="pedometerBigCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#16C79A" stroke-width="3.5" stroke-dasharray="74, 100" stroke-linecap="round" />
-                  </svg>
-                  <div style="position:absolute;text-align:center;">
-                    <span style="font-size:1.6rem;font-weight:900;color:var(--ff-text-primary);line-height:1;" id="pedometerStepsDisplay">7,420</span>
-                    <span style="font-size:0.72rem;color:var(--ff-text-muted);display:block;margin-top:2px;">/ 10,000 steps</span>
-                  </div>
+              
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;">
+                  <span style="font-size:.72rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">Elevation Gain</span>
+                  <b style="font-size:1.15rem;color:#1e293b;">+42 m</b>
                 </div>
-              </div>
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 10px;">
-                <div class="activity-hud-item" style="padding:8px 10px;text-align:center;">
-                  <span class="activity-hud-lbl" style="justify-content:center;">Distance</span>
-                  <b style="font-size:1.05rem;color:var(--ff-text-primary);" id="pedometerDistDisplay">5.2 km</b>
-                </div>
-                <div class="activity-hud-item" style="padding:8px 10px;text-align:center;">
-                  <span class="activity-hud-lbl" style="justify-content:center;">Calories</span>
-                  <b style="font-size:1.05rem;color:#f59e0b;" id="pedometerCalDisplay">340 kcal</b>
-                </div>
-                <div class="activity-hud-item" style="padding:8px 10px;text-align:center;">
-                  <span class="activity-hud-lbl" style="justify-content:center;">Floors</span>
-                  <b style="font-size:1.05rem;color:#8b5cf6;" id="pedometerFloorsDisplay">8 flights</b>
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;">
+                  <span style="font-size:.72rem;color:#64748b;display:block;text-transform:uppercase;font-weight:700;">Avg Cadence</span>
+                  <b style="font-size:1.15rem;color:#1e293b;">158 spm</b>
                 </div>
               </div>
-              <button type="button" class="outline-button small" id="pedometerSimulateBtn" style="font-size:0.78rem;padding:6px 14px;">
-                Simulate +500 Steps (Test Sensor)
+
+              <button type="button" class="solid-button small" id="actSaveSummaryBtn" style="width:100%;justify-content:center;background:#2563eb;padding:9px;font-size:.85rem;">
+                Save Activity to Cloud
               </button>
             </div>
 
-            <!-- Past Sessions History -->
-            <div class="panel" style="padding:20px;">
+            <!-- Step Counter Hourly Bars (Image 5) -->
+            <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;margin-bottom:18px;">
               <div class="card-heading-v2" style="margin-bottom:12px;">
-                <h3>Activity History (Turso DB)</h3>
-                <button type="button" class="text-button" id="refreshActivityHistoryBtn" style="font-size:0.8rem;color:var(--ff-emerald);font-weight:700;">Refresh</button>
+                <div>
+                  <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Step Counter Breakdown</h3>
+                  <span style="font-size:.74rem;color:#64748b;">Hourly Activity Cadence</span>
+                </div>
+                <span style="font-size:.74rem;color:#16c79a;font-weight:700;">7 Day Streak</span>
               </div>
-              <div class="session-history-list" id="activityHistoryContainer">
-                <!-- Dynamically populated by renderActivityView() -->
+              <!-- Hourly Bars (6am - 10pm) -->
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;height:85px;padding:6px 2px;gap:4px;">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:30%;background:#bfdbfe;border-radius:3px;" title="6am: 320 steps"></div>
+                  <span style="font-size:.62rem;color:#94a3b8;">6a</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:85%;background:#2563eb;border-radius:3px;" title="9am: 1,840 steps (Run)"></div>
+                  <span style="font-size:.62rem;color:#2563eb;font-weight:700;">9a</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:45%;background:#bfdbfe;border-radius:3px;" title="12pm: 680 steps"></div>
+                  <span style="font-size:.62rem;color:#94a3b8;">12p</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:55%;background:#bfdbfe;border-radius:3px;" title="3pm: 920 steps"></div>
+                  <span style="font-size:.62rem;color:#94a3b8;">3p</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:75%;background:#2563eb;border-radius:3px;" title="6pm: 1,450 steps (Walk)"></div>
+                  <span style="font-size:.62rem;color:#2563eb;font-weight:700;">6p</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;height:35%;background:#bfdbfe;border-radius:3px;" title="9pm: 450 steps"></div>
+                  <span style="font-size:.62rem;color:#94a3b8;">9p</span>
+                </div>
               </div>
+            </div>
+
+            <!-- Camera Posture Check Card (Image 5: 92% score & checklist) -->
+            <div class="panel" style="padding:20px;border:1.5px solid #dbeafe;border-radius:18px;">
+              <div class="card-heading-v2" style="margin-bottom:10px;">
+                <div>
+                  <h3 style="font-size:1rem;font-weight:800;color:#1e293b;margin:0;">Camera Posture &amp; Form</h3>
+                  <span style="font-size:.74rem;color:#64748b;">Live AI Skeletal Analysis</span>
+                </div>
+                <span style="font-size:.74rem;background:rgba(22,199,154,0.15);color:#0f766e;font-weight:800;padding:2px 8px;border-radius:99px;">92% Score</span>
+              </div>
+              
+              <!-- 4 Form Checkpoints Checklist -->
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Back straight and neutral spine maintained</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Knees tracking cleanly in line with toes</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Good squat depth achieved (88° parallel)</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:#334155;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Weight evenly balanced over midfoot</span>
+                </div>
+              </div>
+
+              <button type="button" class="solid-button small" id="actOpenPostureCheckerBtn" style="width:100%;justify-content:center;background:#8b5cf6;padding:9px;font-size:.85rem;">
+                Open Camera Posture Analyzer
+              </button>
             </div>
           </div>
         </div>
@@ -2829,61 +3191,104 @@
       </div>
     </div>
 
-    <!-- 2x2 Quick Action Cards (Image 3) -->
-    <div class="floating-quick-actions-2x2">
-      <button type="button" class="floating-qa-card" data-fqa="workout">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/></svg>
-        <span>Workout Advice</span>
+    <!-- Welcome Greeting Bubble (Image 4) -->
+    <div style="padding:14px 16px 6px;">
+      <div style="background:rgba(239,246,255,0.85);border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;font-size:0.85rem;line-height:1.45;color:#1e293b;box-shadow:0 2px 8px rgba(37,99,235,0.04);">
+        <b style="color:#2563eb;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;">FitFuel AI Coach</b>
+        Hi Utkarsh! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?
+      </div>
+    </div>
+
+    <!-- 2x2 Quick Action Cards (Image 4) -->
+    <div class="floating-quick-actions-2x2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 16px;">
+      <button type="button" class="floating-qa-card" data-fqa="analyze-meal" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
+        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Analyze My Meal</span>
       </button>
-      <button type="button" class="floating-qa-card" data-fqa="nutrition">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
-        <span>Nutrition Tips</span>
+
+      <button type="button" class="floating-qa-card" data-fqa="workout-plan" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(22,199,154,0.1);display:flex;align-items:center;justify-content:center;color:#16c79a;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1a5 5 0 0 0-7.07 0l-.71.71a5 5 0 0 1-7.07 0L4 19.5"/><path d="m3 3 1 1a5 5 0 0 0 7.07 0l.71-.71a5 5 0 0 1 7.07 0L20 4.5"/></svg>
+        </span>
+        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Create Workout Plan</span>
       </button>
-      <button type="button" class="floating-qa-card" data-fqa="form">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        <span>Form Correction</span>
+
+      <button type="button" class="floating-qa-card" data-fqa="analyze-body" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;color:#8b5cf6;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+        </span>
+        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Analyze My Body</span>
       </button>
-      <button type="button" class="floating-qa-card" data-fqa="recovery">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span>Recovery Help</span>
+
+      <button type="button" class="floating-qa-card" data-fqa="track-progress" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#ffffff;border:1px solid #dbeafe;border-radius:12px;cursor:pointer;text-align:left;">
+        <span style="width:28px;height:28px;border-radius:8px;background:rgba(56,189,248,0.1);display:flex;align-items:center;justify-content:center;color:#0284c7;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        <span style="font-size:.8rem;font-weight:700;color:#1e293b;line-height:1.2;">Track My Progress</span>
       </button>
     </div>
 
-    <!-- Popular Questions List (Image 3) -->
-    <div class="floating-popular-questions">
-      <div class="floating-pq-label">POPULAR QUESTIONS</div>
-      <div class="floating-pq-item" data-q="Recommend a high-protein dinner under 500 kcal with exact ingredient grams.">
-        <span>High-protein dinner under 500 kcal</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+    <!-- Popular Questions List (Image 4: 5 Exact Questions) -->
+    <div class="floating-popular-questions" style="padding:8px 16px;">
+      <div class="floating-pq-label" style="font-size:.72rem;font-weight:800;color:#64748b;letter-spacing:.05em;margin-bottom:8px;">POPULAR QUESTIONS</div>
+      
+      <div class="floating-pq-item" data-q="How much protein should I eat daily to maximize muscle building?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">How much protein should I eat to build muscle?</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
-      <div class="floating-pq-item" data-q="How do I properly brace my core during heavy squats and deadlifts?">
-        <span>Proper core bracing technique</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+
+      <div class="floating-pq-item" data-q="What is the best pre-workout meal for sustained energy and endurance?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">What is the best pre-workout meal for energy?</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
-      <div class="floating-pq-item" data-q="What is the scientific daily hydration requirement when taking 5g creatine?">
-        <span>Daily hydration demand with creatine</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+
+      <div class="floating-pq-item" data-q="Can you review my deadlift form cues and safety checkpoints?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">Can you review my deadlift form tips?</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+
+      <div class="floating-pq-item" data-q="Suggest a 20-minute fat-burning HIIT workout with no equipment needed." style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">Suggest a 20-minute fat-burning HIIT workout</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+
+      <div class="floating-pq-item" data-q="How do I accurately calculate my daily calorie deficit for steady fat loss?" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.7);border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-size:.8rem;color:#1e293b;font-weight:600;">How do I calculate my daily calorie deficit?</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
     </div>
 
     <!-- Live Messages Stream -->
-    <div class="floating-messages-stream" id="floatingAiMessages">
-      <div class="ai-msg bot" style="background:rgba(255,255,255,0.85);border:1px solid var(--ff-glass-border-subtle);border-radius:14px;padding:10px 14px;font-size:0.84rem;line-height:1.45;">
-        <b style="color:var(--ff-emerald);display:block;margin-bottom:3px;">FitFuel Assistant:</b>
-        Hi! I'm your on-call fitness AI. Ask any question about nutrition, exercises, form cues, or recovery.
+    <div class="floating-messages-stream" id="floatingAiMessages" style="padding:10px 16px;max-height:220px;overflow-y:auto;">
+      <div class="ai-msg bot" style="background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:10px 14px;font-size:0.84rem;line-height:1.45;color:#1e293b;">
+        <b style="color:#2563eb;display:block;margin-bottom:2px;">FitFuel AI Coach:</b>
+        Ready when you are! Ask me any fitness, nutrition, or workout question, or choose an action above.
       </div>
     </div>
 
-    <!-- Panel Footer & Input Bar -->
-    <div class="floating-panel-footer">
+    <!-- Panel Footer & Input Bar (Image 4: paperclip + mic + send pill) -->
+    <div class="floating-panel-footer" style="padding:12px 16px;border-top:1px solid #e2e8f0;background:rgba(255,255,255,0.9);">
       <form id="floatingAiForm" onsubmit="return false;" style="margin:0;">
-        <div class="ai-chat-input-bar">
-          <input type="text" class="ai-chat-input-field" id="floatingAiInput" placeholder="Ask about diet, workout, food, or form..." autocomplete="off">
-          <button type="button" class="ai-chat-icon-btn" id="floatingAiMicBtn" title="Voice Input">
+        <!-- Hidden file input for paperclip upload -->
+        <input type="file" id="floatingAiFileInput" accept="image/*" style="display:none;">
+        <div class="ai-chat-input-bar" style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #dbeafe;border-radius:99px;padding:4px 6px 4px 12px;">
+          <!-- Paperclip button -->
+          <button type="button" class="ai-chat-icon-btn" id="floatingAiPaperclipBtn" title="Attach meal or form photo" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center;padding:4px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          
+          <input type="text" class="ai-chat-input-field" id="floatingAiInput" placeholder="Ask your AI coach anything..." autocomplete="off" style="flex:1;border:none;background:transparent;outline:none;font-size:.88rem;color:#1e293b;">
+          
+          <!-- Voice mic button -->
+          <button type="button" class="ai-chat-icon-btn" id="floatingAiMicBtn" title="Voice Input" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center;padding:4px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
           </button>
-          <button type="submit" class="ai-chat-send-btn" id="floatingAiSendBtn" title="Send message">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          
+          <!-- Send pill button (>) -->
+          <button type="submit" class="ai-chat-send-btn" id="floatingAiSendBtn" title="Send message" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#38bdf8);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </button>
         </div>
       </form>

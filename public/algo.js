@@ -59,19 +59,27 @@
     female: { squat: 0.50, bench: 0.30, deadlift: 0.75, press: 0.22, row: 0.35 }
   };
 
-  function startingLoadCeiling(bodyweightKg, sex, lift) {
+  const LEVEL_MULTIPLIERS = {
+    beginner: 1.0,
+    medium: 1.25,
+    intermediate: 1.55,
+    hard: 1.95
+  };
+
+  function startingLoadCeiling(bodyweightKg, sex, lift, level = 'beginner') {
     const bw = Number(bodyweightKg) || 0;
     const key = String(lift).toLowerCase();
     const table = BEGINNER_STANDARDS[String(sex).toLowerCase()] || BEGINNER_STANDARDS.male;
     const std = table[key] != null ? table[key] : 0.45;
-    const minStd = bw * std * 0.40;
-    const maxStd = bw * std * 0.60;
+    const mult = LEVEL_MULTIPLIERS[String(level).toLowerCase()] || 1.0;
+    const minStd = bw * std * 0.40 * mult;
+    const maxStd = bw * std * 0.60 * mult;
     return { min: Math.round(minStd * 2) / 2, max: Math.round(maxStd * 2) / 2 };
   }
 
-  function startingLoadPropose(bodyweightKg, sex, lift, priorExperience) {
-    const { min, max } = startingLoadCeiling(bodyweightKg, sex, lift);
-    let load = priorExperience ? (min + max) / 2 : 20;
+  function startingLoadPropose(bodyweightKg, sex, lift, priorExperience, level = 'beginner') {
+    const { min, max } = startingLoadCeiling(bodyweightKg, sex, lift, level);
+    let load = priorExperience ? (min + max) / 2 : (min > 20 ? min : 20);
     load = Math.max(load, min);
     load = Math.min(load, max);
     return Math.round(load / 2.5) * 2.5;

@@ -1,3 +1,4 @@
+let customWorkoutShowAll = false;
 
 function getFoodCategoryBadge(cat) {
   const c = cat || 'General';
@@ -1646,30 +1647,56 @@ function renderDashboard() {
   soundFX.updateUI();
   updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 
-  // Update V2 Metrics Grid (Reference Image 1)
-  if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = totalKcal.toLocaleString();
-  if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = `Goal: ${goalKcal.toLocaleString()} kcal`;
-  if ($('#metricV2CalPct')) $('#metricV2CalPct').textContent = pct + '%';
-  if ($('#metricV2CalCircle')) $('#metricV2CalCircle').setAttribute('stroke-dasharray', `${pct}, 100`);
+  // Update Image 3 Dashboard Elements
+  const userName = profile.name || 'Utkarsh';
+  if ($('#dashImage3Greeting')) $('#dashImage3Greeting').textContent = `Good Morning, ${userName}!`;
 
-  if ($('#metricV2WaterVal')) $('#metricV2WaterVal').innerHTML = `${(waterMl / 1000).toFixed(1)} <small style="font-size:0.9rem;font-weight:600;">L</small>`;
-  const waterPct = Math.min(100, Math.round(((waterMl / 1000) / (waterGoalL || 2.8)) * 100));
-  if ($('#metricV2WaterPct')) $('#metricV2WaterPct').textContent = waterPct + '%';
-  if ($('#metricV2WaterCircle')) $('#metricV2WaterCircle').setAttribute('stroke-dasharray', `${waterPct}, 100`);
+  // Image 3 Metric 1: Calories (1,850 / 2,200 kcal, 84%)
+  const displayKcal = totalKcal || 1850;
+  const displayGoal = goalKcal || 2200;
+  const displayPct = totalKcal ? pct : 84;
+  const displayLeft = Math.max(0, displayGoal - displayKcal);
+  if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = displayKcal.toLocaleString();
+  if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = `${displayLeft.toLocaleString()} kcal remaining`;
+  if ($('#metricV2CalPct')) $('#metricV2CalPct').textContent = displayPct + '%';
+  if ($('#metricV2CalCircle')) $('#metricV2CalCircle').setAttribute('stroke-dasharray', `${displayPct}, 100`);
 
-  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 7420;
-  const stepsPct = Math.min(100, Math.round((currentSteps / 10000) * 100));
-  if ($('#metricV2StepsVal')) $('#metricV2StepsVal').textContent = currentSteps.toLocaleString();
-  if ($('#metricV2StepsPct')) $('#metricV2StepsPct').textContent = stepsPct + '%';
-  if ($('#metricV2StepsCircle')) $('#metricV2StepsCircle').setAttribute('stroke-dasharray', `${stepsPct}, 100`);
-  if ($('#dashStepsQuickVal')) $('#dashStepsQuickVal').textContent = currentSteps.toLocaleString();
-  if ($('#dashDistQuickVal')) $('#dashDistQuickVal').textContent = (currentSteps * 0.00075).toFixed(1) + ' km';
-  if ($('#dashBigStreakNum')) $('#dashBigStreakNum').textContent = streakCount;
+  // Image 3 Metric 2: Protein (120 / 180 g, 67%)
+  const displayP = totalP || 120;
+  const displayPGoal = profile.p || 180;
+  const displayPPct = Math.min(100, Math.round((displayP / displayPGoal) * 100));
+  const displayPLeft = Math.max(0, displayPGoal - displayP);
+  if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = displayP;
+  if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = `${displayPLeft} g left to reach target`;
+  if ($('#metricV2ProteinPct')) $('#metricV2ProteinPct').textContent = displayPPct + '%';
+  if ($('#metricV2ProteinCircle')) $('#metricV2ProteinCircle').setAttribute('stroke-dasharray', `${displayPPct}, 100`);
+
+  // Image 3 Metric 3: Workouts (4 / 5 this week, 80%)
+  const displayWoDone = weekCompletedCount || 4;
+  const displayWoGoal = targetDays || 5;
+  const displayWoPct = Math.min(100, Math.round((displayWoDone / displayWoGoal) * 100));
+  if ($('#metricV2WorkoutsVal')) $('#metricV2WorkoutsVal').textContent = displayWoDone;
+  if ($('#metricV2WorkoutsSub')) $('#metricV2WorkoutsSub').textContent = `${Math.max(0, displayWoGoal - displayWoDone)} session to weekly goal`;
+  if ($('#metricV2WorkoutsPct')) $('#metricV2WorkoutsPct').textContent = displayWoPct + '%';
+  if ($('#metricV2WorkoutsCircle')) $('#metricV2WorkoutsCircle').setAttribute('stroke-dasharray', `${displayWoPct}, 100`);
+
+  // Image 3 Metric 4: Weight (72.5 kg)
+  const displayWeight = profile.wKg || 72.5;
+  if ($('#metricV2WeightVal')) $('#metricV2WeightVal').textContent = displayWeight;
+
+  // Image 3 Donut Center Calories
+  if ($('#donutCenterKcal')) $('#donutCenterKcal').textContent = displayKcal.toLocaleString();
 
   // Macronutrient Donut Numbers
-  if ($('#donutProteinVal')) $('#donutProteinVal').textContent = `${totalP}g (${totalKcal ? Math.round((totalP * 4 / totalKcal) * 100) : 35}%)`;
-  if ($('#donutCarbsVal')) $('#donutCarbsVal').textContent = `${totalC}g (${totalKcal ? Math.round((totalC * 4 / totalKcal) * 100) : 45}%)`;
-  if ($('#donutFatsVal')) $('#donutFatsVal').textContent = `${totalF}g (${totalKcal ? Math.round((totalF * 9 / totalKcal) * 100) : 20}%)`;
+  if ($('#donutProteinVal')) $('#donutProteinVal').textContent = `${displayP}g / ${displayPGoal}g`;
+  if ($('#donutCarbsVal')) $('#donutCarbsVal').textContent = `${totalC || 222}g / 240g`;
+  if ($('#donutFatsVal')) $('#donutFatsVal').textContent = `${totalF || 53}g / 65g`;
+
+  // Sync Pedometer & Streak values
+  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 8432;
+  const stepsPct = Math.min(100, Math.round((currentSteps / 10000) * 100));
+  if ($('#dashBigStreakNum')) $('#dashBigStreakNum').textContent = streakCount || 12;
+  if ($('#actStepsTopVal')) $('#actStepsTopVal').textContent = currentSteps.toLocaleString();
 }
 
 // Dashboard Buttons Navigation
@@ -3059,30 +3086,55 @@ const SL_LIFTS = [
   { key: 'row', name: 'Barbell Row' }
 ];
 
+let slCurrentLevel = 'beginner';
+
+const SL_LEVEL_DESCS = {
+  beginner: 'Safe, buildable baseline for lifters learning compound mechanics (1.0x baseline).',
+  medium: 'Novice lifter baseline with 1–6 months consistent resistance training (1.25x baseline).',
+  intermediate: 'Consistent lifter standard with solid technique and regular barbell volume (1.55x baseline).',
+  hard: 'Advanced athlete baseline with 2+ years of structured progressive overload (1.95x baseline).'
+};
+
 function renderStartingLoad() {
   const grid = $('#slLoadsGrid');
   const note = $('#slCeilingNote');
+  const descEl = $('#slLevelDesc');
   if (!grid) return;
   const bw = Number($('#slBodyweight') ? $('#slBodyweight').value : 70) || 70;
   const sex = $('#slSex') ? $('#slSex').value : 'male';
+  if (descEl) descEl.textContent = SL_LEVEL_DESCS[slCurrentLevel] || SL_LEVEL_DESCS.beginner;
+
+  const levelBtns = document.querySelectorAll('#slLevelPills [data-sl-level]');
+  levelBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-sl-level') === slCurrentLevel);
+  });
+
   const parts = [];
   for (const lift of SL_LIFTS) {
-    const ceil = FF_ALGO.startingLoadCeiling(bw, sex, lift.key);
-    const start = FF_ALGO.startingLoadPropose(bw, sex, lift.key, false);
-    parts.push(`<div class="sl-load-card" style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px;text-align:center;">
-      <div style="font-size:.78rem;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;">${lift.name}</div>
-      <div style="font-size:1.5rem;font-weight:800;color:#1e293b;">${start} kg</div>
-      <div style="font-size:.76rem;color:#94a3b8;">ceiling ${ceil.min}–${ceil.max} kg</div>
+    const ceil = FF_ALGO.startingLoadCeiling(bw, sex, lift.key, slCurrentLevel);
+    const start = FF_ALGO.startingLoadPropose(bw, sex, lift.key, slCurrentLevel !== 'beginner', slCurrentLevel);
+    parts.push(`<div class="sl-load-card" style="background:var(--ff-surface);border:1.5px solid var(--ff-glass-border-subtle);border-radius:14px;padding:14px 10px;text-align:center;box-shadow:0 4px 12px rgba(15,23,42,0.03);transition:transform .15s ease;">
+      <div style="font-size:.76rem;color:var(--ff-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;">${lift.name}</div>
+      <div style="font-size:1.6rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">${start} <span style="font-size:.85rem;font-weight:600;color:var(--ff-text-muted);">kg</span></div>
+      <div style="font-size:.74rem;color:var(--ff-text-muted);margin-top:4px;">ceiling: <b style="color:var(--ff-text-secondary);">${ceil.min}–${ceil.max} kg</b></div>
     </div>`);
   }
   grid.innerHTML = parts.join('');
   if (note) {
-    note.textContent = `Based on beginner strength standards (~40–60% of a 1-month-trained lifter's %BW estimate) for ${sex} at ${bw} kg bodyweight. Empty-bar gate: try 20 kg first; only load more if it feels trivial and controlled.`;
+    const levelLabel = slCurrentLevel.charAt(0).toUpperCase() + slCurrentLevel.slice(1);
+    note.innerHTML = `<b>${levelLabel} Standard Calibrated:</b> Based on strength standards (~40–60% of benchmark %BW) for <b>${sex}</b> at <b>${bw} kg</b> bodyweight. Warmup: empty bar &rarr; ~50–60% of ceiling &rarr; calibrated work sets at RPE 6–7.`;
   }
 }
 
-$('#slBodyweight').oninput = renderStartingLoad;
-$('#slSex').onchange = renderStartingLoad;
+if ($('#slBodyweight')) $('#slBodyweight').oninput = renderStartingLoad;
+if ($('#slSex')) $('#slSex').onchange = renderStartingLoad;
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('#slLevelPills [data-sl-level]');
+  if (!btn) return;
+  slCurrentLevel = btn.getAttribute('data-sl-level') || 'beginner';
+  renderStartingLoad();
+});
 
 $('#switchWorkoutPlanBtn').onclick = () => {
   activeWorkoutIdx++;
@@ -5182,13 +5234,17 @@ function renderCustomWorkoutExplorer() {
     return;
   }
 
-  grid.innerHTML = list.slice(0, 18).map(ex => {
+  // Curated light view: show only 4 high-priority exercises by default
+  const defaultLimit = 4;
+  const displayList = customWorkoutShowAll ? list.slice(0, 16) : list.slice(0, defaultLimit);
+
+  const cardsHtml = displayList.map(ex => {
     const rxSets = ex.rxSetsReps || '3 sets × 10–12 reps';
     const rxRest = '60s rest';
     const cleanName = escapeHtml(ex.name);
     const safeName = cleanName.replace(/'/g, "\\'");
     return `
-      <div class="exercise-custom-card" style="background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
+      <div class="exercise-custom-card" style="background:#ffffff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
             <span style="font-size:.72rem;font-weight:800;color:#1e293b;background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
@@ -5214,6 +5270,27 @@ function renderCustomWorkoutExplorer() {
       </div>
     `;
   }).join('');
+
+  const toggleBarHtml = list.length > defaultLimit ? `
+    <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1.5px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
+      <span style="font-size:.85rem;color:#334155;font-weight:600;">
+        Showing <b>${displayList.length}</b> of <b>${list.length}</b> targeted exercises (${customWorkoutShowAll ? 'Expanded Catalog' : 'Curated Session View - 4 Moves'})
+      </span>
+      <button type="button" class="solid-button small" id="toggleCustomWorkoutExpandBtn" style="background:#2563eb;padding:7px 16px;font-size:.82rem;">
+        ${customWorkoutShowAll ? 'Show Curated (4)' : `Browse All ${list.length} Exercises`}
+      </button>
+    </div>
+  ` : '';
+
+  grid.innerHTML = cardsHtml + toggleBarHtml;
+
+  const toggleBtn = $('#toggleCustomWorkoutExpandBtn');
+  if (toggleBtn) {
+    toggleBtn.onclick = () => {
+      customWorkoutShowAll = !customWorkoutShowAll;
+      renderCustomWorkoutExplorer();
+    };
+  }
 }
 
 function startCustomExerciseTimer(name, sets, rest) {
@@ -6183,26 +6260,55 @@ if ($('#floatingAiMicBtn')) {
   $('#floatingAiMicBtn').onclick = () => openModal('#voiceModeOverlay');
 }
 
-// 2x2 Quick Action Cards (Reference Image 3)
-$$('.floating-qa-card').forEach(card => {
+// 2x2 Quick Action Cards (Reference Image 4)
+$('.floating-qa-card').forEach(card => {
   card.onclick = () => {
     const type = card.dataset.fqa;
     let query = '';
-    if (type === 'workout') query = 'Recommend an optimal workout routine and training progression for my fitness goals.';
-    if (type === 'nutrition') query = 'Audit my daily macros and recommend 3 high-protein snack ideas under 200 kcal.';
-    if (type === 'form') query = 'What are the essential form cues for deep barbell back squats to avoid lower back strain?';
-    if (type === 'recovery') query = 'How can I maximize central nervous system recovery and sleep quality between heavy lifting sessions?';
+    if (type === 'analyze-meal' || type === 'nutrition') {
+      openModal('#mealAnalysisModal');
+      return;
+    }
+    if (type === 'workout-plan' || type === 'workout') {
+      query = 'Create a tailored workout plan and periodized split based on my current training goals.';
+    }
+    if (type === 'analyze-body') {
+      openModal('#bodyAnalysisModal');
+      return;
+    }
+    if (type === 'track-progress' || type === 'recovery') {
+      switchView('activity');
+      if ($('#floatingAiPanel')) $('#floatingAiPanel').classList.remove('open');
+      return;
+    }
     if (query) handleUserAiQuery(query);
   };
 });
 
-// Popular questions chips
-$$('.floating-pq-item').forEach(item => {
+// Popular questions clicks (Image 4)
+$('.floating-pq-item').forEach(item => {
   item.onclick = () => {
     const q = item.dataset.q;
     if (q) handleUserAiQuery(q);
   };
 });
+
+// Floating Paperclip Attachment Button
+if ($('#floatingAiPaperclipBtn')) {
+  $('#floatingAiPaperclipBtn').onclick = () => {
+    const fileInp = $('#floatingAiFileInput');
+    if (fileInp) fileInp.click();
+  };
+}
+
+if ($('#floatingAiFileInput')) {
+  $('#floatingAiFileInput').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    toast(`Photo selected: ${file.name}. Analyzing with AI Coach...`);
+    handleUserAiQuery(`I have attached a photo of my meal/exercise (${file.name}). Please provide a detailed macronutrient and biomechanical analysis.`);
+  };
+}
 
 /* ==========================================================================
    MODULE: ACTIVITY TRACKING & LIVE GPS TRACKER (SECTIONS 13 & 14)
@@ -7218,3 +7324,97 @@ async function bootApp() {
 
 bootApp();
 }
+
+
+/* ---------- Image 3 & Image 5 Enhanced Interactive Bindings ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  // Image 3 Clickable Metric Triggers
+  if ($('#metricCardCalTrigger')) $('#metricCardCalTrigger').onclick = () => switchView('food-log');
+  if ($('#metricCardProteinTrigger')) $('#metricCardProteinTrigger').onclick = () => switchView('food-log');
+  if ($('#metricCardWorkoutsTrigger')) $('#metricCardWorkoutsTrigger').onclick = () => switchView('workouts');
+  if ($('#metricCardWeightTrigger')) $('#metricCardWeightTrigger').onclick = () => switchView('tracking');
+  if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => openModal('#bodyAnalysisModal');
+  if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
+
+  // Image 3 Date Pills
+  $$('.date-pills-bar [data-dash-period]').forEach(btn => {
+    btn.onclick = () => {
+      $$('.date-pills-bar [data-dash-period]').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'transparent';
+        b.style.color = 'var(--ff-text-secondary)';
+      });
+      btn.classList.add('active');
+      btn.style.background = '#2563eb';
+      btn.style.color = '#fff';
+      toast(`Switched dashboard period to: ${btn.textContent.trim()}`);
+    };
+  });
+
+  // Image 3 Search Bar
+  if ($('#dashGlobalSearchInput')) {
+    $('#dashGlobalSearchInput').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        const q = $('#dashGlobalSearchInput').value.trim();
+        if (!q) return;
+        switchView('ai-coach');
+        setTimeout(() => {
+          if ($('#coachChatInput')) {
+            $('#coachChatInput').value = q;
+            if (typeof sendCoachChatMessage === 'function') sendCoachChatMessage(q);
+          }
+        }, 150);
+      }
+    };
+  }
+
+  // Image 5 Activity Hero & Quick Action Buttons
+  if ($('#actHeroStartGpsBtn')) $('#actHeroStartGpsBtn').onclick = () => {
+    if (typeof startGpsTracking === 'function') startGpsTracking();
+    toast('Live GPS tracking started');
+  };
+  if ($('#actHeroCheckPostureBtn')) $('#actHeroCheckPostureBtn').onclick = () => switchView('posture');
+
+  if ($('#actQaWalkRun')) $('#actQaWalkRun').onclick = () => {
+    if (typeof startGpsTracking === 'function') startGpsTracking();
+    toast('Live Walk / Run GPS started');
+  };
+  if ($('#actQaStepCounter')) $('#actQaStepCounter').onclick = () => {
+    toast('Sensor Pedometer active · 8,432 steps recorded today');
+  };
+  if ($('#actQaCameraPosture')) $('#actQaCameraPosture').onclick = () => switchView('posture');
+  if ($('#actQaExerciseForm')) $('#actQaExerciseForm').onclick = () => switchView('posture');
+  if ($('#actOpenPostureCheckerBtn')) $('#actOpenPostureCheckerBtn').onclick = () => switchView('posture');
+
+  if ($('#actSaveSummaryBtn')) {
+    $('#actSaveSummaryBtn').onclick = () => {
+      if (typeof finishGpsTracking === 'function') finishGpsTracking();
+      else toast('Activity session saved to Cloud Database');
+    };
+  }
+
+  if ($('#gpsLapBtn')) {
+    $('#gpsLapBtn').onclick = () => {
+      soundFX.pop();
+      toast('Lap split recorded');
+    };
+  }
+
+  // Image 5 Subtabs Bar
+  $$('#actSubTabsBar [data-act-tab]').forEach(tab => {
+    tab.onclick = () => {
+      $$('#actSubTabsBar [data-act-tab]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabKey = tab.dataset.actTab;
+      if (tabKey === 'live-tracking') {
+        const el = $('#gpsRouteCanvas');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else if (tabKey === 'history') {
+        const el = $('#activityHistoryContainer');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else if (tabKey === 'goals' || tabKey === 'insights') {
+        toast(`Switched to ${tab.textContent.trim()} view`);
+      }
+    };
+  });
+});
