@@ -111,7 +111,14 @@ cd gym-app
 npm install
 ```
 
-### 3. Initialize Database (Turso / SQLite)
+### 3. Environment Configuration
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+*(Optional: Add your Turso Database URL and Auth Token to sync across cloud devices, or leave empty to use zero-config local SQLite `file:fitfuel.db`)*
+
+### 4. Initialize Database (Turso / SQLite)
 ```bash
 node scripts/init_turso.js
 ```
@@ -121,7 +128,7 @@ node scripts/migrate_body_scan.js
 node scripts/migrate_activity.js
 ```
 
-### 4. Start the Application
+### 5. Start the Application
 ```bash
 npm start
 ```
@@ -153,6 +160,7 @@ gym-app/
 │   ├── migrate_body_scan.js      # Body composition schema setup
 │   └── convert-exercises.js      # Exercise library data converter
 ├── server.js                     # High-performance Node.js REST API server
+├── .env.example                  # Environment variables template
 ├── package.json                  # Dependencies and execution scripts
 └── README.md                     # Documentation
 ```

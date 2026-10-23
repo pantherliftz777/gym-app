@@ -28,12 +28,12 @@ try {
   }
 } catch (e) {}
 
-const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://gym-app-pantherliftz777.aws-ap-south-1.turso.io';
-const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTIzMTY4NzYsImlkIjoiMDFhMTRlNjgtZmYwMS03MTBlLWE0YmItOTUxYzAwNTAzNjc0Iiwia2lkIjoidldIWDFnYjZCNEtoT0l5WXpxVHQ2MDkxR18zQUhKZnNOZ3FmRTBkaUNJUSIsInJpZCI6Ijk2Mjg4OTRmLWRlMGYtNDlmZC1hYzA3LTgyZGQ2MjlmMzY4MCJ9.2GeLWOkLpH2QYFCB2gAgHk-qlpRg3MfUmuD8XH_qf-9qUEcwQpg8xbg5DzE7Gq_vwpXSbT2fN7z0BQyNDuJGAA';
+const TURSO_URL = process.env.TURSO_DATABASE_URL || 'file:fitfuel.db';
+const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || undefined;
 
 const client = createClient({
   url: TURSO_URL,
-  authToken: TURSO_AUTH_TOKEN
+  ...(TURSO_AUTH_TOKEN ? { authToken: TURSO_AUTH_TOKEN } : {})
 });
 
 const db = {
@@ -506,11 +506,12 @@ const routes = {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
     const { secret } = await readBody(req);
-    if (secret === process.env.ADMIN_SECRET || secret === 'fitfuel-admin-2026') {
+    const adminSecret = process.env.ADMIN_SECRET;
+    if (adminSecret && secret === adminSecret) {
       await db.run('UPDATE users SET is_admin=1 WHERE id=?', [u.id]);
       return json(res, 200, { ok: true });
     }
-    json(res, 403, { error: 'Wrong admin secret' });
+    json(res, 403, { error: 'Invalid admin secret' });
   },
   'POST /api/ai/chat': async (req, res) => {
     const body = await readBody(req);
