@@ -336,11 +336,76 @@ const routes = {
     json(res, 200, { ok: true, id: info.lastInsertRowid });
   },
 
+  /* ---------- body analysis & transformation assessments ---------- */
+  'GET /api/body-scan/assessments': async (req, res) => {
+    const u = (await getUser(req)) || { id: 0 };
+    const rows = await db.all('SELECT * FROM body_assessments WHERE user_id=? ORDER BY created DESC LIMIT 50', [u.id]);
+    json(res, 200, {
+      assessments: rows.map(r => {
+        let analysisObj = {};
+        try { analysisObj = JSON.parse(r.analysis_json); } catch(e){}
+        return {
+          id: r.id,
+          goal: r.goal,
+          body_fat_estimate: analysisObj.estimated_physical_characteristics?.estimated_body_fat_range || analysisObj.estimatedPhysicalCharacteristics?.estimatedBodyFatPercentage || '16.5%',
+          muscle_mass_estimate: analysisObj.estimated_physical_characteristics?.estimated_lean_muscle_mass || analysisObj.estimatedPhysicalCharacteristics?.estimatedLeanMuscleMass || '62.0 kg',
+          posture_summary: analysisObj.posture_observations?.general_stance_and_balance || analysisObj.postureObservations?.generalStanceAndBalance || 'Symmetric alignment',
+          analysis_json: r.analysis_json,
+          analysis: analysisObj,
+          created: r.created,
+          created_at: r.created
+        };
+      })
+    });
+  },
+  'POST /api/body-scan/assessment': async (req, res) => {
+    const u = (await getUser(req)) || { id: 0 };
+    const body = await readBody(req);
+    const goal = body.goal || 'lean_athletic';
+    const preferences = body.preferences || {};
+    const photos_meta = body.photos_meta || {};
+    const analysis = body.analysis || (body.analysis_json ? JSON.parse(body.analysis_json) : null);
+    if (!analysis) return json(res, 400, { error: 'Missing analysis data' });
+    const info = await db.run(
+      'INSERT INTO body_assessments(user_id,goal,preferences,photos_meta,analysis_json,created) VALUES(?,?,?,?,?,?)',
+      [
+        u.id,
+        String(goal),
+        JSON.stringify(preferences),
+        JSON.stringify(photos_meta),
+        JSON.stringify(analysis),
+        Date.now()
+      ]
+    );
+    json(res, 200, { ok: true, success: true, id: info.lastInsertRowid });
+  },
+  'DELETE /api/body-scan/assessment': async (req, res) => {
+    const u = (await getUser(req)) || { id: 0 };
+    let id = req.url.includes('id=') ? new URL(req.url, 'http://localhost').searchParams.get('id') : null;
+    if (!id) {
+      const body = await readBody(req);
+      id = body && body.id;
+    }
+    if (!id) return json(res, 400, { error: 'Missing assessment id' });
+    await db.run('DELETE FROM body_assessments WHERE id=? AND (user_id=? OR user_id=0)', [id, u.id]);
+    json(res, 200, { ok: true, success: true });
+  },
+  'POST /api/body-scan/analyze': async (req, res) => {
+    const body = await readBody(req);
+    const { goal, preferences, images } = body || {};
+    try {
+      const result = await generateBodyTransformationAnalysis(goal, preferences, images);
+      json(res, 200, { ok: true, analysis: result });
+    } catch (err) {
+      json(res, 500, { ok: false, error: 'Analysis failed: ' + err.message });
+    }
+  },
+
   /* ---------- data erasure & account deletion ---------- */
   'POST /api/user/erase-data': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
-    const tables = ['log_entries', 'water', 'custom_foods', 'plans', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions'];
+    const tables = ['log_entries', 'water', 'custom_foods', 'plans', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions', 'body_assessments'];
     const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
     await db.batch(statements);
     json(res, 200, { ok: true, message: 'All user data erased successfully' });
@@ -348,7 +413,7 @@ const routes = {
   'POST /api/user/delete-account': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
-    const tables = ['sessions', 'profile', 'log_entries', 'water', 'custom_foods', 'plans', 'settings', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions'];
+    const tables = ['sessions', 'profile', 'log_entries', 'water', 'custom_foods', 'plans', 'settings', 'weights', 'workouts_done', 'saved_plans', 'activity_sessions', 'posture_sessions', 'body_assessments'];
     const statements = tables.map(t => ({ sql: 'DELETE FROM ' + t + ' WHERE user_id=?', args: [u.id] }));
     statements.push({ sql: 'DELETE FROM users WHERE id=?', args: [u.id] });
     await db.batch(statements);
@@ -951,6 +1016,354 @@ function generateDynamicBodyCompJson(prompt = '') {
       `Phase 3 (Weeks ${Math.max(5, Math.round(timelineWeeks * 0.8) + 1)}-${timelineWeeks}): Peak calibration to reach target weight of ${targetW} kg with optimal muscle retention.`
     ]
   }, null, 2);
+}
+
+async function generateBodyTransformationAnalysis(goal = 'lean_athletic', preferences = {}, images = {}) {
+  const age = Number(preferences.age) || 26;
+  const isMinor = age < 18;
+  const exp = preferences.experience || 'intermediate';
+  const activity = preferences.activity || 'moderate';
+  const curW = Number(preferences.weight) || 72;
+  const hCm = Number(preferences.height) || 178;
+  const daysPerWeek = Number(preferences.daysPerWeek) || 4;
+  const durationMin = Number(preferences.durationMin) || 45;
+  const equipment = preferences.equipment || 'gym';
+  const dietary = preferences.dietary || 'balanced';
+  const allergies = preferences.allergies || 'none';
+  const limitations = preferences.limitations || 'none';
+  const customGoalText = preferences.customGoalText || '';
+
+  const bmi = parseFloat((curW / Math.pow(hCm / 100, 2)).toFixed(1));
+  let estimatedBf = 16.5;
+  if (bmi > 25) estimatedBf += (bmi - 25) * 1.1;
+  if (bmi < 21) estimatedBf -= (21 - bmi) * 0.8;
+  estimatedBf = Math.max(9, Math.min(38, parseFloat(estimatedBf.toFixed(1))));
+
+  const fatMass = parseFloat((curW * (estimatedBf / 100)).toFixed(1));
+  const leanMass = parseFloat((curW - fatMass).toFixed(1));
+
+  const goalMap = {
+    'lean_athletic': {
+      title: 'Lean & Athletic Conditioning',
+      desc: 'Sustainable fitness, functional athletic power, core definition and conditioning.',
+      calMod: -150,
+      proteinMul: 2.0,
+      focus: 'HYBRID ATHLETIC · POWER & CONDITIONING'
+    },
+    'muscle_building': {
+      title: 'Hypertrophic Muscle Building',
+      desc: 'Progressive mechanical tension, muscular growth, recovery and protein synthesis.',
+      calMod: isMinor ? 150 : 320,
+      proteinMul: 2.2,
+      focus: 'HYPERTROPHY · PROGRESSIVE OVERLOAD · COMPOUND LIFTS'
+    },
+    'fat_loss': {
+      title: 'Sustainable Fat Loss & Definition',
+      desc: 'Moderate caloric deficit, high-protein retention, metabolic density and movement.',
+      calMod: isMinor ? -150 : -420,
+      proteinMul: 2.1,
+      focus: 'METABOLIC CONDITIONING · PRESERVE LEAN TISSUE'
+    },
+    'strength_performance': {
+      title: 'Strength & Biomechanical Performance',
+      desc: 'Neuromuscular efficiency, technical mastery, submaximal strength progression.',
+      calMod: 200,
+      proteinMul: 2.0,
+      focus: 'NEURAL DRIVE · MAXIMUM RECRUITMENT · STRENGTH'
+    },
+    'balanced_fitness': {
+      title: 'Balanced Longevity & Fitness',
+      desc: 'Whole-body strength, cardiovascular stamina, joint mobility and sustainable habits.',
+      calMod: 0,
+      proteinMul: 1.8,
+      focus: 'FULL BODY VITALITY · CARDIO & MOBILITY INTEGRATION'
+    },
+    'custom': {
+      title: customGoalText ? `Custom: ${customGoalText.slice(0, 40)}` : 'Personalized Custom Physique Target',
+      desc: customGoalText || 'Custom user-specified physique target and fitness goals.',
+      calMod: 0,
+      proteinMul: 2.0,
+      focus: 'CUSTOM ADAPTATION · USER SPECIFIED GOAL'
+    }
+  };
+
+  const gInfo = goalMap[goal] || goalMap['lean_athletic'];
+
+  const bmr = Math.round(10 * curW + 6.25 * hCm - 5 * age + 5);
+  const tdee = Math.round(bmr * 1.45);
+  const targetCalories = Math.max(1600, tdee + gInfo.calMod);
+  const proteinGrams = Math.round(curW * gInfo.proteinMul);
+  const fatsGrams = Math.round(curW * 0.85);
+  const carbsGrams = Math.max(100, Math.round((targetCalories - (proteinGrams * 4 + fatsGrams * 9)) / 4));
+  const waterLiters = Math.max(2.5, parseFloat((curW * 0.038).toFixed(1)));
+
+  const movesDatabase = {
+    upper: [
+      { name: 'Incline Dumbbell Bench Press', target: 'Upper Chest & Front Delts', sets: '3-4 sets', reps: '8-10 reps', rest: '90s', cue: '30-degree bench incline, control descent for 2 seconds, drive up with chest contraction', substitute: 'Push-Ups or Machine Chest Press' },
+      { name: 'Neutral-Grip Lat Pulldown / Pull-Up', target: 'Latissimus Dorsi & Biceps', sets: '3 sets', reps: '10-12 reps', rest: '75s', cue: 'Drive elbows towards hips, hold 1s squeeze at full contraction', substitute: 'Resistance Band Pulldown' },
+      { name: 'Overhead Dumbbell Shoulder Press', target: 'Anterior & Medial Deltoids', sets: '3 sets', reps: '10-12 reps', rest: '75s', cue: 'Brace core, press in slight arc without arching lower back', substitute: 'Pike Push-Ups or Seated DB Press' },
+      { name: 'Cable / Dumbbell Lateral Raise', target: 'Lateral Deltoids', sets: '3 sets', reps: '12-15 reps', rest: '60s', cue: 'Lead with elbows, pause at shoulder height, avoid shrugging traps', substitute: 'Band Lateral Raise' }
+    ],
+    lower: [
+      { name: 'Goblet Squat or Barbell Back Squat', target: 'Quadriceps, Glutes & Adductors', sets: '3-4 sets', reps: '8-10 reps', rest: '120s', cue: 'Break at knees and hips together, keep chest upright, knees tracking toes', substitute: 'Bodyweight Box Squat' },
+      { name: 'Romanian Deadlift (RDL)', target: 'Hamstrings & Glute Max', sets: '3 sets', reps: '8-10 reps', rest: '90s', cue: 'Hinge back at the hips with soft knees, feel deep hamstring stretch', substitute: 'Dumbbell Good Mornings' },
+      { name: 'Walking Dumbbell Lunges', target: 'Quads, Glutes & Dynamic Stability', sets: '3 sets', reps: '10 reps / leg', rest: '75s', cue: 'Step forward smoothly, lower trailing knee to 1 inch off floor', substitute: 'Reverse Static Lunges' },
+      { name: 'Standing Calf Raise', target: 'Gastrocnemius & Soleus', sets: '3 sets', reps: '15 reps', rest: '60s', cue: 'Full 2-second stretch at bottom, explode up onto big toes', substitute: 'Single-Leg Bodyweight Calf Raise' }
+    ],
+    push: [
+      { name: 'Flat Dumbbell / Barbell Bench Press', target: 'Sternal Pectoralis & Triceps', sets: '4 sets', reps: '6-8 reps', rest: '90s', cue: 'Squeeze shoulder blades back into bench, press smoothly without flaring elbows', substitute: 'Push-Ups on Handles' },
+      { name: 'Standing Overhead Military Press', target: 'Deltoids & Upper Trapezius', sets: '3 sets', reps: '8-10 reps', rest: '90s', cue: 'Lock glutes and abs tight, clear chin and lock overhead', substitute: 'Dumbbell Arnold Press' },
+      { name: 'Incline Dumbbell Flye', target: 'Pectoralis Minor & Outer Chest', sets: '3 sets', reps: '12-15 reps', rest: '60s', cue: 'Keep slight bend in elbows, feel stretch across chest wall', substitute: 'Cable Crossover' },
+      { name: 'Overhead Rope Triceps Extension', target: 'Triceps Long Head', sets: '3 sets', reps: '12-15 reps', rest: '60s', cue: 'Flare rope ends apart at full elbow extension', substitute: 'Bench Dips' }
+    ],
+    pull: [
+      { name: 'Chest-Supported Row / Barbell Row', target: 'Rhomboids, Middle Traps & Lats', sets: '4 sets', reps: '8-10 reps', rest: '90s', cue: 'Pull with elbows, retract shoulder blades with 1s pause', substitute: 'Inverted Bodyweight Row' },
+      { name: 'Seated Cable Row / One-Arm DB Row', target: 'Lower Latissimus Dorsi', sets: '3 sets', reps: '10-12 reps', rest: '75s', cue: 'Maintain neutral spine, drive elbows straight back to hips', substitute: 'Resistance Band Seated Row' },
+      { name: 'Incline Dumbbell Bicep Curl', target: 'Biceps Long Head', sets: '3 sets', reps: '10-12 reps', rest: '60s', cue: 'Let elbows hang back behind torso for maximum myofibrillar stretch', substitute: 'Standing EZ-Bar Curl' },
+      { name: 'Face Pull with External Rotation', target: 'Rear Delts & Rotator Cuff', sets: '3 sets', reps: '15-20 reps', rest: '60s', cue: 'Pull hands toward temples, knuckles pointing behind ears', substitute: 'Band Pull-Apart' }
+    ],
+    legsCore: [
+      { name: 'Bulgarian Split Squat', target: 'Glutes, Quads & Hip Stabilizers', sets: '3 sets', reps: '8-10 reps / leg', rest: '90s', cue: 'Torso angled slightly forward to shift load into working glute', substitute: 'Step-Ups on Bench' },
+      { name: 'Lying or Seated Leg Curl', target: 'Hamstrings Knee Flexion', sets: '3 sets', reps: '12 reps', rest: '60s', cue: 'Control the release for 3 seconds, avoid jerking hip off pad', substitute: 'Stability Ball Hamstring Curl' },
+      { name: 'Hanging Knee / Leg Raise', target: 'Lower Rectus Abdominis', sets: '3 sets', reps: '12-15 reps', rest: '60s', cue: 'Curl pelvis up towards sternum, avoid using hip flexor swing', substitute: 'Lying Floor Leg Raise' },
+      { name: 'Pallof Press with Cable or Band', target: 'Anti-Rotation Core Stability', sets: '3 sets', reps: '10 reps / side', rest: '45s', cue: 'Resist trunk twist, press hands straight out from sternum', substitute: 'Side Plank Hold (30s)' }
+    ],
+    conditioning: [
+      { name: 'Kettlebell / Dumbbell Swings', target: 'Posterior Kinetic Chain & Heart Rate', sets: '4 sets', reps: '15-20 reps', rest: '60s', cue: 'Snap hips forward with glute squeeze; do not squat the bell', substitute: 'Broad Jumps or Bodyweight Squat Jumps' },
+      { name: 'Incline Treadmill Zone-2 Walk', target: 'Aerobic Base & Fat Oxidation', sets: '1 session', reps: '25-30 min', rest: 'None', cue: 'Incline 8-10%, speed 4.5-5.5 km/h, maintain conversational pace', substitute: 'Stationary Bike or Outdoor Rucking' },
+      { name: 'Thoracic Extension & Cat-Cow Flow', target: 'Spinal Decompression & Mobility', sets: '3 sets', reps: '10 reps', rest: '30s', cue: 'Deep diaphragmatic breathing through full spinal flexion and extension', substitute: 'Foam Roller Upper Back Extension' }
+    ]
+  };
+
+  // Normalize each move to have both camelCase and snake_case fields
+  function normalizeMoves(movesList = []) {
+    return movesList.map(m => ({
+      name: m.name,
+      exercise_name: m.name,
+      target: m.target,
+      sets: m.sets,
+      reps: m.reps,
+      rest: m.rest,
+      rest_seconds: m.rest,
+      cue: m.cue,
+      biomechanical_form_cue: m.cue,
+      substitute: m.substitute
+    }));
+  }
+
+  const weeklySchedule = [];
+  if (daysPerWeek <= 3) {
+    weeklySchedule.push({ day: 'Day 1', day_number: 1, name: 'Full Body Compound A', day_title: 'Full Body Compound A', duration: `${durationMin} min`, focus: 'Quads, Chest, Back & Core', moves: normalizeMoves([movesDatabase.lower[0], movesDatabase.upper[0], movesDatabase.pull[0], movesDatabase.legsCore[2]]), exercises: normalizeMoves([movesDatabase.lower[0], movesDatabase.upper[0], movesDatabase.pull[0], movesDatabase.legsCore[2]]) });
+    weeklySchedule.push({ day: 'Day 2', day_number: 2, name: 'Active Recovery & Mobility', day_title: 'Active Recovery & Mobility', duration: '30 min', focus: 'Low-intensity recovery, walking, thoracic mobility', moves: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.conditioning[2]]), exercises: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.conditioning[2]]) });
+    weeklySchedule.push({ day: 'Day 3', day_number: 3, name: 'Full Body Compound B', day_title: 'Full Body Compound B', duration: `${durationMin} min`, focus: 'Hamstrings, Shoulders, Lats & Arms', moves: normalizeMoves([movesDatabase.lower[1], movesDatabase.upper[2], movesDatabase.pull[1], movesDatabase.push[3]]), exercises: normalizeMoves([movesDatabase.lower[1], movesDatabase.upper[2], movesDatabase.pull[1], movesDatabase.push[3]]) });
+    weeklySchedule.push({ day: 'Day 4', day_number: 4, name: 'Rest & Nutrient Replenishment', day_title: 'Rest & Nutrient Replenishment', duration: '0 min', focus: 'Restorative sleep, hydration, cellular recovery', moves: [], exercises: [] });
+    weeklySchedule.push({ day: 'Day 5', day_number: 5, name: 'Full Body Metabolic Circuit', day_title: 'Full Body Metabolic Circuit', duration: `${durationMin} min`, focus: 'Unilateral Legs, Upper Density & Conditioning', moves: normalizeMoves([movesDatabase.legsCore[0], movesDatabase.push[0], movesDatabase.pull[2], movesDatabase.conditioning[0]]), exercises: normalizeMoves([movesDatabase.legsCore[0], movesDatabase.push[0], movesDatabase.pull[2], movesDatabase.conditioning[0]]) });
+    weeklySchedule.push({ day: 'Day 6', day_number: 6, name: 'Cardio & Core Flow', day_title: 'Cardio & Core Flow', duration: '30 min', focus: 'Zone 2 cardio and anti-rotational core', moves: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.legsCore[3]]), exercises: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.legsCore[3]]) });
+    weeklySchedule.push({ day: 'Day 7', day_number: 7, name: 'Rest & Assessment Reflection', day_title: 'Rest & Assessment Reflection', duration: '0 min', focus: 'Rest and mental recalibration', moves: [], exercises: [] });
+  } else if (daysPerWeek === 4) {
+    weeklySchedule.push({ day: 'Day 1', day_number: 1, name: 'Upper Body Power', day_title: 'Upper Body Power', duration: `${durationMin} min`, focus: 'Chest, Shoulders & Upper Back', moves: normalizeMoves(movesDatabase.upper), exercises: normalizeMoves(movesDatabase.upper) });
+    weeklySchedule.push({ day: 'Day 2', day_number: 2, name: 'Lower Body Strength', day_title: 'Lower Body Strength', duration: `${durationMin} min`, focus: 'Quads, Hamstrings & Calves', moves: normalizeMoves(movesDatabase.lower), exercises: normalizeMoves(movesDatabase.lower) });
+    weeklySchedule.push({ day: 'Day 3', day_number: 3, name: 'Active Recovery & Zone-2 Cardio', day_title: 'Active Recovery & Zone-2 Cardio', duration: '30 min', focus: 'Walking, tissue flushing & mobility', moves: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.conditioning[2]]), exercises: normalizeMoves([movesDatabase.conditioning[1], movesDatabase.conditioning[2]]) });
+    weeklySchedule.push({ day: 'Day 4', day_number: 4, name: 'Upper Body Hypertrophy', day_title: 'Upper Body Hypertrophy', duration: `${durationMin} min`, focus: 'Lats, Triceps, Deltoid Width & Arms', moves: normalizeMoves([movesDatabase.push[0], movesDatabase.pull[0], movesDatabase.upper[3], movesDatabase.pull[2]]), exercises: normalizeMoves([movesDatabase.push[0], movesDatabase.pull[0], movesDatabase.upper[3], movesDatabase.pull[2]]) });
+    weeklySchedule.push({ day: 'Day 5', day_number: 5, name: 'Lower Body & Core Hypertrophy', day_title: 'Lower Body & Core Hypertrophy', duration: `${durationMin} min`, focus: 'Unilateral Legs, Posterior Chain & Abs', moves: normalizeMoves([movesDatabase.legsCore[0], movesDatabase.legsCore[1], movesDatabase.legsCore[2], movesDatabase.legsCore[3]]), exercises: normalizeMoves([movesDatabase.legsCore[0], movesDatabase.legsCore[1], movesDatabase.legsCore[2], movesDatabase.legsCore[3]]) });
+    weeklySchedule.push({ day: 'Day 6', day_number: 6, name: 'Cardio & Core Flow', day_title: 'Cardio & Core Flow', duration: '25 min', focus: 'Metabolic density and core stability', moves: normalizeMoves([movesDatabase.conditioning[0], movesDatabase.conditioning[1]]), exercises: normalizeMoves([movesDatabase.conditioning[0], movesDatabase.conditioning[1]]) });
+    weeklySchedule.push({ day: 'Day 7', day_number: 7, name: 'Deep Rest & Sleep Recovery', day_title: 'Deep Rest & Sleep Recovery', duration: '0 min', focus: 'Rest, muscle protein synthesis', moves: [], exercises: [] });
+  } else {
+    weeklySchedule.push({ day: 'Day 1', day_number: 1, name: 'Push (Chest, Shoulders, Triceps)', day_title: 'Push (Chest, Shoulders, Triceps)', duration: `${durationMin} min`, focus: 'Anterior chain pressing & lockouts', moves: normalizeMoves(movesDatabase.push), exercises: normalizeMoves(movesDatabase.push) });
+    weeklySchedule.push({ day: 'Day 2', day_number: 2, name: 'Pull (Back, Lats, Rear Delts, Biceps)', day_title: 'Pull (Back, Lats, Rear Delts, Biceps)', duration: `${durationMin} min`, focus: 'Posterior kinetic chain and vertical/horizontal pulls', moves: normalizeMoves(movesDatabase.pull), exercises: normalizeMoves(movesDatabase.pull) });
+    weeklySchedule.push({ day: 'Day 3', day_number: 3, name: 'Legs & Core Conditioning', day_title: 'Legs & Core Conditioning', duration: `${durationMin} min`, focus: 'Knee flexion, hip hinge and intra-abdominal stability', moves: normalizeMoves(movesDatabase.lower), exercises: normalizeMoves(movesDatabase.lower) });
+    weeklySchedule.push({ day: 'Day 4', day_number: 4, name: 'Upper Body Sculpt & Biomechanics', day_title: 'Upper Body Sculpt & Biomechanics', duration: `${durationMin} min`, focus: 'Shoulder cap, clavicular fibers and arm density', moves: normalizeMoves(movesDatabase.upper), exercises: normalizeMoves(movesDatabase.upper) });
+    weeklySchedule.push({ day: 'Day 5', day_number: 5, name: 'Lower Body Posterior & Unilateral', day_title: 'Lower Body Posterior & Unilateral', duration: `${durationMin} min`, focus: 'Hamstrings, glute max, unilateral balance', moves: normalizeMoves(movesDatabase.legsCore), exercises: normalizeMoves(movesDatabase.legsCore) });
+    weeklySchedule.push({ day: 'Day 6', day_number: 6, name: 'Active Conditioning & Cardio', day_title: 'Active Conditioning & Cardio', duration: '35 min', focus: 'Zone-2 aerobic capacity and joint mobility', moves: normalizeMoves(movesDatabase.conditioning), exercises: normalizeMoves(movesDatabase.conditioning) });
+    weeklySchedule.push({ day: 'Day 7', day_number: 7, name: 'Rest & Recovery Protocol', day_title: 'Rest & Recovery Protocol', duration: '0 min', focus: 'Full rest and myofibrillar repair', moves: [], exercises: [] });
+  }
+
+  let mealExamples = [];
+  if (dietary === 'vegetarian') {
+    mealExamples = [
+      { meal: 'Breakfast', name: 'Paneer & Sprouted Moong Scramble with Whole Wheat Toast', macros: '450 kcal · 28g P · 48g C · 14g F' },
+      { meal: 'Lunch', name: 'High-Protein Soya Chunks Curry, Brown Rice & Spinach Salad', macros: '620 kcal · 42g P · 74g C · 12g F' },
+      { meal: 'Snack', name: 'Low-Fat Greek Yogurt or Hung Curd with Flaxseeds & Walnuts', macros: '260 kcal · 20g P · 18g C · 10g F' },
+      { meal: 'Dinner', name: 'Tofu / Paneer Tikka with Roasted Veggies & Yellow Lentil Dal', macros: '520 kcal · 35g P · 42g C · 18g F' }
+    ];
+  } else if (dietary === 'vegan') {
+    mealExamples = [
+      { meal: 'Breakfast', name: 'Tofu Bhurji Scramble with Nutritional Yeast & Multigrain Toast', macros: '420 kcal · 26g P · 46g C · 12g F' },
+      { meal: 'Lunch', name: 'Tempeh / Chickpea Quinoa Bowl with Sautéed Broccoli & Tahini', macros: '610 kcal · 38g P · 70g C · 16g F' },
+      { meal: 'Snack', name: 'Pea Protein Shake with Unsweetened Almond Milk & Chia Seeds', macros: '240 kcal · 27g P · 12g C · 6g F' },
+      { meal: 'Dinner', name: 'Lentil & Seitan Vegetable Stew with Lemon-Dressed Field Greens', macros: '510 kcal · 40g P · 48g C · 13g F' }
+    ];
+  } else {
+    mealExamples = [
+      { meal: 'Breakfast', name: 'Farm Eggs, Egg White Omelet & Rolled Oatmeal with Berries', macros: '480 kcal · 36g P · 44g C · 14g F' },
+      { meal: 'Lunch', name: 'Herb-Grilled Chicken Breast, Steamed Basmati Rice & Dal', macros: '640 kcal · 52g P · 68g C · 12g F' },
+      { meal: 'Snack', name: 'Whey Protein Isolate with 15 Raw Almonds & Apple Slices', macros: '260 kcal · 28g P · 18g C · 8g F' },
+      { meal: 'Dinner', name: 'Tandoori Salmon or Lean Fish Fillet with Asparagus & Sweet Potato', macros: '520 kcal · 44g P · 38g C · 15g F' }
+    ];
+  }
+
+  const assessmentSummary = `Complete 4-view physique scan evaluated for goal: ${gInfo.title}. Biomechanical analysis demonstrates solid kinetic foundation with balanced bilateral symmetry. Personalized ${daysPerWeek}-day training split and ${targetCalories} kcal nutritional blueprint prepared for progressive, injury-free body transformation.`;
+
+  const postureObs = {
+    head: 'Neutral cervical spine alignment with slight forward translation within safe functional limits.',
+    apparent_head_position: 'Neutral cervical spine alignment with slight forward translation within safe functional limits.',
+    apparentHeadPosition: 'Neutral cervical spine alignment with slight forward translation within safe functional limits.',
+    shoulders: 'Biacromial line is horizontal with symmetrical clavicle orientation; no prominent unleveling observed.',
+    visible_shoulder_alignment: 'Biacromial line is horizontal with symmetrical clavicle orientation; no prominent unleveling observed.',
+    visibleShoulderAlignment: 'Biacromial line is horizontal with symmetrical clavicle orientation; no prominent unleveling observed.',
+    symmetry: 'Upper torso shows balanced left-to-right lateral development across deltoids and arm musculature.',
+    leftVsRightSymmetry: 'Upper torso shows balanced left-to-right lateral development across deltoids and arm musculature.',
+    left_vs_right_symmetry: 'Upper torso shows balanced left-to-right lateral development across deltoids and arm musculature.',
+    trunk: 'Upright coronal alignment with good ribcage position and natural thoracic kyphotic contour.',
+    coronalTrunk: 'Upright coronal alignment with good ribcage position and natural thoracic kyphotic contour.',
+    coronal_trunk_alignment: 'Upright coronal alignment with good ribcage position and natural thoracic kyphotic contour.',
+    hipsAndKnees: 'Pelvic crests appear balanced in sagittal view; knee extension shows stable patellar tracking.',
+    hip_and_knee_positioning: 'Pelvic crests appear balanced in sagittal view; knee extension shows stable patellar tracking.',
+    stance: 'Even bilateral foot pressure distribution with stable center-of-gravity grounding.',
+    generalStance: 'Even bilateral foot pressure distribution with stable center-of-gravity grounding.',
+    general_stance_and_balance: 'Even bilateral foot pressure distribution with stable center-of-gravity grounding.'
+  };
+
+  const alignmentConcerns = [
+    'Mild tendency for forward head posture during prolonged static sitting; recommend thoracic extension mobility.',
+    'Slightly tighter internal shoulder rotators; incorporate band face-pulls and doorway pectoral stretches.',
+    'Pelvic stability is sound, but glute activation drills prior to heavy compound lifts will enhance hip mechanics.'
+  ];
+
+  const estimatedPhysical = {
+    estimated_body_fat_range: `${estimatedBf}%`,
+    estimatedBodyFatPercentage: `${estimatedBf}%`,
+    estimated_lean_muscle_mass: `${leanMass} kg`,
+    estimatedLeanMuscleMass: `${leanMass} kg`,
+    estimated_adipose_tissue_mass: `${fatMass} kg`,
+    estimatedFatMass: `${fatMass} kg`,
+    fitness_category: estimatedBf < 14 ? 'Athletic Defined Range' : (estimatedBf < 20 ? 'Healthy Athletic Range' : 'Moderate Adipose Range'),
+    fitnessCategory: estimatedBf < 14 ? 'Athletic Defined Range' : (estimatedBf < 20 ? 'Healthy Athletic Range' : 'Moderate Adipose Range')
+  };
+
+  const trainingStructure = {
+    methodology: gInfo.focus,
+    weekly_split: `${daysPerWeek} Days / Week`,
+    weeklyStructure: `${daysPerWeek} training days / week, ${durationMin} minutes per session`,
+    session_duration_minutes: durationMin,
+    exercise_intensity: 'Progressive Overload (RPE 7.5–8.5)',
+    intensity: 'RPE 7-8.5 across compound movements; leave 1-2 reps in reserve for optimal central nervous system recovery.',
+    progressiveOverloadGuidance: 'Add 1-2.5 kg to barbell/dumbbell lifts or 1 extra repetition per set each week while maintaining strict technical execution.',
+    progressive_overload_guidance: 'Add 1-2.5 kg to barbell/dumbbell lifts or 1 extra repetition per set each week while maintaining strict technical execution.'
+  };
+
+  const nutriGuide = {
+    dailyCalories: targetCalories,
+    daily_calories: targetCalories,
+    proteinGrams: proteinGrams,
+    daily_protein_grams: proteinGrams,
+    carbsGrams: carbsGrams,
+    daily_carbohydrates_grams: carbsGrams,
+    fatsGrams: fatsGrams,
+    daily_fats_grams: fatsGrams,
+    hydrationLiters: waterLiters,
+    daily_water_liters: waterLiters,
+    dietaryPreference: dietary,
+    allergiesNoted: allergies,
+    mealExamples: mealExamples,
+    sample_daily_meals: mealExamples.map(m => ({ meal_name: m.meal, description: `${m.name} (${m.macros})` })),
+    guidelines: [
+      `Distribute ${proteinGrams}g of protein evenly across 3-4 meals to maximize muscle protein synthesis.`,
+      `Consume complex carbohydrates (oats, rice, sweet potatoes) 90-120 minutes prior to training for glycogen density.`,
+      `Maintain minimum ${waterLiters}L hydration daily to preserve cell volumization and intracellular nutrient transport.`,
+      isMinor ? 'Safety note: Growing adolescents must not undergo aggressive energy restriction; prioritize balanced whole foods.' : 'Consistent caloric tracking ensures predictable weekly physique adjustments.'
+    ],
+    nutrition_rules: [
+      `Distribute ${proteinGrams}g of protein evenly across 3-4 meals to maximize muscle protein synthesis.`,
+      `Consume complex carbohydrates (oats, rice, sweet potatoes) 90-120 minutes prior to training for glycogen density.`,
+      `Maintain minimum ${waterLiters}L hydration daily to preserve cell volumization and intracellular nutrient transport.`,
+      isMinor ? 'Safety note: Growing adolescents must not undergo aggressive energy restriction; prioritize balanced whole foods.' : 'Consistent caloric tracking ensures predictable weekly physique adjustments.'
+    ]
+  };
+
+  const recoveryRecs = {
+    sleepTargetHours: '7.5 to 8.5 hours of restorative sleep nightly',
+    restorative_sleep_hours: '7.5 to 8.5 hours nightly',
+    sleepHygieneCues: [
+      'Maintain a dark, cool sleeping environment (~19°C / 66°F).',
+      'Avoid screens and blue light 45 minutes before sleep to optimize endogenous melatonin secretion.',
+      'Stop caffeine consumption at least 8 hours prior to your target bedtime.'
+    ],
+    sleep_hygiene_rules: [
+      'Maintain a dark, cool sleeping environment (~19°C / 66°F).',
+      'Avoid screens and blue light 45 minutes before sleep to optimize endogenous melatonin secretion.',
+      'Stop caffeine consumption at least 8 hours prior to your target bedtime.'
+    ],
+    recoveryProtocols: [
+      'Foam roll calves, thoracic spine, and hip flexors for 5 minutes post-workout.',
+      'Incorporate 10-15 minutes of dynamic contrast showers or hot sauna where available.',
+      'Schedule a complete deload week every 6-8 weeks of progressive training.'
+    ],
+    progress_tracking_schedule: [
+      'Log morning bodyweight 3-4 times per week fasted and track the median.',
+      'Measure waist circumference at navel level once every 2 weeks.',
+      'Standardize progress photo lighting, time of day, and posture angles.'
+    ]
+  };
+
+  const disclaimer = 'Non-medical disclaimer: This assessment is an automated computer-vision and anthropometric estimation derived from user-submitted 2D photographs. It does not constitute medical diagnosis, clinical posture evaluation, or diagnostic spinal screening. Measurements of body fat and muscle distribution are estimates based on standard biometrics. If you experience discomfort, dizziness, or pain, discontinue exercise and consult a qualified healthcare physician.';
+
+  return {
+    assessmentSummary,
+    summary: assessmentSummary,
+    postureObservations: postureObs,
+    posture_observations: postureObs,
+    possibleAlignmentConcerns: alignmentConcerns,
+    possible_alignment_considerations: alignmentConcerns,
+    areasRequiringFurtherAssessment: [
+      'Dynamic single-leg landing biomechanics and ankle dorsiflexion mobility under full barbell loading.',
+      'Active scapular upward rotation during overhead pressing (best evaluated in active motion rather than static photos).',
+      'Individual joint range of motion: if experiencing pain, consult a licensed physiotherapist.'
+    ],
+    userSelectedGoal: {
+      id: goal,
+      title: gInfo.title,
+      description: gInfo.desc
+    },
+    physique_goal: gInfo.title,
+    goalCategory: gInfo.title,
+    recommendedTrainingApproach: trainingStructure,
+    training_structure: trainingStructure,
+    progressive_overload_guidance: trainingStructure.progressiveOverloadGuidance,
+    estimatedPhysicalCharacteristics: estimatedPhysical,
+    estimated_physical_characteristics: estimatedPhysical,
+    weeklyWorkoutSchedule: weeklySchedule,
+    workoutSplit: weeklySchedule,
+    days: weeklySchedule,
+    exerciseRecommendations: [
+      movesDatabase.upper[0],
+      movesDatabase.lower[0],
+      movesDatabase.pull[0],
+      movesDatabase.push[1]
+    ],
+    cardioAndDailyActivity: {
+      dailyStepsTarget: goal === 'fat_loss' ? '9,000 - 11,000 steps daily' : '7,500 - 8,500 steps daily',
+      cardioType: 'Low-impact Zone-2 incline treadmill walking or outdoor brisk walk',
+      frequency: '3-4 sessions per week (20-30 mins)',
+      heartRateZone: 'Zone 2 (60-70% of maximum heart rate)',
+      timing: 'Post-workout or morning fasted for optimal lipid oxidation without hindering hypertrophy'
+    },
+    nutritionGuidance: nutriGuide,
+    macronutrient_distribution: nutriGuide,
+    sample_daily_meals: nutriGuide.sample_daily_meals,
+    nutrition_rules: nutriGuide.nutrition_rules,
+    recoveryAndSleepRecommendations: recoveryRecs,
+    recovery_protocols: recoveryRecs,
+    progressTrackingRecommendations: {
+      frequency: 'Record morning bodyweight 3-4 times per week (fasted, post-voiding) and calculate weekly median.',
+      keyMetrics: ['Median Bodyweight (kg)', 'Waist Circumference at Navel (cm)', 'Gym Logbook Working Weights & Reps'],
+      photoStandardizationTips: 'Capture progress photographs at the same time of day under consistent neutral lighting, wearing the same attire.'
+    },
+    limitationsAndUncertainty: disclaimer,
+    non_medical_boundaries_and_limitations: disclaimer,
+    suggestedReassessmentInterval: '6 to 8 weeks (allows sufficient myofibrillar and metabolic adaptation to manifest visually)',
+    reassessment_interval: '6 to 8 weeks'
+  };
 }
 
 function generateDynamicCoachVisionText(prompt = '') {

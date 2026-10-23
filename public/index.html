@@ -62,6 +62,18 @@
         <span style="font-size:0.62rem;background:rgba(22,199,154,0.18);color:#16C79A;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(22,199,154,0.35);">LIVE</span>
       </button>
 
+      <!-- DEDICATED AI BODY ANALYSIS & TRANSFORMATION PLANNER -->
+      <button class="nav-link" data-view="body-analysis" id="sidebarBodyAnalysisBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="5" r="3"></circle>
+          <path d="M12 8v8"></path>
+          <path d="m8 12 4 1 4-1"></path>
+          <path d="m9 21 3-5 3 5"></path>
+        </svg>
+        <span>Body Analysis</span>
+        <span style="font-size:0.62rem;background:rgba(2,132,199,0.18);color:#0284c7;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(2,132,199,0.35);">AI SCAN</span>
+      </button>
+
       <!-- LIVE ACTIVITY & GPS TRACKER (SECTION 13 & 14) -->
       <button class="nav-link" data-view="activity" id="sidebarActivityBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -326,11 +338,11 @@
             </div>
           </div>
 
-          <!-- MAIN HERO CONTENT: HEADLINE + ATHLETE VISUAL + FLOATING GLASS CARDS -->
+          <!-- MAIN HERO CONTENT: HEADLINE + ATHLETE VISUAL + SIDE METRIC CARDS (MATCHING IMAGE 3) -->
           <div class="sy-hero-main-grid">
             <!-- Left copy -->
             <div class="sy-hero-copy">
-              <span class="sy-kicker">TRANSFORM</span>
+              <span class="sy-kicker">TRANSFORM <span class="sy-kicker-dash"></span></span>
               <h1 class="sy-headline">
                 A Stronger <span class="sy-gradient-glow">You</span>
               </h1>
@@ -346,72 +358,130 @@
               </button>
             </div>
 
-            <!-- Right athlete visual with floating cards -->
-            <div class="sy-hero-visual-col">
+            <!-- Center athlete visual stage: clean, high-res, no zoom on click, zero cards colliding over athlete -->
+            <div class="sy-hero-athlete-col">
               <div class="sy-athlete-stage">
-                <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Athlete" class="sy-athlete-img img-preview-trigger" data-title="FitFuel — A Stronger You" data-src="images/fitfuel-stronger-you-hero.jpg">
-                
-                <!-- Floating Glass Card 1: Calories -->
-                <div class="sy-floating-glass-card sy-float-calories">
-                  <div class="sy-card-ring-box">
-                    <svg class="sy-circle-chart" viewBox="0 0 36 36" width="46" height="46">
-                      <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3.4"/>
-                      <path class="sy-circle-fill sy-mint-stroke" stroke-dasharray="57, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#22d3ee" stroke-width="3.4" stroke-linecap="round"/>
-                    </svg>
-                    <span class="sy-ring-pct">57%</span>
+                <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Athlete" class="sy-athlete-img" id="syAthleteHeroImg">
+              </div>
+            </div>
+
+            <!-- Right side metric cards column: Calories, Workout, Protein stacked neatly ON THE SIDE -->
+            <div class="sy-hero-metrics-col">
+              <div class="sy-metrics-stack">
+                <!-- Side Card 1: Calories -->
+                <div class="sy-side-card sy-card-calories" id="syFloatCaloriesTrigger" role="button" tabindex="0" title="Click to open Calorie &amp; Nutrition tracker">
+                  <div class="sy-scard-left">
+                    <div class="sy-scard-icon-badge flame">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                      </svg>
+                    </div>
+                    <div class="sy-card-info">
+                      <span class="sy-card-label">Calories</span>
+                      <b class="sy-card-val"><span id="syHeroCalBurned">1,250</span> / <span id="syHeroCalTarget">2,200</span> <small>kcal</small></b>
+                    </div>
                   </div>
-                  <div class="sy-card-info">
-                    <span class="sy-card-label">Calories</span>
-                    <b class="sy-card-val"><span id="syHeroCalBurned">1,250</span> / <span id="syHeroCalTarget">2,200</span> <small>kcal</small></b>
+                  <div class="sy-scard-right">
+                    <div class="sy-card-ring-box">
+                      <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
+                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(37,99,235,0.12)" stroke-width="3.5"/>
+                        <path class="sy-circle-fill sy-cyan-stroke" stroke-dasharray="57, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round"/>
+                      </svg>
+                      <span class="sy-ring-pct" style="color:#0284c7;">57%</span>
+                    </div>
+                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
                   </div>
                 </div>
 
-                <!-- Floating Glass Card 2: Workout -->
-                <div class="sy-floating-glass-card sy-float-workout" id="syFloatWorkoutTrigger" title="Click to open Back & Biceps workout">
-                  <div class="sy-card-info">
-                    <span class="sy-card-label">Workout</span>
-                    <b class="sy-card-val" id="syHeroWorkoutName">Back &amp; Biceps</b>
+                <!-- Side Card 2: Workout -->
+                <div class="sy-side-card sy-card-workout" id="syFloatWorkoutTrigger" role="button" tabindex="0" title="Click to open Back &amp; Biceps workout">
+                  <div class="sy-scard-left">
+                    <div class="sy-scard-icon-badge workout">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/>
+                      </svg>
+                    </div>
+                    <div class="sy-card-info">
+                      <span class="sy-card-label">Workout</span>
+                      <b class="sy-card-val" id="syHeroWorkoutName">Back &amp; Biceps</b>
+                    </div>
                   </div>
-                  <button type="button" class="sy-card-arrow-btn" aria-label="Open Workout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </button>
+                  <div class="sy-scard-right">
+                    <button type="button" class="sy-card-arrow-btn" aria-label="Open Workout">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
+                  </div>
                 </div>
 
-                <!-- Floating Glass Card 3: Protein -->
-                <div class="sy-floating-glass-card sy-float-protein">
-                  <div class="sy-card-ring-box">
-                    <svg class="sy-circle-chart" viewBox="0 0 36 36" width="46" height="46">
-                      <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3.4"/>
-                      <path class="sy-circle-fill sy-cyan-stroke" stroke-dasharray="67, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#38bdf8" stroke-width="3.4" stroke-linecap="round"/>
-                    </svg>
-                    <span class="sy-ring-pct">67%</span>
+                <!-- Side Card 3: Protein -->
+                <div class="sy-side-card sy-card-protein" id="syFloatProteinTrigger" role="button" tabindex="0" title="Click to open Protein &amp; Food Log">
+                  <div class="sy-scard-left">
+                    <div class="sy-scard-icon-badge protein">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <circle cx="6" cy="6" r="2.5"/>
+                        <circle cx="18" cy="6" r="2.5"/>
+                        <circle cx="12" cy="19" r="2.5"/>
+                        <line x1="8" y1="8" x2="10" y2="10"/>
+                        <line x1="16" y1="8" x2="14" y2="10"/>
+                        <line x1="12" y1="15" x2="12" y2="16.5"/>
+                      </svg>
+                    </div>
+                    <div class="sy-card-info">
+                      <span class="sy-card-label">Protein</span>
+                      <b class="sy-card-val"><span id="syHeroProteinEaten">120g</span> / <span id="syHeroProteinTarget">180g</span></b>
+                    </div>
                   </div>
-                  <div class="sy-card-info">
-                    <span class="sy-card-label">Protein</span>
-                    <b class="sy-card-val"><span id="syHeroProteinEaten">120g</span> / <span id="syHeroProteinTarget">180g</span></b>
+                  <div class="sy-scard-right">
+                    <div class="sy-card-ring-box">
+                      <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
+                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(16,185,129,0.12)" stroke-width="3.5"/>
+                        <path class="sy-circle-fill sy-mint-stroke" stroke-dasharray="67, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                      </svg>
+                      <span class="sy-ring-pct" style="color:#10b981;">67%</span>
+                    </div>
+                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- QUICK ACCESS NAVIGATION PILLS -->
+          <!-- QUICK ACCESS NAVIGATION PILLS (MATCHING IMAGE 3) -->
           <div class="sy-quick-nav-bar">
             <button type="button" class="sy-quick-pill" id="syQuickFoodBtn">
+              <span class="sy-pill-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 2v20M6 2v6a3 3 0 0 0 6 0V2"/>
+                </svg>
+              </span>
               <span>Food Analysis</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </button>
             <button type="button" class="sy-quick-pill" id="syQuickBodyBtn">
+              <span class="sy-pill-icon cyan">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M6 21v-2a6 6 0 0 1 12 0v2"/>
+                </svg>
+              </span>
               <span>Body Analysis</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </button>
             <button type="button" class="sy-quick-pill" id="syQuickProgressBtn">
+              <span class="sy-pill-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                  <polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </span>
               <span>Progress Tracking</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -419,88 +489,89 @@
             </button>
           </div>
 
-          <!-- 3 BOTTOM GLASS FEATURE CARDS -->
+          <!-- 3 BOTTOM GLASS FEATURE CARDS (MATCHING IMAGE 3) -->
           <div class="sy-bottom-features-grid">
             <!-- Card 1: Workout Plans (Purple theme) -->
-            <div class="sy-bottom-card sy-card-purple" id="syBottomCardWorkout">
-              <div class="sy-bcard-head">
-                <div class="sy-bcard-icon purple">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6.5 6.5 11 11"></path>
-                    <path d="m21 21-1-1a2 2 0 0 0-2.83 0l-.88.88a2 2 0 0 1-2.83 0l-4.24-4.24a2 2 0 0 1 0-2.83l.88-.88a2 2 0 0 0 0-2.83L10 6"></path>
-                    <path d="m3 3 1 1a2 2 0 0 0 2.83 0l.88-.88a2 2 0 0 1 2.83 0l4.24 4.24a2 2 0 0 1 0 2.83l-.88.88a2 2 0 0 0 0 2.83L14 18"></path>
+            <div class="sy-bottom-card sy-card-purple" id="syBottomCardWorkout" role="button" tabindex="0">
+              <div class="sy-bcard-top-row">
+                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">•••</button>
+              </div>
+              <div class="sy-bcard-center">
+                <div class="sy-bcard-big-badge purple">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/>
                   </svg>
                 </div>
-                <div>
-                  <h3 class="sy-bcard-title">Workout Plans</h3>
-                  <p class="sy-bcard-sub">Fully customizable training plans</p>
-                </div>
+                <h3 class="sy-bcard-title">Workout Plans</h3>
+                <p class="sy-bcard-sub">Fully customizable training plans</p>
               </div>
-              <div class="sy-bcard-wave-row">
-                <svg class="sy-wave-svg" viewBox="0 0 240 40" fill="none">
-                  <path d="M0 24 C 30 24, 45 6, 75 22 C 105 38, 125 10, 155 18 C 185 26, 205 8, 240 18" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round" fill="none" style="filter: drop-shadow(0 0 6px rgba(168,85,247,0.7));"/>
-                </svg>
+              <div class="sy-bcard-bottom-row">
                 <button type="button" class="sy-bcard-action-btn purple" aria-label="Go to Workout Plans">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
                 </button>
+                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
+                  <path d="M0 24 C 40 34, 80 10, 120 22 C 140 28, 150 20, 160 18" stroke="#a855f7" stroke-width="2.8" stroke-linecap="round"/>
+                </svg>
               </div>
             </div>
 
             <!-- Card 2: Calorie & Nutrition (Mint theme) -->
-            <div class="sy-bottom-card sy-card-mint" id="syBottomCardNutrition">
-              <div class="sy-bcard-head">
-                <div class="sy-bcard-icon mint">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="sy-bottom-card sy-card-mint" id="syBottomCardNutrition" role="button" tabindex="0">
+              <div class="sy-bcard-top-row">
+                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">•••</button>
+              </div>
+              <div class="sy-bcard-center">
+                <div class="sy-bcard-big-badge mint">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
                     <path d="M10 2c1 .5 2 2 2 5"></path>
                   </svg>
                 </div>
-                <div>
-                  <h3 class="sy-bcard-title">Calorie &amp; Nutrition</h3>
-                  <p class="sy-bcard-sub">Track calories, protein, carbs and fats with ease</p>
-                </div>
+                <h3 class="sy-bcard-title">Calorie &amp; Nutrition</h3>
+                <p class="sy-bcard-sub">Track calories, protein, carbs and fats with ease</p>
               </div>
-              <div class="sy-bcard-wave-row">
-                <svg class="sy-wave-svg" viewBox="0 0 240 40" fill="none">
-                  <path d="M0 26 C 30 20, 50 8, 80 18 C 110 28, 130 12, 160 22 C 190 32, 210 14, 240 20" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" fill="none" style="filter: drop-shadow(0 0 6px rgba(34,211,238,0.7));"/>
-                </svg>
+              <div class="sy-bcard-bottom-row">
                 <button type="button" class="sy-bcard-action-btn mint" aria-label="Go to Calorie & Nutrition">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
                 </button>
+                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
+                  <path d="M0 26 C 40 22, 80 34, 120 18 C 140 12, 150 16, 160 22" stroke="#10b981" stroke-width="2.8" stroke-linecap="round"/>
+                </svg>
               </div>
             </div>
 
             <!-- Card 3: Progress Tracking (Blue theme) -->
-            <div class="sy-bottom-card sy-card-blue" id="syBottomCardProgress">
-              <div class="sy-bcard-head">
-                <div class="sy-bcard-icon blue">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="sy-bottom-card sy-card-blue" id="syBottomCardProgress" role="button" tabindex="0">
+              <div class="sy-bcard-top-row">
+                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">•••</button>
+              </div>
+              <div class="sy-bcard-center">
+                <div class="sy-bcard-big-badge blue">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
                   </svg>
                 </div>
-                <div>
-                  <h3 class="sy-bcard-title">Progress Tracking</h3>
-                  <p class="sy-bcard-sub">Visualize your results with detailed analytics</p>
-                </div>
+                <h3 class="sy-bcard-title">Progress Tracking</h3>
+                <p class="sy-bcard-sub">Visualize your results with detailed analytics</p>
               </div>
-              <div class="sy-bcard-wave-row">
-                <svg class="sy-wave-svg" viewBox="0 0 240 40" fill="none">
-                  <path d="M0 28 C 30 28, 55 12, 85 24 C 115 36, 140 10, 170 18 C 200 26, 215 14, 240 16" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" style="filter: drop-shadow(0 0 6px rgba(56,189,248,0.7));"/>
-                </svg>
+              <div class="sy-bcard-bottom-row">
                 <button type="button" class="sy-bcard-action-btn blue" aria-label="Go to Progress Tracking">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
                 </button>
+                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
+                  <path d="M0 24 C 40 28, 80 12, 120 24 C 140 28, 150 16, 160 18" stroke="#0284c7" stroke-width="2.8" stroke-linecap="round"/>
+                </svg>
               </div>
             </div>
           </div>
@@ -1280,8 +1351,8 @@
               </button>
             </div>
 
-            <div class="workout-feature img-preview-trigger" data-title="Daily Workout Session" data-src="images/fitfuel-stronger-you-hero.jpg" title="Click to view full image">
-              <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Athlete" id="dashWorkoutImg">
+            <div class="workout-feature" data-title="Daily Workout Session">
+              <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Athlete" id="dashWorkoutImg" style="pointer-events:none;">
               <div class="workout-overlay">
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1352,6 +1423,833 @@
               <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
             </svg>
           </button>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: AI BODY ANALYSIS & TRANSFORMATION PLANNER ================= -->
+      <section class="view" id="view-body-analysis">
+        <!-- HEADER / INTRO STRIP -->
+        <div class="ba-hero-header">
+          <div class="ba-hero-text">
+            <div class="ba-badge-row">
+              <span class="ba-badge-glow">AI ANTHROPOMETRIC SCANNER</span>
+              <span class="ba-badge-privacy">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Private &amp; Encrypted · Strict Consent
+              </span>
+            </div>
+            <h2 class="ba-hero-title">AI Body Analysis &amp; Physique Transformation Planner</h2>
+            <p class="ba-hero-desc">
+              4-View biomechanical photographic analysis, posture &amp; symmetry diagnostics, and custom workout/nutrition transformation engineering.
+            </p>
+          </div>
+          <div class="ba-nav-tabs">
+            <button type="button" class="ba-tab-btn active" id="baTabWizardBtn">Assessment Wizard</button>
+            <button type="button" class="ba-tab-btn" id="baTabDashboardBtn">Latest Dashboard</button>
+            <button type="button" class="ba-tab-btn" id="baTabHistoryBtn">History &amp; Compare</button>
+          </div>
+        </div>
+
+        <!-- ASSESSMENT WIZARD CONTAINER -->
+        <div class="ba-wizard-wrap" id="baWizardWrap">
+          <!-- STEPPER INDICATOR -->
+          <div class="ba-stepper-bar" id="baStepperBar">
+            <div class="ba-step-item active" data-step="1">
+              <span class="ba-step-num">1</span>
+              <span class="ba-step-label">Physique Goal</span>
+            </div>
+            <div class="ba-step-divider"></div>
+            <div class="ba-step-item" data-step="2">
+              <span class="ba-step-num">2</span>
+              <span class="ba-step-label">Preferences</span>
+            </div>
+            <div class="ba-step-divider"></div>
+            <div class="ba-step-item" data-step="3">
+              <span class="ba-step-num">3</span>
+              <span class="ba-step-label">4-View Photos</span>
+            </div>
+            <div class="ba-step-divider"></div>
+            <div class="ba-step-item" data-step="4">
+              <span class="ba-step-num">4</span>
+              <span class="ba-step-label">Review &amp; Consent</span>
+            </div>
+            <div class="ba-step-divider"></div>
+            <div class="ba-step-item" data-step="5">
+              <span class="ba-step-num">5</span>
+              <span class="ba-step-label">AI Analysis</span>
+            </div>
+            <div class="ba-step-divider"></div>
+            <div class="ba-step-item" data-step="6">
+              <span class="ba-step-num">6</span>
+              <span class="ba-step-label">Transformation Plan</span>
+            </div>
+          </div>
+
+          <!-- STEP 1: PHYSIQUE GOAL SELECTION -->
+          <div class="ba-wizard-step active" id="baStep1">
+            <div class="ba-step-head">
+              <span class="ba-step-tag">STEP 1 OF 5</span>
+              <h3 class="ba-step-title">What type of physique or fitness outcome would you like to work toward?</h3>
+              <p class="ba-step-sub">Select your target path. FitFuel AI adapts your exercise split, caloric target, and progressive overload accordingly.</p>
+            </div>
+
+            <div class="ba-goals-grid" id="baGoalsGrid">
+              <!-- Goal A: Lean & Athletic -->
+              <div class="ba-goal-card active" data-goal-id="lean_athletic" role="button" tabindex="0">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge cyan">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">ATHLETIC</span>
+                </div>
+                <h4 class="ba-goal-name">Lean &amp; Athletic</h4>
+                <p class="ba-goal-desc">Focus on functional strength, core definition, athletic stamina, and sustainable body recomposition.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <!-- Goal B: Muscle Building -->
+              <div class="ba-goal-card" data-goal-id="muscle_building" role="button" tabindex="0">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge purple">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">HYPERTROPHY</span>
+                </div>
+                <h4 class="ba-goal-name">Muscle Building</h4>
+                <p class="ba-goal-desc">Focus on progressive mechanical tension, targeted hypertrophy, recovery protocols, and muscle protein synthesis.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <!-- Goal C: Fat Loss -->
+              <div class="ba-goal-card" data-goal-id="fat_loss" role="button" tabindex="0">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge red">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">DEFICIT</span>
+                </div>
+                <h4 class="ba-goal-name">Fat Loss &amp; Definition</h4>
+                <p class="ba-goal-desc">Focus on sustainable energy balance, preserving lean tissue with resistance training, and daily step volume.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <!-- Goal D: Strength & Performance -->
+              <div class="ba-goal-card" data-goal-id="strength_performance" role="button" tabindex="0">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">POWER</span>
+                </div>
+                <h4 class="ba-goal-name">Strength &amp; Performance</h4>
+                <p class="ba-goal-desc">Focus on compound technical mastery, neuromuscular recruitment, power progression, and recovery criteria.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <!-- Goal E: Balanced Fitness -->
+              <div class="ba-goal-card" data-goal-id="balanced_fitness" role="button" tabindex="0">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge green">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">LONGEVITY</span>
+                </div>
+                <h4 class="ba-goal-name">Balanced Fitness</h4>
+                <p class="ba-goal-desc">Focus on whole-body resistance, cardiovascular conditioning, joint mobility, and durable daily habits.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <!-- Goal F: Custom Goal -->
+              <div class="ba-goal-card" data-goal-id="custom" role="button" tabindex="0" id="baGoalCardCustom">
+                <div class="ba-goal-top">
+                  <div class="ba-goal-icon-badge amber">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </div>
+                  <span class="ba-goal-pill">CUSTOM</span>
+                </div>
+                <h4 class="ba-goal-name">Custom Goal</h4>
+                <p class="ba-goal-desc">Describe your desired physique, body recomposition, or specific sport goal in your own words.</p>
+                <div class="ba-goal-check">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Goal Textarea (Shown when Custom selected) -->
+            <div class="ba-custom-goal-box" id="baCustomGoalBox" style="display:none;">
+              <label for="baCustomGoalText" class="ba-form-label">Describe your specific physique or transformation target:</label>
+              <textarea id="baCustomGoalText" class="ba-form-textarea" rows="3" placeholder="e.g., I want to build wider lats and deltoids while trimming waist fat for a defined V-taper..."></textarea>
+            </div>
+
+            <div class="ba-step-actions">
+              <div></div>
+              <button type="button" class="ba-primary-btn" id="baStep1NextBtn">
+                <span>Continue to Preferences</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: USER PREFERENCES -->
+          <div class="ba-wizard-step" id="baStep2">
+            <div class="ba-step-head">
+              <span class="ba-step-tag">STEP 2 OF 5</span>
+              <h3 class="ba-step-title">Personalize Your Training &amp; Nutrition System</h3>
+              <p class="ba-step-sub">We collect only information necessary to tailor your exercise split, caloric balance, and safe progression.</p>
+            </div>
+
+            <div class="ba-pref-grid">
+              <!-- Demographics & Safeguards -->
+              <div class="ba-pref-card">
+                <h4 class="ba-pref-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Profile &amp; Safeguards
+                </h4>
+                <div class="ba-field-row">
+                  <label class="ba-field">
+                    <span>Age (Years)</span>
+                    <input type="number" id="baPrefAge" class="ba-form-input" value="26" min="13" max="100">
+                    <small class="ba-field-hint" id="baAgeSafeguardHint">Age-appropriate safeguards active.</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Biological Sex</span>
+                    <select id="baPrefGender" class="ba-form-input">
+                      <option value="male" selected>Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="ba-field-row">
+                  <label class="ba-field">
+                    <span>Training Experience</span>
+                    <select id="baPrefExperience" class="ba-form-input">
+                      <option value="beginner">Beginner (&lt; 1 year)</option>
+                      <option value="intermediate" selected>Intermediate (1–3 years)</option>
+                      <option value="advanced">Advanced (3+ years)</option>
+                    </select>
+                  </label>
+                  <label class="ba-field">
+                    <span>Current Activity Level</span>
+                    <select id="baPrefActivity" class="ba-form-input">
+                      <option value="sedentary">Sedentary (Desk job, low steps)</option>
+                      <option value="light">Lightly Active (5,000–7,000 steps)</option>
+                      <option value="moderate" selected>Moderately Active (Exercise 3-5x/wk)</option>
+                      <option value="very_active">Very Active (Heavy training &amp; physical job)</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="ba-field-row">
+                  <label class="ba-field">
+                    <span>Current Weight (kg) <small style="color:#0284c7;">(Optional)</small></span>
+                    <input type="number" id="baPrefWeight" class="ba-form-input" value="74" step="0.5">
+                  </label>
+                  <label class="ba-field">
+                    <span>Height (cm) <small style="color:#0284c7;">(Optional)</small></span>
+                    <input type="number" id="baPrefHeight" class="ba-form-input" value="180">
+                  </label>
+                </div>
+              </div>
+
+              <!-- Training Preferences -->
+              <div class="ba-pref-card">
+                <h4 class="ba-pref-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
+                  Workout Availability &amp; Gear
+                </h4>
+                <div class="ba-field-row">
+                  <label class="ba-field">
+                    <span>Training Days / Week</span>
+                    <select id="baPrefDaysPerWeek" class="ba-form-input">
+                      <option value="3">3 Days (Full Body Compound)</option>
+                      <option value="4" selected>4 Days (Upper / Lower Split)</option>
+                      <option value="5">5 Days (Push / Pull / Legs Split)</option>
+                      <option value="6">6 Days (PPL Frequency)</option>
+                    </select>
+                  </label>
+                  <label class="ba-field">
+                    <span>Workout Duration</span>
+                    <select id="baPrefDuration" class="ba-form-input">
+                      <option value="30">30 minutes</option>
+                      <option value="45" selected>45 minutes</option>
+                      <option value="60">60 minutes</option>
+                      <option value="75">75 minutes</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="ba-field-row">
+                  <label class="ba-field">
+                    <span>Available Equipment</span>
+                    <select id="baPrefEquipment" class="ba-form-input">
+                      <option value="gym" selected>Full Commercial Gym</option>
+                      <option value="home_dumbbells">Home Gym with Dumbbells &amp; Bench</option>
+                      <option value="bodyweight">Bodyweight &amp; Calisthenics Only</option>
+                    </select>
+                  </label>
+                  <label class="ba-field">
+                    <span>Exercise Intensity</span>
+                    <select id="baPrefIntensity" class="ba-form-input">
+                      <option value="moderate">Moderate (RPE 6–7, sustainable)</option>
+                      <option value="progressive" selected>Progressive Overload (RPE 7.5–8.5)</option>
+                      <option value="high">High Intensity (Advanced hypertrophy)</option>
+                    </select>
+                  </label>
+                </div>
+                <label class="ba-field" style="margin-top:8px;">
+                  <span>Physical Limitations or Joint Injuries</span>
+                  <input type="text" id="baPrefLimitations" class="ba-form-input" placeholder="e.g., Mild lower back tightness, right shoulder impingement, or none" value="None">
+                </label>
+              </div>
+
+              <!-- Nutrition Preferences -->
+              <div class="ba-pref-card" style="grid-column: 1 / -1;">
+                <h4 class="ba-pref-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
+                  Nutrition &amp; Dietary Guidelines
+                </h4>
+                <div class="ba-field-row-3">
+                  <label class="ba-field">
+                    <span>Dietary Preference</span>
+                    <select id="baPrefDietary" class="ba-form-input">
+                      <option value="balanced" selected>Non-Vegetarian / Balanced</option>
+                      <option value="vegetarian">Vegetarian (Paneer, Dairy, Legumes)</option>
+                      <option value="vegan">100% Plant-Based (Vegan)</option>
+                      <option value="pescatarian">Pescatarian</option>
+                      <option value="keto">Low Carb / Ketogenic</option>
+                    </select>
+                  </label>
+                  <label class="ba-field">
+                    <span>Food Allergies &amp; Restrictions</span>
+                    <input type="text" id="baPrefAllergies" class="ba-form-input" placeholder="e.g., Lactose intolerant, nuts, gluten, or none" value="None">
+                  </label>
+                  <label class="ba-field">
+                    <span>Daily Water Target</span>
+                    <select id="baPrefWaterTarget" class="ba-form-input">
+                      <option value="auto" selected>Auto-Calibrate by Bodyweight</option>
+                      <option value="3.0">3.0 Liters</option>
+                      <option value="3.5">3.5 Liters</option>
+                      <option value="4.0">4.0 Liters</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="ba-step-actions">
+              <button type="button" class="ba-secondary-btn" id="baStep2BackBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Back to Goals</span>
+              </button>
+              <button type="button" class="ba-primary-btn" id="baStep2NextBtn">
+                <span>Continue to 4-View Capture</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: 4-VIEW PHOTO CAPTURE -->
+          <div class="ba-wizard-step" id="baStep3">
+            <div class="ba-step-head">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <div>
+                  <span class="ba-step-tag">STEP 3 OF 5</span>
+                  <h3 class="ba-step-title">4-View Body Photo Studio (Front, Back, Left Side, Right Side)</h3>
+                  <p class="ba-step-sub">Wear fitting fitness attire, stand in good lighting against a neutral background. Camera tracks shut down automatically upon photo capture.</p>
+                </div>
+                <button type="button" class="ba-sample-btn" id="baLoadSamplePhotosBtn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span>Load Sample 4-View Poses</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2x2 Glassmorphism Photo Grid -->
+            <div class="ba-slots-grid">
+              <!-- View 1: Front -->
+              <div class="ba-photo-card" id="baSlotFront" data-slot="front">
+                <div class="ba-photo-card-head">
+                  <span class="ba-photo-card-title">1. FRONT VIEW</span>
+                  <span class="ba-slot-status-badge awaiting" id="baBadgeFront">Awaiting</span>
+                </div>
+                <div class="ba-photo-preview-wrap">
+                  <img id="baImgFront" class="ba-slot-preview-img" style="display:none;" alt="Front view preview">
+                  <div class="ba-photo-placeholder" id="baPlaceholderFront">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"/></svg>
+                    <span>Full Body Front</span>
+                    <small>Feet hip-width, arms relaxed</small>
+                  </div>
+                </div>
+                <div class="ba-slot-btn-row">
+                  <button type="button" class="ba-slot-action-btn cam" data-slot="front">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Take Photo</span>
+                  </button>
+                  <button type="button" class="ba-slot-action-btn upload" data-slot="front">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload</span>
+                  </button>
+                </div>
+                <input type="file" id="baFileFront" accept="image/*" style="display:none;">
+              </div>
+
+              <!-- View 2: Back -->
+              <div class="ba-photo-card" id="baSlotBack" data-slot="back">
+                <div class="ba-photo-card-head">
+                  <span class="ba-photo-card-title">2. BACK VIEW</span>
+                  <span class="ba-slot-status-badge awaiting" id="baBadgeBack">Awaiting</span>
+                </div>
+                <div class="ba-photo-preview-wrap">
+                  <img id="baImgBack" class="ba-slot-preview-img" style="display:none;" alt="Back view preview">
+                  <div class="ba-photo-placeholder" id="baPlaceholderBack">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M5.5 21v-2a6.5 6.5 0 0 1 13 0v2"/><path d="M12 11v6"/></svg>
+                    <span>Full Body Posterior</span>
+                    <small>Shoulders relaxed, upright back</small>
+                  </div>
+                </div>
+                <div class="ba-slot-btn-row">
+                  <button type="button" class="ba-slot-action-btn cam" data-slot="back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Take Photo</span>
+                  </button>
+                  <button type="button" class="ba-slot-action-btn upload" data-slot="back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload</span>
+                  </button>
+                </div>
+                <input type="file" id="baFileBack" accept="image/*" style="display:none;">
+              </div>
+
+              <!-- View 3: Left Side -->
+              <div class="ba-photo-card" id="baSlotLeft" data-slot="left">
+                <div class="ba-photo-card-head">
+                  <span class="ba-photo-card-title">3. LEFT SIDE PROFILE</span>
+                  <span class="ba-slot-status-badge awaiting" id="baBadgeLeft">Awaiting</span>
+                </div>
+                <div class="ba-photo-preview-wrap">
+                  <img id="baImgLeft" class="ba-slot-preview-img" style="display:none;" alt="Left profile preview">
+                  <div class="ba-photo-placeholder" id="baPlaceholderLeft">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="7" r="4"/><path d="M6 21v-3a5 5 0 0 1 9-2v5"/></svg>
+                    <span>Left Lateral Profile</span>
+                    <small>Arms slightly forward for posture check</small>
+                  </div>
+                </div>
+                <div class="ba-slot-btn-row">
+                  <button type="button" class="ba-slot-action-btn cam" data-slot="left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Take Photo</span>
+                  </button>
+                  <button type="button" class="ba-slot-action-btn upload" data-slot="left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload</span>
+                  </button>
+                </div>
+                <input type="file" id="baFileLeft" accept="image/*" style="display:none;">
+              </div>
+
+              <!-- View 4: Right Side -->
+              <div class="ba-photo-card" id="baSlotRight" data-slot="right">
+                <div class="ba-photo-card-head">
+                  <span class="ba-photo-card-title">4. RIGHT SIDE PROFILE</span>
+                  <span class="ba-slot-status-badge awaiting" id="baBadgeRight">Awaiting</span>
+                </div>
+                <div class="ba-photo-preview-wrap">
+                  <img id="baImgRight" class="ba-slot-preview-img" style="display:none;" alt="Right profile preview">
+                  <div class="ba-photo-placeholder" id="baPlaceholderRight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="14" cy="7" r="4"/><path d="M9 21v-5a5 5 0 0 1 9 2v3"/></svg>
+                    <span>Right Lateral Profile</span>
+                    <small>Spinal curvature and hip tilt line</small>
+                  </div>
+                </div>
+                <div class="ba-slot-btn-row">
+                  <button type="button" class="ba-slot-action-btn cam" data-slot="right">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Take Photo</span>
+                  </button>
+                  <button type="button" class="ba-slot-action-btn upload" data-slot="right">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload</span>
+                  </button>
+                </div>
+                <input type="file" id="baFileRight" accept="image/*" style="display:none;">
+              </div>
+            </div>
+
+            <div class="ba-step-actions">
+              <button type="button" class="ba-secondary-btn" id="baStep3BackBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Back to Preferences</span>
+              </button>
+              <button type="button" class="ba-primary-btn" id="baStep3NextBtn">
+                <span>Review Photos &amp; Consent</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: PHOTO REVIEW & INFORMED CONSENT -->
+          <div class="ba-wizard-step" id="baStep4">
+            <div class="ba-step-head">
+              <span class="ba-step-tag">STEP 4 OF 5</span>
+              <h3 class="ba-step-title">Review Photographs &amp; Informed Consent</h3>
+              <p class="ba-step-sub">Confirm all 4 angles are properly framed before initiating AI multi-dimensional processing.</p>
+            </div>
+
+            <!-- 4 Photos Mini Gallery -->
+            <div class="ba-review-gallery">
+              <div class="ba-review-thumb-card">
+                <span class="ba-review-thumb-label">Front View</span>
+                <div class="ba-review-thumb-box">
+                  <img id="baReviewFront" class="ba-review-img" alt="Front review">
+                </div>
+                <button type="button" class="ba-review-retake-btn" data-slot="front">Replace</button>
+              </div>
+              <div class="ba-review-thumb-card">
+                <span class="ba-review-thumb-label">Back View</span>
+                <div class="ba-review-thumb-box">
+                  <img id="baReviewBack" class="ba-review-img" alt="Back review">
+                </div>
+                <button type="button" class="ba-review-retake-btn" data-slot="back">Replace</button>
+              </div>
+              <div class="ba-review-thumb-card">
+                <span class="ba-review-thumb-label">Left Profile</span>
+                <div class="ba-review-thumb-box">
+                  <img id="baReviewLeft" class="ba-review-img" alt="Left review">
+                </div>
+                <button type="button" class="ba-review-retake-btn" data-slot="left">Replace</button>
+              </div>
+              <div class="ba-review-thumb-card">
+                <span class="ba-review-thumb-label">Right Profile</span>
+                <div class="ba-review-thumb-box">
+                  <img id="baReviewRight" class="ba-review-img" alt="Right review">
+                </div>
+                <button type="button" class="ba-review-retake-btn" data-slot="right">Replace</button>
+              </div>
+            </div>
+
+            <!-- Privacy Disclosure & Consent Agreement -->
+            <div class="ba-consent-card">
+              <div class="ba-consent-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div class="ba-consent-content">
+                <b class="ba-consent-heading">Data Privacy &amp; Biomechanical Processing Notice</b>
+                <p class="ba-consent-text">
+                  Your photographs are processed solely to observe posture alignment, balance symmetry, and calculate individualized transformation targets. Stored references are private to your user account and never shared publicly. You can erase your photos and assessment records anytime.
+                </p>
+                <label class="ba-consent-checkbox-wrap">
+                  <input type="checkbox" id="baConsentCheck" class="ba-consent-checkbox">
+                  <span>I give informed consent to process my 4 photographs for my personalized transformation plan.</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="ba-step-actions">
+              <button type="button" class="ba-secondary-btn" id="baStep4BackBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Back to Photos</span>
+              </button>
+              <button type="button" class="ba-primary-btn disabled" id="baRunAnalysisBtn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Run AI Transformation Analysis</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: AI ANALYSIS LOADING STATE -->
+          <div class="ba-wizard-step" id="baStep5">
+            <div class="ba-loading-card">
+              <div class="ba-loading-spinner-wrap">
+                <div class="ba-spinner-ring"></div>
+                <div class="ba-spinner-center-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.4"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+                </div>
+              </div>
+              <h3 class="ba-loading-title" id="baLoadingTitle">Evaluating 4-View Biomechanics...</h3>
+              <p class="ba-loading-sub" id="baLoadingSub">Checking skeletal symmetry and posture alignment across views.</p>
+              
+              <div class="ba-loading-stages-bar">
+                <div class="ba-stage-pill active" id="baStagePill1">1. Photo Validation</div>
+                <div class="ba-stage-pill" id="baStagePill2">2. Posture &amp; Alignment</div>
+                <div class="ba-stage-pill" id="baStagePill3">3. Workout Architecture</div>
+                <div class="ba-stage-pill" id="baStagePill4">4. Nutritional Targets</div>
+              </div>
+
+              <button type="button" class="ba-secondary-btn small" id="baCancelAnalysisBtn" style="margin-top:20px;">Cancel Assessment</button>
+            </div>
+          </div>
+
+          <!-- STEP 6: TRANSFORMATION RESULTS DASHBOARD -->
+          <div class="ba-wizard-step" id="baStep6">
+            <!-- TOP REPORT STRIP -->
+            <div class="ba-report-top-strip">
+              <div class="ba-report-meta">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="ba-verified-pill" id="baReportVerifiedTag">VERIFIED AI ASSESSMENT</span>
+                  <span class="ba-date-pill" id="baReportDateTag">Oct 23, 2026</span>
+                </div>
+                <h3 class="ba-report-goal-headline" id="baReportGoalHeadline">Physique Transformation Blueprint</h3>
+                <p class="ba-report-summary-text" id="baReportSummaryText">Comprehensive biomechanical assessment generated.</p>
+              </div>
+              <div class="ba-report-top-actions">
+                <button type="button" class="ba-action-pill" id="baSaveAssessmentBtn" title="Save this assessment to database">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span>Save Assessment</span>
+                </button>
+                <button type="button" class="ba-action-pill highlight" id="baRepeatScanBtn" title="Start a fresh scan">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+                  <span>New Assessment</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- POSTURE OBSERVATIONS & BIOMECHANICAL INSIGHTS -->
+            <div class="ba-results-section">
+              <div class="ba-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
+                <h4>Visible Posture &amp; Alignment Observations</h4>
+                <span class="ba-disclaimer-tag">Cautious Visual Observations · Non-Medical</span>
+              </div>
+
+              <div class="ba-posture-grid">
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">Apparent Head Position</span>
+                  <p class="ba-pcard-val" id="baObsHead">Neutral cervical spine alignment with slight forward translation within normal functional limits.</p>
+                </div>
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">Visible Shoulder Alignment</span>
+                  <p class="ba-pcard-val" id="baObsShoulders">Biacromial level is horizontal with balanced clavicular breadth; no notable elevation.</p>
+                </div>
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">Left vs Right Symmetry</span>
+                  <p class="ba-pcard-val" id="baObsSymmetry">Upper torso shows balanced lateral development across deltoids and arm musculature.</p>
+                </div>
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">Coronal Trunk Alignment</span>
+                  <p class="ba-pcard-val" id="baObsTrunk">Upright coronal alignment with good ribcage position and natural thoracic contour.</p>
+                </div>
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">Hip &amp; Knee Positioning</span>
+                  <p class="ba-pcard-val" id="baObsHipsKnees">Pelvic crests appear balanced in sagittal view; knee extension shows stable patellar tracking.</p>
+                </div>
+                <div class="ba-posture-card">
+                  <span class="ba-pcard-label">General Stance &amp; Balance</span>
+                  <p class="ba-pcard-val" id="baObsStance">Grounded bilateral foot pressure distribution with stable center-of-gravity grounding.</p>
+                </div>
+              </div>
+
+              <!-- Alignment Notes & Safeguards -->
+              <div class="ba-alignment-notes-wrap">
+                <div class="ba-alignment-box concerns">
+                  <b class="ba-abox-title">Possible Alignment Considerations:</b>
+                  <ul id="baListConcerns" class="ba-abox-list">
+                    <li>Mild tendency for forward head posture during prolonged sitting; thoracic mobility recommended.</li>
+                    <li>Incorporate band face-pulls to reinforce posterior rotator cuff stability.</li>
+                  </ul>
+                </div>
+                <div class="ba-alignment-box limitations">
+                  <b class="ba-abox-title">Non-Medical Disclaimer &amp; Boundaries:</b>
+                  <p id="baTextLimitations" class="ba-abox-text">
+                    This evaluation is derived from 2D user photographs for fitness coaching and does not diagnose scoliosis, spinal conditions, or clinical disorders. If you experience discomfort or pain, consult a licensed physical therapist.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- PHYSICAL ESTIMATES STRIP -->
+            <div class="ba-results-section">
+              <div class="ba-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <h4>Estimated Physical Characteristics &amp; Metrics</h4>
+                <span class="ba-disclaimer-tag">Photographic Estimates · Use For Relative Tracking</span>
+              </div>
+
+              <div class="ba-metrics-4strip">
+                <div class="ba-mcard">
+                  <span class="ba-mcard-kicker">Estimated Body Fat</span>
+                  <b class="ba-mcard-value cyan" id="baEstBodyFat">16.5%</b>
+                  <span class="ba-mcard-sub" id="baEstBfCategory">Athletic Lean Range</span>
+                </div>
+                <div class="ba-mcard">
+                  <span class="ba-mcard-kicker">Lean Muscle Mass</span>
+                  <b class="ba-mcard-value purple" id="baEstMuscleMass">61.8 kg</b>
+                  <span class="ba-mcard-sub">Active Skeletal Mass</span>
+                </div>
+                <div class="ba-mcard">
+                  <span class="ba-mcard-kicker">Adipose Tissue</span>
+                  <b class="ba-mcard-value amber" id="baEstFatMass">12.2 kg</b>
+                  <span class="ba-mcard-sub">Subcutaneous Adipose</span>
+                </div>
+                <div class="ba-mcard">
+                  <span class="ba-mcard-kicker">Reassessment Window</span>
+                  <b class="ba-mcard-value green" id="baReassessmentInterval">6–8 Weeks</b>
+                  <span class="ba-mcard-sub">Optimal Visual Timeline</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PERSONALIZED WORKOUT TRANSFORMATION PLAN -->
+            <div class="ba-results-section">
+              <div class="ba-section-heading" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
+                  <h4>Personalized Workout Transformation Split</h4>
+                </div>
+                <button type="button" class="ba-action-pill highlight" id="baSaveWorkoutPlanBtn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Apply to My Workouts</span>
+                </button>
+              </div>
+
+              <!-- Methodology Callout -->
+              <div class="ba-callout-box">
+                <div>
+                  <b style="color:var(--ff-text-primary);font-size:0.92rem;" id="baTrainingMethodologyTitle">Hypertrophic Progressive Overload Split</b>
+                  <p style="color:var(--ff-text-secondary);font-size:0.82rem;margin:4px 0 0;" id="baTrainingStructureText">4 training days / week · 45 minutes per session · RPE 7.5–8.5</p>
+                </div>
+                <div class="ba-overload-tip">
+                  <small style="text-transform:uppercase;font-weight:800;color:#0284c7;display:block;">Progressive Overload Rule</small>
+                  <span style="font-size:0.78rem;color:var(--ff-text-primary);" id="baOverloadText">Add 1-2.5kg or 1 extra rep each week while preserving clean technique.</span>
+                </div>
+              </div>
+
+              <!-- Day Tabs -->
+              <div class="ba-days-tab-bar" id="baWorkoutDayTabs">
+                <!-- Populated dynamically (Day 1 - Day 7) -->
+              </div>
+
+              <!-- Selected Day Workout Container -->
+              <div class="ba-workout-day-card" id="baWorkoutDayCard">
+                <div class="ba-wcard-head">
+                  <div>
+                    <h5 class="ba-wcard-day-title" id="baCurrentDayTitle">Day 1: Upper Body Power</h5>
+                    <span class="ba-wcard-focus" id="baCurrentDayFocus">Chest, Shoulders &amp; Back</span>
+                  </div>
+                  <button type="button" class="ba-mark-day-btn" id="baMarkDayCompleteBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Mark Day Complete</span>
+                  </button>
+                </div>
+
+                <!-- Exercise List -->
+                <div class="ba-exercises-list" id="baExercisesList">
+                  <!-- Injected dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- PERSONALIZED NUTRITION & MACRO PLANNER -->
+            <div class="ba-results-section">
+              <div class="ba-section-heading" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
+                  <h4>Personalized Nutrition &amp; Macronutrient Architecture</h4>
+                </div>
+                <button type="button" class="ba-action-pill highlight" id="baApplyNutritionBtn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Apply Nutrition to Today</span>
+                </button>
+              </div>
+
+              <!-- Macros 5-grid -->
+              <div class="ba-macro-grid">
+                <div class="ba-macro-box">
+                  <span class="ba-macro-label">Daily Calories</span>
+                  <b class="ba-macro-val" id="baNutriCalories">2,350</b>
+                  <small>kcal / day</small>
+                </div>
+                <div class="ba-macro-box">
+                  <span class="ba-macro-label">Daily Protein</span>
+                  <b class="ba-macro-val blue" id="baNutriProtein">165g</b>
+                  <small>2.2g / kg bodyweight</small>
+                </div>
+                <div class="ba-macro-box">
+                  <span class="ba-macro-label">Carbohydrates</span>
+                  <b class="ba-macro-val cyan" id="baNutriCarbs">240g</b>
+                  <small>Glycogen replenishment</small>
+                </div>
+                <div class="ba-macro-box">
+                  <span class="ba-macro-label">Healthy Fats</span>
+                  <b class="ba-macro-val amber" id="baNutriFats">65g</b>
+                  <small>Hormonal baseline</small>
+                </div>
+                <div class="ba-macro-box">
+                  <span class="ba-macro-label">Hydration</span>
+                  <b class="ba-macro-val green" id="baNutriWater">3.4L</b>
+                  <small>Intracellular water</small>
+                </div>
+              </div>
+
+              <!-- Sample Daily Meals -->
+              <div class="ba-meals-wrap">
+                <span class="ba-sub-label">Goal-Appropriate Sample Meal Guidance:</span>
+                <div class="ba-meals-list" id="baMealsList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Guidelines & Rules -->
+              <div class="ba-guidelines-box">
+                <b class="ba-abox-title">Nutritional Execution Rules:</b>
+                <ul id="baNutriGuidelinesList" class="ba-abox-list">
+                  <li>Distribute protein evenly across 3–4 meals to stimulate muscle protein synthesis throughout the day.</li>
+                  <li>Consume complex carbohydrates 90–120 minutes prior to training for maximum glycogen density.</li>
+                  <li>Maintain minimum 3.0L water intake to support protein synthesis and intracellular cell volumization.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- RECOVERY & PROGRESS TRACKING GUIDELINES -->
+            <div class="ba-results-section">
+              <div class="ba-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <h4>Recovery, Sleep &amp; Progress Measurement Protocols</h4>
+              </div>
+
+              <div class="ba-recovery-grid">
+                <div class="ba-rec-card">
+                  <b class="ba-rec-title">Restorative Sleep Target:</b>
+                  <span class="ba-rec-val" id="baSleepTargetHours">7.5 to 8.5 hours nightly</span>
+                  <ul class="ba-abox-list" id="baSleepHygieneList">
+                    <li>Maintain dark, cool sleeping space (~19°C / 66°F).</li>
+                    <li>Eliminate blue light screens 45 minutes before bedtime.</li>
+                    <li>Cease caffeine at least 8 hours prior to planned sleep.</li>
+                  </ul>
+                </div>
+
+                <div class="ba-rec-card">
+                  <b class="ba-rec-title">Standardized Tracking Protocols:</b>
+                  <ul class="ba-abox-list" id="baProgressTrackingList">
+                    <li>Log fasted morning bodyweight 3-4 days per week; track the weekly median.</li>
+                    <li>Measure waist circumference at navel level once every 2 weeks.</li>
+                    <li>Capture progress photos in consistent lighting and identical distance.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASSESSMENT HISTORY & COMPARISON CONTAINER -->
+        <div class="ba-history-wrap" id="baHistoryWrap" style="display:none;">
+          <div class="ba-history-head">
+            <h3 class="ba-step-title">Transformation Assessment History</h3>
+            <button type="button" class="ba-primary-btn" id="baHistoryNewScanBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Start New Assessment</span>
+            </button>
+          </div>
+          <div id="baHistoryList" class="ba-history-cards-grid">
+            <!-- Injected dynamically -->
+          </div>
         </div>
       </section>
 
@@ -1458,11 +2356,8 @@
         <div class="workout-plan-grid">
           <article class="panel workout-card-full">
             <div class="workout-card-hero">
-              <div style="position:relative;cursor:pointer;border-radius:14px;overflow:hidden;" class="img-preview-trigger" data-title="Workout: Dumbbell Training" data-src="images/fitfuel-stronger-you-hero.jpg">
-                <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Dumbbell Training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;">
-                <span style="position:absolute;bottom:10px;right:10px;background:rgba(20,33,24,0.78);color:#fff;font-size:.76rem;padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px);display:flex;align-items:center;gap:4px;">
-                  Click for Full View
-                </span>
+              <div style="position:relative;border-radius:14px;overflow:hidden;">
+                <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Dumbbell Training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;pointer-events:none;">
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
                 <div>

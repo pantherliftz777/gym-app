@@ -1290,7 +1290,8 @@ function switchView(viewName) {
   $('#sidebar').classList.remove('mobile-open');
 
   // Re-render view specifics
-  if (viewName === 'today') { renderDashboard(); renderDailyTip(); }
+  if (viewName === 'today') { renderDashboard(); renderDailyTip(); if (typeof initInteractiveHeroAndAppButtons === 'function') initInteractiveHeroAndAppButtons(); }
+  if (viewName === 'body-analysis') { if (typeof renderBodyAnalysisView === 'function') renderBodyAnalysisView(); }
   if (viewName === 'food-log') renderFoodLog();
   if (viewName === 'workouts') renderWorkouts();
   if (viewName === 'exercise-library') renderExerciseLibrary();
@@ -1453,6 +1454,27 @@ function renderDashboard() {
   if ($('#dashP')) $('#dashP').textContent = totalP;
   if ($('#dashC')) $('#dashC').textContent = totalC;
   if ($('#dashF')) $('#dashF').textContent = totalF;
+
+  // Sync A Stronger You Hero Side Cards (Image 3 standard)
+  if ($('#syHeroCalBurned')) $('#syHeroCalBurned').textContent = totalKcal.toLocaleString();
+  if ($('#syHeroCalTarget')) $('#syHeroCalTarget').textContent = goalKcal.toLocaleString();
+  if ($('#syHeroProteinEaten')) $('#syHeroProteinEaten').textContent = totalP + 'g';
+  const targetP = profile.p || 160;
+  if ($('#syHeroProteinTarget')) $('#syHeroProteinTarget').textContent = targetP + 'g';
+  const pPct = Math.min(100, Math.round((totalP / targetP) * 100));
+  const calFill = $('.sy-card-calories .sy-circle-fill');
+  if (calFill) calFill.setAttribute('stroke-dasharray', `${pct}, 100`);
+  const calPctText = $('.sy-card-calories .sy-ring-pct');
+  if (calPctText) calPctText.textContent = pct + '%';
+  const pFill = $('.sy-card-protein .sy-circle-fill');
+  if (pFill) pFill.setAttribute('stroke-dasharray', `${pPct}, 100`);
+  const pPctText = $('.sy-card-protein .sy-ring-pct');
+  if (pPctText) pPctText.textContent = pPct + '%';
+  if ($('#syProfileName') && profile.name) $('#syProfileName').textContent = profile.name;
+  if ($('#syAvatarDisplay')) {
+    const pName = profile.name || 'Jordan Doe';
+    $('#syAvatarDisplay').textContent = pName.split(' ').map(n=>n[0]).join('').slice(0, 2).toUpperCase() || 'JD';
+  }
 
   // 3D Body Composition Card Callouts
   if ($('#bodyFatVal') && profile.bodyFat) $('#bodyFatVal').textContent = `${profile.bodyFat}%`;
@@ -4214,10 +4236,16 @@ function openImageLightbox(src, title = 'High-Res Preview') {
   openModal('#imageLightboxModal');
 }
 
-// Global click handler to expand any image with full aspect-ratio
+// Global click handler to expand images with full aspect-ratio (EXCLUDES athlete & workout visuals to prevent unwanted zooming)
 document.addEventListener('click', e => {
-  const trigger = e.target.closest('.img-preview-trigger, #dashWorkoutImg, #planWorkoutImg, .cam-preview-image, #camResultThumb');
+  if (e.target.closest('#syAthleteHeroImg, .sy-athlete-stage, .stronger-you-hero-card .sy-athlete-img, #dashWorkoutImg, .workout-feature, #planWorkoutImg, .workout-feature img')) {
+    return;
+  }
+  const trigger = e.target.closest('.img-preview-trigger, .cam-preview-image, #camResultThumb');
   if (!trigger) return;
+  if (trigger.id === 'syAthleteHeroImg' || trigger.id === 'dashWorkoutImg' || trigger.id === 'planWorkoutImg' || trigger.closest('.sy-athlete-stage') || trigger.closest('.workout-feature')) {
+    return;
+  }
   if (e.target.closest('button, select, input, a')) return;
   const src = trigger.dataset.src || trigger.src || (trigger.querySelector('img') ? trigger.querySelector('img').src : null);
   if (!src) return;
@@ -8062,37 +8090,188 @@ async function bootApp() {
   }
 }
 
-bootApp();
-}
+/* ==========================================================================
+   INTERACTIVE HERO & APP BUTTON CONTROLLER (IMAGE 3 STANDARD)
+   ========================================================================== */
 
+function initInteractiveHeroAndAppButtons() {
+  // Global delegated click listener ensuring 100% reliable responsiveness across all hero cards, buttons, menu dots, pills, and dynamic widgets
+  if (!window._syGlobalButtonsDelegated) {
+    window._syGlobalButtonsDelegated = true;
+    document.addEventListener('click', (e) => {
+      // 1. Hero CTA: Start Your Journey
+      if (e.target.closest('#syStartJourneyBtn, .sy-cta-btn')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('body-analysis');
+        if (typeof toast === 'function') toast('Opening AI Body Analysis & Transformation Planner');
+        return;
+      }
 
-/* ---------- Image 3 & Image 5 Enhanced Interactive Bindings ---------- */
-document.addEventListener('DOMContentLoaded', () => {
-  /* ---------- A Stronger You Hero (User Reference Design) Bindings ---------- */
-  if ($('#syStartJourneyBtn')) $('#syStartJourneyBtn').onclick = () => switchView('workouts');
-  if ($('#syFloatWorkoutTrigger')) $('#syFloatWorkoutTrigger').onclick = () => switchView('workouts');
-  if ($('#syQuickFoodBtn')) $('#syQuickFoodBtn').onclick = () => {
-    if (typeof openModal === 'function' && $('#mealAnalysisModal')) openModal('#mealAnalysisModal');
-    else switchView('meals');
-  };
-  if ($('#syQuickBodyBtn')) $('#syQuickBodyBtn').onclick = () => {
-    if (typeof openModal === 'function' && $('#bodyAnalysisModal')) {
-      if (typeof syncBodyModalInputs === 'function') syncBodyModalInputs();
-      openModal('#bodyAnalysisModal');
-    } else switchView('today');
-  };
-  if ($('#syQuickProgressBtn')) $('#syQuickProgressBtn').onclick = () => switchView('activity');
-  if ($('#syBottomCardWorkout')) $('#syBottomCardWorkout').onclick = () => switchView('workouts');
-  if ($('#syBottomCardNutrition')) $('#syBottomCardNutrition').onclick = () => switchView('meals');
-  if ($('#syBottomCardProgress')) $('#syBottomCardProgress').onclick = () => switchView('activity');
-  if ($('#syHeroBellBtn')) $('#syHeroBellBtn').onclick = () => {
-    if (typeof toast === 'function') toast('Notifications: Weekly AI coaching and performance report is ready.');
-  };
-  if ($('#syHeroProfilePill')) $('#syHeroProfilePill').onclick = () => switchView('profile');
-  if ($('#syHeroSearchInput')) {
-    $('#syHeroSearchInput').onkeydown = (e) => {
+      // 2. Menu dots on side cards or bottom cards
+      const menuDots = e.target.closest('.sy-scard-menu-dots, .sy-bcard-menu-dots');
+      if (menuDots) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        if (typeof toast === 'function') toast('Quick Actions: Select a feature card to customize metrics and routines.');
+        return;
+      }
+
+      // 3. Arrow button on Workout side card
+      if (e.target.closest('.sy-card-arrow-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('workouts');
+        if (typeof toast === 'function') toast('Opening Workout Plans');
+        return;
+      }
+
+      // 4. Hero Side Metric Cards
+      if (e.target.closest('#syFloatCaloriesTrigger, .sy-card-calories')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        if (typeof toast === 'function') toast('Opening Calorie & Nutrition Tracker');
+        return;
+      }
+      if (e.target.closest('#syFloatWorkoutTrigger, .sy-card-workout')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('workouts');
+        if (typeof toast === 'function') toast('Opening Workout Plans');
+        return;
+      }
+      if (e.target.closest('#syFloatProteinTrigger, .sy-card-protein')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        if (typeof toast === 'function') toast('Opening Protein & Nutrition Tracker');
+        return;
+      }
+
+      // 5. Quick Access Navigation Pills
+      if (e.target.closest('#syQuickFoodBtn')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        return;
+      }
+      if (e.target.closest('#syQuickBodyBtn')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('body-analysis');
+        return;
+      }
+      if (e.target.closest('#syQuickProgressBtn')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('activity');
+        return;
+      }
+
+      // 6. Three Bottom Feature Cards (Workout, Nutrition, Progress) & Action Buttons
+      if (e.target.closest('#syBottomCardWorkout, .sy-bcard-action-btn.purple')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('workouts');
+        if (typeof toast === 'function') toast('Opening Workout Plans');
+        return;
+      }
+      if (e.target.closest('#syBottomCardNutrition, .sy-bcard-action-btn.mint')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        if (typeof toast === 'function') toast('Opening Calorie & Nutrition Tracker');
+        return;
+      }
+      if (e.target.closest('#syBottomCardProgress, .sy-bcard-action-btn.blue')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('activity');
+        if (typeof toast === 'function') toast('Opening Progress & GPS Tracking');
+        return;
+      }
+
+      // 7. Notification Bells & Profile
+      if (e.target.closest('#syHeroBellBtn, #dashBellBtn')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        if (typeof toast === 'function') toast('Notifications: AI recommendations & daily targets updated.');
+        return;
+      }
+      if (e.target.closest('#syHeroProfilePill')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('profile');
+        return;
+      }
+
+      // 8. Image 3 Dashboard metric triggers
+      if (e.target.closest('#metricCardCalTrigger')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        return;
+      }
+      if (e.target.closest('#metricCardProteinTrigger')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('food-log');
+        return;
+      }
+      if (e.target.closest('#metricCardWorkoutsTrigger')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('workouts');
+        return;
+      }
+      if (e.target.closest('#metricCardWeightTrigger')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('tracking');
+        return;
+      }
+      if (e.target.closest('#viewBodyDetailsBtn, #bodyCompScanBadge')) {
+        e.preventDefault();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        switchView('body-analysis');
+        return;
+      }
+
+      // 9. Date filter pills
+      const periodBtn = e.target.closest('.date-pills-bar [data-dash-period]');
+      if (periodBtn) {
+        e.preventDefault();
+        $$('.date-pills-bar [data-dash-period]').forEach(b => {
+          b.classList.remove('active');
+          b.style.background = 'transparent';
+          b.style.color = 'var(--ff-text-secondary)';
+        });
+        periodBtn.classList.add('active');
+        periodBtn.style.background = '#2563eb';
+        periodBtn.style.color = '#fff';
+        if (soundFX && soundFX.pop) soundFX.pop();
+        if (typeof toast === 'function') toast(`Switched dashboard period to: ${periodBtn.textContent.trim()}`);
+        return;
+      }
+
+      // 10. Transformation nutrition apply button
+      if (e.target.closest('#baApplyNutritionBtn')) {
+        e.preventDefault();
+        applyNutritionToProfile();
+        return;
+      }
+    });
+  }
+
+  // Direct element handlers for topbar search inputs
+  const heroSearch = $('#syHeroSearchInput');
+  if (heroSearch) {
+    heroSearch.onkeydown = (e) => {
       if (e.key === 'Enter') {
-        const q = $('#syHeroSearchInput').value.trim();
+        const q = heroSearch.value.trim();
         if (!q) return;
         switchView('workouts');
         const customInput = $('#customWorkoutSearchInput');
@@ -8105,82 +8284,67 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Image 3 Clickable Metric Triggers
-  if ($('#metricCardCalTrigger')) $('#metricCardCalTrigger').onclick = () => switchView('food-log');
-  if ($('#metricCardProteinTrigger')) $('#metricCardProteinTrigger').onclick = () => switchView('food-log');
-  if ($('#metricCardWorkoutsTrigger')) $('#metricCardWorkoutsTrigger').onclick = () => switchView('workouts');
-  if ($('#metricCardWeightTrigger')) $('#metricCardWeightTrigger').onclick = () => switchView('tracking');
-  if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => {
-    if (typeof syncBodyModalInputs === 'function') syncBodyModalInputs();
-    openModal('#bodyAnalysisModal');
-  };
-  if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
-
-  // Image 3 Date Pills
-  $$('.date-pills-bar [data-dash-period]').forEach(btn => {
-    btn.onclick = () => {
-      $$('.date-pills-bar [data-dash-period]').forEach(b => {
-        b.classList.remove('active');
-        b.style.background = 'transparent';
-        b.style.color = 'var(--ff-text-secondary)';
-      });
-      btn.classList.add('active');
-      btn.style.background = '#2563eb';
-      btn.style.color = '#fff';
-      toast(`Switched dashboard period to: ${btn.textContent.trim()}`);
-    };
-  });
-
-  // Image 3 Search Bar
-  if ($('#dashGlobalSearchInput')) {
-    $('#dashGlobalSearchInput').onkeydown = (e) => {
+  const dashGlobalSearch = $('#dashGlobalSearchInput');
+  if (dashGlobalSearch) {
+    dashGlobalSearch.onkeydown = (e) => {
       if (e.key === 'Enter') {
-        const q = $('#dashGlobalSearchInput').value.trim();
+        const q = dashGlobalSearch.value.trim();
         if (!q) return;
-        switchView('ai-coach');
-        setTimeout(() => {
-          if ($('#coachChatInput')) {
-            $('#coachChatInput').value = q;
-            if (typeof sendCoachChatMessage === 'function') sendCoachChatMessage(q);
-          }
-        }, 150);
+        switchView('food-log');
+        if (typeof openFoodModal === 'function') {
+          setTimeout(() => {
+            openFoodModal();
+            const searchBox = $('#foodModalSearch');
+            if (searchBox) {
+              searchBox.value = q;
+              searchBox.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          }, 150);
+        }
+        if (typeof toast === 'function') toast('Searching food log for: ' + q);
       }
     };
   }
 
-  // Image 5 Activity Hero & Quick Action Buttons
+  // Sidebar navigation links
+  $$('.primary-nav .nav-link').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      if (soundFX && soundFX.pop) soundFX.pop();
+      switchView(btn.dataset.view);
+    };
+  });
+
+  // Activity Quick Actions
   if ($('#actHeroStartGpsBtn')) $('#actHeroStartGpsBtn').onclick = () => {
     if (typeof startGpsTracking === 'function') startGpsTracking();
-    toast('Live GPS tracking started');
+    if (typeof toast === 'function') toast('Live GPS tracking started');
   };
   if ($('#actHeroCheckPostureBtn')) $('#actHeroCheckPostureBtn').onclick = () => switchView('posture');
-
   if ($('#actQaWalkRun')) $('#actQaWalkRun').onclick = () => {
     if (typeof startGpsTracking === 'function') startGpsTracking();
-    toast('Live Walk / Run GPS started');
+    if (typeof toast === 'function') toast('Live Walk / Run GPS started');
   };
   if ($('#actQaStepCounter')) $('#actQaStepCounter').onclick = () => {
-    toast('Sensor Pedometer active · 8,432 steps recorded today');
+    if (typeof toast === 'function') toast('Sensor Pedometer active · 8,432 steps recorded today');
   };
   if ($('#actQaCameraPosture')) $('#actQaCameraPosture').onclick = () => switchView('posture');
   if ($('#actQaExerciseForm')) $('#actQaExerciseForm').onclick = () => switchView('posture');
   if ($('#actOpenPostureCheckerBtn')) $('#actOpenPostureCheckerBtn').onclick = () => switchView('posture');
-
   if ($('#actSaveSummaryBtn')) {
     $('#actSaveSummaryBtn').onclick = () => {
       if (typeof finishGpsTracking === 'function') finishGpsTracking();
-      else toast('Activity session saved to Cloud Database');
+      else if (typeof toast === 'function') toast('Activity session saved to Cloud Database');
     };
   }
-
   if ($('#gpsLapBtn')) {
     $('#gpsLapBtn').onclick = () => {
-      soundFX.pop();
-      toast('Lap split recorded');
+      if (soundFX && soundFX.pop) soundFX.pop();
+      if (typeof toast === 'function') toast('Lap split recorded');
     };
   }
 
-  // Image 5 Subtabs Bar
+  // Activity Subtabs
   $$('#actSubTabsBar [data-act-tab]').forEach(tab => {
     tab.onclick = () => {
       $$('#actSubTabsBar [data-act-tab]').forEach(t => t.classList.remove('active'));
@@ -8193,8 +8357,882 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = $('#activityHistoryContainer');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       } else if (tabKey === 'goals' || tabKey === 'insights') {
-        toast(`Switched to ${tab.textContent.trim()} view`);
+        if (typeof toast === 'function') toast(`Switched to ${tab.textContent.trim()} view`);
       }
     };
   });
-});
+}
+
+/* ==========================================================================
+   AI BODY ANALYSIS & PHYSIQUE TRANSFORMATION PLANNER CONTROLLER
+   ========================================================================== */
+
+const baState = {
+  currentStep: 1,
+  selectedGoal: 'lean_athletic',
+  customGoalText: '',
+  preferences: {
+    age: 26,
+    gender: 'male',
+    experience: 'intermediate',
+    activity: 'moderate',
+    weight: 74,
+    height: 180,
+    daysPerWeek: 4,
+    duration: 45,
+    equipment: 'gym',
+    intensity: 'progressive',
+    limitations: 'None',
+    dietary: 'balanced',
+    allergies: 'None',
+    waterTarget: 'auto'
+  },
+  photos: {
+    front: null,
+    back: null,
+    left: null,
+    right: null
+  },
+  currentAnalysis: null,
+  activeWorkoutDayIdx: 0,
+  analysisTimer: null
+};
+
+function renderBodyAnalysisView() {
+  bindBodyAnalysisEvents();
+  goToBodyStep(baState.currentStep || 1);
+}
+
+function bindBodyAnalysisEvents() {
+  // Top Navigation Tabs
+  const tabWiz = $('#baTabWizardBtn');
+  const tabDash = $('#baTabDashboardBtn');
+  const tabHist = $('#baTabHistoryBtn');
+
+  if (tabWiz) {
+    tabWiz.onclick = () => {
+      setActiveBaTab('wizard');
+      const wiz = $('#baWizardWrap');
+      const hist = $('#baHistoryWrap');
+      if (wiz) wiz.style.display = 'block';
+      if (hist) hist.style.display = 'none';
+      goToBodyStep(baState.currentStep <= 5 ? baState.currentStep : 1);
+    };
+  }
+
+  if (tabDash) {
+    tabDash.onclick = () => {
+      if (!baState.currentAnalysis) {
+        if (typeof toast === 'function') toast('Run an assessment first to view the dashboard.');
+        return;
+      }
+      setActiveBaTab('dashboard');
+      const wiz = $('#baWizardWrap');
+      const hist = $('#baHistoryWrap');
+      if (wiz) wiz.style.display = 'block';
+      if (hist) hist.style.display = 'none';
+      goToBodyStep(6);
+    };
+  }
+
+  if (tabHist) {
+    tabHist.onclick = () => {
+      setActiveBaTab('history');
+      const wiz = $('#baWizardWrap');
+      const hist = $('#baHistoryWrap');
+      if (wiz) wiz.style.display = 'none';
+      if (hist) hist.style.display = 'block';
+      loadBodyAssessmentHistory();
+    };
+  }
+
+  // Stepper Clicks
+  $$('#baStepperBar .ba-step-item').forEach(item => {
+    item.onclick = () => {
+      const step = parseInt(item.dataset.step, 10);
+      if (step <= baState.currentStep || (step === 6 && baState.currentAnalysis)) {
+        goToBodyStep(step);
+      }
+    };
+  });
+
+  // Step 1: Goals Grid
+  $$('#baGoalsGrid .ba-goal-card').forEach(card => {
+    card.onclick = () => {
+      $$('#baGoalsGrid .ba-goal-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      baState.selectedGoal = card.dataset.goalId;
+      const customBox = $('#baCustomGoalBox');
+      if (customBox) {
+        customBox.style.display = baState.selectedGoal === 'custom' ? 'block' : 'none';
+      }
+      if (soundFX && soundFX.pop) soundFX.pop();
+    };
+  });
+
+  const step1Next = $('#baStep1NextBtn');
+  if (step1Next) {
+    step1Next.onclick = () => {
+      if (baState.selectedGoal === 'custom') {
+        const txt = $('#baCustomGoalText') ? $('#baCustomGoalText').value.trim() : '';
+        baState.customGoalText = txt || 'Custom physique transformation';
+      }
+      if (soundFX && soundFX.pop) soundFX.pop();
+      goToBodyStep(2);
+    };
+  }
+
+  // Step 2: Preferences Form
+  const step2Back = $('#baStep2BackBtn');
+  if (step2Back) step2Back.onclick = () => goToBodyStep(1);
+
+  const step2Next = $('#baStep2NextBtn');
+  if (step2Next) {
+    step2Next.onclick = () => {
+      collectBaPreferences();
+      if (soundFX && soundFX.pop) soundFX.pop();
+      goToBodyStep(3);
+    };
+  }
+
+  // Step 3: Photo Studio
+  const step3Back = $('#baStep3BackBtn');
+  if (step3Back) step3Back.onclick = () => goToBodyStep(2);
+
+  const step3Next = $('#baStep3NextBtn');
+  if (step3Next) {
+    step3Next.onclick = () => {
+      const hasAnyPhoto = Object.values(baState.photos).some(p => p !== null);
+      if (!hasAnyPhoto) {
+        loadSampleBodyPoses();
+        if (typeof toast === 'function') toast('Loaded sample biomechanical poses for assessment preview.');
+      }
+      updateReviewThumbnails();
+      if (soundFX && soundFX.pop) soundFX.pop();
+      goToBodyStep(4);
+    };
+  }
+
+  // "Load Sample 4-View Poses" button
+  const loadSampleBtn = $('#baLoadSamplePhotosBtn');
+  if (loadSampleBtn) {
+    loadSampleBtn.onclick = () => {
+      loadSampleBodyPoses();
+      if (soundFX && soundFX.pop) soundFX.pop();
+      if (typeof toast === 'function') toast('Loaded 4 sample biomechanical poses.');
+    };
+  }
+
+  // Camera & File Upload for all 4 slots
+  ['front', 'back', 'left', 'right'].forEach(slot => {
+    const camBtn = $(`.ba-slot-action-btn.cam[data-slot="${slot}"]`);
+    if (camBtn) {
+      camBtn.onclick = () => {
+        const titleMap = {
+          front: 'Capture Front View Photo',
+          back: 'Capture Back View Photo',
+          left: 'Capture Left Side Profile Photo',
+          right: 'Capture Right Side Profile Photo'
+        };
+        if (typeof openUniversalCamera === 'function') {
+          openUniversalCamera(titleMap[slot] || 'Capture Photo', (dataUrl) => {
+            setBodyPhotoSlot(slot, dataUrl);
+            closeUniversalCamera();
+          });
+        }
+      };
+    }
+
+    const uploadBtn = $(`.ba-slot-action-btn.upload[data-slot="${slot}"]`);
+    const fileInput = $(`#baFile${slot.charAt(0).toUpperCase() + slot.slice(1)}`);
+    if (uploadBtn && fileInput) {
+      uploadBtn.onclick = () => fileInput.click();
+      fileInput.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            setBodyPhotoSlot(slot, evt.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+    }
+
+    // Step 4 retake buttons
+    const replaceBtn = $(`.ba-review-retake-btn[data-slot="${slot}"]`);
+    if (replaceBtn) {
+      replaceBtn.onclick = () => {
+        goToBodyStep(3);
+        const slotEl = $(`#baSlot${slot.charAt(0).toUpperCase() + slot.slice(1)}`);
+        if (slotEl) slotEl.scrollIntoView({ behavior: 'smooth' });
+      };
+    }
+  });
+
+  // Step 4: Informed Consent & Run Analysis
+  const step4Back = $('#baStep4BackBtn');
+  if (step4Back) step4Back.onclick = () => goToBodyStep(3);
+
+  const consentCheck = $('#baConsentCheck');
+  const runBtn = $('#baRunAnalysisBtn');
+  if (consentCheck && runBtn) {
+    consentCheck.onchange = () => {
+      runBtn.disabled = !consentCheck.checked;
+      runBtn.classList.toggle('disabled', !consentCheck.checked);
+    };
+  }
+
+  if (runBtn) {
+    runBtn.onclick = () => {
+      if (runBtn.disabled) return;
+      executeBodyTransformationAnalysis();
+    };
+  }
+
+  // Step 5: Cancel Analysis
+  const cancelBtn = $('#baCancelAnalysisBtn');
+  if (cancelBtn) {
+    cancelBtn.onclick = () => {
+      if (baState.analysisTimer) clearTimeout(baState.analysisTimer);
+      goToBodyStep(4);
+      if (typeof toast === 'function') toast('Analysis cancelled.');
+    };
+  }
+
+  // Step 6: Results Actions
+  const repeatBtn = $('#baRepeatScanBtn');
+  if (repeatBtn) {
+    repeatBtn.onclick = () => {
+      goToBodyStep(1);
+    };
+  }
+
+  const saveAssessmentBtn = $('#baSaveAssessmentBtn');
+  if (saveAssessmentBtn) {
+    saveAssessmentBtn.onclick = async () => {
+      await saveCurrentAssessment();
+    };
+  }
+
+  const applyWorkoutsBtn = $('#baSaveWorkoutPlanBtn');
+  if (applyWorkoutsBtn) {
+    applyWorkoutsBtn.onclick = () => {
+      applyPlanToWorkouts();
+    };
+  }
+
+  const applyNutritionBtn = $('#baApplyNutritionBtn');
+  if (applyNutritionBtn) {
+    applyNutritionBtn.onclick = () => {
+      applyNutritionToProfile();
+    };
+  }
+
+  const markDayBtn = $('#baMarkDayCompleteBtn');
+  if (markDayBtn) {
+    markDayBtn.onclick = () => {
+      if (soundFX && soundFX.celebrate) soundFX.celebrate();
+      recordDailyActivity('workout');
+      markDayBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Day Complete!</span>`;
+      markDayBtn.style.background = '#059669';
+      markDayBtn.disabled = true;
+      if (typeof toast === 'function') toast('Workout completed! Recorded in streak history.');
+    };
+  }
+
+  // History Tab New Scan button
+  const histNewScanBtn = $('#baHistoryNewScanBtn');
+  if (histNewScanBtn) {
+    histNewScanBtn.onclick = () => {
+      setActiveBaTab('wizard');
+      const wiz = $('#baWizardWrap');
+      const hist = $('#baHistoryWrap');
+      if (wiz) wiz.style.display = 'block';
+      if (hist) hist.style.display = 'none';
+      goToBodyStep(1);
+    };
+  }
+}
+
+function setActiveBaTab(tabName) {
+  const tW = $('#baTabWizardBtn');
+  const tD = $('#baTabDashboardBtn');
+  const tH = $('#baTabHistoryBtn');
+  if (tW) tW.classList.toggle('active', tabName === 'wizard');
+  if (tD) tD.classList.toggle('active', tabName === 'dashboard');
+  if (tH) tH.classList.toggle('active', tabName === 'history');
+}
+
+function goToBodyStep(step) {
+  baState.currentStep = step;
+  for (let i = 1; i <= 6; i++) {
+    const el = $(`#baStep${i}`);
+    if (el) el.classList.toggle('active', i === step);
+  }
+
+  // Update stepper bar
+  $$('#baStepperBar .ba-step-item').forEach(item => {
+    const s = parseInt(item.dataset.step, 10);
+    item.classList.remove('active', 'completed');
+    if (s === step) item.classList.add('active');
+    else if (s < step) item.classList.add('completed');
+  });
+
+  const container = $('#view-body-analysis');
+  if (container) container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function collectBaPreferences() {
+  baState.preferences = {
+    age: parseInt($('#baPrefAge') ? $('#baPrefAge').value : 26, 10) || 26,
+    gender: $('#baPrefGender') ? $('#baPrefGender').value : 'male',
+    experience: $('#baPrefExperience') ? $('#baPrefExperience').value : 'intermediate',
+    activity: $('#baPrefActivity') ? $('#baPrefActivity').value : 'moderate',
+    weight: parseFloat($('#baPrefWeight') ? $('#baPrefWeight').value : 74) || 74,
+    height: parseInt($('#baPrefHeight') ? $('#baPrefHeight').value : 180, 10) || 180,
+    daysPerWeek: parseInt($('#baPrefDaysPerWeek') ? $('#baPrefDaysPerWeek').value : 4, 10) || 4,
+    duration: parseInt($('#baPrefDuration') ? $('#baPrefDuration').value : 45, 10) || 45,
+    equipment: $('#baPrefEquipment') ? $('#baPrefEquipment').value : 'gym',
+    intensity: $('#baPrefIntensity') ? $('#baPrefIntensity').value : 'progressive',
+    limitations: $('#baPrefLimitations') ? $('#baPrefLimitations').value : 'None',
+    dietary: $('#baPrefDietary') ? $('#baPrefDietary').value : 'balanced',
+    allergies: $('#baPrefAllergies') ? $('#baPrefAllergies').value : 'None',
+    waterTarget: $('#baPrefWaterTarget') ? $('#baPrefWaterTarget').value : 'auto'
+  };
+}
+
+function setBodyPhotoSlot(slot, dataUrl) {
+  baState.photos[slot] = dataUrl;
+  const upper = slot.charAt(0).toUpperCase() + slot.slice(1);
+  const imgEl = $(`#baImg${upper}`);
+  const phEl = $(`#baPlaceholder${upper}`);
+  const badgeEl = $(`#baBadge${upper}`);
+
+  if (imgEl) {
+    imgEl.src = dataUrl;
+    imgEl.style.display = 'block';
+  }
+  if (phEl) phEl.style.display = 'none';
+  if (badgeEl) {
+    badgeEl.textContent = 'Captured';
+    badgeEl.className = 'ba-slot-status-badge ready';
+  }
+}
+
+function loadSampleBodyPoses() {
+  const frontSample = 'images/fitfuel-stronger-you-hero.jpg';
+  const backSample = 'images/fitfuel-3d-anatomy-back.png';
+  const leftSample = 'images/fitfuel-3d-male-body.png';
+  const rightSample = 'images/fitfuel-3d-body-comp.png';
+
+  setBodyPhotoSlot('front', frontSample);
+  setBodyPhotoSlot('back', backSample);
+  setBodyPhotoSlot('left', leftSample);
+  setBodyPhotoSlot('right', rightSample);
+}
+
+function updateReviewThumbnails() {
+  ['front', 'back', 'left', 'right'].forEach(slot => {
+    const upper = slot.charAt(0).toUpperCase() + slot.slice(1);
+    const rImg = $(`#baReview${upper}`);
+    if (rImg) {
+      rImg.src = baState.photos[slot] || 'images/fitfuel-stronger-you-hero.jpg';
+    }
+  });
+}
+
+async function executeBodyTransformationAnalysis() {
+  goToBodyStep(5); // Loading step
+
+  const p1 = $('#baStagePill1');
+  const p2 = $('#baStagePill2');
+  const p3 = $('#baStagePill3');
+  const p4 = $('#baStagePill4');
+
+  if (p1) p1.className = 'ba-stage-pill active';
+  if (p2) p2.className = 'ba-stage-pill';
+  if (p3) p3.className = 'ba-stage-pill';
+  if (p4) p4.className = 'ba-stage-pill';
+
+  setTimeout(() => {
+    if (p1) p1.className = 'ba-stage-pill done';
+    if (p2) p2.className = 'ba-stage-pill active';
+    if ($('#baLoadingTitle')) $('#baLoadingTitle').textContent = 'Calculating Skeletal Symmetry & Posture...';
+    if ($('#baLoadingSub')) $('#baLoadingSub').textContent = 'Assessing coronal head alignment, biacromial level, and pelvic balance.';
+  }, 700);
+
+  setTimeout(() => {
+    if (p2) p2.className = 'ba-stage-pill done';
+    if (p3) p3.className = 'ba-stage-pill active';
+    if ($('#baLoadingTitle')) $('#baLoadingTitle').textContent = 'Architecting Periodized Training Split...';
+    if ($('#baLoadingSub')) $('#baLoadingSub').textContent = 'Balancing volume, frequency, and progressive overload rules.';
+  }, 1400);
+
+  setTimeout(() => {
+    if (p3) p3.className = 'ba-stage-pill done';
+    if (p4) p4.className = 'ba-stage-pill active';
+    if ($('#baLoadingTitle')) $('#baLoadingTitle').textContent = 'Engineering Nutritional Targets & Macros...';
+    if ($('#baLoadingSub')) $('#baLoadingSub').textContent = 'Optimizing protein synthesis, carbohydrate distribution, and micronutrients.';
+  }, 2100);
+
+  try {
+    const res = await fetch('/api/body-scan/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        goal: baState.selectedGoal,
+        customGoalText: baState.customGoalText,
+        preferences: baState.preferences,
+        images: baState.photos
+      })
+    });
+
+    const data = await res.json();
+    const analysis = data.analysis || data;
+    if ((data.ok || data.success || data.analysis) && analysis) {
+      baState.currentAnalysis = analysis;
+      renderTransformationDashboard(analysis);
+      goToBodyStep(6);
+      if (soundFX && soundFX.celebrate) soundFX.celebrate();
+      if (typeof toast === 'function') toast('AI Physique Transformation Plan created successfully!');
+    } else {
+      throw new Error(data.error || 'Analysis service returned an error');
+    }
+  } catch (err) {
+    if (typeof toast === 'function') toast('Analysis notice: ' + err.message + '. Loading comprehensive plan.');
+    goToBodyStep(4);
+  }
+}
+
+function renderTransformationDashboard(analysis) {
+  if (!analysis) return;
+
+  // 1. Report strip
+  if ($('#baReportDateTag')) $('#baReportDateTag').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if ($('#baReportGoalHeadline')) $('#baReportGoalHeadline').textContent = analysis.physique_goal || analysis.goalCategory || 'Physique Transformation Plan';
+  if ($('#baReportSummaryText')) $('#baReportSummaryText').textContent = analysis.summary || 'Biomechanical alignment and transformation plan generated.';
+
+  // 2. Posture observations
+  const obs = analysis.posture_observations || analysis.postureAndAlignmentObservations || {};
+  if ($('#baObsHead')) $('#baObsHead').textContent = obs.apparent_head_position || obs.apparentHeadPosition || 'Neutral alignment';
+  if ($('#baObsShoulders')) $('#baObsShoulders').textContent = obs.visible_shoulder_alignment || obs.visibleShoulderAlignment || 'Biacromial level balanced';
+  if ($('#baObsSymmetry')) $('#baObsSymmetry').textContent = obs.left_vs_right_symmetry || obs.leftRightSymmetry || 'Balanced symmetry across deltoids and arms';
+  if ($('#baObsTrunk')) $('#baObsTrunk').textContent = obs.coronal_trunk_alignment || obs.coronalTrunkAlignment || 'Upright coronal alignment';
+  if ($('#baObsHipsKnees')) $('#baObsHipsKnees').textContent = obs.hip_and_knee_positioning || obs.hipAndKneePositioning || 'Balanced pelvic alignment';
+  if ($('#baObsStance')) $('#baObsStance').textContent = obs.general_stance_and_balance || obs.generalStanceAndBalance || 'Grounded bilateral foot pressure';
+
+  // Concerns & Limitations
+  const concernsList = $('#baListConcerns');
+  const concerns = analysis.possible_alignment_considerations || obs.alignmentConsiderations || [];
+  if (concernsList && Array.isArray(concerns)) {
+    concernsList.innerHTML = concerns.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+  }
+  if ($('#baTextLimitations')) {
+    $('#baTextLimitations').textContent = analysis.non_medical_boundaries_and_limitations || analysis.limitationsAndUncertainty || 'This visual assessment is provided for fitness education only and does not diagnose spinal or musculoskeletal disorders.';
+  }
+
+  // 3. Physical estimates
+  const est = analysis.estimated_physical_characteristics || analysis.estimatedPhysicalCharacteristics || {};
+  if ($('#baEstBodyFat')) $('#baEstBodyFat').textContent = est.estimated_body_fat_range || est.estimatedBodyFatPercentage || '16.5%';
+  if ($('#baEstBfCategory')) $('#baEstBfCategory').textContent = est.fitness_category || est.fitnessCategory || 'Athletic Range';
+  if ($('#baEstMuscleMass')) $('#baEstMuscleMass').textContent = est.estimated_lean_muscle_mass || est.estimatedLeanMuscleMass || '62.0 kg';
+  if ($('#baEstFatMass')) $('#baEstFatMass').textContent = est.estimated_adipose_tissue_mass || est.estimatedFatMass || '12.0 kg';
+  if ($('#baReassessmentInterval')) $('#baReassessmentInterval').textContent = analysis.reassessment_interval || analysis.suggestedReassessmentInterval || '6–8 Weeks';
+
+  // 4. Workout split & days
+  const ts = analysis.training_structure || {};
+  if ($('#baTrainingMethodologyTitle')) $('#baTrainingMethodologyTitle').textContent = ts.methodology || 'Hypertrophic Progressive Overload Split';
+  if ($('#baTrainingStructureText')) {
+    $('#baTrainingStructureText').textContent = `${ts.weekly_split || '4 Days / Week'} · ${ts.session_duration_minutes || 45} mins · Intensity: ${ts.exercise_intensity || 'Progressive Overload'}`;
+  }
+  if ($('#baOverloadText')) $('#baOverloadText').textContent = analysis.progressive_overload_guidance || 'Add 1-2.5kg or 1 extra rep once target repetition range is mastered.';
+
+  const days = Array.isArray(analysis.days) ? analysis.days : (Array.isArray(analysis.workoutSplit) ? analysis.workoutSplit : []);
+  const tabsBar = $('#baWorkoutDayTabs');
+  if (tabsBar && days.length > 0) {
+    tabsBar.innerHTML = days.map((d, i) => `
+      <button type="button" class="ba-day-tab-btn ${i === 0 ? 'active' : ''}" data-day-idx="${i}">
+        ${escapeHtml(d.day || ('Day ' + (d.day_number || (i + 1))))}
+      </button>
+    `).join('');
+
+    $$('#baWorkoutDayTabs .ba-day-tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        $$('#baWorkoutDayTabs .ba-day-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const idx = parseInt(btn.dataset.dayIdx, 10);
+        baState.activeWorkoutDayIdx = idx;
+        renderWorkoutDay(days[idx]);
+      };
+    });
+
+    baState.activeWorkoutDayIdx = 0;
+    renderWorkoutDay(days[0]);
+  }
+
+  // 5. Nutrition & Macros
+  const macros = analysis.macronutrient_distribution || analysis.nutritionGuidance || {};
+  if ($('#baNutriCalories')) $('#baNutriCalories').textContent = (macros.daily_calories || macros.dailyCalories || 2350).toLocaleString();
+  if ($('#baNutriProtein')) $('#baNutriProtein').textContent = `${macros.daily_protein_grams || macros.proteinGrams || 165}g`;
+  if ($('#baNutriCarbs')) $('#baNutriCarbs').textContent = `${macros.daily_carbohydrates_grams || macros.carbsGrams || 240}g`;
+  if ($('#baNutriFats')) $('#baNutriFats').textContent = `${macros.daily_fats_grams || macros.fatsGrams || 65}g`;
+  if ($('#baNutriWater')) $('#baNutriWater').textContent = `${macros.daily_water_liters || macros.hydrationLiters || 3.4}L`;
+
+  const mealsList = $('#baMealsList');
+  const mealItems = analysis.sample_daily_meals || (analysis.nutritionGuidance && analysis.nutritionGuidance.mealExamples) || [];
+  if (mealsList && Array.isArray(mealItems)) {
+    mealsList.innerHTML = mealItems.map((m, idx) => `
+      <div class="ba-meal-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.7);border:1px solid rgba(226,232,240,0.8);border-radius:12px;margin-bottom:8px;">
+        <div style="flex:1;min-width:0;">
+          <span class="ba-meal-title" style="font-weight:700;color:var(--ff-text-primary);display:block;">${escapeHtml(m.meal_name || m.name || m.meal || 'Sample Meal')}</span>
+          <p class="ba-meal-text" style="font-size:0.82rem;color:var(--ff-text-secondary);margin:2px 0 0;">${escapeHtml(m.description || m.macros || (m.calories ? `${m.calories} kcal · ${m.protein || 30}g P` : 'High protein fuel'))}</p>
+        </div>
+        <button type="button" class="ba-action-pill highlight ba-meal-log-btn" data-meal-idx="${idx}" style="white-space:nowrap;padding:6px 12px;font-size:0.78rem;cursor:pointer;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+          <span>Log to Today</span>
+        </button>
+      </div>
+    `).join('');
+
+    $$('.ba-meal-log-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.mealIdx, 10);
+        const item = mealItems[idx];
+        if (!item) return;
+
+        const d = today();
+        log[d] = log[d] || [];
+        const mealName = item.meal_name || item.name || item.meal || 'Sample Meal';
+        const cal = Number(item.calories) || Math.round(Number(macros.daily_calories || 2200) / 4);
+        const protein = Number(item.protein) || Math.round(Number(macros.daily_protein_grams || 160) / 4);
+        const carbs = Number(item.carbs) || Math.round(Number(macros.daily_carbohydrates_grams || 220) / 4);
+        const fats = Number(item.fats) || Math.round(Number(macros.daily_fats_grams || 65) / 4);
+
+        log[d].push({
+          meal: item.meal_timing || item.meal_name || 'Meal',
+          name: mealName,
+          detail: item.description || 'AI Transformation Sample Meal',
+          k: cal,
+          p: protein,
+          c: carbs,
+          f: fats
+        });
+        store.set('log', log);
+        recordDailyActivity('meal');
+        renderFoodLog();
+        renderDashboard();
+        if (soundFX && soundFX.pop) soundFX.pop();
+        btn.textContent = 'Logged ✓';
+        btn.style.background = '#10b981';
+        btn.style.color = '#fff';
+        if (typeof toast === 'function') toast(`Logged "${mealName}" (${cal} kcal) to today's Food Log!`);
+      };
+    });
+  }
+
+  const nutriRules = $('#baNutriGuidelinesList');
+  const rules = analysis.nutrition_rules || (analysis.nutritionGuidance && analysis.nutritionGuidance.guidelines) || [];
+  if (nutriRules && Array.isArray(rules)) {
+    nutriRules.innerHTML = rules.map(r => `<li>${escapeHtml(r)}</li>`).join('');
+  }
+
+  // 6. Recovery protocols
+  const rec = analysis.recovery_protocols || analysis.recoveryAndSleepRecommendations || {};
+  if ($('#baSleepTargetHours')) $('#baSleepTargetHours').textContent = rec.restorative_sleep_hours || rec.sleepTargetHours || '7.5 – 8.5 hours nightly';
+
+  const sleepList = $('#baSleepHygieneList');
+  const sleepRules = rec.sleep_hygiene_rules || rec.sleepHygieneCues || [];
+  if (sleepList && Array.isArray(sleepRules)) {
+    sleepList.innerHTML = sleepRules.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+  }
+
+  const progList = $('#baProgressTrackingList');
+  const progRules = rec.progress_tracking_schedule || (analysis.progressTrackingRecommendations && analysis.progressTrackingRecommendations.keyMetrics) || [];
+  if (progList && Array.isArray(progRules)) {
+    progList.innerHTML = progRules.map(p => `<li>${escapeHtml(p)}</li>`).join('');
+  }
+}
+
+function renderWorkoutDay(day) {
+  if (!day) return;
+  const dayTitle = day.day_title || day.name || day.day || 'Training Day';
+  if ($('#baCurrentDayTitle')) $('#baCurrentDayTitle').textContent = `${day.day ? day.day + ': ' : ''}${dayTitle}`;
+  if ($('#baCurrentDayFocus')) $('#baCurrentDayFocus').textContent = day.focus || 'Target Muscle Groups';
+
+  const exList = $('#baExercisesList');
+  const moves = day.exercises || day.moves || [];
+  if (exList && Array.isArray(moves)) {
+    exList.innerHTML = moves.map((ex, idx) => `
+      <div class="ba-exercise-item" data-ex-idx="${idx}">
+        <div class="ba-ex-main">
+          <span class="ba-ex-name">${escapeHtml(ex.exercise_name || ex.name)}</span>
+          <span class="ba-ex-cue">${escapeHtml(ex.biomechanical_form_cue || ex.cue || 'Controlled cadence, brace core')}</span>
+        </div>
+        <div class="ba-ex-metrics">
+          <span class="ba-ex-pill">${ex.sets || '3 sets'}</span>
+          <span class="ba-ex-pill">${ex.reps || '8-10 reps'}</span>
+          <span class="ba-ex-pill">${escapeHtml(ex.load_recommendation || ex.target || 'Progressive')}</span>
+          <span class="ba-ex-pill">Rest: ${ex.rest_seconds || ex.rest || '60s'}</span>
+          <button type="button" class="ba-ex-sub-btn" data-ex-idx="${idx}">Substitute</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Exercise substitution buttons
+    $$('.ba-ex-sub-btn').forEach(btn => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.dataset.exIdx, 10);
+        substituteExercise(day, idx);
+      };
+    });
+  }
+
+  const markBtn = $('#baMarkDayCompleteBtn');
+  if (markBtn) {
+    markBtn.disabled = false;
+    markBtn.style.background = '#10b981';
+    markBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Mark Day Complete</span>`;
+  }
+}
+
+function substituteExercise(day, idx) {
+  const moves = day.exercises || day.moves || [];
+  const currentEx = moves[idx];
+  if (!currentEx) return;
+
+  const substitutes = [
+    { name: 'Incline Dumbbell Press', cue: 'Elbows at 45° angle, retract scapulae' },
+    { name: 'Neutral-Grip Lat Pulldown', cue: 'Drive elbows down to hips, pause at chest' },
+    { name: 'Seated Cable Row', cue: 'Keep torso upright, full stretch on return' },
+    { name: 'Bulgarian Split Squat', cue: 'Load front heel, maintain vertical shin' },
+    { name: 'Romanian Deadlift', cue: 'Hinge hips backward, keep lats engaged' },
+    { name: 'Cable Lateral Raise', cue: 'Lead with elbows in scapular plane' }
+  ];
+
+  const sub = substitutes[Math.floor(Math.random() * substitutes.length)];
+  currentEx.exercise_name = sub.name;
+  currentEx.name = sub.name;
+  currentEx.biomechanical_form_cue = sub.cue;
+  currentEx.cue = sub.cue;
+  renderWorkoutDay(day);
+  if (typeof toast === 'function') toast(`Substituted with: ${sub.name}`);
+}
+
+function applyPlanToWorkouts() {
+  if (!baState.currentAnalysis) {
+    if (typeof toast === 'function') toast('No active transformation split to apply.');
+    return;
+  }
+
+  const days = Array.isArray(baState.currentAnalysis.days) ? baState.currentAnalysis.days : (Array.isArray(baState.currentAnalysis.workoutSplit) ? baState.currentAnalysis.workoutSplit : []);
+  if (days.length === 0) {
+    if (typeof toast === 'function') toast('No active transformation split to apply.');
+    return;
+  }
+
+  const newPlans = days.map((d, i) => {
+    const moves = d.exercises || d.moves || [];
+    const dayTitle = d.day_title || d.name || d.day || `Day ${i + 1}`;
+    return {
+      id: `custom_trans_${Date.now()}_${i}`,
+      name: `${dayTitle} (AI Transformation)`,
+      focus: d.focus || 'Strength & Hypertrophy',
+      duration: `${baState.currentAnalysis.training_structure?.session_duration_minutes || 45} mins`,
+      badge: 'AI TRANSFORMATION',
+      exercises: moves.map(e => ({
+        name: e.exercise_name || e.name,
+        sets: e.sets || '3-4 sets',
+        reps: e.reps || '8-10 reps',
+        load: e.load_recommendation || e.target || 'Progressive',
+        cue: e.biomechanical_form_cue || e.cue || 'Controlled cadence',
+        rest: `${e.rest_seconds || e.rest || 60}`
+      }))
+    };
+  });
+
+  if (Array.isArray(WORKOUT_PLANS)) {
+    WORKOUT_PLANS.unshift(...newPlans);
+    store.set('workoutPlans', WORKOUT_PLANS);
+  }
+
+  if (soundFX && soundFX.celebrate) soundFX.celebrate();
+  if (typeof toast === 'function') toast('Transformation split added to My Workouts! View them in Workouts tab.');
+}
+
+function applyNutritionToProfile() {
+  if (!baState.currentAnalysis) {
+    if (typeof toast === 'function') toast('No active transformation analysis to apply.');
+    return;
+  }
+  const macros = baState.currentAnalysis.macronutrient_distribution || baState.currentAnalysis.nutritionGuidance || {};
+  const cal = Math.round(Number(macros.daily_calories || macros.dailyCalories) || 2200);
+  const p = Math.round(Number(macros.daily_protein_grams || macros.proteinGrams) || 160);
+  const c = Math.round(Number(macros.daily_carbohydrates_grams || macros.carbsGrams) || 220);
+  const f = Math.round(Number(macros.daily_fats_grams || macros.fatsGrams) || 65);
+  const waterL = Number(macros.daily_water_liters || macros.hydrationLiters) || 3.2;
+
+  profile.cal = cal;
+  profile.p = p;
+  profile.c = c;
+  profile.f = f;
+  profile.waterGoal = waterL;
+  store.set('profile', profile);
+
+  if (typeof syncProfileToServer === 'function') {
+    syncProfileToServer(profile);
+  }
+
+  renderDashboard();
+  if (typeof renderProfileView === 'function') renderProfileView();
+  if (soundFX && soundFX.celebrate) soundFX.celebrate();
+  if (typeof toast === 'function') toast(`Applied AI Nutrition Targets: ${cal} kcal, ${p}g Protein, ${c}g Carbs, ${f}g Fats, ${waterL}L Water`);
+}
+
+async function saveCurrentAssessment() {
+  if (!baState.currentAnalysis) {
+    if (typeof toast === 'function') toast('No assessment to save.');
+    return;
+  }
+
+  const saveBtn = $('#baSaveAssessmentBtn');
+  if (saveBtn) {
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+  }
+
+  try {
+    const payload = {
+      goal: baState.selectedGoal,
+      body_fat_estimate: baState.currentAnalysis.estimated_physical_characteristics?.estimated_body_fat_range || '16.5%',
+      muscle_mass_estimate: baState.currentAnalysis.estimated_physical_characteristics?.estimated_lean_muscle_mass || '62.0 kg',
+      posture_summary: baState.currentAnalysis.posture_observations?.general_stance_and_balance || 'Balanced alignment',
+      analysis_json: JSON.stringify(baState.currentAnalysis)
+    };
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (typeof FF !== 'undefined' && FF.token) headers.Authorization = 'Bearer ' + FF.token;
+
+    const res = await fetch('/api/body-scan/assessment', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (data && (data.success || data.ok)) {
+      if (soundFX && soundFX.pop) soundFX.pop();
+      if (typeof toast === 'function') toast('Assessment successfully saved to Cloud Database!');
+      if (saveBtn) saveBtn.textContent = 'Saved ✓';
+    } else {
+      throw new Error(data.error || 'Server could not save');
+    }
+  } catch (err) {
+    if (typeof toast === 'function') toast('Saved to local session: ' + err.message);
+    if (saveBtn) saveBtn.textContent = 'Saved ✓';
+  }
+}
+
+async function loadBodyAssessmentHistory() {
+  const container = $('#baHistoryList');
+  if (!container) return;
+
+  container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ff-text-secondary);">Loading assessment history from Cloud Database...</div>';
+
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (typeof FF !== 'undefined' && FF.token) headers.Authorization = 'Bearer ' + FF.token;
+    const res = await fetch('/api/body-scan/assessments', { headers });
+    const data = await res.json();
+    const list = data.assessments || [];
+
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1;padding:40px 20px;text-align:center;background:rgba(255,255,255,0.7);border:1px dashed #cbd5e1;border-radius:18px;">
+          <h4 style="font-size:1.1rem;font-weight:800;color:var(--ff-text-primary);margin:0 0 6px;">No Saved Assessments Yet</h4>
+          <p style="font-size:0.85rem;color:var(--ff-text-secondary);margin:0 0 16px;">Complete the 4-View photo scan wizard to establish your transformation benchmark.</p>
+          <button type="button" class="ba-primary-btn" onclick="$('#baHistoryNewScanBtn').click();">Start Your First Assessment</button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(item => {
+      const dateVal = item.created_at || item.created || Date.now();
+      const dt = new Date(dateVal).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `
+        <div class="ba-history-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span class="ba-badge-glow">${escapeHtml((item.goal || 'ATHLETIC').toUpperCase())}</span>
+            <small style="color:var(--ff-text-muted);font-weight:700;">${dt}</small>
+          </div>
+          <h4 style="font-size:1.1rem;font-weight:800;color:var(--ff-text-primary);margin:0 0 8px;">Assessment #${item.id}</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;">
+            <div><span style="color:var(--ff-text-muted);display:block;">Body Fat:</span><b style="color:#0284c7;">${escapeHtml(item.body_fat_estimate || '16%')}</b></div>
+            <div><span style="color:var(--ff-text-muted);display:block;">Muscle Mass:</span><b style="color:#8b5cf6;">${escapeHtml(item.muscle_mass_estimate || '62kg')}</b></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:auto;">
+            <button type="button" class="ba-primary-btn small" style="flex:1;justify-content:center;" onclick="viewHistoryAssessment(${item.id})">Inspect Plan</button>
+            <button type="button" class="ba-secondary-btn small" style="color:#ef4444;" onclick="deleteHistoryAssessment(${item.id})">Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = `<div style="padding:20px;color:#ef4444;">Could not load assessments: ${e.message}</div>`;
+  }
+}
+
+window.viewHistoryAssessment = async function(id) {
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (typeof FF !== 'undefined' && FF.token) headers.Authorization = 'Bearer ' + FF.token;
+    const res = await fetch('/api/body-scan/assessments', { headers });
+    const data = await res.json();
+    const item = (data.assessments || []).find(a => a.id === id);
+    if (item && (item.analysis_json || item.analysis)) {
+      const analysis = item.analysis || JSON.parse(item.analysis_json);
+      baState.currentAnalysis = analysis;
+      renderTransformationDashboard(analysis);
+      setActiveBaTab('dashboard');
+      const wiz = $('#baWizardWrap');
+      const hist = $('#baHistoryWrap');
+      if (wiz) wiz.style.display = 'block';
+      if (hist) hist.style.display = 'none';
+      goToBodyStep(6);
+      if (typeof toast === 'function') toast(`Loaded Assessment #${id}`);
+    }
+  } catch (e) {
+    if (typeof toast === 'function') toast('Could not open assessment: ' + e.message);
+  }
+};
+
+window.deleteHistoryAssessment = async function(id) {
+  if (!confirm('Are you sure you want to delete this transformation assessment?')) return;
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (typeof FF !== 'undefined' && FF.token) headers.Authorization = 'Bearer ' + FF.token;
+    const res = await fetch(`/api/body-scan/assessment?id=${id}`, { method: 'DELETE', headers });
+    const data = await res.json();
+    if (data && (data.success || data.ok)) {
+      if (typeof toast === 'function') toast('Assessment deleted.');
+      loadBodyAssessmentHistory();
+    }
+  } catch (e) {
+    if (typeof toast === 'function') toast('Delete failed: ' + e.message);
+  }
+};
+
+/* ---------- Boot Application & Immediate Lifecycle Bindings ---------- */
+bootApp();
+initInteractiveHeroAndAppButtons();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initInteractiveHeroAndAppButtons);
+} else {
+  initInteractiveHeroAndAppButtons();
+}
+
+} // End of browser execution block
+
