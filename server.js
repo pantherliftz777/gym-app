@@ -685,21 +685,25 @@ const routes = {
         }
       };
 
-      // Free models directly from Image 3 (North Mini Code, LFM2.5-2.6B, Nemotron 3 Nano Omni, Gemma 2, OpenRouter Free)
+      // Free models directly from Image 3 (LFM2.5-2.6B, Laguna, Xing4.0, Nemotron, MiniMax, North Mini Code)
+      const requestedModel = body.selectedModel || body.model;
       const primaryModels = [
-        'cohere/north-mini-code:free',
+        requestedModel && requestedModel !== 'auto' ? requestedModel : null,
         'liquid/lfm-2.5-2.6b:free',
+        'cohere/north-mini-code:free',
         'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'xing/xing-4.0-29b-a4b:free',
+        'minimax/minimax-m3.1-flash:free',
+        'nvidia/nemotron-3.5-super-vl:free',
         'google/gemma-2-9b-it:free',
-        'meta-llama/llama-3.2-3b-instruct:free',
         'openrouter/free'
-      ];
+      ].filter((m, idx, arr) => m && arr.indexOf(m) === idx);
 
       for (const m of primaryModels) {
         try {
-          const resData = await callOrModel(m, 7000);
+          const resData = await callOrModel(m, 6000);
           if (resData && resData.content) {
-            return json(res, 200, { ok: true, provider: 'openrouter', model: resData.model, content: formatOutputContent(resData.content, isJson) });
+            return json(res, 200, { ok: true, provider: 'openrouter', model: resData.model || m, content: formatOutputContent(resData.content, isJson) });
           }
         } catch (err) {
           // Cascade quickly to next free model

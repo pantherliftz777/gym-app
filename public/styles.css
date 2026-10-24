@@ -4841,7 +4841,7 @@ html.dark .sy-hero-topbar {
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.14em;
-  color: #0284c7;
+  color: #1d4ed8;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4851,9 +4851,18 @@ html.dark .sy-hero-topbar {
 .sy-kicker-dash {
   width: 22px;
   height: 2px;
-  background: #0284c7;
+  background: #1d4ed8;
   border-radius: 2px;
   display: inline-block;
+}
+
+html.dark .sy-kicker,
+[data-theme="dark"] .sy-kicker {
+  color: #38bdf8 !important;
+}
+html.dark .sy-kicker-dash,
+[data-theme="dark"] .sy-kicker-dash {
+  background: #38bdf8 !important;
 }
 
 .sy-headline {
@@ -6928,7 +6937,7 @@ html.dark .ba-rec-card {
   --glass-accent-blue: #2563eb;
   --glass-accent-cyan: #0284c7;
   --glass-accent-purple: #8b5cf6;
-  --glass-accent-mint: #10b981;
+  --glass-accent-mint: #047857;
 }
 
 /* Dark Mode Master Tokens */
@@ -6968,6 +6977,7 @@ html.dark, [data-theme="dark"] {
   --glass-text-primary: #f8fafc;
   --glass-text-secondary: #cbd5e1;
   --glass-text-muted: #94a3b8;
+  --glass-accent-mint: #10b981;
 }
 
 /* ==========================================================================
@@ -8989,6 +8999,7 @@ html, body {
 
 /* 1. Global Contrast Defaults for Light Mode */
 html:not(.dark), [data-theme="light"] {
+  --button-bg: #2563eb;
   --ff-text-primary: #0f172a;
   --ff-text-secondary: #475569;
   --ff-text-muted: #64748b;
@@ -8998,11 +9009,21 @@ html:not(.dark), [data-theme="light"] {
 
 /* 2. Global Contrast Defaults for Dark Mode */
 html.dark, [data-theme="dark"] {
+  --button-bg: #2563eb;
   --ff-text-primary: #f8fafc;
   --ff-text-secondary: #cbd5e1;
   --ff-text-muted: #94a3b8;
   --ff-glass-bg: rgba(15, 23, 42, 0.75);
   --ff-glass-border: rgba(255, 255, 255, 0.12);
+}
+
+.solid-button {
+  background: var(--button-bg, #2563eb) !important;
+  color: #ffffff !important;
+}
+.solid-button:hover {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
 }
 
 /* 3. Welcome Check-in Card (Image 1 High-Contrast Fix) */
@@ -9330,12 +9351,13 @@ html.dark #streakText, [data-theme="dark"] #streakText {
 }
 
 /* Body Analysis Tabs and Goal Pills */
+html.dark .ba-nav-tabs, [data-theme="dark"] .ba-nav-tabs,
 html.dark .ba-tabs-wrap, [data-theme="dark"] .ba-tabs-wrap {
-  background: rgba(15, 23, 42, 0.7) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 html.dark .ba-tab-btn, [data-theme="dark"] .ba-tab-btn {
-  color: #94a3b8 !important;
+  color: #cbd5e1 !important;
 }
 html.dark .ba-tab-btn.active, [data-theme="dark"] .ba-tab-btn.active {
   background: #0284c7 !important;
@@ -9436,15 +9458,19 @@ html.dark #mobileMenuBtn svg,
     transition: margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1),
                 width 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
-  .app-shell.sidebar-collapsed #sidebar {
+  .app-shell.sidebar-collapsed #sidebar,
+  #sidebar.collapsed {
     width: 0 !important;
     min-width: 0 !important;
     max-width: 0 !important;
     padding: 0 !important;
+    margin: 0 !important;
     border: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
     overflow: hidden !important;
+    visibility: hidden !important;
+    display: none !important;
   }
   .app-shell.sidebar-collapsed .main-area {
     margin-left: 0 !important;
@@ -9626,4 +9652,355 @@ html.dark .premium-plans-modal-card, [data-theme="dark"] .premium-plans-modal-ca
 .plan-feature-item svg {
   flex-shrink: 0;
 }
+
+/* ==========================================================================
+   ENHANCED GLOBAL CONTRAST GUARDS ACROSS ALL VIEWS (LIGHT & DARK ACCESSIBILITY)
+   ========================================================================== */
+.badge-dot {
+  color: #94a3b8 !important;
+}
+
+.header-weather-temp small {
+  color: #1e40af !important;
+  font-weight: 700;
+}
+html.dark .header-weather-temp small,
+[data-theme="dark"] .header-weather-temp small {
+  color: #bfdbfe !important;
+}
+
+.front-water-advisory-card p {
+  color: #e2e8f0 !important;
+}
+
+.ai-subtab-btn.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
+}
+
+html.dark #sidebarBodyAnalysisBtn span:last-child,
+[data-theme="dark"] #sidebarBodyAnalysisBtn span:last-child {
+  background: rgba(2, 132, 199, 0.35) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+}
+
+.app-footnote,
+#footnoteSyncStatus.footnote-right {
+  color: #475569 !important;
+}
+html.dark .app-footnote,
+html.dark #footnoteSyncStatus.footnote-right,
+[data-theme="dark"] .app-footnote,
+[data-theme="dark"] #footnoteSyncStatus.footnote-right {
+  color: #94a3b8 !important;
+}
+
+/* Ensure / kcal and kcal subtext are high contrast */
+html.dark .calories-unit,
+html.dark span:has(+ strong:contains("kcal")),
+[data-theme="dark"] .calories-unit {
+  color: #cbd5e1 !important;
+}
+
+/* Fix buttons without backgrounds */
+#viewBodyDetailsBtn,
+#quickAddMealBtn,
+#triggerAiVerifyBtn,
+#confirmAddFoodBtn,
+#saveCustomFoodBtn,
+#generateAiPlanBtn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+#viewBodyDetailsBtn:hover,
+#quickAddMealBtn:hover,
+#triggerAiVerifyBtn:hover,
+#confirmAddFoodBtn:hover,
+#saveCustomFoodBtn:hover,
+#generateAiPlanBtn:hover {
+  background: #1d4ed8 !important;
+}
+
+/* ==========================================================================
+   SLIDING CHATBOT MINIMIZE & DOCK ARCHITECTURE
+   ========================================================================== */
+.floating-ai-panel.minimized {
+  max-height: 54px !important;
+  height: 54px !important;
+  overflow: hidden !important;
+  border-radius: 18px 18px 14px 14px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+  transition: max-height 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.2s ease !important;
+}
+.floating-ai-panel.minimized .floating-panel-scrollable,
+.floating-ai-panel.minimized .floating-panel-input-form,
+.floating-ai-panel.minimized .floating-panel-preset-questions {
+  display: none !important;
+}
+.floating-ai-panel.minimized .floating-panel-header {
+  border-bottom: none !important;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   AI MODEL SELECTOR DROPDOWN (IMAGE 3 INTEGRATION)
+   ========================================================================== */
+.ai-model-picker-wrap {
+  position: relative;
+  display: inline-block;
+}
+.ai-model-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 10px;
+  background: var(--ff-glass-bg, rgba(255, 255, 255, 0.8));
+  border: 1px solid var(--ff-glass-border, rgba(226, 232, 240, 0.9));
+  color: var(--ff-text-primary, #0f172a);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ai-model-picker-btn:hover {
+  background: var(--ff-glass-bg-hover, rgba(255, 255, 255, 0.98));
+  border-color: #2563eb;
+}
+html.dark .ai-model-picker-btn, [data-theme="dark"] .ai-model-picker-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+.ai-model-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 280px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  padding: 6px;
+  z-index: 1000;
+  display: none;
+}
+.ai-model-dropdown-menu.show {
+  display: block;
+  animation: enter 0.15s ease-out;
+}
+.ai-model-menu-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  padding: 8px 12px 6px;
+  text-transform: uppercase;
+}
+.ai-model-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.ai-model-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.ai-model-item.selected {
+  background: rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+.model-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.model-dot-blue { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+.model-dot-emerald { background: #10b981; box-shadow: 0 0 6px #10b981; }
+.model-dot-amber { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.model-dot-orange { background: #f97316; box-shadow: 0 0 6px #f97316; }
+.model-dot-coral { background: #fb7185; box-shadow: 0 0 6px #fb7185; }
+.model-dot-purple { background: #c084fc; box-shadow: 0 0 6px #c084fc; }
+.model-dot-cyan { background: #2dd4bf; box-shadow: 0 0 6px #2dd4bf; }
+.model-dot-lime { background: #84cc16; box-shadow: 0 0 6px #84cc16; }
+.model-dot-gray { background: #94a3b8; box-shadow: 0 0 6px #94a3b8; }
+.model-tag-free {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   DASHBOARD BODY CATEGORY CARD ON TODAY VIEW
+   ========================================================================== */
+.dash-body-category-card {
+  background: var(--ff-glass-bg, rgba(255, 255, 255, 0.8));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ff-glass-border, rgba(226, 232, 240, 0.9));
+  border-radius: 18px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  transition: all 0.2s ease;
+}
+html.dark .dash-body-category-card,
+[data-theme="dark"] .dash-body-category-card {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Fallback solid background-color for all gradient buttons and avatar pills */
+.solid-button,
+.sy-cta-btn,
+.ba-primary-btn {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+.date-pill-btn.active,
+.muscle-tab.active,
+.sub-muscle-pill.active,
+.filter-pill.active,
+.badge-pill.active,
+.tab-btn.active,
+.activity-mode-pill.active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+.sy-profile-avatar {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Light Mode high-contrast text and pill states */
+html:not(.dark) .primary-nav .nav-link.selected,
+[data-theme="light"] .primary-nav .nav-link.selected {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .bmi-optimal,
+[data-theme="light"] .bmi-optimal {
+  color: #065f46 !important;
+  background: rgba(16, 185, 129, 0.16) !important;
+  border-color: rgba(6, 95, 70, 0.35) !important;
+}
+html:not(.dark) .bmi-underweight,
+[data-theme="light"] .bmi-underweight {
+  color: #0369a1 !important;
+  background: rgba(2, 132, 199, 0.16) !important;
+  border-color: rgba(3, 105, 161, 0.35) !important;
+}
+html:not(.dark) .bmi-moderate,
+[data-theme="light"] .bmi-moderate {
+  color: #b45309 !important;
+  background: rgba(245, 158, 11, 0.16) !important;
+  border-color: rgba(180, 83, 9, 0.35) !important;
+}
+html:not(.dark) .bmi-obese,
+[data-theme="light"] .bmi-obese {
+  color: #be123c !important;
+  background: rgba(244, 63, 94, 0.16) !important;
+  border-color: rgba(190, 18, 60, 0.35) !important;
+}
+html:not(.dark) .mint,
+[data-theme="light"] .mint {
+  color: #0d9488 !important;
+}
+html:not(.dark) .stat-badge.green,
+html:not(.dark) .metric-delta.positive,
+html:not(.dark) .task-status-done,
+[data-theme="light"] .stat-badge.green,
+[data-theme="light"] .metric-delta.positive,
+[data-theme="light"] .task-status-done {
+  color: #047857 !important;
+}
+html:not(.dark) .stat-badge.amber,
+[data-theme="light"] .stat-badge.amber {
+  color: #b45309 !important;
+}
+
+/* Dark Mode text and badge fixes */
+html.dark .calories-number > div:first-child > span,
+[data-theme="dark"] .calories-number > div:first-child > span {
+  color: #cbd5e1 !important;
+}
+html.dark #sidebarBodyAnalysisBtn span:nth-of-type(2),
+[data-theme="dark"] #sidebarBodyAnalysisBtn span:nth-of-type(2) {
+  background: rgba(15, 23, 42, 0.85) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.5) !important;
+}
+html.dark .sidebar .nav-link span[style*="LIVE"],
+[data-theme="dark"] .sidebar .nav-link span[style*="LIVE"] {
+  background: rgba(15, 23, 42, 0.85) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.5) !important;
+}
+
+/* Light Mode inline-styled color contrast enforcement (WCAG AA >= 4.5:1) */
+html:not(.dark) span[style*="color:#16c79a"],
+html:not(.dark) span[style*="color:#16C79A"],
+html:not(.dark) span[style*="color: #16c79a"],
+html:not(.dark) span[style*="color: #16C79A"],
+html:not(.dark) b[style*="color:#10b981"],
+html:not(.dark) b[style*="color: #10b981"],
+html:not(.dark) span[style*="color:#10b981"],
+html:not(.dark) span[style*="color: #10b981"],
+html:not(.dark) strong[style*="color:#10b981"],
+[data-theme="light"] span[style*="color:#16c79a"],
+[data-theme="light"] span[style*="color:#16C79A"],
+[data-theme="light"] span[style*="color: #16c79a"],
+[data-theme="light"] span[style*="color: #16C79A"],
+[data-theme="light"] b[style*="color:#10b981"],
+[data-theme="light"] b[style*="color: #10b981"],
+[data-theme="light"] span[style*="color:#10b981"],
+[data-theme="light"] span[style*="color: #10b981"],
+[data-theme="light"] strong[style*="color:#10b981"] {
+  color: #047857 !important;
+}
+
+html:not(.dark) b[style*="color:#f59e0b"],
+html:not(.dark) b[style*="color: #f59e0b"],
+[data-theme="light"] b[style*="color:#f59e0b"],
+[data-theme="light"] b[style*="color: #f59e0b"] {
+  color: #b45309 !important;
+}
+
+html:not(.dark) #sidebarBodyAnalysisBtn span:nth-of-type(2),
+[data-theme="light"] #sidebarBodyAnalysisBtn span:nth-of-type(2) {
+  background: rgba(2, 132, 199, 0.12) !important;
+  color: #0369a1 !important;
+  border: 1px solid rgba(2, 132, 199, 0.35) !important;
+}
+html:not(.dark) .sidebar .nav-link span[style*="LIVE"],
+[data-theme="light"] .sidebar .nav-link span[style*="LIVE"] {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #047857 !important;
+  border: 1px solid rgba(4, 120, 87, 0.35) !important;
+}
+
+
+
 

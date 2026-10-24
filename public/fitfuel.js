@@ -1320,27 +1320,37 @@ $$('.primary-nav .nav-link').forEach(btn => {
 });
 
 // Navigation menu toggle (Desktop Sidebar Collapse & Mobile Drawer)
-const mobMenuBtn = $('#mobileMenuBtn');
-if (mobMenuBtn) {
-  mobMenuBtn.onclick = () => {
-    if (window.innerWidth <= 900) {
-      const sb = $('#sidebar');
-      if (sb) sb.classList.toggle('mobile-open');
-      const bdrop = $('#sidebarBackdrop');
-      if (bdrop) bdrop.classList.toggle('active');
-    } else {
-      const appShell = document.querySelector('.app-shell');
-      const sb = $('#sidebar');
-      if (appShell && sb) {
-        appShell.classList.toggle('sidebar-collapsed');
-        sb.classList.toggle('collapsed');
-        const isCollapsed = appShell.classList.contains('sidebar-collapsed');
-        localStorage.setItem('fitfuel_sidebar_collapsed', isCollapsed ? '1' : '0');
-        if (typeof toast === 'function') {
-          toast(isCollapsed ? 'Dashboard navigation collapsed' : 'Dashboard navigation expanded');
-        }
+function toggleDashboardSidebarCollapse() {
+  if (window.innerWidth <= 900) {
+    const sb = $('#sidebar');
+    if (sb) sb.classList.toggle('mobile-open');
+    const bdrop = $('#sidebarBackdrop');
+    if (bdrop) bdrop.classList.toggle('active');
+  } else {
+    const appShell = document.querySelector('.app-shell');
+    const sb = $('#sidebar');
+    if (appShell && sb) {
+      appShell.classList.toggle('sidebar-collapsed');
+      sb.classList.toggle('collapsed');
+      const isCollapsed = appShell.classList.contains('sidebar-collapsed');
+      localStorage.setItem('fitfuel_sidebar_collapsed', isCollapsed ? '1' : '0');
+      if (typeof toast === 'function') {
+        toast(isCollapsed ? 'Sidebar navigation collapsed' : 'Sidebar navigation expanded');
       }
     }
+  }
+}
+
+const mobMenuBtn = $('#mobileMenuBtn');
+if (mobMenuBtn) {
+  mobMenuBtn.onclick = toggleDashboardSidebarCollapse;
+}
+
+const sbCollapseToggleBtn = $('#sidebarCollapseToggleBtn');
+if (sbCollapseToggleBtn) {
+  sbCollapseToggleBtn.onclick = (e) => {
+    e.stopPropagation();
+    toggleDashboardSidebarCollapse();
   };
 }
 
@@ -3498,7 +3508,15 @@ function saveProfileData() {
   store.set('profile', profile);
   renderDashboard();
   renderProfileView();
-  toast('Profile saved & synced to database');
+  if (typeof syncDashboardBmiBanner === 'function') syncDashboardBmiBanner();
+  if (typeof updateProfileBmiUI === 'function') updateProfileBmiUI();
+
+  const bmiRes = typeof calculateBmiAndCategory === 'function' ? calculateBmiAndCategory(profile.wKg, profile.hCm) : null;
+  if (bmiRes) {
+    toast(`Profile saved! Body Category: ${bmiRes.category} (BMI ${bmiRes.bmi})`);
+  } else {
+    toast('Profile saved & synced to database');
+  }
 }
 
 $('#saveProfileBtn').onclick = saveProfileData;
@@ -4419,8 +4437,17 @@ async function submitAuth() {
     renderMyFoods();
     renderChallengeView();
     renderTrackingView();
+    if (typeof syncDashboardBmiBanner === 'function') syncDashboardBmiBanner();
+    if (typeof updateProfileBmiUI === 'function') updateProfileBmiUI();
     updateSyncStatus('Cloud database synced');
     showMotivationalQuotePopup();
+
+    const loginBmi = typeof calculateBmiAndCategory === 'function' ? calculateBmiAndCategory(profile.wKg || 70, profile.hCm || 175) : null;
+    if (loginBmi) {
+      setTimeout(() => {
+        toast(`Welcome back, ${user.name || 'Athlete'}! Body composition category: ${loginBmi.category} (BMI ${loginBmi.bmi})`, 5000);
+      }, 700);
+    }
   } catch (err) {
     toast(err.message || 'Authentication error');
   } finally {
@@ -6455,7 +6482,12 @@ const floatingAiTooltip = $('#floatingAiTooltip');
 if (floatingAiLauncher) {
   floatingAiLauncher.onclick = () => {
     if (floatingAiPanel) {
-      floatingAiPanel.classList.toggle('open');
+      if (floatingAiPanel.classList.contains('minimized')) {
+        floatingAiPanel.classList.remove('minimized');
+        floatingAiPanel.classList.add('open');
+      } else {
+        floatingAiPanel.classList.toggle('open');
+      }
       if (floatingAiPanel.classList.contains('open')) {
         if (floatingAiTooltip) floatingAiTooltip.style.display = 'none';
         const badge = $('#floatingAiBadge');
@@ -6484,16 +6516,36 @@ setTimeout(() => {
 }, 5000);
 
 if ($('#floatingMinimizeBtn')) {
-  $('#floatingMinimizeBtn').onclick = () => {
-    if (floatingAiPanel) floatingAiPanel.classList.remove('open');
-    if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
+  $('#floatingMinimizeBtn').onclick = (e) => {
+    e.stopPropagation();
+    if (floatingAiPanel) {
+      floatingAiPanel.classList.remove('open');
+      floatingAiPanel.classList.add('minimized');
+      if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
+    }
+  };
+}
+
+// Clicking header while minimized restores panel
+const floatingHeader = floatingAiPanel ? floatingAiPanel.querySelector('.floating-panel-header') : null;
+if (floatingHeader) {
+  floatingHeader.onclick = (e) => {
+    if (floatingAiPanel && floatingAiPanel.classList.contains('minimized')) {
+      if (!e.target.closest('button') && !e.target.closest('.ai-model-dropdown-menu')) {
+        floatingAiPanel.classList.remove('minimized');
+      }
+    }
   };
 }
 
 if ($('#floatingCloseBtn')) {
-  $('#floatingCloseBtn').onclick = () => {
-    if (floatingAiPanel) floatingAiPanel.classList.remove('open');
-    if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
+  $('#floatingCloseBtn').onclick = (e) => {
+    e.stopPropagation();
+    if (floatingAiPanel) {
+      floatingAiPanel.classList.remove('open');
+      floatingAiPanel.classList.remove('minimized');
+      if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
+    }
   };
 }
 
@@ -9506,6 +9558,9 @@ function updateProfileBmiUI() {
 /* ==========================================================================
    FITFUEL PREMIUM PLANS SUBSCRIPTION WORKFLOW (IMAGE 4)
    ========================================================================== */
+/* ==========================================================================
+   FITFUEL PREMIUM PLANS SUBSCRIPTION WORKFLOW (IMAGE 4)
+   ========================================================================== */
 function initPremiumPlansEngine() {
   const modal = $('#premiumPlansModal');
   if (!modal) return;
@@ -9523,6 +9578,12 @@ function initPremiumPlansEngine() {
   if ($('#syHeroPremiumBtn')) $('#syHeroPremiumBtn').onclick = (e) => { e.stopPropagation(); openPlans(); };
   if ($('#syHeroProfilePill')) {
     $('#syHeroProfilePill').onclick = () => openPlans();
+  }
+  if ($('#sidebarPlan')) {
+    $('#sidebarPlan').onclick = (e) => {
+      e.stopPropagation();
+      openPlans();
+    };
   }
   if ($('#closePremiumModalBtn')) $('#closePremiumModalBtn').onclick = closePlans;
   modal.onclick = (e) => {
@@ -9579,6 +9640,7 @@ function initPremiumPlansEngine() {
 
       localStorage.setItem('fitfuel_user_tier', plan);
       if ($('#userTierLabel')) $('#userTierLabel').textContent = planName;
+      if ($('#sidebarPlan')) $('#sidebarPlan').textContent = `${planName} Plan`;
 
       closePlans();
       if (typeof soundFX !== 'undefined' && soundFX.complete) soundFX.complete();
@@ -9590,41 +9652,232 @@ function initPremiumPlansEngine() {
 
   // Restore saved tier label
   const savedTier = localStorage.getItem('fitfuel_user_tier');
-  if (savedTier && $('#userTierLabel')) {
-    if (savedTier === 'pro') $('#userTierLabel').textContent = 'Pro Athlete';
-    else if (savedTier === 'elite') $('#userTierLabel').textContent = 'Elite Champion';
-    else $('#userTierLabel').textContent = 'Starter';
+  if (savedTier) {
+    const tierName = savedTier === 'pro' ? 'Pro Athlete' : (savedTier === 'elite' ? 'Elite Champion' : 'Starter');
+    if ($('#userTierLabel')) $('#userTierLabel').textContent = tierName;
+    if ($('#sidebarPlan')) $('#sidebarPlan').textContent = `${tierName} Plan`;
   }
+}
+
+/* ==========================================================================
+   DASHBOARD BODY CATEGORY BANNER ENGINE (MISSING PAST FEATURE INTEGRATION)
+   ========================================================================== */
+function syncDashboardBmiBanner() {
+  const w = profile.wKg || Number($('#pfWeightInput')?.value) || 70;
+  const h = profile.hCm || Number($('#pfHeightInput')?.value) || 175;
+  const res = calculateBmiAndCategory(w, h);
+  if (!res) return;
+
+  const badge = $('#dashBmiCategoryBadge');
+  if (badge) {
+    badge.textContent = res.category;
+    badge.className = `bmi-badge-pill ${res.badgeClass}`;
+  }
+  const hwText = $('#dashHeightWeightText');
+  if (hwText) {
+    hwText.textContent = `${h} cm · ${typeof w === 'number' ? w.toFixed(1) : w} kg`;
+  }
+  const bmiNum = $('#dashBmiNumber');
+  if (bmiNum) {
+    bmiNum.textContent = res.bmi;
+    const isDark = document.documentElement.classList.contains('dark') || document.documentElement.getAttribute('data-theme') === 'dark';
+    bmiNum.style.color = isDark ? res.color : (res.badgeClass === 'bmi-optimal' ? '#047857' : (res.badgeClass === 'bmi-underweight' ? '#0284c7' : (res.badgeClass === 'bmi-moderate' ? '#b45309' : '#be123c')));
+  }
+  const advice = $('#dashBmiCategoryAdvice');
+  if (advice) {
+    advice.innerHTML = `Current: <b id="dashHeightWeightText" style="color:var(--ff-text-primary);">${h} cm · ${typeof w === 'number' ? w.toFixed(1) : w} kg</b> (BMI: <b id="dashBmiNumber" style="color:${res.color};">${res.bmi}</b>). ${res.advice}`;
+  }
+
+  // Also sync body modal badge
+  const modalBadge = $('#bodyModalBmiBadge');
+  if (modalBadge) {
+    modalBadge.textContent = res.category;
+    modalBadge.className = `bmi-badge-pill ${res.badgeClass}`;
+  }
+}
+
+function initDashboardBmiBannerListeners() {
+  const updateBtn = $('#dashUpdateMetricsBtn');
+  if (updateBtn) {
+    updateBtn.onclick = () => {
+      switchView('profile');
+      setTimeout(() => {
+        const inp = $('#pfHeightInput');
+        if (inp) { inp.focus(); if (inp.select) inp.select(); }
+      }, 200);
+    };
+  }
+
+  const bodyScanBtn = $('#dashViewBodyAnalysisBtn');
+  if (bodyScanBtn) {
+    bodyScanBtn.onclick = () => {
+      switchView('body-analysis');
+      openModal('#bodyAnalysisModal');
+    };
+  }
+
+  // Live calculation inside 4D Body Scan Modal
+  const modalW = $('#bodyModalWeight');
+  const modalH = $('#bodyModalHeight');
+  const updateModalBmi = () => {
+    const w = Number(modalW?.value) || profile.wKg || 70;
+    const h = Number(modalH?.value) || profile.hCm || 175;
+    const res = calculateBmiAndCategory(w, h);
+    const badge = $('#bodyModalBmiBadge');
+    if (badge && res) {
+      badge.textContent = res.category;
+      badge.className = `bmi-badge-pill ${res.badgeClass}`;
+    }
+  };
+  if (modalW) {
+    modalW.addEventListener('input', updateModalBmi);
+    modalW.addEventListener('change', updateModalBmi);
+  }
+  if (modalH) {
+    modalH.addEventListener('input', updateModalBmi);
+    modalH.addEventListener('change', updateModalBmi);
+  }
+}
+
+/* ==========================================================================
+   AI REASONING MODEL PICKER CONTROLLER (IMAGE 3 INTEGRATION)
+   ========================================================================== */
+const AI_MODELS = [
+  { id: 'liquid/lfm-2.5-2.6b:free', name: 'LFM2.5–2.6B', dot: 'model-dot-blue', tag: 'free' },
+  { id: 'laguna/laguna-xs-2.1', name: 'Laguna XS 2.1', dot: 'model-dot-emerald', tag: '' },
+  { id: 'xing/xing-4.0-29b-a4b:free', name: 'Xing4.0 29B A4B', dot: 'model-dot-amber', tag: 'free' },
+  { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free', name: 'Nemotron 3 Nano Omni', dot: 'model-dot-orange', tag: 'free' },
+  { id: 'minimax/minimax-m3.1-flash:free', name: 'MiniMax M3.1 Flash', dot: 'model-dot-coral', tag: 'free' },
+  { id: 'nvidia/nemotron-3.5-super-vl:free', name: 'Nemotron 3.5 Super VL', dot: 'model-dot-purple', tag: 'free' },
+  { id: 'laguna/laguna-s-2.1', name: 'Laguna S 2.1', dot: 'model-dot-lime', tag: '' },
+  { id: 'cohere/north-mini-code:free', name: 'North Mini Code', dot: 'model-dot-purple', tag: 'free' },
+  { id: 'nvidia/nemotron-3.5-content-safety', name: 'Nemotron 3.5 Content Safety', dot: 'model-dot-cyan', tag: '' },
+  { id: 'auto', name: 'Auto Free Agent', dot: 'model-dot-gray', tag: 'fast' }
+];
+
+function getSelectedAiModel() {
+  return localStorage.getItem('fitfuel_selected_ai_model') || 'liquid/lfm-2.5-2.6b:free';
+}
+
+function selectAiModel(modelId, notify = true) {
+  const model = AI_MODELS.find(m => m.id === modelId) || AI_MODELS[0];
+  localStorage.setItem('fitfuel_selected_ai_model', model.id);
+
+  // Update Coach View picker
+  const coachName = $('#coachModelActiveName');
+  if (coachName) coachName.textContent = model.name;
+  const coachDot = $('#coachModelActiveDot');
+  if (coachDot) {
+    coachDot.className = `model-dot ${model.dot}`;
+  }
+
+  // Update Floating Chat status trigger
+  const floatingLabel = $('#floatingActiveModelLabel');
+  if (floatingLabel) floatingLabel.textContent = model.name;
+
+  // Update active state in menus
+  $$('.ai-model-dropdown-menu .ai-model-item').forEach(item => {
+    if (item.dataset.model === model.id) {
+      item.classList.add('selected');
+    } else {
+      item.classList.remove('selected');
+    }
+  });
+
+  // Close menus
+  const cMenu = $('#coachModelMenu');
+  if (cMenu) cMenu.classList.remove('show');
+  const fMenu = $('#floatingModelMenu');
+  if (fMenu) fMenu.classList.remove('show');
+
+  if (notify && typeof toast === 'function') {
+    toast(`Active AI Agent: ${model.name}`);
+  }
+}
+
+function initAiModelPickers() {
+  const coachBtn = $('#coachModelPickerBtn');
+  const coachMenu = $('#coachModelMenu');
+  if (coachBtn && coachMenu) {
+    coachBtn.onclick = (e) => {
+      e.stopPropagation();
+      coachMenu.classList.toggle('show');
+    };
+  }
+
+  const floatingTrigger = $('#floatingModelTrigger');
+  const floatingMenu = $('#floatingModelMenu');
+  if (floatingTrigger && floatingMenu) {
+    floatingTrigger.onclick = (e) => {
+      e.stopPropagation();
+      floatingMenu.classList.toggle('show');
+    };
+  }
+
+  // Bind clicks on items in both menus
+  $$('.ai-model-dropdown-menu .ai-model-item').forEach(item => {
+    item.onclick = (e) => {
+      e.stopPropagation();
+      const modelId = item.dataset.model;
+      if (modelId) selectAiModel(modelId, true);
+    };
+  });
+
+  // Global click outside listener to close model menus
+  document.addEventListener('click', (e) => {
+    if (coachMenu && !e.target.closest('#coachModelPickerWrap')) {
+      coachMenu.classList.remove('show');
+    }
+    if (floatingMenu && !e.target.closest('#floatingModelTrigger') && !e.target.closest('#floatingModelMenu')) {
+      floatingMenu.classList.remove('show');
+    }
+  });
+
+  // Initialize display from localStorage
+  selectAiModel(getSelectedAiModel(), false);
 }
 
 /* ---------- Boot Application & Immediate Lifecycle Bindings ---------- */
 bootApp();
 initInteractiveHeroAndAppButtons();
 initPremiumPlansEngine();
+initDashboardBmiBannerListeners();
+initAiModelPickers();
+syncDashboardBmiBanner();
 updateProfileBmiUI();
 
 const hInp = $('#pfHeightInput');
 const wInp = $('#pfWeightInput');
 if (hInp) {
-  hInp.addEventListener('input', updateProfileBmiUI);
-  hInp.addEventListener('change', updateProfileBmiUI);
+  hInp.addEventListener('input', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
+  hInp.addEventListener('change', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
 }
 if (wInp) {
-  wInp.addEventListener('input', updateProfileBmiUI);
-  wInp.addEventListener('change', updateProfileBmiUI);
+  wInp.addEventListener('input', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
+  wInp.addEventListener('change', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
 }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initInteractiveHeroAndAppButtons();
     initPremiumPlansEngine();
+    initDashboardBmiBannerListeners();
+    initAiModelPickers();
+    syncDashboardBmiBanner();
     updateProfileBmiUI();
   });
 } else {
   initInteractiveHeroAndAppButtons();
   initPremiumPlansEngine();
-  updateProfileBmiUI();
+  initDashboardBmiBannerListeners();
+  initAiModelPickers();
+  syncDashboardBmiBanner();
 }
+
+window.applyTheme = applyTheme;
+window.switchView = switchView;
+window.showView = switchView;
+window.syncDashboardBmiBanner = syncDashboardBmiBanner;
 
 } // End of browser execution block
 

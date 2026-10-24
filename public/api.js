@@ -245,7 +245,8 @@ const FF = {
     const isJson = (systemPrompt && systemPrompt.toLowerCase().includes('json')) || (prompt && prompt.toLowerCase().includes('json'));
 
     const baseSystemPrompt = (systemPrompt ? systemPrompt + ' ' : '') + 'Never use emojis in your response. Output clean, professional markdown only.';
-    const { image, images } = options || {};
+    const { image, images, model } = options || {};
+    const selectedModel = model || (typeof localStorage !== 'undefined' ? localStorage.getItem('fitfuel_selected_ai_model') : 'liquid/lfm-2.5-2.6b:free') || 'liquid/lfm-2.5-2.6b:free';
     const imagesArray = Array.isArray(images)
       ? images.filter(Boolean)
       : (images && typeof images === 'object' ? Object.values(images).filter(Boolean) : []);
@@ -253,8 +254,12 @@ const FF = {
     // 1. Try server endpoint first (connects to OpenRouter free models via backend .env)
     let lastError = null;
     try {
-      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt: baseSystemPrompt, messages, geminiKey, openRouterKey, image, images: imagesArray });
+      const res = await this.req('POST', '/api/ai/chat', { prompt, systemPrompt: baseSystemPrompt, messages, geminiKey, openRouterKey, selectedModel, image, images: imagesArray });
       if (res && res.content && String(res.content).trim()) {
+        this.lastAiModel = res.model || selectedModel;
+        if (options && typeof options.onModelMeta === 'function') {
+          options.onModelMeta(this.lastAiModel);
+        }
         return stripEmojis(res.content).trim();
       }
     } catch (e) {
