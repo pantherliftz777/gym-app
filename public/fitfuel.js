@@ -1319,16 +1319,41 @@ $$('.primary-nav .nav-link').forEach(btn => {
   };
 });
 
-// Mobile menu toggle
+// Navigation menu toggle (Desktop Sidebar Collapse & Mobile Drawer)
 const mobMenuBtn = $('#mobileMenuBtn');
 if (mobMenuBtn) {
   mobMenuBtn.onclick = () => {
-    const sb = $('#sidebar');
-    if (sb) sb.classList.toggle('mobile-open');
-    const bdrop = $('#sidebarBackdrop');
-    if (bdrop) bdrop.classList.toggle('active');
+    if (window.innerWidth <= 900) {
+      const sb = $('#sidebar');
+      if (sb) sb.classList.toggle('mobile-open');
+      const bdrop = $('#sidebarBackdrop');
+      if (bdrop) bdrop.classList.toggle('active');
+    } else {
+      const appShell = document.querySelector('.app-shell');
+      const sb = $('#sidebar');
+      if (appShell && sb) {
+        appShell.classList.toggle('sidebar-collapsed');
+        sb.classList.toggle('collapsed');
+        const isCollapsed = appShell.classList.contains('sidebar-collapsed');
+        localStorage.setItem('fitfuel_sidebar_collapsed', isCollapsed ? '1' : '0');
+        if (typeof toast === 'function') {
+          toast(isCollapsed ? 'Dashboard navigation collapsed' : 'Dashboard navigation expanded');
+        }
+      }
+    }
   };
 }
+
+// Restore saved sidebar collapsed preference on desktop
+if (typeof localStorage !== 'undefined' && localStorage.getItem('fitfuel_sidebar_collapsed') === '1' && window.innerWidth > 900) {
+  const appShell = document.querySelector('.app-shell');
+  const sb = $('#sidebar');
+  if (appShell && sb) {
+    appShell.classList.add('sidebar-collapsed');
+    sb.classList.add('collapsed');
+  }
+}
+
 const sbBackdropEl = $('#sidebarBackdrop');
 if (sbBackdropEl) {
   sbBackdropEl.onclick = () => {
@@ -1897,6 +1922,7 @@ function applyTheme(themeChoice) {
     renderDashboard();
   }
 }
+window.applyTheme = applyTheme;
 
 function initThemeEngine() {
   const currentTheme = getActiveThemeSetting();
@@ -6460,6 +6486,14 @@ setTimeout(() => {
 if ($('#floatingMinimizeBtn')) {
   $('#floatingMinimizeBtn').onclick = () => {
     if (floatingAiPanel) floatingAiPanel.classList.remove('open');
+    if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
+  };
+}
+
+if ($('#floatingCloseBtn')) {
+  $('#floatingCloseBtn').onclick = () => {
+    if (floatingAiPanel) floatingAiPanel.classList.remove('open');
+    if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
   };
 }
 
@@ -9401,14 +9435,195 @@ window.deleteHistoryAssessment = async function(id) {
   }
 };
 
+/* ==========================================================================
+   BODY CATEGORY & BMI ENGINE (PAST VERSION RESTORATION & ENHANCEMENT)
+   ========================================================================== */
+function calculateBmiAndCategory(weightKg, heightCm) {
+  const w = parseFloat(weightKg);
+  const h = parseFloat(heightCm);
+  if (!w || !h || w <= 0 || h <= 0) return null;
+
+  const heightM = h / 100;
+  const bmi = Number((w / (heightM * heightM)).toFixed(1));
+
+  let category = '';
+  let badgeClass = '';
+  let color = '';
+  let advice = '';
+  let meterPct = 0; // 0 to 100 for spectrum bar
+
+  if (bmi < 18.5) {
+    category = 'Underweight (Low / Lean)';
+    badgeClass = 'bmi-underweight';
+    color = '#0284c7';
+    advice = 'Caloric surplus recommended (+300 to +500 kcal/day). Focus on complex carbohydrates, nutrient-dense meals, and progressive resistance training to build healthy skeletal muscle mass.';
+    meterPct = Math.max(5, Math.min(24, Math.round(((bmi - 12) / (18.5 - 12)) * 24)));
+  } else if (bmi < 25.0) {
+    category = 'Normal Weight (Good / Optimal)';
+    badgeClass = 'bmi-optimal';
+    color = '#10b981';
+    advice = 'Optimal metabolic body composition! Maintain balanced macronutrient intake (1.8-2.0g/kg protein), consistent resistance training, and active hydration to sustain peak conditioning.';
+    meterPct = Math.max(26, Math.min(49, 25 + Math.round(((bmi - 18.5) / (25.0 - 18.5)) * 24)));
+  } else if (bmi < 30.0) {
+    category = 'Overweight (Moderate / High)';
+    badgeClass = 'bmi-moderate';
+    color = '#f59e0b';
+    advice = 'Moderate caloric deficit recommended (-300 to -450 kcal/day) with elevated protein intake (2.0-2.2g/kg bodyweight), daily 8,000-10,000 steps, and progressive resistance training to preserve lean tissue.';
+    meterPct = Math.max(51, Math.min(74, 50 + Math.round(((bmi - 25.0) / (30.0 - 25.0)) * 24)));
+  } else {
+    category = 'Obese (High Risk / Action Needed)';
+    badgeClass = 'bmi-obese';
+    color = '#f43f5e';
+    advice = 'Structured nutrition plan recommended with controlled caloric deficit, progressive low-impact cardio, and strength training. Consult your FitFuel AI Coach for a tailored step-by-step roadmap.';
+    meterPct = Math.max(76, Math.min(96, 75 + Math.round(((bmi - 30.0) / (45.0 - 30.0)) * 24)));
+  }
+
+  return { bmi, category, badgeClass, color, advice, meterPct };
+}
+
+function updateProfileBmiUI() {
+  const hInput = $('#pfHeightInput');
+  const wInput = $('#pfWeightInput');
+  if (!hInput || !wInput) return;
+
+  const res = calculateBmiAndCategory(wInput.value, hInput.value);
+  if (!res) return;
+
+  if ($('#profileBmiVal')) $('#profileBmiVal').textContent = res.bmi;
+  const badge = $('#profileBmiBadge');
+  if (badge) {
+    badge.textContent = res.category;
+    badge.className = `bmi-badge-pill ${res.badgeClass}`;
+  }
+  const ind = $('#profileBmiIndicator');
+  if (ind) {
+    ind.style.left = `${res.meterPct}%`;
+    ind.style.borderColor = res.color;
+  }
+  if ($('#profileBmiAdvice')) $('#profileBmiAdvice').textContent = res.advice;
+}
+
+/* ==========================================================================
+   FITFUEL PREMIUM PLANS SUBSCRIPTION WORKFLOW (IMAGE 4)
+   ========================================================================== */
+function initPremiumPlansEngine() {
+  const modal = $('#premiumPlansModal');
+  if (!modal) return;
+
+  const openPlans = () => {
+    modal.style.display = 'flex';
+    if (typeof soundFX !== 'undefined' && soundFX.pop) soundFX.pop();
+    updatePlanPricing();
+  };
+
+  const closePlans = () => {
+    modal.style.display = 'none';
+  };
+
+  if ($('#syHeroPremiumBtn')) $('#syHeroPremiumBtn').onclick = (e) => { e.stopPropagation(); openPlans(); };
+  if ($('#syHeroProfilePill')) {
+    $('#syHeroProfilePill').onclick = () => openPlans();
+  }
+  if ($('#closePremiumModalBtn')) $('#closePremiumModalBtn').onclick = closePlans;
+  modal.onclick = (e) => {
+    if (e.target === modal) closePlans();
+  };
+
+  let isAnnual = false;
+  const monthlyBtn = $('#planMonthlyBtn');
+  const annualBtn = $('#planAnnualBtn');
+
+  function updatePlanPricing() {
+    if (isAnnual) {
+      if ($('#proPriceVal')) $('#proPriceVal').textContent = '₹374';
+      if ($('#proPricePeriod')) $('#proPricePeriod').textContent = '/ month (billed yearly)';
+      if ($('#elitePriceVal')) $('#elitePriceVal').textContent = '₹749';
+      if ($('#elitePricePeriod')) $('#elitePricePeriod').textContent = '/ month (billed yearly)';
+    } else {
+      if ($('#proPriceVal')) $('#proPriceVal').textContent = '₹499';
+      if ($('#proPricePeriod')) $('#proPricePeriod').textContent = '/ month';
+      if ($('#elitePriceVal')) $('#elitePriceVal').textContent = '₹999';
+      if ($('#elitePricePeriod')) $('#elitePricePeriod').textContent = '/ month';
+    }
+  }
+
+  if (monthlyBtn && annualBtn) {
+    monthlyBtn.onclick = () => {
+      isAnnual = false;
+      monthlyBtn.classList.add('active');
+      annualBtn.classList.remove('active');
+      monthlyBtn.style.background = '#2563eb';
+      monthlyBtn.style.color = '#ffffff';
+      annualBtn.style.background = 'transparent';
+      annualBtn.style.color = 'var(--ff-text-secondary)';
+      updatePlanPricing();
+    };
+    annualBtn.onclick = () => {
+      isAnnual = true;
+      annualBtn.classList.add('active');
+      monthlyBtn.classList.remove('active');
+      annualBtn.style.background = '#2563eb';
+      annualBtn.style.color = '#ffffff';
+      monthlyBtn.style.background = 'transparent';
+      monthlyBtn.style.color = 'var(--ff-text-secondary)';
+      updatePlanPricing();
+    };
+  }
+
+  $$('.select-plan-btn').forEach(btn => {
+    btn.onclick = () => {
+      const plan = btn.dataset.plan;
+      let planName = 'Free Starter';
+      if (plan === 'pro') planName = 'Pro Athlete';
+      if (plan === 'elite') planName = 'Elite Champion';
+
+      localStorage.setItem('fitfuel_user_tier', plan);
+      if ($('#userTierLabel')) $('#userTierLabel').textContent = planName;
+
+      closePlans();
+      if (typeof soundFX !== 'undefined' && soundFX.complete) soundFX.complete();
+      if (typeof toast === 'function') {
+        toast(`Success! You have activated the FitFuel ${planName} Plan.`);
+      }
+    };
+  });
+
+  // Restore saved tier label
+  const savedTier = localStorage.getItem('fitfuel_user_tier');
+  if (savedTier && $('#userTierLabel')) {
+    if (savedTier === 'pro') $('#userTierLabel').textContent = 'Pro Athlete';
+    else if (savedTier === 'elite') $('#userTierLabel').textContent = 'Elite Champion';
+    else $('#userTierLabel').textContent = 'Starter';
+  }
+}
+
 /* ---------- Boot Application & Immediate Lifecycle Bindings ---------- */
 bootApp();
 initInteractiveHeroAndAppButtons();
+initPremiumPlansEngine();
+updateProfileBmiUI();
+
+const hInp = $('#pfHeightInput');
+const wInp = $('#pfWeightInput');
+if (hInp) {
+  hInp.addEventListener('input', updateProfileBmiUI);
+  hInp.addEventListener('change', updateProfileBmiUI);
+}
+if (wInp) {
+  wInp.addEventListener('input', updateProfileBmiUI);
+  wInp.addEventListener('change', updateProfileBmiUI);
+}
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initInteractiveHeroAndAppButtons);
+  document.addEventListener('DOMContentLoaded', () => {
+    initInteractiveHeroAndAppButtons();
+    initPremiumPlansEngine();
+    updateProfileBmiUI();
+  });
 } else {
   initInteractiveHeroAndAppButtons();
+  initPremiumPlansEngine();
+  updateProfileBmiUI();
 }
 
 } // End of browser execution block

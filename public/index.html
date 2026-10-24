@@ -40,11 +40,11 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <span class="brand-mark">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
           <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
         </svg>
       </span>
-      <span class="brand-title">Fit<span class="mint" style="color:#16C79A;">Fuel</span></span>
+      <span class="brand-title">Fit<span class="mint" style="color:#16c79a;font-weight:900;">Fuel</span></span>
     </div>
 
     <div class="sidebar-label">YOUR SPACE</div>
@@ -297,15 +297,14 @@
         <!-- ================= A STRONGER YOU HERO BANNER (USER REFERENCE DESIGN) ================= -->
         <div class="stronger-you-hero-card">
           <!-- TOP BAR INSIDE HERO -->
-          <div class="sy-hero-topbar">
-            <!-- Brand / Logo -->
-            <div class="sy-hero-brand">
-              <span class="sy-brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path>
+            <!-- Brand / Logo (Image 5: 100% Unified with Sidebar) -->
+            <div class="sy-hero-brand" title="FitFuel Athletic Performance">
+              <span class="sy-brand-icon brand-mark">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
+                  <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
                 </svg>
               </span>
-              <span class="sy-brand-title">Fit<span class="sy-brand-accent">Fuel</span></span>
+              <span class="sy-brand-title brand-title">Fit<span class="mint" style="color:#16c79a;font-weight:900;">Fuel</span></span>
             </div>
 
             <!-- Search Bar -->
@@ -327,15 +326,15 @@
                 <span class="sy-notif-badge">1</span>
               </button>
 
-              <div class="sy-hero-profile-pill" id="syHeroProfilePill" title="View profile & settings">
+              <div class="sy-hero-profile-pill" id="syHeroProfilePill" title="View profile & premium subscription plans" role="button" tabindex="0">
                 <div class="sy-profile-avatar" id="syAvatarDisplay">JD</div>
                 <div class="sy-profile-info">
                   <span class="sy-profile-name" id="syProfileName">John Doe</span>
-                  <span class="sy-profile-tier">
+                  <span class="sy-profile-tier" id="syHeroPremiumBtn" title="Click to view Premium Membership Plans" style="cursor:pointer;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5">
                       <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"></path>
                     </svg>
-                    Premium
+                    <span id="userTierLabel">Premium</span>
                   </span>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1391,7 +1390,7 @@
         </div>
 
         <!-- DAILY TIP & HABIT SCIENCE SECTION -->
-        <article class="panel daily-tip-panel" id="dailyTipPanel" style="margin-top:16px;background:linear-gradient(135deg, #eff6ff 0%, #edf5e6 100%);border:1px solid #d8e5d2;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(32,59,41,0.04);">
+        <article class="panel daily-tip-panel" id="dailyTipPanel" style="margin-top:16px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="width:38px;height:38px;border-radius:10px;background:#e2eed9;display:flex;align-items:center;justify-content:center;font-size:20px;">
@@ -2629,6 +2628,35 @@
                   <span id="pfWeightUnit">kg</span>
                 </div>
               </label>
+
+              <!-- Body Composition Category Card (Dynamic BMI & Health Category Engine) -->
+              <div class="bmi-category-card full-field" id="profileBmiCategoryCard" style="grid-column:1 / -1;margin:12px 0 16px;padding:16px 20px;border-radius:18px;background:var(--ff-glass-bg);border:1.5px solid var(--ff-glass-border);box-shadow:var(--ff-glass-shadow);">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                  <div>
+                    <span style="font-size:0.75rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--ff-text-muted);">Body Composition Category</span>
+                    <div style="display:flex;align-items:baseline;gap:8px;margin-top:2px;">
+                      <span style="font-size:1.5rem;font-weight:900;color:var(--ff-text-primary);" id="profileBmiVal">22.9</span>
+                      <span style="font-size:0.85rem;color:var(--ff-text-secondary);font-weight:600;">BMI</span>
+                    </div>
+                  </div>
+                  <span class="bmi-badge-pill bmi-optimal" id="profileBmiBadge" style="padding:6px 14px;border-radius:99px;font-size:0.82rem;font-weight:800;">
+                    Normal Weight (Good / Optimal)
+                  </span>
+                </div>
+                <!-- Visual Spectrum Gauge -->
+                <div class="bmi-spectrum-bar" style="margin:14px 0 8px;height:8px;border-radius:99px;background:linear-gradient(to right, #0284c7 0%, #0284c7 24%, #10b981 25%, #10b981 49%, #f59e0b 50%, #f59e0b 74%, #f43f5e 75%, #f43f5e 100%);position:relative;">
+                  <div id="profileBmiIndicator" style="position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#ffffff;border:3px solid #10b981;box-shadow:0 2px 6px rgba(0,0,0,0.3);transform:translateX(-50%);left:36%;transition:left 0.3s ease, border-color 0.3s ease;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--ff-text-muted);font-weight:700;">
+                  <span>Low (&lt;18.5)</span>
+                  <span>Good (18.5-24.9)</span>
+                  <span>Moderate (25-29.9)</span>
+                  <span>Obese (30+)</span>
+                </div>
+                <p style="margin:10px 0 0;font-size:0.82rem;line-height:1.45;color:var(--ff-text-secondary);" id="profileBmiAdvice">
+                  Optimal metabolic health! Focus on maintaining lean muscle mass, balanced macronutrient intake, and consistent weekly training volume.
+                </p>
+              </div>
 
               <label class="full-field">
                 Target Calorie Goal
@@ -4415,7 +4443,12 @@
         <button type="button" class="floating-panel-ctrl-btn" id="floatingClearHistoryBtn" title="Clear Chat History">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
-        <button type="button" class="floating-panel-ctrl-btn" id="floatingMinimizeBtn" title="Minimize Chat" style="font-size:1.25rem;">
+        <button type="button" class="floating-panel-ctrl-btn" id="floatingMinimizeBtn" title="Minimize Chat" aria-label="Minimize Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+          </svg>
+        </button>
+        <button type="button" class="floating-panel-ctrl-btn" id="floatingCloseBtn" title="Close Chat" aria-label="Close Chat" style="font-size:1.25rem;">
           &times;
         </button>
       </div>
@@ -4425,11 +4458,11 @@
     <div class="floating-panel-scrollable" id="floatingAiScrollable">
       <!-- Welcome Greeting Bubble (Image 4) -->
       <div style="padding:14px 16px 6px;">
-        <div style="background:rgba(239,246,255,0.85);border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;font-size:0.85rem;line-height:1.45;color:var(--glass-text-primary);box-shadow:0 2px 8px rgba(37,99,235,0.04);">
-        <b style="color:#2563eb;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;">FitFuel AI Coach</b>
-        <span id="floatingAiWelcomeText">Hi there! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?</span>
+        <div class="floating-ai-welcome-box">
+          <b style="color:#2563eb;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;">FitFuel AI Coach</b>
+          <span id="floatingAiWelcomeText">Hi there! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?</span>
+        </div>
       </div>
-    </div>
 
     <!-- 2x2 Quick Action Cards (Image 4) -->
     <div class="floating-quick-actions-2x2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 16px;">
@@ -5067,6 +5100,169 @@
       <button type="button" class="solid-button" id="exModalLogDoneBtn" style="flex:1.5;background:#2563eb;">
         Mark Completed
       </button>
+    </div>
+  </div>
+<!-- ================= FITFUEL PREMIUM PAID PLANS MODAL (IMAGE 4) ================= -->
+<div class="modal-backdrop" id="premiumPlansModal" style="display:none;">
+  <div class="modal-card premium-plans-modal-card">
+    <div class="modal-head" style="margin-bottom:8px;">
+      <div>
+        <span class="section-kicker" style="color:#f59e0b;display:inline-flex;align-items:center;gap:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b">
+            <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"></path>
+          </svg>
+          FITFUEL MEMBERSHIP TIERS
+        </span>
+        <h2 style="font-size:1.75rem;margin:4px 0 6px;">Choose Your Performance Tier</h2>
+        <p style="font-size:0.88rem;color:var(--ff-text-secondary);margin:0;">
+          Level up your fitness journey with next-gen AI coaching, live posture biomechanics, and holographic composition analysis.
+        </p>
+      </div>
+      <button class="close-btn" id="closePremiumModalBtn" data-close>&times;</button>
+    </div>
+
+    <!-- Billing Period Switcher -->
+    <div style="display:flex;justify-content:center;margin:18px 0 10px;">
+      <div style="display:inline-flex;padding:4px;border-radius:99px;background:var(--ff-glass-bg);border:1px solid var(--ff-glass-border);gap:4px;">
+        <button type="button" class="plan-period-btn active" id="planMonthlyBtn" style="padding:6px 18px;border-radius:99px;border:none;background:#2563eb;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;">
+          Monthly Billing
+        </button>
+        <button type="button" class="plan-period-btn" id="planAnnualBtn" style="padding:6px 18px;border-radius:99px;border:none;background:transparent;color:var(--ff-text-secondary);font-size:0.82rem;font-weight:700;cursor:pointer;">
+          Annual (Save 25%)
+        </button>
+      </div>
+    </div>
+
+    <!-- 3 Tier Cards Grid -->
+    <div class="plan-grid">
+      <!-- Tier 1: Free Starter -->
+      <div class="plan-tier-card" id="planCardStarter">
+        <div>
+          <span style="font-size:0.75rem;font-weight:800;letter-spacing:0.06em;color:var(--ff-text-muted);text-transform:uppercase;">Starter Tier</span>
+          <h3 style="font-size:1.35rem;margin:4px 0 10px;color:var(--ff-text-primary);">Free Athlete</h3>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;">
+            <span class="plan-price-num">₹0</span>
+            <span style="font-size:0.85rem;color:var(--ff-text-muted);">/ month</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--ff-text-secondary);line-height:1.4;margin:0 0 14px;">
+            Core fitness and nutrition tracking essentials for disciplined self-starters.
+          </p>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Standard Food &amp; Macro Diary (100k+ foods)
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Core 5 Strength Lifts Starting Weights
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              12-Cup Hydration &amp; Daily Streak Tracker
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Human-Body Exercise Animation Library
+            </li>
+          </ul>
+        </div>
+        <button type="button" class="solid-button full select-plan-btn" data-plan="free" style="background:var(--ff-glass-bg);color:var(--ff-text-primary);border:1.5px solid var(--ff-glass-border);font-weight:700;">
+          Current Active Plan
+        </button>
+      </div>
+
+      <!-- Tier 2: Pro Athlete (Featured) -->
+      <div class="plan-tier-card featured" id="planCardPro">
+        <span class="plan-badge-popular">MOST POPULAR</span>
+        <div>
+          <span style="font-size:0.75rem;font-weight:800;letter-spacing:0.06em;color:#2563eb;text-transform:uppercase;">Performance Tier</span>
+          <h3 style="font-size:1.35rem;margin:4px 0 10px;color:var(--ff-text-primary);">Pro Athlete</h3>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;">
+            <span class="plan-price-num" id="proPriceVal">₹499</span>
+            <span style="font-size:0.85rem;color:var(--ff-text-muted);" id="proPricePeriod">/ month</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--ff-text-secondary);line-height:1.4;margin:0 0 14px;">
+            Complete smart AI coaching, camera pose correction, and outdoor GPS telemetry.
+          </p>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <strong>Everything in Starter, plus:</strong>
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Unlimited AI Coach Chat (Multi-Model Engine)
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Real-Time Camera Posture AI Form Assessment
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Outdoor GPS Telemetry, Pace &amp; Splits
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              RPE Overload Recalibration Engine
+            </li>
+          </ul>
+        </div>
+        <button type="button" class="solid-button full select-plan-btn" data-plan="pro" style="background:#2563eb;color:#ffffff;font-weight:800;box-shadow:0 4px 14px rgba(37,99,235,0.4);">
+          Upgrade to Pro Athlete
+        </button>
+      </div>
+
+      <!-- Tier 3: Elite Champion -->
+      <div class="plan-tier-card" id="planCardElite">
+        <div>
+          <span style="font-size:0.75rem;font-weight:800;letter-spacing:0.06em;color:#f59e0b;text-transform:uppercase;">Championship Tier</span>
+          <h3 style="font-size:1.35rem;margin:4px 0 10px;color:var(--ff-text-primary);">Elite Champion</h3>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:14px;">
+            <span class="plan-price-num" id="elitePriceVal">₹999</span>
+            <span style="font-size:0.85rem;color:var(--ff-text-muted);" id="elitePricePeriod">/ month</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--ff-text-secondary);line-height:1.4;margin:0 0 14px;">
+            The pinnacle of performance science with 4D holographic scanning &amp; dietitian review.
+          </p>
+          <ul class="plan-feature-list">
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <strong>Everything in Pro Athlete, plus:</strong>
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              4D Holographic Body Composition Analysis
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              1-on-1 Certified Sports Dietitian Review
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Biometric Macro Auto-Sync &amp; Exportable Reports
+            </li>
+            <li class="plan-feature-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              VIP 24/7 Dedicated Support Channel
+            </li>
+          </ul>
+        </div>
+        <button type="button" class="solid-button full select-plan-btn" data-plan="elite" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;font-weight:800;border:none;box-shadow:0 4px 14px rgba(245,158,11,0.35);">
+          Upgrade to Elite Champion
+        </button>
+      </div>
+    </div>
+
+    <!-- Security & Guarantee Footer -->
+    <div style="display:flex;justify-content:center;align-items:center;gap:18px;margin-top:22px;padding-top:14px;border-top:1px solid var(--ff-glass-border);font-size:0.78rem;color:var(--ff-text-muted);flex-wrap:wrap;">
+      <span style="display:inline-flex;align-items:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Bank-Grade 256-Bit SSL Encryption
+      </span>
+      <span>•</span>
+      <span>Cancel or change plans anytime</span>
+      <span>•</span>
+      <span>30-Day Performance Guarantee</span>
     </div>
   </div>
 </div>
