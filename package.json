@@ -11,5 +11,9 @@
   "dependencies": {
     "@libsql/client": "^0.18.0",
     "framer-motion": "^14.4.0"
+  },
+  "devDependencies": {
+    "puppeteer": "^25.16.0",
+    "puppeteer-core": "^25.16.0"
   }
 }

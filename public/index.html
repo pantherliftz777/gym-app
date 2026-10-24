@@ -26,7 +26,10 @@
       } catch (e) {}
     })();
   </script>
+  <link rel="icon" type="image/svg+xml" href="images/fitfuel-ai-logo.svg">
+  <link rel="alternate icon" href="favicon.ico">
   <link rel="stylesheet" href="styles.css?v=4.0.0">
+<link rel="stylesheet" href="exercise-animations.css?v=1.0">
 </head>
 <body>
 <div class="app-shell">
@@ -195,6 +198,7 @@
       </button>
     </div>
   </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
   <!-- ================= MAIN AREA ================= -->
   <main class="main-area">
@@ -581,7 +585,7 @@
         <div class="dash-image3-header-bar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin:22px 0 18px;">
           <div>
             <h1 style="font-size:1.85rem;font-weight:900;color:var(--ff-text-primary);margin:0 0 4px;letter-spacing:-.03em;" id="dashImage3Greeting">
-              Good Morning, Utkarsh!
+              Good Morning, Athlete!
             </h1>
             <p style="font-size:.88rem;color:var(--ff-text-secondary);margin:0;" id="dashImage3DateSub">
               Thursday, Oct 24, 2026 · Ready to crush today's fitness goals?
@@ -4414,11 +4418,13 @@
       </div>
     </div>
 
-    <!-- Welcome Greeting Bubble (Image 4) -->
-    <div style="padding:14px 16px 6px;">
+    <!-- Scrollable Body Container (Prevents header from being scrolled off-screen) -->
+    <div class="floating-panel-scrollable" id="floatingAiScrollable">
+      <!-- Welcome Greeting Bubble (Image 4) -->
+      <div style="padding:14px 16px 6px;">
       <div style="background:rgba(239,246,255,0.85);border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;font-size:0.85rem;line-height:1.45;color:#1e293b;box-shadow:0 2px 8px rgba(37,99,235,0.04);">
         <b style="color:#2563eb;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;">FitFuel AI Coach</b>
-        Hi Utkarsh! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?
+        <span id="floatingAiWelcomeText">Hi there! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?</span>
       </div>
     </div>
 
@@ -4490,6 +4496,7 @@
         Ready when you are! Ask me any fitness, nutrition, or workout question, or choose an action above.
       </div>
     </div>
+    </div> <!-- end floating-panel-scrollable -->
 
     <!-- Panel Footer & Input Bar (Image 4: paperclip + mic + send pill) -->
     <div class="floating-panel-footer" style="padding:12px 16px;border-top:1px solid #e2e8f0;background:rgba(255,255,255,0.9);">
@@ -5551,6 +5558,7 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
+<script src="exercise-animation.js?v=1.0"></script>
 <script src="fitfuel.js?v=4.2.0"></script>
 </body>
 </html>

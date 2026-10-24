@@ -1310,13 +1310,33 @@ function switchView(viewName) {
 
 // Attach Nav Links
 $$('.primary-nav .nav-link').forEach(btn => {
-  btn.onclick = () => switchView(btn.dataset.view);
+  btn.onclick = () => {
+    switchView(btn.dataset.view);
+    const sb = $('#sidebar');
+    if (sb) sb.classList.remove('mobile-open');
+    const bdrop = $('#sidebarBackdrop');
+    if (bdrop) bdrop.classList.remove('active');
+  };
 });
 
 // Mobile menu toggle
-$('#mobileMenuBtn').onclick = () => {
-  $('#sidebar').classList.toggle('mobile-open');
-};
+const mobMenuBtn = $('#mobileMenuBtn');
+if (mobMenuBtn) {
+  mobMenuBtn.onclick = () => {
+    const sb = $('#sidebar');
+    if (sb) sb.classList.toggle('mobile-open');
+    const bdrop = $('#sidebarBackdrop');
+    if (bdrop) bdrop.classList.toggle('active');
+  };
+}
+const sbBackdropEl = $('#sidebarBackdrop');
+if (sbBackdropEl) {
+  sbBackdropEl.onclick = () => {
+    const sb = $('#sidebar');
+    if (sb) sb.classList.remove('mobile-open');
+    sbBackdropEl.classList.remove('active');
+  };
+}
 
 /* ---------- Live Date and Clock (Delegates to unified ticker) ---------- */
 function updateClock() {
@@ -1681,33 +1701,36 @@ function renderDashboard() {
   updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 
   // Update Image 3 Dashboard Elements
-  const userName = profile.name || 'Utkarsh';
+  const userName = profile.name || 'Athlete';
   if ($('#dashImage3Greeting')) $('#dashImage3Greeting').textContent = `Good Morning, ${userName}!`;
+  if ($('#floatingAiWelcomeText')) {
+    $('#floatingAiWelcomeText').textContent = `Hi ${profile.name || 'there'}! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?`;
+  }
 
-  // Image 3 Metric 1: Calories (1,850 / 2,200 kcal, 84%)
-  const displayKcal = totalKcal || 1850;
+  // Image 3 Metric 1: Calories
+  const displayKcal = Number(totalKcal || 0);
   const displayGoal = goalKcal || 2200;
-  const displayPct = totalKcal ? pct : 84;
+  const displayPct = displayGoal > 0 ? Math.min(100, Math.round((displayKcal / displayGoal) * 100)) : 0;
   const displayLeft = Math.max(0, displayGoal - displayKcal);
   if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = displayKcal.toLocaleString();
   if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = `${displayLeft.toLocaleString()} kcal remaining`;
   if ($('#metricV2CalPct')) $('#metricV2CalPct').textContent = displayPct + '%';
   if ($('#metricV2CalCircle')) $('#metricV2CalCircle').setAttribute('stroke-dasharray', `${displayPct}, 100`);
 
-  // Image 3 Metric 2: Protein (120 / 180 g, 67%)
-  const displayP = totalP || 120;
+  // Image 3 Metric 2: Protein
+  const displayP = Number(totalP || 0);
   const displayPGoal = profile.p || 180;
-  const displayPPct = Math.min(100, Math.round((displayP / displayPGoal) * 100));
+  const displayPPct = displayPGoal > 0 ? Math.min(100, Math.round((displayP / displayPGoal) * 100)) : 0;
   const displayPLeft = Math.max(0, displayPGoal - displayP);
   if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = displayP;
   if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = `${displayPLeft} g left to reach target`;
   if ($('#metricV2ProteinPct')) $('#metricV2ProteinPct').textContent = displayPPct + '%';
   if ($('#metricV2ProteinCircle')) $('#metricV2ProteinCircle').setAttribute('stroke-dasharray', `${displayPPct}, 100`);
 
-  // Image 3 Metric 3: Workouts (4 / 5 this week, 80%)
-  const displayWoDone = weekCompletedCount || 4;
+  // Image 3 Metric 3: Workouts
+  const displayWoDone = Number(weekCompletedCount || 0);
   const displayWoGoal = targetDays || 5;
-  const displayWoPct = Math.min(100, Math.round((displayWoDone / displayWoGoal) * 100));
+  const displayWoPct = displayWoGoal > 0 ? Math.min(100, Math.round((displayWoDone / displayWoGoal) * 100)) : 0;
   if ($('#metricV2WorkoutsVal')) $('#metricV2WorkoutsVal').textContent = displayWoDone;
   if ($('#metricV2WorkoutsSub')) $('#metricV2WorkoutsSub').textContent = `${Math.max(0, displayWoGoal - displayWoDone)} session to weekly goal`;
   if ($('#metricV2WorkoutsPct')) $('#metricV2WorkoutsPct').textContent = displayWoPct + '%';
@@ -1726,7 +1749,7 @@ function renderDashboard() {
   if ($('#donutFatsVal')) $('#donutFatsVal').textContent = `${totalF || 53}g / 65g`;
 
   // Sync Pedometer & Streak values
-  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 8432;
+  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 0;
   const stepsPct = Math.min(100, Math.round((currentSteps / 10000) * 100));
   if ($('#dashBigStreakNum')) $('#dashBigStreakNum').textContent = streakCount || 12;
   if ($('#actStepsTopVal')) $('#actStepsTopVal').textContent = currentSteps.toLocaleString();
@@ -1972,7 +1995,7 @@ function renderFoodLog() {
     }).join('');
   }
 
-  const allEntries = entries.length ? entries : DEFAULT_PREVIEW_MEALS;
+  const allEntries = entries;
   const totKcal = allEntries.reduce((a, b) => a + (b.k || b.calories || 0), 0);
   const totP = allEntries.reduce((a, b) => a + (b.p || b.protein || 0), 0);
   const totC = allEntries.reduce((a, b) => a + (b.c || b.carbs || 0), 0);
@@ -3022,10 +3045,16 @@ function openExerciseDetailModal(exerciseName) {
   if ($('#exModalWhy')) $('#exModalWhy').textContent = ex.rxWhy || ex.benefit;
   if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.steps;
 
-  // Render SVG Visual Demonstration
+  // Render Human-Body Exercise Animation (from workout-guide SVG frames)
   const visualContainer = $('#exModalVisualContainer');
   if (visualContainer) {
-    visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
+    visualContainer.innerHTML = '<div id="exAnimContainer" style="width:100%;height:300px;"></div>';
+    const slug = window.FF_EX_ANIM ? window.FF_EX_ANIM.slugForExercise(ex) : null;
+    if (window.FF_EX_ANIM) {
+      window.FF_EX_ANIM.init('exAnimContainer', slug, ex.name);
+    } else {
+      document.getElementById('exAnimContainer').innerHTML = '<div style="padding:20px;color:#64748b;text-align:center;">Animation loading...</div>';
+    }
   }
 
   // Reset AI Advice container
@@ -4730,7 +4759,13 @@ function renderChatMessages() {
 
 function formatChatMarkdown(txt) {
   if (!txt) return '';
-  let html = txt;
+  // Sanitize raw text to prevent XSS execution
+  let html = String(txt)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
   // Headers
   html = html.replace(/^### (.*$)/gim, '<h4 style="color:#38bdf8;margin:8px 0 4px;font-size:1.02rem;">$1</h4>');
@@ -6415,6 +6450,13 @@ if ($('#closeFloatingTooltip')) {
   };
 }
 
+setTimeout(() => {
+  if (floatingAiTooltip && (!floatingAiPanel || !floatingAiPanel.classList.contains('open'))) {
+    floatingAiTooltip.style.opacity = '0';
+    setTimeout(() => { if (floatingAiTooltip) floatingAiTooltip.style.display = 'none'; }, 300);
+  }
+}, 5000);
+
 if ($('#floatingMinimizeBtn')) {
   $('#floatingMinimizeBtn').onclick = () => {
     if (floatingAiPanel) floatingAiPanel.classList.remove('open');
@@ -6522,7 +6564,7 @@ function renderActivityView() {
 }
 
 function updatePedometerUI() {
-  const steps = Number(localStorage.getItem('fitfuel_steps')) || 7420;
+  const steps = Number(localStorage.getItem('fitfuel_steps')) || 0;
   const distKm = (steps * 0.00075).toFixed(2);
   const activeKcal = Math.round(steps * 0.04);
   const floors = Math.floor(steps / 900);
@@ -6544,7 +6586,7 @@ function updatePedometerUI() {
 
 if ($('#pedometerSimulateBtn')) {
   $('#pedometerSimulateBtn').onclick = () => {
-    let steps = Number(localStorage.getItem('fitfuel_steps')) || 7420;
+    let steps = Number(localStorage.getItem('fitfuel_steps')) || 0;
     steps += 500;
     localStorage.setItem('fitfuel_steps', steps);
     updatePedometerUI();
@@ -6594,25 +6636,23 @@ function startGpsTracking() {
     gpsWatchId = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude, accuracy, speed } = pos.coords;
-        if (accuracy && accuracy <= 50) {
+        if (accuracy && accuracy <= 100) {
+          if ($('#gpsLiveStatusText')) $('#gpsLiveStatusText').textContent = 'Live GPS Recording (Active)';
           addGpsCoordinate(latitude, longitude, speed);
         }
       },
       (err) => {
-        simulateGpsStep();
+        console.warn('GPS signal update:', err.message);
+        if ($('#gpsLiveStatusText') && gpsCoords.length === 0) {
+          $('#gpsLiveStatusText').textContent = 'Acquiring GPS Signal...';
+        }
       },
       { enableHighAccuracy: true, maximumAge: 1000, timeout: 8000 }
     );
   } else {
-    simulateGpsStep();
+    if ($('#gpsLiveStatusText')) $('#gpsLiveStatusText').textContent = 'GPS Not Supported by Browser';
+    toast('Geolocation is not supported by your current browser.');
   }
-
-  // Interval simulation fallback if stationary
-  window._gpsSimInterval = setInterval(() => {
-    if (gpsState === 'RECORDING' && gpsCoords.length === 0) {
-      simulateGpsStep();
-    }
-  }, 3000);
 
   soundFX.complete();
   toast('Live GPS activity started! Tracking pace, distance & route.');
@@ -7155,6 +7195,10 @@ let postureFacingMode = 'user';
 let isPostureDemoMode = false;
 
 function renderPostureView() {
+  const video = $('#postureVideo');
+  if (video && !isPostureDemoMode) {
+    video.style.display = 'block';
+  }
   renderPostureHistory();
   if (navigator.permissions && navigator.permissions.query) {
     try {
@@ -7264,7 +7308,7 @@ function stopPostureCamera() {
   const video = $('#postureVideo');
   if (video) {
     video.srcObject = null;
-    video.style.display = 'none';
+    video.style.display = 'block';
   }
 
   const canvas = $('#postureCanvas');
@@ -7349,6 +7393,21 @@ function analyzePostureFrame(ctx, w, h) {
 
   const isParallel = kneeAngle <= 95;
   const skeletonColor = isParallel ? '#16C79A' : (_simSimulatedKneeAngle < 130 ? '#38BDF8' : '#94A3B8');
+
+  // HUD Label: Biomechanical Alignment Grid & Depth Guide
+  ctx.save();
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.70)';
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(12, 12, 275, 24, 6);
+    ctx.fill();
+  } else {
+    ctx.fillRect(12, 12, 275, 24);
+  }
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '600 11px system-ui, sans-serif';
+  ctx.fillText('BIOMECHANICAL ALIGNMENT & DEPTH GUIDE', 18, 28);
+  ctx.restore();
 
   // Draw Bones
   ctx.strokeStyle = skeletonColor;
@@ -8443,7 +8502,8 @@ function initInteractiveHeroAndAppButtons() {
     if (typeof toast === 'function') toast('Live Walk / Run GPS started');
   };
   if ($('#actQaStepCounter')) $('#actQaStepCounter').onclick = () => {
-    if (typeof toast === 'function') toast('Sensor Pedometer active · 8,432 steps recorded today');
+    const curSteps = Number(localStorage.getItem('fitfuel_steps')) || 0;
+    if (typeof toast === 'function') toast(`Pedometer Tracker: ${curSteps.toLocaleString()} steps logged today`);
   };
   if ($('#actQaCameraPosture')) $('#actQaCameraPosture').onclick = () => switchView('posture');
   if ($('#actQaExerciseForm')) $('#actQaExerciseForm').onclick = () => switchView('posture');

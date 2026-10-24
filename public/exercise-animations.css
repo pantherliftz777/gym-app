@@ -1,0 +1,115 @@
+/* ========================================================================
+   FitFuel Exercise Human-Body Animation
+   High-quality 2D human-body exercise animations from workout-guide
+   (bryllim/workout-guide, CC BY-SA 4.0, creator Bryl Lim, source Everkinetic)
+   Each exercise has 3 SVG frames (512×512) crossfaded via CSS keyframes.
+   ======================================================================== */
+
+.exercise-anim-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 340px;
+  margin: 0 auto 14px auto;
+  background: #0b1021;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #1f2a44;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exercise-anim-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exercise-anim-stage img,
+.exercise-anim-stage svg,
+.exercise-anim-stage .ex-anim-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  opacity: 0;
+  animation: exFade 4.2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
+}
+
+.exercise-anim-stage img:nth-child(1), .exercise-anim-stage svg:nth-child(1), .exercise-anim-stage .ex-anim-frame:nth-child(1) { animation-delay: 0s; }
+.exercise-anim-stage img:nth-child(2), .exercise-anim-stage svg:nth-child(2), .exercise-anim-stage .ex-anim-frame:nth-child(2) { animation-delay: 1.4s; }
+.exercise-anim-stage img:nth-child(3), .exercise-anim-stage svg:nth-child(3), .exercise-anim-stage .ex-anim-frame:nth-child(3) { animation-delay: 2.8s; }
+
+@keyframes exFade {
+  0%, 18%   { opacity: 0; }
+  22%, 78%  { opacity: 1; }
+  82%, 100% { opacity: 0; }
+}
+
+.exercise-anim-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.exercise-anim-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #38bdf8;
+  background: rgba(56,189,248,0.1);
+  color: #38bdf8;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+
+.exercise-anim-btn:hover { background: #38bdf8; color: #0b1021; }
+.exercise-anim-btn.paused { border-color: #ef4444; color: #ef4444; }
+
+.exercise-anim-paused .exercise-anim-stage img,
+.exercise-anim-paused .exercise-anim-stage svg,
+.exercise-anim-paused .exercise-anim-stage .ex-anim-frame {
+  animation-play-state: paused;
+}
+
+.exercise-anim-label {
+  margin-top: 6px;
+  text-align: center;
+  font-size: .78rem;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* Fallback when animation assets missing */
+.exercise-anim-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: .8rem;
+  text-align: center;
+  padding: 20px;
+  background: #0b1021;
+  border-radius: 14px;
+  border: 1px solid #1f2a44;
+}
