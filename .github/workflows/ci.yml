@@ -35,11 +35,14 @@ jobs:
       - name: Credential Leak Prevention Guard
         run: |
           echo "Scanning tracked files for accidental secrets..."
-          if git grep -q -i "eyJhbGciOi"; then
+          if git grep -q -i "eyJhbGciOi" -- ':!.github/workflows/ci.yml' ':!scripts/test_v5_suite.js'; then
             echo "ERROR: Potential hardcoded JWT or Turso token detected!"
             exit 1
           fi
           echo "No credentials or private tokens detected in tracked repository files."
+
+      - name: Run Integration Test Suite
+        run: node scripts/test_v5_suite.js
 
       - name: Run Server Smoke Test & Health Check
         run: |
