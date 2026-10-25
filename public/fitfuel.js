@@ -1422,6 +1422,11 @@ function switchView(viewName) {
     btn.classList.toggle('active', btn.dataset.view === viewName);
   });
 
+  // Sync hub sub-navigation active state across merged views
+  $$('.hub-subnav-btn[data-hubview]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.hubview === viewName);
+  });
+
   // Re-render view specifics
   if (viewName === 'today') { renderDashboard(); renderDailyTip(); if (typeof initInteractiveHeroAndAppButtons === 'function') initInteractiveHeroAndAppButtons(); }
   if (viewName === 'body-analysis') { if (typeof renderBodyAnalysisView === 'function') renderBodyAnalysisView(); }
@@ -1445,6 +1450,24 @@ function switchView(viewName) {
 $$('.primary-nav .nav-link').forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);
 });
+
+// Topbar 3-dots dropdown menu toggle
+const topbarMoreBtn = $('#topbarMoreBtn');
+const topbarMoreMenu = $('#topbarMoreMenu');
+if (topbarMoreBtn && topbarMoreMenu) {
+  topbarMoreBtn.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = topbarMoreMenu.style.display === 'flex' || topbarMoreMenu.style.display === 'block';
+    topbarMoreMenu.style.display = isOpen ? 'none' : 'flex';
+    topbarMoreBtn.setAttribute('aria-expanded', !isOpen);
+  };
+  document.addEventListener('click', (e) => {
+    if (!topbarMoreMenu.contains(e.target) && e.target !== topbarMoreBtn && !topbarMoreBtn.contains(e.target)) {
+      topbarMoreMenu.style.display = 'none';
+      topbarMoreBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
 
 // Mobile menu and drawer toggles
 if ($('#mobileMenuBtn')) {

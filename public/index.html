@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=6.5.0">
+  <link rel="stylesheet" href="styles.css?v=6.6.0">
 </head>
 <body>
 <div class="app-shell">
@@ -49,9 +49,9 @@
       <span class="brand-title">Fit<span class="mint" style="color:#16C79A;">Fuel</span></span>
     </div>
 
-    <div class="sidebar-label">YOUR SPACE</div>
-
     <nav class="primary-nav" aria-label="Main navigation">
+      <!-- 1. OVERVIEW -->
+      <div class="sidebar-label">OVERVIEW</div>
       <button class="nav-link selected" data-view="today">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>
@@ -60,7 +60,8 @@
         <span class="nav-active-dot"></span>
       </button>
 
-      <!-- DEDICATED AI FITNESS COACH (REFERENCE IMAGE 2) -->
+      <!-- 2. AI & MOTION SUITE (Merged AI Coach, Posture AI, Activity & GPS, Body Analysis) -->
+      <div class="sidebar-label" style="margin-top:14px;">AI &amp; MOTION</div>
       <button class="nav-link" data-view="ai-coach" id="sidebarAiCoachBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"></path>
@@ -70,7 +71,22 @@
         <span style="font-size:0.62rem;background:rgba(22,199,154,0.18);color:#16C79A;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(22,199,154,0.35);">LIVE</span>
       </button>
 
-      <!-- DEDICATED AI BODY ANALYSIS & TRANSFORMATION PLANNER -->
+      <button class="nav-link" data-view="posture" id="sidebarPostureBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        <span>Posture AI</span>
+      </button>
+
+      <button class="nav-link" data-view="activity" id="sidebarActivityBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+        <span>Activity &amp; GPS</span>
+      </button>
+
       <button class="nav-link" data-view="body-analysis" id="sidebarBodyAnalysisBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="5" r="3"></circle>
@@ -82,31 +98,8 @@
         <span style="font-size:0.62rem;background:rgba(2,132,199,0.18);color:#0284c7;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(2,132,199,0.35);">AI SCAN</span>
       </button>
 
-      <!-- LIVE ACTIVITY & GPS TRACKER (SECTION 13 & 14) -->
-      <button class="nav-link" data-view="activity" id="sidebarActivityBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-        </svg>
-        <span>Activity &amp; GPS</span>
-      </button>
-
-      <!-- CAMERA-BASED AI POSTURE TRACKER & FORM CHECKER (SECTION 16 & 17) -->
-      <button class="nav-link" data-view="posture" id="sidebarPostureBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-          <circle cx="12" cy="13" r="4"></circle>
-        </svg>
-        <span>Posture AI</span>
-      </button>
-
-      <button class="nav-link" data-view="food-log">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
-        </svg>
-        <span>Food log</span>
-      </button>
-
+      <!-- 3. TRAINING & WORKOUTS (Merged Workouts, Exercise Library, Smart Start) -->
+      <div class="sidebar-label" style="margin-top:14px;">TRAINING</div>
       <button class="nav-link" data-view="workouts">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
@@ -117,6 +110,13 @@
         <span>Workouts</span>
       </button>
 
+      <button class="nav-link" data-view="exercise-library">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+        </svg>
+        <span>Exercise library</span>
+      </button>
+
       <button class="nav-link" data-view="starting-load">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>
@@ -124,11 +124,13 @@
         <span>Smart Start</span>
       </button>
 
-      <button class="nav-link" data-view="exercise-library">
+      <!-- 4. NUTRITION & FUEL (Merged Food Log, My Foods) -->
+      <div class="sidebar-label" style="margin-top:14px;">NUTRITION</div>
+      <button class="nav-link" data-view="food-log">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
         </svg>
-        <span>Exercise library</span>
+        <span>Food log</span>
       </button>
 
       <button class="nav-link" data-view="my-foods">
@@ -138,6 +140,8 @@
         <span>My foods</span>
       </button>
 
+      <!-- 5. OTHER & EXTRAS -->
+      <div class="sidebar-label" style="margin-top:14px;">OTHER</div>
       <button class="nav-link" data-view="challenge">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
@@ -152,7 +156,6 @@
         <span>Tracking</span>
       </button>
 
-      <!-- CUSTOMIZATION PANEL (REFERENCE IMAGE 1) -->
       <button class="nav-link" data-view="customization" id="sidebarCustomizationBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
@@ -244,55 +247,8 @@
         </div>
 
         <div class="topbar-right-actions">
-          <!-- 2. Theme Light / Dark / System Selector -->
-          <div class="theme-select-wrap" title="Visual Theme (Light / Dark / System)">
-            <select id="themeSelector" class="theme-select-pill" aria-label="Visual Theme">
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">System</option>
-            </select>
-          </div>
-
-          <!-- 3. Audio On / Off -->
-          <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
-            <span id="soundToggleIcon"></span> <span id="soundToggleText">Audio On</span>
-          </button>
-
-          <!-- Mobile AI Coach Shortcut -->
-          <button type="button" class="icon-button mobile-ai-coach-btn" id="topMobileAiBtn" title="Ask FitFuel AI Coach" aria-label="AI Coach">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"></path>
-              <path d="M9 10h.01"></path><path d="M15 10h.01"></path>
-            </svg>
-          </button>
-
-          <!-- PWA Install Button -->
-          <button type="button" class="solid-button small" id="btnPwaInstall" style="display:none;background:#2563eb;padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:999px;align-items:center;gap:5px;" title="Install FitFuel App">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Install App
-          </button>
-
-          <!-- Voice Coach Toggle Button -->
-          <button type="button" class="icon-button" id="btnVoiceCoachToggle" title="Toggle AI Voice Coach & Audio Cues">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-          </button>
-
-          <!-- Export & PR Share Button -->
-          <button type="button" class="icon-button" id="btnExportPRShare" title="Export Data & Share PR Story">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-          </button>
-
-          <!-- 4. Sign in / Sign out -->
-          <button class="text-button" id="topAuthBtn">Sign in</button>
-
-          <!-- Dedicated Admin Portal Shortcut (Visible for Admins) -->
-          <button type="button" class="admin-only-btn" id="topAdminBtn" style="display:none;background:#1e3a8a;border:1px solid #38bdf8;color:#38bdf8;font-size:0.75rem;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer;align-items:center;gap:5px;box-shadow:0 0 10px rgba(56,189,248,0.25);" title="Open Dedicated Admin Resolution Portal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            Admin Portal
-          </button>
-
           <!-- Notification Bell -->
-          <button class="icon-button" id="topNotificationBtn" title="Notifications & Reminders" aria-label="Notifications" style="position:relative;">
+          <button class="icon-button" id="topNotificationBtn" title="Notifications &amp; Reminders" aria-label="Notifications" style="position:relative;">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -300,16 +256,84 @@
             <span style="position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#16C79A;"></span>
           </button>
 
-          <!-- 5. Settings Button -->
-          <button class="icon-button" id="topSettingsBtn" title="Settings & Admin" aria-label="Settings">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+          <!-- Sign in / Sign out -->
+          <button class="text-button" id="topAuthBtn">Sign in</button>
 
-          <!-- 6. Profile Pic Avatar -->
+          <!-- Profile Pic Avatar -->
           <button class="top-avatar" id="topAvatar" aria-label="Open profile">JD</button>
+
+          <!-- 3-DOTS ACTION MENU (Consolidates Sound, Theme, AI, Voice, Export, Settings) -->
+          <div class="topbar-more-wrap">
+            <button type="button" class="icon-button topbar-more-btn" id="topbarMoreBtn" title="More Quick Options" aria-label="More Quick Options" aria-expanded="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1.5"></circle>
+                <circle cx="19" cy="12" r="1.5"></circle>
+                <circle cx="5" cy="12" r="1.5"></circle>
+              </svg>
+            </button>
+
+            <!-- Floating Glass 3-Dots Dropdown Menu -->
+            <div class="topbar-dropdown-menu" id="topbarMoreMenu" style="display:none;">
+              <div class="dropdown-header">Quick Preferences</div>
+
+              <!-- Theme Selector -->
+              <div class="dropdown-item-wrap">
+                <div class="dropdown-item-label">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                  <span>Theme</span>
+                </div>
+                <div class="theme-select-wrap" title="Visual Theme">
+                  <select id="themeSelector" class="theme-select-pill" aria-label="Visual Theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="system">System</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Audio Effects Toggle -->
+              <button type="button" class="dropdown-menu-item" id="soundToggleBtn" title="Toggle audio sound effects">
+                <span id="soundToggleIcon"></span>
+                <span id="soundToggleText">Audio On</span>
+              </button>
+
+              <!-- AI Voice Coach Toggle -->
+              <button type="button" class="dropdown-menu-item" id="btnVoiceCoachToggle" title="Toggle AI Voice Coach &amp; Audio Cues">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                <span>Voice Coach</span>
+              </button>
+
+              <!-- Ask AI Coach -->
+              <button type="button" class="dropdown-menu-item" id="topMobileAiBtn" title="Ask FitFuel AI Coach">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+                <span>Ask AI Coach</span>
+              </button>
+
+              <!-- Export Data & PR Story -->
+              <button type="button" class="dropdown-menu-item" id="btnExportPRShare" title="Export Data &amp; Share PR Story">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                <span>Export &amp; Share PR</span>
+              </button>
+
+              <!-- PWA Install App (if ready) -->
+              <button type="button" class="dropdown-menu-item" id="btnPwaInstall" style="display:none;color:#38bdf8;" title="Install FitFuel App">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Install App</span>
+              </button>
+
+              <!-- Settings & Preferences -->
+              <button type="button" class="dropdown-menu-item" id="topSettingsBtn" title="Settings &amp; Preferences" aria-label="Settings">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+              </button>
+
+              <!-- Dedicated Admin Portal Shortcut (Visible for Admins) -->
+              <button type="button" class="dropdown-menu-item admin-only-btn" id="topAdminBtn" style="display:none;color:#38bdf8;" title="Open Dedicated Admin Resolution Portal">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>Admin Portal</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1469,6 +1493,25 @@
 
       <!-- ================= VIEW: AI BODY ANALYSIS & TRANSFORMATION PLANNER ================= -->
       <section class="view" id="view-body-analysis">
+        <!-- Merged AI & Motion Suite Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+            <span>AI Coach</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Posture AI</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
+            <span>Body Analysis</span>
+          </button>
+        </nav>
         <!-- HEADER / INTRO STRIP -->
         <div class="ba-hero-header">
           <div class="ba-hero-text">
@@ -2296,6 +2339,17 @@
 
       <!-- ================= VIEW 2: FOOD LOG ================= -->
       <section class="view" id="view-food-log">
+        <!-- Merged Nutrition & Fuel Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Nutrition Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="food-log" onclick="switchView('food-log')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            <span>Food Log</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="my-foods" onclick="switchView('my-foods')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
+            <span>My Foods</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker" id="foodLogDateTag">TODAY</span>
@@ -2389,6 +2443,21 @@
 
       <!-- ================= VIEW 3: WORKOUTS ================= -->
       <section class="view" id="view-workouts">
+        <!-- Merged Training & Workouts Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Training Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+            <span>Workouts</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+            <span>Exercise Library</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>Smart Start</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker">TRAINING PLAN</span>
@@ -2491,6 +2560,21 @@
 
       <!-- ================= Starting Load Calculator (1RM-free) ================= -->
       <section class="view" id="view-starting-load">
+        <!-- Merged Training & Workouts Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Training Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+            <span>Workouts</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+            <span>Exercise Library</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>Smart Start</span>
+          </button>
+        </nav>
         <div class="view-intro" style="text-align:center;max-width:720px;margin:0 auto 20px;">
           <div>
             <span class="section-kicker">SMART START &bull; AUTONOMOUS CALIBRATION</span>
@@ -2549,6 +2633,21 @@
 
       <!-- ================= VIEW 4: EXERCISE LIBRARY ================= -->
       <section class="view" id="view-exercise-library">
+        <!-- Merged Training & Workouts Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Training Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+            <span>Workouts</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+            <span>Exercise Library</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>Smart Start</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker">MOVEMENT LIBRARY</span>
@@ -2586,6 +2685,17 @@
 
       <!-- ================= VIEW 5: MY FOODS ================= -->
       <section class="view" id="view-my-foods">
+        <!-- Merged Nutrition & Fuel Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Nutrition Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="food-log" onclick="switchView('food-log')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            <span>Food Log</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="my-foods" onclick="switchView('my-foods')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
+            <span>My Foods</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker">YOUR PERSONAL COLLECTION</span>
@@ -2878,6 +2988,25 @@
 
       <!-- ================= VIEW: DEDICATED AI FITNESS COACH (REFERENCE IMAGE 2) ================= -->
       <section class="view" id="view-ai-coach">
+        <!-- Merged AI & Motion Suite Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+            <span>AI Coach</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Posture AI</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
+            <span>Body Analysis</span>
+          </button>
+        </nav>
         <div class="ai-coach-page-layout">
           <!-- LEFT: COACH HEADER, SUBTABS, CHAT STREAM & INPUT -->
           <div>
@@ -3069,6 +3198,25 @@
 
       <!-- ================= VIEW: ACTIVITY & MOVEMENT (IMAGE 5) ================= -->
       <section class="view" id="view-activity">
+        <!-- Merged AI & Motion Suite Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+            <span>AI Coach</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Posture AI</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
+            <span>Body Analysis</span>
+          </button>
+        </nav>
         <!-- Hero Banner with Athlete Visual (Image 5) -->
         <div class="panel" style="position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(239,246,255,0.85), rgba(219,234,254,0.7));border:1.5px solid #bfdbfe;border-radius:22px;padding:26px 30px;margin-bottom:22px;">
           <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
@@ -3413,6 +3561,25 @@
 
       <!-- ================= VIEW: AI CAMERA POSTURE & FORM CHECKER (SECTIONS 16 & 17) ================= -->
       <section class="view" id="view-posture">
+        <!-- Merged AI & Motion Suite Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
+            <span>AI Coach</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Posture AI</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
+            <span>Body Analysis</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker">COMPUTER VISION &amp; BIOMECHANICS</span>
@@ -5730,7 +5897,7 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=6.5.0"></script>
+<script src="fitfuel.js?v=6.6.0"></script>
 <script src="modules/pwa-sync.js"></script>
 <script src="modules/voice-coach.js"></script>
 <script src="modules/social-card.js"></script>
