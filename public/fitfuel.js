@@ -1287,7 +1287,13 @@ function switchView(viewName) {
   }
 
   // Close mobile drawer if open
-  $('#sidebar').classList.remove('mobile-open');
+  $('#sidebar')?.classList.remove('mobile-open');
+  $('#mobileSidebarBackdrop')?.classList.remove('active');
+
+  // Sync mobile bottom navigation active state
+  $$('.mobile-nav-btn[data-view]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewName);
+  });
 
   // Re-render view specifics
   if (viewName === 'today') { renderDashboard(); renderDailyTip(); if (typeof initInteractiveHeroAndAppButtons === 'function') initInteractiveHeroAndAppButtons(); }
@@ -1313,10 +1319,32 @@ $$('.primary-nav .nav-link').forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);
 });
 
-// Mobile menu toggle
-$('#mobileMenuBtn').onclick = () => {
-  $('#sidebar').classList.toggle('mobile-open');
-};
+// Mobile menu and drawer toggles
+if ($('#mobileMenuBtn')) {
+  $('#mobileMenuBtn').onclick = () => {
+    const isOpen = $('#sidebar').classList.toggle('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.toggle('active', isOpen);
+  };
+}
+
+if ($('#mobileSidebarBackdrop')) {
+  $('#mobileSidebarBackdrop').onclick = () => {
+    $('#sidebar')?.classList.remove('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.remove('active');
+  };
+}
+
+// Mobile bottom navigation items
+$$('.mobile-bottom-nav .mobile-nav-btn[data-view]').forEach(btn => {
+  btn.onclick = () => switchView(btn.dataset.view);
+});
+
+if ($('#mobNavMore')) {
+  $('#mobNavMore').onclick = () => {
+    const isOpen = $('#sidebar').classList.toggle('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.toggle('active', isOpen);
+  };
+}
 
 /* ---------- Live Date and Clock (Delegates to unified ticker) ---------- */
 function updateClock() {

@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=5.9.0">
+  <link rel="stylesheet" href="styles.css?v=6.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -214,6 +214,15 @@
             <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
           </svg>
         </button>
+
+        <div class="topbar-mobile-brand" id="topbarMobileBrand">
+          <span class="mobile-brand-mark">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
+            </svg>
+          </span>
+          <span class="mobile-brand-text">Fit<span class="mint" style="color:#16C79A;">Fuel</span></span>
+        </div>
 
         <!-- Search Bar Pill (Reference Images 1 & 2) -->
         <div class="topbar-search-wrap">
@@ -3662,6 +3671,45 @@
   </main>
 </div>
 
+<!-- ================= MOBILE APP NAVIGATION & DRAWER BACKDROP ================= -->
+<div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+
+<nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile Bottom Navigation">
+  <button type="button" class="mobile-nav-btn active" data-view="today" id="mobNavToday" aria-label="Today Dashboard">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>
+    </svg>
+    <span>Today</span>
+  </button>
+  <button type="button" class="mobile-nav-btn" data-view="workouts" id="mobNavWorkouts" aria-label="Gym Workouts">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
+      <path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path>
+      <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path>
+      <path d="m9.6 14.4 4.8-4.8"></path>
+    </svg>
+    <span>Workout</span>
+  </button>
+  <button type="button" class="mobile-nav-btn" data-view="food-log" id="mobNavFood" aria-label="Nutrition & Food Log">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+    </svg>
+    <span>Nutrition</span>
+  </button>
+  <button type="button" class="mobile-nav-btn" data-view="exercise-library" id="mobNavExercises" aria-label="Exercise Library">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+    </svg>
+    <span>Exercises</span>
+  </button>
+  <button type="button" class="mobile-nav-btn" id="mobNavMore" aria-label="More Features & Menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle>
+    </svg>
+    <span>More</span>
+  </button>
+</nav>
+
 <!-- ================= MODALS ================= -->
 
 <!-- AUTH MODAL -->
@@ -5674,7 +5722,7 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=5.9.0"></script>
+<script src="fitfuel.js?v=6.0.0"></script>
 <script src="modules/pwa-sync.js"></script>
 <script src="modules/voice-coach.js"></script>
 <script src="modules/social-card.js"></script>
