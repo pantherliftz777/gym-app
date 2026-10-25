@@ -8131,3 +8131,277 @@ body.is-offline::before {
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
+
+/* ==========================================================================
+   HIGH-CONTRAST TYPOGRAPHY & COMPONENT VISIBILITY FIXES
+   Resolves washed-out, invisible, and mismatched text on pills, cards & badges
+   ========================================================================== */
+
+/* 1. Habit Banner (.bottom-note) — SMALL WINS, STRONG HABITS */
+.bottom-note {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+.bottom-note > span {
+  color: #0284c7 !important;
+  font-weight: 800 !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.05em !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.bottom-note > span svg {
+  stroke: #0284c7 !important;
+}
+.bottom-note p {
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+  margin: 0 !important;
+  flex: 1;
+}
+.bottom-note button {
+  color: #2563eb !important;
+  font-weight: 700 !important;
+  font-size: 0.82rem !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+html.dark .bottom-note, [data-theme="dark"] .bottom-note {
+  background: rgba(15, 23, 42, 0.82) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+html.dark .bottom-note > span, [data-theme="dark"] .bottom-note > span {
+  color: #38bdf8 !important;
+}
+html.dark .bottom-note > span svg, [data-theme="dark"] .bottom-note > span svg {
+  stroke: #38bdf8 !important;
+}
+html.dark .bottom-note p, [data-theme="dark"] .bottom-note p {
+  color: #f1f5f9 !important;
+}
+html.dark .bottom-note button, [data-theme="dark"] .bottom-note button {
+  color: #60a5fa !important;
+}
+
+/* 2. Calorie Donut Ring Center (.ring-inner) — 2,100 KCAL LEFT */
+.ring-inner {
+  background: #ffffff !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+.ring-inner strong {
+  color: #0f172a !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+}
+.ring-inner span {
+  color: #475569 !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+.ring-inner svg {
+  stroke: #2563eb !important;
+}
+html.dark .ring-inner, [data-theme="dark"] .ring-inner {
+  background: #080d1a !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+html.dark .ring-inner strong, [data-theme="dark"] .ring-inner strong {
+  color: #ffffff !important;
+  text-shadow: 0 0 14px rgba(56, 189, 248, 0.35) !important;
+}
+html.dark .ring-inner span, [data-theme="dark"] .ring-inner span {
+  color: #94a3b8 !important;
+}
+html.dark .ring-inner svg, [data-theme="dark"] .ring-inner svg {
+  stroke: #38bdf8 !important;
+}
+
+/* 3. Hero Profile Pill (.sy-hero-profile-pill) — Jordan Davis Premium */
+.sy-hero-profile-pill {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+.sy-hero-profile-pill .sy-profile-name {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+.sy-hero-profile-pill .sy-profile-tier {
+  color: #d97706 !important;
+  font-weight: 700 !important;
+}
+html.dark .sy-hero-profile-pill, [data-theme="dark"] .sy-hero-profile-pill {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+html.dark .sy-hero-profile-pill:hover, [data-theme="dark"] .sy-hero-profile-pill:hover {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+}
+html.dark .sy-hero-profile-pill .sy-profile-name, [data-theme="dark"] .sy-hero-profile-pill .sy-profile-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+html.dark .sy-hero-profile-pill .sy-profile-tier, [data-theme="dark"] .sy-hero-profile-pill .sy-profile-tier {
+  color: #fbbf24 !important;
+  font-weight: 700 !important;
+}
+html.dark .sy-hero-profile-pill svg, [data-theme="dark"] .sy-hero-profile-pill svg {
+  stroke: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 4. Filter Subtab Pills (.ai-subtab-btn) — All Guidance, Workouts & Splits, etc. */
+.ai-subtab-btn {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+.ai-subtab-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+.ai-subtab-btn.active {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+}
+html.dark .ai-subtab-btn, [data-theme="dark"] .ai-subtab-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+html.dark .ai-subtab-btn:hover, [data-theme="dark"] .ai-subtab-btn:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+html.dark .ai-subtab-btn.active, [data-theme="dark"] .ai-subtab-btn.active {
+  background: #10b981 !important;
+  color: #022c22 !important;
+  border-color: #10b981 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* 5. Header Weather Badge & Pill (.header-weather-temp, Clear Sky) */
+.header-weather-badge {
+  background: #ffffff !important;
+  border: 1px solid #dbeafe !important;
+  color: #1e293b !important;
+}
+.header-weather-temp {
+  background: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+.header-weather-temp small,
+#headerWeatherLabel {
+  color: #2563eb !important;
+  font-weight: 700 !important;
+}
+#headerWeatherTemp {
+  color: #1d4ed8 !important;
+  font-weight: 800 !important;
+}
+html.dark .header-weather-badge, [data-theme="dark"] .header-weather-badge {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #f1f5f9 !important;
+}
+html.dark .header-weather-temp, [data-theme="dark"] .header-weather-temp {
+  background: rgba(30, 58, 138, 0.45) !important;
+  border: 1px solid rgba(96, 165, 250, 0.45) !important;
+  color: #93c5fd !important;
+}
+html.dark .header-weather-temp:hover, [data-theme="dark"] .header-weather-temp:hover {
+  background: rgba(30, 58, 138, 0.7) !important;
+  border-color: rgba(96, 165, 250, 0.7) !important;
+}
+html.dark #headerWeatherTemp, [data-theme="dark"] #headerWeatherTemp {
+  color: #60a5fa !important;
+  font-weight: 800 !important;
+}
+html.dark #headerWeatherLabel, [data-theme="dark"] #headerWeatherLabel,
+html.dark .header-weather-temp small, [data-theme="dark"] .header-weather-temp small {
+  color: #bfdbfe !important;
+  font-weight: 700 !important;
+}
+
+/* 6. Theme Selector & Sound Toggle Button Contrast */
+.theme-select-pill,
+.sound-toggle-btn {
+  background: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: #1d4ed8 !important;
+  font-weight: 700 !important;
+}
+html.dark .theme-select-pill, [data-theme="dark"] .theme-select-pill,
+html.dark .sound-toggle-btn, [data-theme="dark"] .sound-toggle-btn {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #38bdf8 !important;
+}
+html.dark #themeSelector, [data-theme="dark"] #themeSelector {
+  background: transparent !important;
+  color: #38bdf8 !important;
+}
+html.dark #themeSelector option, [data-theme="dark"] #themeSelector option {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* 7. Date Pills & Sub Muscle Pills Contrast */
+.date-pill-btn,
+.date-pill {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+.date-pill-btn.active,
+.date-pill.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+html.dark .date-pill-btn, [data-theme="dark"] .date-pill-btn,
+html.dark .date-pill, [data-theme="dark"] .date-pill {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+html.dark .date-pill-btn.active, [data-theme="dark"] .date-pill-btn.active,
+html.dark .date-pill.active, [data-theme="dark"] .date-pill.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+}
