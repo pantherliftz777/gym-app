@@ -1939,7 +1939,7 @@ function renderFoodLog() {
             <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
             <b style="color:#2563eb;font-size:1.08rem;font-weight:700;">${mealType}</b>
           </div>
-          <span style="color:var(--glass-text-primary);font-size:.88rem;font-weight:700;background:#eff6ff;padding:3px 12px;border-radius:99px;border: 1px solid #dbeafe;">
+          <span class="meal-group-kcal-badge" style="font-size:.88rem;font-weight:700;padding:3px 12px;border-radius:99px;">
             ${subKcal} kcal
           </span>
         </div>
@@ -5373,7 +5373,7 @@ function renderCustomWorkoutExplorer() {
       <div class="exercise-custom-card" style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <span style="font-size:.72rem;font-weight:800;color:var(--glass-text-primary);background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+            <span class="custom-ex-sub-badge" style="font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
               ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
             </span>
             <span style="font-size:.74rem;color:var(--glass-text-secondary);font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
@@ -5398,7 +5398,7 @@ function renderCustomWorkoutExplorer() {
   }).join('');
 
   const toggleBarHtml = list.length > defaultLimit ? `
-    <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1.5px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
+    <div class="custom-workout-toggle-bar" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
       <span style="font-size:.85rem;color:var(--glass-text-secondary);font-weight:600;">
         Showing <b>${displayList.length}</b> of <b>${list.length}</b> targeted exercises (${customWorkoutShowAll ? 'Expanded Catalog' : 'Curated Session View - 4 Moves'})
       </span>
@@ -6168,7 +6168,7 @@ function renderTrackingView() {
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
           <small style="color:var(--glass-text-secondary);font-size:.78rem;">${w.date || today()}</small>
         </div>
-        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:var(--glass-text-primary);font-weight:700;">
+        <span class="workout-logged-pill" style="font-size:.75rem;padding:3px 10px;border-radius:99px;font-weight:700;">
            Logged
         </span>
       </div>
@@ -6188,11 +6188,11 @@ function renderTrackingView() {
         <span class="section-kicker">HABIT CONSISTENCY</span>
         <h4 style="margin:2px 0 14px;font-size:1.1rem;color:var(--glass-text-primary);font-weight:800;">Workout &amp; Streak Metrics</h4>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+          <div class="habit-metric-box" style="padding:12px;border-radius:10px;">
             <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">CURRENT STREAK</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
-          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+          <div class="habit-metric-box" style="padding:12px;border-radius:10px;">
             <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">TOTAL WORKOUTS</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${totalWorkouts}</b>
           </div>
@@ -9294,7 +9294,7 @@ async function loadBodyAssessmentHistory() {
             <small style="color:var(--ff-text-muted);font-weight:700;">${dt}</small>
           </div>
           <h4 style="font-size:1.1rem;font-weight:800;color:var(--ff-text-primary);margin:0 0 8px;">Assessment #${item.id}</h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;">
+          <div class="ba-history-stats-sub" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;">
             <div><span style="color:var(--ff-text-muted);display:block;">Body Fat:</span><b style="color:#0284c7;">${escapeHtml(item.body_fat_estimate || '16%')}</b></div>
             <div><span style="color:var(--ff-text-muted);display:block;">Muscle Mass:</span><b style="color:#8b5cf6;">${escapeHtml(item.muscle_mass_estimate || '62kg')}</b></div>
           </div>
