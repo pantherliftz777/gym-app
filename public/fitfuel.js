@@ -1627,17 +1627,16 @@ function renderDashboard() {
   const barGraph = $('#dashStreakBarGraph');
   if (barGraph) {
     barGraph.innerHTML = weeklyDayData.map(d => {
-      const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
-      const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
-      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:var(--glass-text-secondary);';
+      const activeClass = d.isActive ? 'active' : '';
+      const todayClass = d.isToday ? 'today' : '';
       const statusIcon = d.isActive ? '' : (d.isToday ? '•' : '');
       return `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-          <span style="font-size:.72rem; ${labelWeight}">${d.name}</span>
-          <div style="width:100%; height:14px; background:${activeColor}; border-radius:99px; ${borderStyle} transition:background .2s; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;" title="${d.name} (${d.dateStr}): ${d.isActive ? 'Active' : (d.isToday ? 'Today' : 'Rest/Pending')}">
+        <div class="streak-day-item" style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+          <span class="streak-day-name ${todayClass}" style="font-size:.72rem;">${d.name}</span>
+          <div class="streak-day-bar ${activeClass} ${todayClass}" style="width:100%; height:14px; border-radius:99px; transition:all .2s; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;" title="${d.name} (${d.dateStr}): ${d.isActive ? 'Active' : (d.isToday ? 'Today' : 'Rest/Pending')}">
             ${statusIcon}
           </div>
-          <small style="font-size:.65rem; color:${d.isActive ? '#4b6e2f' : '#a2b1a5'}; font-weight:700;">${d.letter}</small>
+          <small class="streak-day-sub ${activeClass}" style="font-size:.65rem; font-weight:700;">${d.letter}</small>
         </div>
       `;
     }).join('');

@@ -8605,3 +8605,159 @@ html.dark .ba-history-stats-sub, [data-theme="dark"] .ba-history-stats-sub {
   background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
+
+/* 14. Exercise Prescription Box & Tempo Badges (Image 1 Fix) */
+html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+html.dark .rx-sets-reps, [data-theme="dark"] .rx-sets-reps {
+  color: #38bdf8 !important;
+  font-weight: 800 !important;
+}
+html.dark .rx-tempo, [data-theme="dark"] .rx-tempo {
+  background: rgba(30, 58, 138, 0.45) !important;
+  border: 1px solid rgba(96, 165, 250, 0.45) !important;
+  color: #93c5fd !important;
+}
+html.dark .rx-why, [data-theme="dark"] .rx-why {
+  color: #cbd5e1 !important;
+}
+html.dark .rx-why b, [data-theme="dark"] .rx-why b {
+  color: #f8fafc !important;
+}
+
+/* 15. Workout Move List Items & Badges (Image 2 Fix) */
+html.dark .workout-move-item, [data-theme="dark"] .workout-move-item {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+html.dark .workout-move-item:hover, [data-theme="dark"] .workout-move-item:hover {
+  background: rgba(30, 58, 138, 0.3) !important;
+  border-color: #38bdf8 !important;
+}
+html.dark .move-index-badge, [data-theme="dark"] .move-index-badge {
+  background: rgba(30, 58, 138, 0.5) !important;
+  border: 1px solid rgba(96, 165, 250, 0.4) !important;
+  color: #93c5fd !important;
+}
+html.dark .move-name-title, [data-theme="dark"] .move-name-title {
+  color: #f8fafc !important;
+}
+html.dark .move-sub-badge, [data-theme="dark"] .move-sub-badge {
+  background: rgba(30, 58, 138, 0.45) !important;
+  border: 1px solid rgba(96, 165, 250, 0.45) !important;
+  color: #93c5fd !important;
+}
+html.dark .move-sets-text, [data-theme="dark"] .move-sets-text {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+}
+html.dark .move-hover-cta, [data-theme="dark"] .move-hover-cta {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #93c5fd !important;
+}
+html.dark .workout-move-item:hover .move-hover-cta, [data-theme="dark"] .workout-move-item:hover .move-hover-cta {
+  background: #2563eb !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+}
+html.dark .move-tip-text, [data-theme="dark"] .move-tip-text {
+  color: #cbd5e1 !important;
+}
+html.dark .move-detail-target, [data-theme="dark"] .move-detail-target,
+html.dark .move-detail-tempo, [data-theme="dark"] .move-detail-tempo {
+  color: #93c5fd !important;
+}
+html.dark .move-detail-why, [data-theme="dark"] .move-detail-why {
+  color: #cbd5e1 !important;
+}
+
+/* 16. Weekly Streak & Tracking Card (Image 3 Fix) */
+.streak-icon-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+html.dark .streak-icon-box, [data-theme="dark"] .streak-icon-box {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+.streak-badge-pill {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+html.dark .streak-badge-pill, [data-theme="dark"] .streak-badge-pill {
+  background: rgba(30, 58, 138, 0.45) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(96, 165, 250, 0.4) !important;
+}
+.dash-streak-fraction {
+  color: #2563eb;
+}
+html.dark .dash-streak-fraction, [data-theme="dark"] .dash-streak-fraction {
+  color: #38bdf8 !important;
+}
+.streak-day-name {
+  color: var(--glass-text-secondary);
+  font-weight: 600;
+}
+.streak-day-name.today {
+  color: #2563eb;
+  font-weight: 800;
+}
+html.dark .streak-day-name, [data-theme="dark"] .streak-day-name {
+  color: #94a3b8 !important;
+}
+html.dark .streak-day-name.today, [data-theme="dark"] .streak-day-name.today {
+  color: #38bdf8 !important;
+  font-weight: 800 !important;
+}
+.streak-day-bar {
+  background: #e2ead9;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+.streak-day-bar.active {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+.streak-day-bar.today {
+  border: 2px solid #2563eb;
+}
+html.dark .streak-day-bar, [data-theme="dark"] .streak-day-bar {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+html.dark .streak-day-bar.active, [data-theme="dark"] .streak-day-bar.active {
+  background: #2563eb !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35) !important;
+}
+html.dark .streak-day-bar.today, [data-theme="dark"] .streak-day-bar.today {
+  border: 2px solid #38bdf8 !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5) !important;
+}
+.streak-day-sub {
+  color: #a2b1a5;
+}
+.streak-day-sub.active {
+  color: #4b6e2f;
+}
+html.dark .streak-day-sub, [data-theme="dark"] .streak-day-sub {
+  color: #64748b !important;
+}
+html.dark .streak-day-sub.active, [data-theme="dark"] .streak-day-sub.active {
+  color: #38bdf8 !important;
+}
+.streak-card-footer {
+  border-top: 1px solid #f0f4ec;
+}
+html.dark .streak-card-footer, [data-theme="dark"] .streak-card-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+html.dark #quickCheckInBtn, [data-theme="dark"] #quickCheckInBtn {
+  color: #38bdf8 !important;
+}

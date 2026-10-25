@@ -113,60 +113,38 @@ async function run() {
   await cdp.eval(`applyTheme('dark');`);
   await wait(500);
 
-  // 1. Challenge View
-  console.log('[Visual Test] Capturing Challenge View...');
+  // Fix 1: Exercise Library Prescription Boxes & Tempo Badges
+  console.log('[Visual Test] Capturing Exercise Library Cards (Fix 1)...');
   await cdp.eval(`
-    switchView('challenge');
-    renderChallengeView();
-    const box = document.querySelector('.challenge-feature-box');
+    switchView('exercise-library');
+    if (typeof selectExerciseCategory === 'function') selectExerciseCategory('Legs');
+    const box = document.querySelector('.exercise-prescription-box');
     if (box) box.scrollIntoView({ block: 'center' });
   `);
   await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, '01_challenge_view.png'));
+  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix1_exercise_tempo_cards.png'));
 
-  // 2. Custom Workout View
-  console.log('[Visual Test] Capturing Workouts View...');
+  // Fix 2: Workout Move List with View Visual & Sub Badges
+  console.log('[Visual Test] Capturing Workout Move List (Fix 2)...');
   await cdp.eval(`
     switchView('workouts');
-    renderCustomWorkoutExplorer();
-    const card = document.querySelector('.exercise-custom-card');
-    if (card) card.scrollIntoView({ block: 'center' });
+    const move = document.querySelector('.workout-move-item');
+    if (move) move.scrollIntoView({ block: 'center' });
   `);
   await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, '02_workouts_custom_cards.png'));
+  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix2_workout_move_items.png'));
 
-  // 3. Food Log View
-  console.log('[Visual Test] Capturing Food Log View...');
+  // Fix 3: Weekly Streak & Tracking Card
+  console.log('[Visual Test] Capturing Weekly Streak Card (Fix 3)...');
   await cdp.eval(`
-    switchView('food-log');
-    renderFoodLog();
-    const mg = document.querySelector('.meal-group-block');
-    if (mg) mg.scrollIntoView({ block: 'center' });
+    switchView('today');
+    const sc = document.querySelector('.streak-card-inner');
+    if (sc) sc.scrollIntoView({ block: 'center' });
   `);
   await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, '03_food_log_view.png'));
+  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix3_weekly_streak_card.png'));
 
-  // 4. Body Analysis Goal Cards
-  console.log('[Visual Test] Capturing Body Analysis Goal Cards...');
-  await cdp.eval(`
-    switchView('body-analysis');
-    const g = document.querySelector('#baGoalsGrid');
-    if (g) g.scrollIntoView({ block: 'center' });
-  `);
-  await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, '04_body_analysis_goals.png'));
-
-  // 5. Body Analysis Nav Tabs
-  console.log('[Visual Test] Capturing Body Analysis Nav Tabs...');
-  await cdp.eval(`
-    switchView('body-analysis');
-    const tabs = document.querySelector('.ba-nav-tabs');
-    if (tabs) tabs.scrollIntoView({ block: 'center' });
-  `);
-  await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, '05_body_analysis_nav_tabs.png'));
-
-  console.log('[Visual Test] Completed successfully!');
+  console.log('[Visual Test] All 3 latest screenshots captured!');
   cdp.ws.close();
   try { process.kill(chrome.pid); } catch(e) {}
 }
