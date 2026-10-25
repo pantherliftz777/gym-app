@@ -3385,7 +3385,7 @@ function renderProfileView() {
   const updateAvatarEl = (el) => {
     if (!el) return;
     if (profile.avatarUrl) {
-      el.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="${escapeHtml(name)}">`;
+      el.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:50%;display:block;" alt="${escapeHtml(name)}">`;
     } else {
       el.textContent = initials;
     }
@@ -3570,19 +3570,15 @@ if ($('#pfAvatarUploadInput')) {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxDim = 256;
-        let w = img.width;
-        let h = img.height;
-        if (w > h) {
-          if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-        } else {
-          if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-        }
-        canvas.width = w;
-        canvas.height = h;
+        const size = 256;
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        const minDim = Math.min(img.width, img.height);
+        const sx = (img.width - minDim) / 2;
+        const sy = (img.height - minDim) / 2;
+        ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
         profile.avatarUrl = dataUrl;
         store.set('profile', profile);

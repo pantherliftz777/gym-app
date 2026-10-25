@@ -69,7 +69,7 @@ class CDPClient {
 
   async captureScreenshot(filepath) {
     const res = await this.send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync(filepath, Buffer.from(res.data, 'base64'));
+    fs.writeFileSync(filepath, Buffer.from(res.data, 'base46', 'base64'));
   }
 }
 
@@ -113,38 +113,27 @@ async function run() {
   await cdp.eval(`applyTheme('dark');`);
   await wait(500);
 
-  // Fix 1: Exercise Library Prescription Boxes & Tempo Badges
-  console.log('[Visual Test] Capturing Exercise Library Cards (Fix 1)...');
+  // 1. Topbar search & avatar capture
+  console.log('[Visual Test] Capturing Topbar search & avatar (Fix 17 & 18)...');
   await cdp.eval(`
-    switchView('exercise-library');
-    if (typeof selectExerciseCategory === 'function') selectExerciseCategory('Legs');
-    const box = document.querySelector('.exercise-prescription-box');
-    if (box) box.scrollIntoView({ block: 'center' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   `);
   await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix1_exercise_tempo_cards.png'));
+  const res1 = await cdp.send('Page.captureScreenshot', { format: 'png' });
+  fs.writeFileSync(path.join(SCREENSHOT_DIR, 'fix4_topbar_search_avatar.png'), Buffer.from(res1.data, 'base64'));
 
-  // Fix 2: Workout Move List with View Visual & Sub Badges
-  console.log('[Visual Test] Capturing Workout Move List (Fix 2)...');
-  await cdp.eval(`
-    switchView('workouts');
-    const move = document.querySelector('.workout-move-item');
-    if (move) move.scrollIntoView({ block: 'center' });
-  `);
-  await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix2_workout_move_items.png'));
-
-  // Fix 3: Weekly Streak & Tracking Card
-  console.log('[Visual Test] Capturing Weekly Streak Card (Fix 3)...');
+  // 2. Daily Tip Panel capture
+  console.log('[Visual Test] Capturing Daily Tip Panel (Fix 19)...');
   await cdp.eval(`
     switchView('today');
-    const sc = document.querySelector('.streak-card-inner');
-    if (sc) sc.scrollIntoView({ block: 'center' });
+    const tip = document.querySelector('#dailyTipPanel');
+    if (tip) tip.scrollIntoView({ block: 'center' });
   `);
   await wait(500);
-  await cdp.captureScreenshot(path.join(SCREENSHOT_DIR, 'fix3_weekly_streak_card.png'));
+  const res2 = await cdp.send('Page.captureScreenshot', { format: 'png' });
+  fs.writeFileSync(path.join(SCREENSHOT_DIR, 'fix5_daily_tip_panel.png'), Buffer.from(res2.data, 'base64'));
 
-  console.log('[Visual Test] All 3 latest screenshots captured!');
+  console.log('[Visual Test] Captured fix4 and fix5 screenshots!');
   cdp.ws.close();
   try { process.kill(chrome.pid); } catch(e) {}
 }
