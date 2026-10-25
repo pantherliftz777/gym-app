@@ -6,7 +6,9 @@
 
 [![Node.js Version](https://img.shields.io/badge/Node.js-%3E%3D22.5.0-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Turso-SQLite%20LibSQL-00E599?style=for-the-badge&logo=sqlite&logoColor=black)](https://turso.tech/)
+[![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-5A67D8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![UI Style](https://img.shields.io/badge/Design-Glassmorphism%20v2.0-8B5CF6?style=for-the-badge&logo=css3&logoColor=white)](https://github.com/pantherliftz777/gym-app)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/pantherliftz777/gym-app/actions)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 **An ultra-modern, all-in-one athletic performance, macro tracking, and biomechanical fitness platform engineered with a pure Glassmorphism aesthetic.**
@@ -57,6 +59,27 @@ Whether you're tracking daily caloric macros, planning progressive overload weig
 ### 🏋️ 7. Starting Load & Progressive Overload Planner
 - Intelligent 1RM (One Rep Max) calculations and warm-up ramp-up load progressions.
 - Exercise library with muscle activation maps, form tips, and customizable sets/reps.
+
+### 📱 8. Progressive Web App (PWA) & Gym Offline Mode
+- **Zero-signal resilience**: Complete workout logging, hydration tracking, and rest timers function seamlessly in basements and gyms with no internet.
+- **Offline Sync Queue**: Automatic background synchronization with Turso Cloud when network connectivity is re-established.
+- **Native Experience**: Installable on iOS & Android home screens as a standalone full-screen web app.
+
+### 📸 9. Barcode Scanner with OpenFoodFacts API
+- Live camera barcode detection (UPC/EAN) powered by the native `BarcodeDetector` API.
+- Instant access to the OpenFoodFacts database (3M+ items) with verified calories, protein, carbohydrates, and fats.
+
+### 🔊 10. Voice Coach & Synthesized Audio Cues
+- Hands-free audio rest timer using `window.speechSynthesis` (announces intervals, 30s remaining, 10s warnings).
+- Web Audio API real-time sound synthesizer: countdown beeps, metronome tempo cues, and rep completion chimes without external audio dependencies.
+
+### 📤 11. Data Portability & Glassmorphic Social PR Story Cards
+- **1-Click Exports**: Export workout history to CSV, nutrition logs to CSV, and complete profile state to JSON.
+- **1080x1920 Story Generator**: Dynamically renders high-resolution frosted glass PR share cards for Instagram Stories and X/Twitter.
+
+### 🛡️ 12. Server Sliding-Window Rate Limiting
+- In-memory sliding-window IP rate limiter in Node.js protecting `/api/auth/login`, `/api/auth/register`, and `/api/ai/chat`.
+- Strict request body size filtering protecting against payload abuse.
 
 ---
 
@@ -145,10 +168,19 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ```
 gym-app/
+├── .github/workflows/ci.yml      # Automated CI/CD build, syntax & smoke test pipeline
 ├── public/                       # Frontend client assets
 │   ├── index.html                # Main application interface (15+ integrated views)
 │   ├── styles.css                # Master Glassmorphism design system & variables
 │   ├── fitfuel.js                # Core state management, DOM interactions, API client
+│   ├── manifest.json             # Progressive Web App configuration
+│   ├── sw.js                     # Service Worker for offline gym caching
+│   ├── modules/                  # Specialized feature modules
+│   │   ├── pwa-sync.js           # PWA install prompt & offline queue sync
+│   │   ├── voice-coach.js        # Speech synthesis & Web Audio synthesizer
+│   │   ├── social-card.js        # 1080x1920 PR Story card & CSV/JSON exports
+│   │   ├── barcode-scanner.js    # Barcode detection & OpenFoodFacts API
+│   │   └── mediapipe-posture.js  # Biomechanical joint angle calculation
 │   └── images/                   # UI graphics, avatars, anatomy assets & previews
 │       ├── fitfuel-hero-banner.png
 │       ├── fitfuel_glassmorphism_preview.png
@@ -159,7 +191,7 @@ gym-app/
 │   ├── migrate_activity.js       # Activity telemetry migration
 │   ├── migrate_body_scan.js      # Body composition schema setup
 │   └── convert-exercises.js      # Exercise library data converter
-├── server.js                     # High-performance Node.js REST API server
+├── server.js                     # High-performance Node.js REST API server (Rate-limited)
 ├── .env.example                  # Environment variables template
 ├── package.json                  # Dependencies and execution scripts
 └── README.md                     # Documentation

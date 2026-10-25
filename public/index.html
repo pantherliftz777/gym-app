@@ -26,6 +26,11 @@
       } catch (e) {}
     })();
   </script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FitFuel">
+  <link rel="apple-touch-icon" href="/images/fitfuel-bot-round.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -242,6 +247,22 @@
           <!-- 3. Audio On / Off -->
           <button type="button" class="sound-toggle-btn" id="soundToggleBtn" title="Toggle audio sound effects">
             <span id="soundToggleIcon"></span> <span id="soundToggleText">Audio On</span>
+          </button>
+
+          <!-- PWA Install Button -->
+          <button type="button" class="solid-button small" id="btnPwaInstall" style="display:none;background:#2563eb;padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:999px;align-items:center;gap:5px;" title="Install FitFuel App">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Install App
+          </button>
+
+          <!-- Voice Coach Toggle Button -->
+          <button type="button" class="icon-button" id="btnVoiceCoachToggle" title="Toggle AI Voice Coach & Audio Cues">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+
+          <!-- Export & PR Share Button -->
+          <button type="button" class="icon-button" id="btnExportPRShare" title="Export Data & Share PR Story">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
           </button>
 
           <!-- 4. Sign in / Sign out -->
@@ -2271,6 +2292,10 @@
             <button class="outline-button" id="openCameraBtn" style="border-color:#38bdf8;background:#f0f6ff;">
               Scan Food Photo
             </button>
+            <button class="outline-button" id="openBarcodeScannerBtn" style="border-color:#10b981;color:#10b981;background:rgba(16,185,129,0.08);display:inline-flex;align-items:center;gap:6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14"/><path d="M8 5v14"/><path d="M12 5v14"/><path d="M17 5v14"/><path d="M21 5v14"/></svg>
+              Scan Barcode
+            </button>
             <button class="outline-button" id="openRecipeBuilderBtn" style="border-color:#38bdf8;background:#f0f6ff;">
               Custom Recipe Builder
             </button>
@@ -3717,6 +3742,10 @@
             <input type="text" id="foodSearchInput" placeholder="e.g. White rice, Paneer butter masala, 2 Boiled eggs, Protein oats..." autocomplete="off">
             <button type="button" class="solid-button small" id="aiPredictFoodBtn" style="white-space:nowrap;padding:0 14px;height:38px;background:#2563eb;" title="Use AI to estimate calories and macros">
               AI Predict
+            </button>
+            <button type="button" class="solid-button small" id="modalScanBarcodeBtn" style="white-space:nowrap;padding:0 12px;height:38px;background:#10b981;" title="Scan Barcode with camera or UPC">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px;"><path d="M3 5v14"/><path d="M8 5v14"/><path d="M12 5v14"/><path d="M17 5v14"/><path d="M21 5v14"/></svg>
+              Barcode
             </button>
           </div>
           <div id="foodSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:90;background:#ffffff;border:1px solid #dce2d7;border-radius:10px;max-height:210px;overflow-y:auto;box-shadow:0 14px 35px rgba(25,40,28,0.18);margin-top:4px;padding:6px;">
@@ -5544,6 +5573,97 @@
   </div>
 </div>
 
+<!-- BARCODE SCANNER MODAL -->
+<div class="modal-backdrop" id="barcodeScannerModal">
+  <div class="modal-card" style="max-width:500px;padding:24px;border-radius:24px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker" style="color:#10b981;">NUTRITION DATABASE</span>
+        <h2>Barcode Scanner</h2>
+        <p style="margin:2px 0 0;font-size:0.84rem;color:var(--glass-text-secondary);">Point camera at packaging or enter numeric UPC code.</p>
+      </div>
+      <button class="close-btn" id="closeBarcodeModalBtn">&times;</button>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div style="position:relative;width:100%;height:240px;background:#000;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);">
+        <video id="barcodeVideo" playsinline autoplay muted style="width:100%;height:100%;object-fit:cover;"></video>
+        <div style="position:absolute;width:200px;height:120px;border:2px dashed #10b981;border-radius:12px;box-shadow:0 0 20px rgba(16,185,129,0.3);pointer-events:none;"></div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+        <label style="font-size:0.84rem;font-weight:700;color:var(--glass-text-primary);">
+          Barcode number (UPC / EAN):
+        </label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="manualBarcodeInput" placeholder="e.g. 737628064502 or 8901030922855" style="flex:1;padding:9px 12px;border-radius:9px;border:1px solid var(--border-color);background:rgba(255,255,255,0.06);color:var(--glass-text-primary);font-size:0.88rem;">
+          <button type="button" class="solid-button" id="submitManualBarcodeBtn" style="background:#10b981;white-space:nowrap;padding:9px 16px;font-weight:700;">
+            Lookup
+          </button>
+        </div>
+        <div id="barcodeStatusMsg" style="font-size:0.82rem;color:var(--glass-text-secondary);min-height:20px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT & PR SHARE MODAL -->
+<div class="modal-backdrop" id="exportModal">
+  <div class="modal-card" style="max-width:520px;padding:24px;border-radius:24px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker" style="color:#38bdf8;">DATA PORTABILITY &amp; SOCIAL</span>
+        <h2>Export &amp; Share PR Story</h2>
+        <p style="margin:2px 0 0;font-size:0.84rem;color:var(--glass-text-secondary);">Download fitness records or generate a 1080x1920 Instagram Story card.</p>
+      </div>
+      <button class="close-btn" id="closeExportModalBtn">&times;</button>
+    </div>
+
+    <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px;">
+      <!-- Section 1: Social PR Story -->
+      <div class="glass-card" style="padding:16px;border-radius:16px;display:flex;flex-direction:column;gap:8px;">
+        <b style="font-size:0.95rem;color:var(--glass-text-primary);display:flex;align-items:center;gap:6px;">
+          📸 1080x1920 Instagram Story / X Card
+        </b>
+        <p style="margin:0;font-size:0.82rem;color:var(--glass-text-secondary);">
+          Renders high-definition frosted glass graphics with your workout volume, PR badge, and athletic streak.
+        </p>
+        <button type="button" class="solid-button" id="btnDownloadPRStoryCard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:10px 16px;font-weight:700;align-self:flex-start;">
+          Download PR Story Card (PNG)
+        </button>
+      </div>
+
+      <!-- Section 2: CSV Data Exports -->
+      <div class="glass-card" style="padding:16px;border-radius:16px;display:flex;flex-direction:column;gap:10px;">
+        <b style="font-size:0.95rem;color:var(--glass-text-primary);display:flex;align-items:center;gap:6px;">
+          📊 CSV Spreadsheets
+        </b>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button type="button" class="outline-button" id="btnExportWorkoutsCSV" style="flex:1;min-width:130px;padding:9px 14px;border-color:#38bdf8;color:#38bdf8;">
+            Workouts (.CSV)
+          </button>
+          <button type="button" class="outline-button" id="btnExportNutritionCSV" style="flex:1;min-width:130px;padding:9px 14px;border-color:#10b981;color:#10b981;">
+            Nutrition (.CSV)
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 3: Full JSON Backup -->
+      <div class="glass-card" style="padding:16px;border-radius:16px;display:flex;flex-direction:column;gap:8px;">
+        <b style="font-size:0.95rem;color:var(--glass-text-primary);display:flex;align-items:center;gap:6px;">
+          💾 Full JSON Backup
+        </b>
+        <p style="margin:0;font-size:0.82rem;color:var(--glass-text-secondary);">
+          Complete backup of your profile, weights, custom foods, and workout logs.
+        </p>
+        <button type="button" class="outline-button" id="btnExportFullJSON" style="padding:8px 14px;border-color:var(--border-color);color:var(--glass-text-primary);align-self:flex-start;">
+          Export Full Backup (.JSON)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-notice" id="toastNotice" title="Click to dismiss">
   <span id="toastMsg">Action completed</span>
@@ -5554,6 +5674,11 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=4.2.0"></script>
+<script src="fitfuel.js?v=5.3.0"></script>
+<script src="modules/pwa-sync.js"></script>
+<script src="modules/voice-coach.js"></script>
+<script src="modules/social-card.js"></script>
+<script src="modules/barcode-scanner.js"></script>
+<script src="modules/mediapipe-posture.js"></script>
 </body>
 </html>

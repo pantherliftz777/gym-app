@@ -5907,16 +5907,25 @@ function transitionToRestPhase() {
   const ex = sessionDay.exercises[sessionExIdx];
   sessionTimerSec = ex.restSec || 60;
   renderSessionStepUI();
+  if (window.FitFuelVoice) {
+    window.FitFuelVoice.onRestStart(sessionTimerSec, ex ? ex.name : '');
+  }
 
   sessionTimerInterval = setInterval(() => {
     if (sessionTimerSec > 0) {
       sessionTimerSec--;
       updateTimerClockDisplay();
+      if (window.FitFuelVoice) {
+        window.FitFuelVoice.onRestTick(sessionTimerSec, ex ? (ex.restSec || 60) : 60);
+      }
       if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
         soundFX.timerTick();
       }
     } else {
       clearInterval(sessionTimerInterval);
+      if (window.FitFuelVoice) {
+        window.FitFuelVoice.onRestComplete();
+      }
       trigger321CountdownAndAdvance();
     }
   }, 1000);
@@ -9341,14 +9350,130 @@ window.deleteHistoryAssessment = async function(id) {
   }
 };
 
+/* ---------- V5 Advanced Feature Orchestrator ---------- */
+function initV5Features() {
+  // 1. PWA Install Button
+  const pwaBtn = $('#btnPwaInstall');
+  if (pwaBtn) {
+    pwaBtn.addEventListener('click', () => {
+      if (window.FitFuelPWA) window.FitFuelPWA.promptInstall();
+    });
+  }
+
+  // 2. Voice Coach Toggle Button
+  const voiceBtn = $('#btnVoiceCoachToggle');
+  if (voiceBtn) {
+    const updateVoiceBtn = () => {
+      const isEn = window.FitFuelVoice ? window.FitFuelVoice.isVoiceEnabled() : true;
+      voiceBtn.title = isEn ? 'Voice Coach: ON (Click to mute)' : 'Voice Coach: MUTED (Click to activate)';
+      voiceBtn.style.opacity = isEn ? '1' : '0.45';
+      voiceBtn.style.color = isEn ? '#38bdf8' : 'inherit';
+    };
+    updateVoiceBtn();
+    voiceBtn.addEventListener('click', () => {
+      if (window.FitFuelVoice) {
+        const next = !window.FitFuelVoice.isVoiceEnabled();
+        window.FitFuelVoice.setVoiceEnabled(next);
+        updateVoiceBtn();
+        toast(next ? 'AI Voice Coach & Audio Cues activated!' : 'Voice Coach muted.');
+        if (next) window.FitFuelVoice.speak('FitFuel Voice Coach active.');
+      }
+    });
+  }
+
+  // 3. Export & PR Share Modal
+  const exportBtn = $('#btnExportPRShare');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => openModal('#exportModal'));
+  }
+  $('#closeExportModalBtn')?.addEventListener('click', () => closeModal('#exportModal'));
+
+  $('#btnExportWorkoutsCSV')?.addEventListener('click', () => window.FitFuelSocial?.exportWorkoutsCSV());
+  $('#btnExportNutritionCSV')?.addEventListener('click', () => window.FitFuelSocial?.exportNutritionCSV());
+  $('#btnExportFullJSON')?.addEventListener('click', () => window.FitFuelSocial?.exportFullBackupJSON());
+  $('#btnDownloadPRStoryCard')?.addEventListener('click', () => {
+    const prof = (typeof FF !== 'undefined' && FF.state && FF.state.profile) ? FF.state.profile : {};
+    const wo = (typeof FF !== 'undefined' && FF.state && FF.state.workouts && FF.state.workouts[0]) ? FF.state.workouts[0] : {};
+    window.FitFuelSocial?.openAndDownloadPRCard({
+      name: prof.name || localStorage.getItem('fitfuel_username') || 'FitFuel Athlete',
+      workoutTitle: wo.focus ? wo.focus.toUpperCase() : 'ELITE HYPERTROPHY WORKOUT',
+      volume: (wo.volume || 8420) + ' KG',
+      sets: (wo.sets || 18) + ' SETS',
+      pr: 'NEW 1RM PR: BENCH PRESS 105 KG'
+    });
+  });
+
+  // 4. Barcode Scanner Modal & Logic
+  const openBarcode = () => {
+    openModal('#barcodeScannerModal');
+    const v = $('#barcodeVideo');
+    if (v && window.FitFuelBarcode) {
+      window.FitFuelBarcode.startScanner(v, (code) => {
+        handleScannedBarcode(code);
+      }).catch(err => {
+        const msg = $('#barcodeStatusMsg');
+        if (msg) msg.textContent = 'Camera not available. Enter barcode number below:';
+      });
+    }
+  };
+
+  $('#openBarcodeScannerBtn')?.addEventListener('click', openBarcode);
+  $('#modalScanBarcodeBtn')?.addEventListener('click', openBarcode);
+
+  const closeBarcode = () => {
+    const v = $('#barcodeVideo');
+    if (v && window.FitFuelBarcode) window.FitFuelBarcode.stopScanner(v);
+    closeModal('#barcodeScannerModal');
+  };
+  $('#closeBarcodeModalBtn')?.addEventListener('click', closeBarcode);
+
+  async function handleScannedBarcode(code) {
+    const msg = $('#barcodeStatusMsg');
+    if (msg) msg.textContent = `Looking up barcode ${code} in OpenFoodFacts...`;
+    try {
+      const prod = await window.FitFuelBarcode.fetchProductByBarcode(code);
+      closeBarcode();
+      openModal('#foodModal');
+      if ($('#foodSearchInput')) $('#foodSearchInput').value = prod.name;
+      if ($('#foodPortionInput')) $('#foodPortionInput').value = 100;
+      if ($('#foodCaloriesInput')) $('#foodCaloriesInput').value = prod.calories;
+      if ($('#foodProteinInput')) $('#foodProteinInput').value = prod.protein;
+      if ($('#foodCarbsInput')) $('#foodCarbsInput').value = prod.carbs;
+      if ($('#foodFatsInput')) $('#foodFatsInput').value = prod.fats;
+      if (window.FitFuelVoice) window.FitFuelVoice.playSuccessChime();
+      toast(`Verified: ${prod.name} (${prod.calories} kcal)`);
+    } catch (err) {
+      if (msg) msg.textContent = `Lookup error: ${err.message}`;
+      toast(err.message);
+    }
+  }
+
+  $('#submitManualBarcodeBtn')?.addEventListener('click', () => {
+    const val = $('#manualBarcodeInput')?.value.trim();
+    if (val) handleScannedBarcode(val);
+  });
+  $('#manualBarcodeInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = $('#manualBarcodeInput')?.value.trim();
+      if (val) handleScannedBarcode(val);
+    }
+  });
+}
+
 /* ---------- Boot Application & Immediate Lifecycle Bindings ---------- */
 bootApp();
 initInteractiveHeroAndAppButtons();
+initV5Features();
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initInteractiveHeroAndAppButtons);
+  document.addEventListener('DOMContentLoaded', () => {
+    initInteractiveHeroAndAppButtons();
+    initV5Features();
+  });
 } else {
   initInteractiveHeroAndAppButtons();
+  initV5Features();
 }
 
 } // End of browser execution block
