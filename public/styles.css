@@ -2030,8 +2030,6 @@ body {
 .exercise-prescription-box,
 .ai-verify-card,
 .notif-card,
-.welcome-strip,
-.daily-motivation-panel,
 .front-water-advisory-card,
 .challenge-empty-card,
 .track-summary-card,
@@ -2083,8 +2081,6 @@ body {
 .metric-card-v2::after,
 .sy-side-card::after,
 .sy-bottom-card::after,
-.welcome-strip::after,
-.daily-motivation-panel::after,
 .modal-card::after {
   content: '';
   position: absolute;
@@ -2550,9 +2546,7 @@ html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
   .exercise-prescription-box,
   .ai-verify-card,
   .notif-card,
-  .welcome-strip,
-  .daily-motivation-panel,
-  .front-water-advisory-card,
+    .front-water-advisory-card,
   .challenge-empty-card,
   .track-summary-card,
   .ba-card,
@@ -2580,9 +2574,7 @@ html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
   html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
   html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card,
   html.dark .notif-card, [data-theme="dark"] .notif-card,
-  html.dark .welcome-strip, [data-theme="dark"] .welcome-strip,
-  html.dark .daily-motivation-panel, [data-theme="dark"] .daily-motivation-panel,
-  html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
+    html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
   html.dark .challenge-empty-card, [data-theme="dark"] .challenge-empty-card,
   html.dark .track-summary-card, [data-theme="dark"] .track-summary-card,
   html.dark .ba-card, [data-theme="dark"] .ba-card,
@@ -7001,8 +6993,6 @@ body {
 .exercise-prescription-box,
 .ai-verify-card,
 .notif-card,
-.welcome-strip,
-.daily-motivation-panel,
 .front-water-advisory-card,
 .challenge-empty-card,
 .challenge-dash-card,
@@ -7061,8 +7051,6 @@ body {
 .metric-card-v2::after,
 .sy-side-card::after,
 .sy-bottom-card::after,
-.welcome-strip::after,
-.daily-motivation-panel::after,
 .modal-card::after,
 .ba-card::after {
   content: '';
@@ -7542,9 +7530,7 @@ html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
   .exercise-prescription-box,
   .ai-verify-card,
   .notif-card,
-  .welcome-strip,
-  .daily-motivation-panel,
-  .front-water-advisory-card,
+    .front-water-advisory-card,
   .challenge-empty-card,
   .track-summary-card,
   .ba-card,
@@ -7572,9 +7558,7 @@ html.dark .stronger-you-hero-card, [data-theme="dark"] .stronger-you-hero-card {
   html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box,
   html.dark .ai-verify-card, [data-theme="dark"] .ai-verify-card,
   html.dark .notif-card, [data-theme="dark"] .notif-card,
-  html.dark .welcome-strip, [data-theme="dark"] .welcome-strip,
-  html.dark .daily-motivation-panel, [data-theme="dark"] .daily-motivation-panel,
-  html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
+    html.dark .front-water-advisory-card, [data-theme="dark"] .front-water-advisory-card,
   html.dark .challenge-empty-card, [data-theme="dark"] .challenge-empty-card,
   html.dark .track-summary-card, [data-theme="dark"] .track-summary-card,
   html.dark .ba-card, [data-theme="dark"] .ba-card,
@@ -9678,4 +9662,171 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
 #exModalVisualContainer > div:hover img.loaded {
   transform: scale(1.02);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ==========================================================================
+   PERSISTENT HIGH-CONTRAST SIGNATURE HERO BANNERS
+   Prevents any light-mode or glass overrides from washing out white text
+   ========================================================================== */
+.welcome-strip,
+div.welcome-strip,
+#welcomeStrip {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #1e3a8a 0%, #172554 50%, #0f172a 100%) !important;
+  border: 1px solid rgba(96, 165, 250, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  border-radius: 18px !important;
+  padding: 24px 28px !important;
+  margin-bottom: 18px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.welcome-strip h2,
+div.welcome-strip h2 {
+  color: #ffffff !important;
+  letter-spacing: -0.5px !important;
+  margin: 10px 0 6px !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.welcome-strip p,
+div.welcome-strip p {
+  color: #e2e8f0 !important;
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.welcome-strip .welcome-overline,
+.welcome-overline {
+  color: #38bdf8 !important;
+  letter-spacing: 1.2px !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  display: flex !important;
+}
+
+.welcome-strip .welcome-overline svg,
+.welcome-overline svg {
+  stroke: #38bdf8 !important;
+}
+
+.welcome-strip .strip-stats span,
+.strip-stats span {
+  color: #93c5fd !important;
+  letter-spacing: 0.9px !important;
+  font-size: 9.5px !important;
+  font-weight: 750 !important;
+}
+
+.welcome-strip .strip-stats b,
+.strip-stats b {
+  color: #ffffff !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.welcome-strip .strip-stats small,
+.strip-stats small {
+  color: #60a5fa !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/* Motivation Banner */
+.daily-motivation-panel,
+div.daily-motivation-panel,
+#dailyMotivationPanel {
+  background: linear-gradient(135deg, #0e2448 0%, #163668 50%, #0a1730 100%) !important;
+  color: #ffffff !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(56, 189, 248, 0.32) !important;
+  padding: 22px 26px !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 10px 30px rgba(10, 23, 48, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.daily-motivation-panel::after {
+  content: "“" !important;
+  position: absolute !important;
+  right: 24px !important;
+  bottom: -32px !important;
+  font-size: 140px !important;
+  line-height: 1 !important;
+  font-family: Georgia, serif !important;
+  color: rgba(56, 189, 248, 0.08) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+}
+
+.motivation-tag {
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  color: #38bdf8 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.motivation-tag svg {
+  stroke: #38bdf8 !important;
+}
+
+.next-quote-btn {
+  color: #38bdf8 !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(56, 189, 248, 0.14) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  padding: 5px 12px !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.next-quote-btn:hover {
+  background: rgba(56, 189, 248, 0.28) !important;
+  border-color: #38bdf8 !important;
+  transform: translateY(-1px) !important;
+}
+
+.motivation-quote-text,
+#dailyMotivationQuoteText {
+  font-size: 1.12rem !important;
+  font-weight: 600 !important;
+  line-height: 1.55 !important;
+  color: #ffffff !important;
+  margin: 0 0 10px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.motivation-author,
+#dailyMotivationAuthor {
+  font-size: 0.88rem !important;
+  color: #93c5fd !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
