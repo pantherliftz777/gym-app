@@ -3269,10 +3269,10 @@ function renderExerciseLibrary() {
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;">
-          <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#38bdf8;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
+          <button type="button" class="outline-button small ex-btn-visual" style="flex:1;font-size:.8rem;padding:7px;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
             Visual Guide
           </button>
-          <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#2563eb;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+          <button type="button" class="solid-button small ex-btn-ai" style="flex:1;font-size:.8rem;padding:7px;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
             AI Coach
           </button>
         </div>

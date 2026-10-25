@@ -839,15 +839,15 @@
 .rx-sets-reps {
   font-size: .94rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: #0f172a;
 }
 .rx-tempo {
-  font-size: .78rem;
-  color: #1d4ed8;
-  background: #eff6ff;
-  padding: 3px 9px;
-  border-radius: 6px;
-  border: 1px solid #bfdbfe;
+  font-size: .74rem;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid #cbd5e1;
   font-weight: 700;
   display: inline-block;
 }
@@ -8608,24 +8608,100 @@ html.dark .ba-history-stats-sub, [data-theme="dark"] .ba-history-stats-sub {
 
 /* 14. Exercise Prescription Box & Tempo Badges (Image 1 Fix) */
 html.dark .exercise-prescription-box, [data-theme="dark"] .exercise-prescription-box {
-  background: rgba(15, 23, 42, 0.75) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  border-radius: 12px !important;
 }
 html.dark .rx-sets-reps, [data-theme="dark"] .rx-sets-reps {
-  color: #38bdf8 !important;
+  color: #f1f5f9 !important;
   font-weight: 800 !important;
 }
 html.dark .rx-tempo, [data-theme="dark"] .rx-tempo {
-  background: rgba(30, 58, 138, 0.45) !important;
-  border: 1px solid rgba(96, 165, 250, 0.45) !important;
-  color: #93c5fd !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #cbd5e1 !important;
+  padding: 3px 10px !important;
+  border-radius: 99px !important;
+  font-size: 0.73rem !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 html.dark .rx-why, [data-theme="dark"] .rx-why {
-  color: #cbd5e1 !important;
+  color: #94a3b8 !important;
 }
 html.dark .rx-why b, [data-theme="dark"] .rx-why b {
-  color: #f8fafc !important;
+  color: #f1f5f9 !important;
+}
+
+/* Action buttons on Exercise Cards */
+.ex-btn-visual {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+.ex-btn-visual:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+html.dark .ex-btn-visual, [data-theme="dark"] .ex-btn-visual {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #e2e8f0 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+}
+html.dark .ex-btn-visual:hover, [data-theme="dark"] .ex-btn-visual:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.ex-btn-ai {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  border: 1px solid #0284c7;
+  color: #ffffff;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+  transition: all 0.18s ease;
+}
+html.dark .ex-btn-ai, [data-theme="dark"] .ex-btn-ai {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(30, 64, 175, 0.85) 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+}
+html.dark .ex-btn-ai:hover, [data-theme="dark"] .ex-btn-ai:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #1e40af 100%) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Modal Boxes */
+.ex-modal-rx-pill {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+html.dark .ex-modal-rx-pill, [data-theme="dark"] .ex-modal-rx-pill {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.ex-modal-guide-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+html.dark .ex-modal-guide-box, [data-theme="dark"] .ex-modal-guide-box {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 /* 15. Workout Move List Items & Badges (Image 2 Fix) */
