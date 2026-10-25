@@ -706,6 +706,49 @@ if (plan && plan.workout && !WORKOUT_PLANS.some(w => w.name === plan.workout.nam
   WORKOUT_PLANS.unshift(plan.workout);
 }
 
+const EXERCISE_GIF_MAP = {
+  'Barbell / EZ-Bar Bicep Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1682-Dsfz0Id.gif',
+  'Barbell Back Squat': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0026-W9pFVv1.gif',
+  'Barbell Bent-Over Row': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0027-eZyBC3j.gif',
+  'Barbell Hip Thrust': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1409-qKBpF7I.gif',
+  'Barbell Military Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1456-wdRZISl.gif',
+  'Bulgarian Split Squat': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0987-arsYEd3.gif',
+  'Cable Kneeling Crunch': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0175-WW95auq.gif',
+  'Cable Lateral Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0178-goJ6ezq.gif',
+  'Chest Dips': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0009-PAgTVaK.gif',
+  'Conventional Deadlift': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0032-ila4NZS.gif',
+  'Decline Dumbbell Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Dumbbell Floor Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Dumbbell Lateral Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0334-DsgkuIt.gif',
+  'Dumbbell Shrug': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0406-NJzBsGJ.gif',
+  'Face Pull': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0570-OyoZ3Pu.gif',
+  'Flat Barbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0025-EIeI8Vf.gif',
+  'Flat Dumbbell Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Hammer Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0313-slDvUAU.gif',
+  'Hanging Leg Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0472-I3tsCnC.gif',
+  'High-to-Low Cable Fly': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0158-7saC5zz.gif',
+  'Hyperextension / Back Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0573-rUXfn3R.gif',
+  'Incline Barbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0047-3TZduzM.gif',
+  'Incline Dumbbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0314-ns0SIbU.gif',
+  'Incline Dumbbell Bicep Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1677-xiA6lRr.gif',
+  'Incline Push-up': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0493-B1EVP9F.gif',
+  'Lat Pulldown': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0673-ecpY0rH.gif',
+  'Leg Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0585-my33uHU.gif',
+  'Low-to-High Cable Fly': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0158-7saC5zz.gif',
+  'Lying / Seated Leg Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0795-C5jncD2.gif',
+  'Overhead Dumbbell Shoulder Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0361-84RyJf8.gif',
+  'Overhead Tricep Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1727-i11JWU7.gif',
+  'Preacher Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0070-qOgPVf6.gif',
+  'Pull-up / Chin-up': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/3293-72BC5Za.gif',
+  'Rear Delt Fly / Reverse Pec Deck': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0378-8DiFDVA.gif',
+  'Romanian Deadlift (RDL)': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0085-wQ2c4XD.gif',
+  'Russian Twist with Weight': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0687-XVDdcoj.gif',
+  'Single-Arm Dumbbell Row': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0327-7vG5o25.gif',
+  'Skull Crusher (Lying Triceps Extension)': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0060-h8LFzo9.gif',
+  'Standing Calf Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1372-8ozhUIZ.gif',
+  'Tricep Rope Pushdown': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1723-qRZ5S1N.gif'
+};
+
 const EXERCISES_LIBRARY = [
   // --- CHEST: Upper, Mid, Lower ---
   {
@@ -1159,6 +1202,15 @@ const EXERCISES_LIBRARY = [
     steps: 'Sit on floor, feet elevated, torso back at 45°. Rotate weight from hip to hip under strict control.'
   }
 ];
+
+// Pre-populate gif field in EXERCISES_LIBRARY from hardcoded map (instant, no async)
+(function applyHardcodedGifs() {
+  for (const ex of EXERCISES_LIBRARY) {
+    if (!ex.gif && EXERCISE_GIF_MAP[ex.name]) {
+      ex.gif = EXERCISE_GIF_MAP[ex.name];
+    }
+  }
+})();
 
 /* ---------- Exercises JSON GIF Loader ---------- */
 // Loads exercises.json and merges gif URLs into EXERCISES_LIBRARY + builds a full lookup map
@@ -2955,9 +3007,15 @@ function findExerciseInfo(name) {
   if (!name) return null;
   const n = name.toLowerCase().trim();
 
+  // 0. Pre-load gif from hardcoded map (instant, no async race)
+  function attachGif(ex) {
+    if (!ex.gif && EXERCISE_GIF_MAP[ex.name]) ex.gif = EXERCISE_GIF_MAP[ex.name];
+    return ex;
+  }
+
   // 1. Exact match in library
   let found = EXERCISES_LIBRARY.find(e => e.name.toLowerCase() === n);
-  if (found) return found;
+  if (found) return attachGif(found);
 
   // 2. Check JSON map directly (1318 exercises from exercises.json)
   if (EXERCISES_JSON_MAP[n]) {
