@@ -9050,7 +9050,15 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
    20. MOBILE-FIRST GYM COMPATIBILITY & THUMB-FRIENDLY NAVIGATION
    ========================================================================== */
 
-/* Desktop defaults: Hide mobile bottom nav, backdrop, and topbar brand */
+/* Universal Modal Z-Index: Must always sit on top of bottom navigation */
+.modal-backdrop {
+  z-index: 200000 !important;
+}
+.toast-notice {
+  z-index: 200001 !important;
+}
+
+/* Desktop defaults: Hide mobile bottom nav, backdrop, topbar brand & mobile AI button */
 .mobile-bottom-nav {
   display: none !important;
 }
@@ -9058,6 +9066,9 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
   display: none !important;
 }
 .topbar-mobile-brand {
+  display: none !important;
+}
+.mobile-ai-coach-btn {
   display: none !important;
 }
 
@@ -9087,7 +9098,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     box-sizing: border-box !important;
   }
   .page-content {
-    padding: 12px 14px 92px !important; /* Bottom clearance for thumb navigation bar */
+    padding: 10px 14px 100px !important; /* Generous bottom clearance: zero card intersection with bottom nav */
     width: 100% !important;
     max-width: 100vw !important;
     box-sizing: border-box !important;
@@ -9102,7 +9113,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 62px !important;
+    height: 60px !important;
     background: rgba(11, 18, 32, 0.94) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
@@ -9111,6 +9122,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     align-items: center !important;
     justify-content: space-around !important;
     padding: 0 4px !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45) !important;
     box-sizing: border-box !important;
   }
@@ -9127,7 +9139,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 3px !important;
+    gap: 2px !important;
     height: 100% !important;
     background: transparent !important;
     border: none !important;
@@ -9172,7 +9184,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
   .mobile-nav-btn.active::after {
     content: '';
     position: absolute;
-    bottom: 5px;
+    bottom: 4px;
     width: 16px;
     height: 3px;
     border-radius: 99px;
@@ -9227,11 +9239,11 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     box-shadow: 12px 0 40px rgba(0, 0, 0, 0.55) !important;
   }
 
-  /* 4. Mobile Topbar Controls & Layout */
+  /* 4. Mobile Topbar Controls & Layout (Single Sleek Header Row) */
   .topbar {
-    padding: 10px 14px 10px !important;
+    padding: 8px 12px 8px !important;
     min-height: auto !important;
-    gap: 8px !important;
+    gap: 6px !important;
     width: 100% !important;
     max-width: 100vw !important;
     box-sizing: border-box !important;
@@ -9243,17 +9255,17 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     justify-content: space-between !important;
     width: 100% !important;
     flex-wrap: wrap !important;
-    gap: 8px !important;
+    gap: 6px !important;
   }
 
   .mobile-menu {
     display: inline-flex !important;
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 10px !important;
+    border-radius: 9px !important;
     margin: 0 !important;
     flex-shrink: 0 !important;
   }
@@ -9283,18 +9295,37 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
   .topbar-right-actions {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 5px !important;
     margin-left: auto !important;
     flex-shrink: 0 !important;
     width: auto !important;
   }
 
-  /* Hide verbose desktop buttons on mobile topbar to avoid 475px overflow */
+  /* Hide verbose & desktop-redundant buttons on mobile topbar */
   #btnExportPRShare,
   #btnVoiceCoachToggle,
   #topAdminBtn,
-  #btnPwaInstall {
+  #btnPwaInstall,
+  #topAuthBtn,
+  #topSettingsBtn {
     display: none !important;
+  }
+
+  .mobile-ai-coach-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    color: #38bdf8 !important;
+    background: rgba(56, 189, 248, 0.15) !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    border-radius: 99px !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2) !important;
+  }
+  .mobile-ai-coach-btn:hover {
+    background: rgba(56, 189, 248, 0.3) !important;
   }
 
   .sound-toggle-btn {
@@ -9303,7 +9334,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     font-size: 0.72rem !important;
   }
   #soundToggleText {
-    display: none !important; /* show icon only on small screens */
+    display: none !important; /* show audio icon only */
   }
 
   .theme-select-wrap {
@@ -9322,7 +9353,6 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     font-size: 0.72rem !important;
   }
 
-  #topSettingsBtn,
   #topNotificationBtn {
     width: 32px !important;
     height: 32px !important;
@@ -9335,40 +9365,41 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
-    height: 38px !important;
+    height: 36px !important;
     margin: 2px 0 0 !important;
   }
 
-  /* Weather & Live Date Badge Compact Single Pill */
+  /* Weather & Live Date Badge Compact Single Pill (Centered, Zero Truncation) */
   .header-weather-badge {
     order: 4 !important;
     width: 100% !important;
     max-width: 100% !important;
-    height: 32px !important;
-    padding: 0 8px !important;
-    justify-content: space-between !important;
-    font-size: 0.68rem !important;
+    height: 30px !important;
+    padding: 0 10px !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    font-size: 0.7rem !important;
     box-sizing: border-box !important;
     margin: 2px 0 0 !important;
     overflow: hidden !important;
   }
 
   #eyebrowDate {
-    font-size: 0.64rem !important;
-    max-width: 110px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    max-width: none !important;
     white-space: nowrap !important;
   }
 
   #liveClockTime {
     font-size: 0.72rem !important;
+    font-weight: 700 !important;
     white-space: nowrap !important;
   }
 
   .header-weather-temp {
-    height: 24px !important;
-    padding: 0 6px !important;
+    height: 22px !important;
+    padding: 0 7px !important;
     font-size: 0.68rem !important;
     gap: 3px !important;
   }
@@ -9381,20 +9412,24 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
 
   /* Greeting Row */
   .topbar-greeting-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 2px !important;
-    margin-top: 4px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    margin-top: 3px !important;
+    width: 100% !important;
   }
   #userGreeting {
-    font-size: 1.25rem !important;
+    font-size: 1.15rem !important;
     line-height: 1.2 !important;
+    margin: 0 !important;
   }
   .sync-note {
-    font-size: 0.72rem !important;
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
   }
 
-  /* Orbit background decorations: hide to prevent 400px+ horizontal overflow */
+  /* Orbit background decorations: hide to prevent horizontal overflow */
   .strip-orbit {
     display: none !important;
   }
@@ -9405,34 +9440,35 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     border-radius: 18px !important;
   }
   .sy-hero-h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.65rem !important;
     line-height: 1.15 !important;
   }
 
-  /* 5. Floating AI Widget on Mobile */
-  #floatingAiWidget {
-    right: 12px !important;
-    bottom: 74px !important;
-    z-index: 99980 !important;
+  /* 5. Zero-Obstruction AI Coach on Mobile: No Floating Bubble Blocking Workout Cards! */
+  #floatingAiLauncher {
+    display: none !important; /* Replaced by sleek topbar button #topMobileAiBtn */
   }
-  .floating-ai-launcher {
-    width: 50px !important;
-    height: 50px !important;
-  }
-  .floating-ai-robot-img {
-    width: 40px !important;
-    height: 40px !important;
+  #floatingAiTooltip {
+    display: none !important;
   }
   .floating-ai-panel {
-    width: calc(100vw - 24px) !important;
-    max-width: 360px !important;
-    right: 12px !important;
-    bottom: 74px !important;
-    max-height: calc(100vh - 160px) !important;
-    border-radius: 20px !important;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 75vh !important;
+    max-height: 80vh !important;
+    border-radius: 24px 24px 0 0 !important;
+    z-index: 200005 !important;
+    transform: translateY(115%) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.7) !important;
+    box-sizing: border-box !important;
   }
-  .floating-ai-tooltip {
-    display: none !important;
+  .floating-ai-panel.open {
+    transform: translateY(0) !important;
   }
 
   /* 6. Gym Workout Logger & Cards on Mobile */

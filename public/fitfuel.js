@@ -528,7 +528,13 @@ function updateLiveDateTime() {
   const year = now.getFullYear();
 
   // ONLY Day and Date - NEVER append time here to prevent duplicates & jitter!
-  const dateOnlyStr = `${dayName}, ${monthName} ${dateNum}, ${year}`;
+  // Use concise format on mobile screens to prevent text clipping & wrapping
+  const isMobile = window.innerWidth <= 768;
+  const shortDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const shortMonths = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const dateOnlyStr = isMobile
+    ? `${shortDays[now.getDay()]}, ${shortMonths[now.getMonth()]} ${dateNum}`
+    : `${dayName}, ${monthName} ${dateNum}, ${year}`;
   const eyebrowEl = $('#eyebrowDate');
   if (eyebrowEl && eyebrowEl.textContent !== dateOnlyStr) {
     eyebrowEl.textContent = dateOnlyStr;
@@ -6431,6 +6437,21 @@ if (floatingAiLauncher) {
         if (floatingAiTooltip) floatingAiTooltip.style.display = 'none';
         const badge = $('#floatingAiBadge');
         if (badge) badge.style.display = 'none';
+        setTimeout(() => {
+          const inp = $('#floatingAiInput');
+          if (inp) inp.focus();
+        }, 150);
+      }
+    }
+  };
+}
+
+const topMobileAiBtn = $('#topMobileAiBtn');
+if (topMobileAiBtn) {
+  topMobileAiBtn.onclick = () => {
+    if (floatingAiPanel) {
+      floatingAiPanel.classList.toggle('open');
+      if (floatingAiPanel.classList.contains('open')) {
         setTimeout(() => {
           const inp = $('#floatingAiInput');
           if (inp) inp.focus();

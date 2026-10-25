@@ -141,8 +141,8 @@ async function run() {
   await wait(800);
   await cdp.captureScreenshot('mobile_view_workouts.png');
 
-  // 3. Switch to Nutrition view
-  await cdp.eval(`switchView('nutrition');`);
+  // 3. Switch to Food Log view
+  await cdp.eval(`switchView('food-log');`);
   await wait(800);
   await cdp.captureScreenshot('mobile_view_nutrition.png');
 
