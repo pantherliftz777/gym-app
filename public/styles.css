@@ -8314,23 +8314,64 @@ html.dark .ai-subtab-btn.active, [data-theme="dark"] .ai-subtab-btn.active {
 
 /* 5. Header Weather Badge & Pill (.header-weather-temp, Clear Sky) */
 .header-weather-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  gap: 8px !important;
+  padding: 4px 6px 4px 14px !important;
+  height: 38px !important;
+  flex-shrink: 0 !important;
+  border-radius: 9999px !important;
   background: #ffffff !important;
   border: 1px solid #dbeafe !important;
   color: #1e293b !important;
+  box-sizing: border-box !important;
 }
 .header-weather-temp {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  height: 28px !important;
+  padding: 0 10px !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  flex-shrink: 0 !important;
+  border-radius: 9999px !important;
   background: #eff6ff !important;
   border: 1px solid #bfdbfe !important;
   color: #1d4ed8 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
 }
 .header-weather-temp small,
 #headerWeatherLabel {
   color: #2563eb !important;
   font-weight: 700 !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+  font-size: 0.74rem !important;
 }
 #headerWeatherTemp {
   color: #1d4ed8 !important;
   font-weight: 800 !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+  font-size: 0.82rem !important;
+}
+#headerWeatherIcon {
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
+  font-size: 0.85rem !important;
+  white-space: nowrap !important;
 }
 html.dark .header-weather-badge, [data-theme="dark"] .header-weather-badge {
   background: rgba(15, 23, 42, 0.8) !important;
@@ -8354,6 +8395,7 @@ html.dark #headerWeatherLabel, [data-theme="dark"] #headerWeatherLabel,
 html.dark .header-weather-temp small, [data-theme="dark"] .header-weather-temp small {
   color: #bfdbfe !important;
   font-weight: 700 !important;
+  white-space: nowrap !important;
 }
 
 /* 6. Theme Selector & Sound Toggle Button Contrast */
@@ -8861,28 +8903,56 @@ html.dark #quickCheckInBtn, [data-theme="dark"] #quickCheckInBtn {
   display: block !important;
   margin: 0 !important;
 }
-.topbar-search-input {
-  flex: 1 !important;
-  width: 100% !important;
-  height: 100% !important;
+.topbar-search-wrap input,
+.topbar-search-wrap input:focus,
+.topbar-search-wrap input:active,
+.topbar-search-wrap input[type="text"],
+.topbar-search-wrap input[type="text"]:focus,
+.topbar-search-wrap input[type="text"]:active,
+input#topbarSearchInput,
+input#topbarSearchInput:focus,
+input#topbarSearchInput:active,
+.topbar-search-input,
+.topbar-search-input:focus,
+.topbar-search-input:active {
   background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
   outline: none !important;
   box-shadow: none !important;
-  padding: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 4px !important;
   margin: 0 !important;
+  height: 100% !important;
+  min-height: unset !important;
+  flex: 1 1 auto !important;
   font-size: 0.88rem !important;
   color: var(--glass-text-primary) !important;
   line-height: normal !important;
+  box-sizing: border-box !important;
 }
-.topbar-search-input::placeholder {
+.topbar-search-input::placeholder,
+input#topbarSearchInput::placeholder {
   color: var(--glass-text-muted) !important;
   font-size: 0.85rem !important;
 }
-html.dark .topbar-search-input, [data-theme="dark"] .topbar-search-input {
+html.dark .topbar-search-wrap input,
+html.dark input#topbarSearchInput,
+html.dark .topbar-search-input,
+[data-theme="dark"] .topbar-search-wrap input,
+[data-theme="dark"] input#topbarSearchInput,
+[data-theme="dark"] .topbar-search-input {
   color: #f8fafc !important;
 }
-html.dark .topbar-search-input::placeholder, [data-theme="dark"] .topbar-search-input::placeholder {
+html.dark .topbar-search-input::placeholder,
+html.dark input#topbarSearchInput::placeholder,
+[data-theme="dark"] .topbar-search-input::placeholder,
+[data-theme="dark"] input#topbarSearchInput::placeholder {
   color: #94a3b8 !important;
 }
 
