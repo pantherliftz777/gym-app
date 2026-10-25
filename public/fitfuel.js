@@ -3219,6 +3219,8 @@ function openExerciseDetailModal(exerciseName) {
           <img
             src="${escapeHtml(ex.gif)}"
             alt="${escapeHtml(ex.name)} demonstration"
+            class="gif-img"
+            onload="this.classList.add('loaded')"
             style="width:100%;max-height:300px;object-fit:contain;display:block;border-radius:12px;"
             loading="lazy"
             onerror="this.parentElement.innerHTML='<div style=\'padding:20px;text-align:center;color:var(--glass-text-secondary);\'>' + ${JSON.stringify(getExerciseVisualSvg(ex.category, ex.name)).replace(/`/g,"'")} + '</div>'"
@@ -3299,7 +3301,7 @@ function renderWorkouts() {
       return `
         <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
           <span class="move-index-badge">${i + 1}</span>
-          ${ex && ex.gif ? `<div style="width:54px;height:54px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#0d1711;display:flex;align-items:center;justify-content:center;margin-right:4px;"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(m.name)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
+          ${ex && ex.gif ? `<div class="move-gif-thumb"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(m.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.move-gif-thumb').style.display='none'"></div>` : ''}
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
@@ -3453,7 +3455,7 @@ function renderExerciseLibrary() {
   if (cardsContainer) {
     cardsContainer.innerHTML = filtered.map(ex => `
       <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
-        ${ex.gif ? `<div style="width:100%;height:140px;border-radius:10px;overflow:hidden;background:#0d1711;margin-bottom:10px;display:flex;align-items:center;justify-content:center;"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
+        ${ex.gif ? `<div class="ex-card-gif-wrap"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.ex-card-gif-wrap').style.display='none'"></div>` : ''}
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
             <span class="exercise-type">${ex.type}</span>
