@@ -1160,6 +1160,75 @@ const EXERCISES_LIBRARY = [
   }
 ];
 
+/* ---------- Exercises JSON GIF Loader ---------- */
+// Loads exercises.json and merges gif URLs into EXERCISES_LIBRARY + builds a full lookup map
+let EXERCISES_JSON_MAP = {}; // id/name -> {gif, instructions_en, muscle, equipment, category, level}
+
+(async function loadExercisesJson() {
+  try {
+    const res = await fetch('/data/exercises.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    // Build lookup maps: by name (lowercase) and by id
+    const byName = {};
+    const byId = {};
+    for (const ex of data) {
+      if (ex.name) byName[ex.name.toLowerCase().trim()] = ex;
+      if (ex.id) byId[ex.id] = ex;
+      EXERCISES_JSON_MAP[ex.name ? ex.name.toLowerCase().trim() : ex.id] = ex;
+    }
+    // Merge gif + instructions into existing EXERCISES_LIBRARY entries
+    for (const libEx of EXERCISES_LIBRARY) {
+      const key = libEx.name.toLowerCase().trim();
+      const jsonEx = byName[key];
+      if (jsonEx) {
+        if (jsonEx.gif) libEx.gif = jsonEx.gif;
+        if (jsonEx.instructions_en) libEx.instructions_en = jsonEx.instructions_en;
+        if (jsonEx.muscle && !libEx.muscle) libEx.muscle = jsonEx.muscle;
+        if (jsonEx.equipment && !libEx.equipment) libEx.equipment = jsonEx.equipment;
+        if (jsonEx.level && !libEx.level) libEx.level = jsonEx.level;
+      }
+    }
+    // Also add all JSON exercises not already in library (so full 1318 exercise GIFs are accessible)
+    const existingNames = new Set(EXERCISES_LIBRARY.map(e => e.name.toLowerCase().trim()));
+    for (const ex of data) {
+      if (!ex.name || existingNames.has(ex.name.toLowerCase().trim())) continue;
+      // Map JSON category/muscle to library category
+      let category = 'Full Body';
+      const m = (ex.muscle || ex.category || '').toLowerCase();
+      if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+      else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
+      else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
+      else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm') || m.includes('arm')) category = 'Arms';
+      else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf') || m.includes('leg')) category = 'Legs';
+      else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+      EXERCISES_LIBRARY.push({
+        name: ex.name,
+        category: category,
+        sub: ex.muscle || ex.category || category,
+        type: (ex.equipment || 'body weight').toUpperCase(),
+        gif: ex.gif || '',
+        instructions_en: ex.instructions_en || '',
+        muscle: ex.muscle || '',
+        equipment: ex.equipment || 'body weight',
+        level: ex.level || 'beginner',
+        rxSetsReps: '3 sets × 10-12 reps · 60s rest',
+        rxTempo: 'Tempo: 2-0-1',
+        rxWhy: ex.instructions_en ? ex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
+        benefit: ex.instructions_en ? ex.instructions_en.substring(0, 100) + '...' : 'Builds strength and muscle mass.',
+        steps: ex.instructions_en || 'Perform with controlled movement and full range of motion.'
+      });
+      existingNames.add(ex.name.toLowerCase().trim());
+    }
+    // Re-render exercise library if it's currently open
+    if (document.querySelector('#exerciseCardsContainer')) renderExerciseLibrary();
+    // Re-render workouts if open
+    if (document.querySelector('#planMoveList')) renderWorkouts();
+  } catch (e) {
+    console.warn('FitFuel: Could not load exercises.json GIFs', e);
+  }
+})();
+
 /* ---------- Toast Notice (Self-hiding & Click-to-dismiss) ---------- */
 let toastTimeout = null;
 function hideToast() {
@@ -2890,7 +2959,31 @@ function findExerciseInfo(name) {
   let found = EXERCISES_LIBRARY.find(e => e.name.toLowerCase() === n);
   if (found) return found;
 
-  // 2. Fuzzy match
+  // 2. Check JSON map directly (1318 exercises from exercises.json)
+  if (EXERCISES_JSON_MAP[n]) {
+    const jex = EXERCISES_JSON_MAP[n];
+    let category = 'Full Body';
+    const m = (jex.muscle || jex.category || '').toLowerCase();
+    if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+    else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
+    else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
+    else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm')) category = 'Arms';
+    else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf')) category = 'Legs';
+    else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+    return {
+      name: jex.name, category, sub: jex.muscle || category,
+      gif: jex.gif || '', instructions_en: jex.instructions_en || '',
+      type: (jex.equipment || 'body weight').toUpperCase(),
+      muscle: jex.muscle || '', equipment: jex.equipment || '',
+      level: jex.level || 'beginner',
+      rxSetsReps: '3 sets × 10-12 reps · 60s rest', rxTempo: 'Tempo: 2-0-1',
+      rxWhy: jex.instructions_en ? jex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
+      benefit: jex.instructions_en ? jex.instructions_en.substring(0, 100) + '...' : '',
+      steps: jex.instructions_en || 'Perform with controlled movement and full range of motion.'
+    };
+  }
+
+  // 3. Fuzzy match
   found = EXERCISES_LIBRARY.find(e => {
     const en = e.name.toLowerCase();
     return n.includes(en) || en.includes(n) ||
@@ -3053,12 +3146,32 @@ function openExerciseDetailModal(exerciseName) {
   if ($('#exModalSetsReps')) $('#exModalSetsReps').textContent = ex.rxSetsReps || '3-4 sets × 8-10 reps';
   if ($('#exModalTempo')) $('#exModalTempo').textContent = `${ex.rxTempo || 'Tempo: 2-1-1'}`;
   if ($('#exModalWhy')) $('#exModalWhy').textContent = ex.rxWhy || ex.benefit;
-  if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.steps;
+  // Show full instructions if available from exercises.json, otherwise fallback to steps
+  if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.instructions_en || ex.steps || '';
+  // Show extra meta (equipment/level)
+  if ($('#exModalEquipment')) $('#exModalEquipment').textContent = ex.equipment ? ex.equipment.toUpperCase() : '';
+  if ($('#exModalLevel')) $('#exModalLevel').textContent = ex.level ? ex.level.toUpperCase() : '';
 
-  // Render SVG Visual Demonstration
+  // Show GIF if available, otherwise fall back to SVG diagram
   const visualContainer = $('#exModalVisualContainer');
   if (visualContainer) {
-    visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
+    if (ex.gif) {
+      visualContainer.innerHTML = `
+        <div style="position:relative;width:100%;background:#0d1711;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:200px;">
+          <img
+            src="${escapeHtml(ex.gif)}"
+            alt="${escapeHtml(ex.name)} demonstration"
+            style="width:100%;max-height:300px;object-fit:contain;display:block;border-radius:12px;"
+            loading="lazy"
+            onerror="this.parentElement.innerHTML='<div style=\'padding:20px;text-align:center;color:var(--glass-text-secondary);\'>' + ${JSON.stringify(getExerciseVisualSvg(ex.category, ex.name)).replace(/`/g,"'")} + '</div>'"
+          >
+          ${ex.level ? `<span style="position:absolute;top:10px;left:10px;background:rgba(37,99,235,0.85);color:#38bdf8;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;">${escapeHtml(ex.level)}</span>` : ''}
+          ${ex.equipment ? `<span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:#e2e8f0;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px;">${escapeHtml(ex.equipment)}</span>` : ''}
+        </div>
+      `;
+    } else {
+      visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
+    }
   }
 
   // Reset AI Advice container
@@ -3128,6 +3241,7 @@ function renderWorkouts() {
       return `
         <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
           <span class="move-index-badge">${i + 1}</span>
+          ${ex && ex.gif ? `<div style="width:54px;height:54px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#0d1711;display:flex;align-items:center;justify-content:center;margin-right:4px;"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(m.name)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
@@ -3281,6 +3395,7 @@ function renderExerciseLibrary() {
   if (cardsContainer) {
     cardsContainer.innerHTML = filtered.map(ex => `
       <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+        ${ex.gif ? `<div style="width:100%;height:140px;border-radius:10px;overflow:hidden;background:#0d1711;margin-bottom:10px;display:flex;align-items:center;justify-content:center;"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
             <span class="exercise-type">${ex.type}</span>
