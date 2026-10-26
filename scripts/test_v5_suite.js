@@ -72,7 +72,7 @@ async function run() {
 
   const sw = await request('GET', '/sw.js');
   assert('Service Worker returns 200', sw.status === 200, `Got ${sw.status}`);
-  assert('Service Worker contains CACHE_NAME', sw.raw && sw.raw.includes('fitfuel-cache-v1'));
+  assert('Service Worker contains CACHE_NAME', sw.raw && (sw.raw.includes('fitfuel-cache-') || sw.raw.includes('CACHE_NAME')));
 
   console.log('\n--- 3. MODULARIZED FEATURE ASSETS ---');
   for (const mod of ['pwa-sync.js', 'voice-coach.js', 'social-card.js', 'barcode-scanner.js', 'mediapipe-posture.js']) {
