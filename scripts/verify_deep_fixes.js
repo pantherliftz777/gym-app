@@ -148,6 +148,15 @@ const path = require('path');
     throw new Error('Expected view-workouts after adding coach plan');
   }
 
+  const todayDuration = await page.evaluate(() => {
+    if (typeof switchView === 'function') switchView('today');
+    return document.querySelector('#dashWorkoutDuration')?.textContent;
+  });
+  console.log('Dashboard active workout duration after adding plan:', todayDuration);
+  if (!todayDuration || todayDuration.includes('undefined')) {
+    throw new Error(`Invalid workout duration on dashboard: ${todayDuration}`);
+  }
+
   // 5b. #coachPlanInspectFormBtn
   await page.evaluate(() => switchView('ai-coach'));
   await new Promise(r => setTimeout(r, 400));
@@ -253,7 +262,8 @@ const path = require('path');
   const artifactDirs = [
     shotsDir,
     'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\d22a54bb-6331-45b2-8bcf-1c9b6f6e91a7',
-    'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\eb8ed369-d3cf-459b-8060-0898be809b6e'
+    'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\eb8ed369-d3cf-459b-8060-0898be809b6e',
+    'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\a67b53e9-18e7-42cf-ac8d-299908ffc71e'
   ];
 
   // Save posture view screenshot

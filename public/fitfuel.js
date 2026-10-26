@@ -1829,7 +1829,7 @@ function renderDashboard() {
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
   if ($('#dashWorkoutName')) $('#dashWorkoutName').textContent = wo.name;
   if ($('#dashWorkoutFocus')) $('#dashWorkoutFocus').textContent = wo.focus.toUpperCase();
-  if ($('#dashWorkoutDuration')) $('#dashWorkoutDuration').textContent = wo.duration;
+  if ($('#dashWorkoutDuration')) $('#dashWorkoutDuration').textContent = wo.duration || '40 min';
 
   // Dynamically sync exercise demonstration GIF for active workout
   if ($('#dashWorkoutGif') && wo && wo.moves && wo.moves.length) {
@@ -7036,6 +7036,7 @@ function initCoachListeners() {
       const recPlan = {
         name: 'Recommended Upper-Body Hypertrophy Plan',
         focus: 'Upper Body · Hypertrophy',
+        duration: '45 min',
         benefit: 'Targeted chest, shoulders, and triceps volume for muscle growth (RPE 8).',
         moves: [
           { name: 'Bench Press', sets: '4 sets × 8-10 reps', tip: 'Control descent to lower chest; drive explosively.' },
