@@ -1493,6 +1493,37 @@ if ($('#mobileSidebarBackdrop')) {
   };
 }
 
+// Sidebar smooth drag-to-slide & scroll interaction
+const sidebarEl = $('#sidebar');
+if (sidebarEl) {
+  let isDown = false;
+  let startY = 0;
+  let startScrollTop = 0;
+
+  sidebarEl.addEventListener('mousedown', (e) => {
+    if (e.target.closest('button, select, input, a')) return;
+    isDown = true;
+    startY = e.pageY;
+    startScrollTop = sidebarEl.scrollTop;
+    sidebarEl.style.cursor = 'grabbing';
+    sidebarEl.style.userSelect = 'none';
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!isDown) return;
+    isDown = false;
+    sidebarEl.style.cursor = '';
+    sidebarEl.style.userSelect = '';
+  });
+
+  sidebarEl.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const walk = (e.pageY - startY) * 1.4;
+    sidebarEl.scrollTop = startScrollTop - walk;
+  });
+}
+
 // Mobile bottom navigation items
 $$('.mobile-bottom-nav .mobile-nav-btn[data-view]').forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);

@@ -2115,15 +2115,86 @@ body {
    SIDEBAR & NAVIGATION
    ========================================================================== */
 .sidebar {
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  width: 250px !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
   background: var(--ff-glass-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
   border-right: 1px solid var(--ff-glass-border) !important;
   box-shadow: 4px 0 32px rgba(15, 23, 42, 0.04) !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(15, 23, 42, 0.35) transparent !important;
 }
 
 html.dark .sidebar, [data-theme="dark"] .sidebar {
   box-shadow: 4px 0 32px rgba(0, 0, 0, 0.35) !important;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent !important;
+}
+
+/* Custom Sleek Scrollbar / Slidebar for .sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-radius: 999px !important;
+  margin: 6px 0 !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.25) !important;
+  border-radius: 999px !important;
+  transition: background 0.2s ease !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:active {
+  background: #2563eb !important;
+}
+
+html.dark .sidebar::-webkit-scrollbar-track,
+[data-theme="dark"] .sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .sidebar::-webkit-scrollbar-thumb,
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28) !important;
+}
+
+html.dark .sidebar::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:hover,
+html.dark .sidebar::-webkit-scrollbar-thumb:active,
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:active {
+  background: #38bdf8 !important;
+}
+
+.sidebar .brand {
+  flex-shrink: 0 !important;
+}
+
+.sidebar .primary-nav {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.sidebar .sidebar-bottom {
+  flex-shrink: 0 !important;
+  margin-top: 16px !important;
+  padding-bottom: 30px !important;
 }
 
 .brand-mark {
