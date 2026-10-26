@@ -408,7 +408,7 @@ const routes = {
     const { goal, preferences, images } = body || {};
     try {
       const result = await generateBodyTransformationAnalysis(goal, preferences, images);
-      json(res, 200, { ok: true, analysis: result });
+      json(res, 200, { ok: true, provider: result.provider || 'openrouter', model: result.model || 'nvidia/nemotron-3-ultra-550b-a55b:free', analysis: result });
     } catch (err) {
       json(res, 500, { ok: false, error: 'Analysis failed: ' + err.message });
     }
@@ -527,9 +527,159 @@ const routes = {
     }
     json(res, 403, { error: 'Invalid admin secret' });
   },
+  'POST /api/ai-coach': async (req, res) => {
+    const body = await readBody(req);
+    const { prompt, systemPrompt, messages, selectedModel, model, image, images } = body || {};
+    const effectiveSystemPrompt = systemPrompt || 'You are FitFuel Dedicated AI Fitness Coach — an elite sports nutritionist and strength & conditioning coach. Provide direct, dynamic, customized advice tailored specifically to the user. Never use emojis anywhere in your output. Use clean markdown formatting.';
+
+    const incomingImages = Array.isArray(images)
+      ? images
+      : (images && typeof images === 'object' ? Object.values(images) : []);
+    const allImages = [image, ...incomingImages].filter(Boolean);
+
+    let chatMessages = [];
+    if (Array.isArray(messages) && messages.length > 0) {
+      chatMessages.push({ role: 'system', content: effectiveSystemPrompt });
+      chatMessages = chatMessages.concat(messages.map(m => ({
+        role: m.role === 'assistant' || m.role === 'bot' ? 'assistant' : 'user',
+        content: stripEmojis(m.content || m.text || '')
+      })));
+      if (prompt && (!messages.length || (messages[messages.length - 1].content !== prompt && messages[messages.length - 1].text !== prompt))) {
+        if (allImages.length > 0) {
+          chatMessages.push({
+            role: 'user',
+            content: [
+              { type: 'text', text: stripEmojis(prompt) },
+              ...allImages.map(img => ({ type: 'image_url', image_url: { url: img } }))
+            ]
+          });
+        } else {
+          chatMessages.push({ role: 'user', content: stripEmojis(prompt) });
+        }
+      }
+    } else {
+      if (allImages.length > 0) {
+        chatMessages = [
+          { role: 'system', content: effectiveSystemPrompt },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: stripEmojis(prompt || 'Visually analyze this photo for calories, macros, exercise form, or physique composition.') },
+              ...allImages.map(img => ({ type: 'image_url', image_url: { url: img } }))
+            ]
+          }
+        ];
+      } else {
+        chatMessages = [
+          { role: 'system', content: effectiveSystemPrompt },
+          { role: 'user', content: stripEmojis(prompt || 'Hello Coach') }
+        ];
+      }
+    }
+
+    const aiRes = await callOpenRouterAiPipeline({
+      chatMessages,
+      requestedModel: selectedModel || model,
+      isJson: false,
+      hasImages: allImages.length > 0,
+      userOpenRouterKey: body.openRouterKey
+    });
+
+    if (aiRes && aiRes.content) {
+      return json(res, 200, { ok: true, provider: 'openrouter', model: aiRes.model, content: aiRes.content, latency: aiRes.latency });
+    }
+
+    if (allImages.length > 0) {
+      return json(res, 200, {
+        ok: true,
+        provider: 'fitfuel-vision-engine',
+        model: 'fitfuel-visual-coach',
+        content: generateDynamicCoachVisionText(prompt)
+      });
+    }
+
+    return json(res, 200, {
+      ok: true,
+      provider: 'fitfuel-ai-coach-engine',
+      model: 'fitfuel-elite-coach',
+      content: generateDynamicCoachChatResponse(prompt, chatMessages)
+    });
+  },
+
+  'POST /api/ai-plan': async (req, res) => {
+    const body = await readBody(req);
+    const profileData = body.profileData || body || {};
+    const { wKg = 72, hCm = 178, goal = 'Maintain weight', days = 4, creatine = 'yes', units = 'Metric', dietPref = 'Balanced', focus = 'Full body', note = '' } = profileData;
+
+    const planPrompt = `Create a complete, highly personalized nutrition and workout plan for this user:
+- Weight: ${wKg} kg (${units})
+- Height: ${hCm} cm
+- Primary Goal: ${goal}
+- Training Frequency: ${days} days / week
+- Creatine: ${creatine}
+- Dietary Preference: ${dietPref}
+- Target Focus Areas: ${focus}
+- Extra Notes: ${note || 'None'}
+
+Never use emojis. Return ONLY valid JSON with this exact structure:
+{
+  "cal": 2200,
+  "p": 145,
+  "c": 220,
+  "f": 65,
+  "waterL": "2.5",
+  "meals": [
+    { "meal": "Breakfast", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 450, "p": 32, "c": 45, "f": 12 },
+    { "meal": "Lunch", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 600, "p": 45, "c": 60, "f": 18 },
+    { "meal": "Snack", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 250, "p": 20, "c": 25, "f": 8 },
+    { "meal": "Dinner", "name": "Meal Name", "detail": "Ingredients/Portion", "k": 550, "p": 40, "c": 50, "f": 16 }
+  ],
+  "workout": {
+    "name": "Routine Name",
+    "focus": "PRIMARY TARGETS",
+    "duration": "45 min",
+    "benefit": "Why this workout was chosen for this goal.",
+    "moves": [
+      { "name": "Exercise 1", "sets": "3 sets x 10 reps", "tip": "Technique cue" },
+      { "name": "Exercise 2", "sets": "3 sets x 12 reps", "tip": "Technique cue" },
+      { "name": "Exercise 3", "sets": "3 sets x 10 reps", "tip": "Technique cue" },
+      { "name": "Exercise 4", "sets": "3 sets x 15 reps", "tip": "Technique cue" }
+    ]
+  }
+}`;
+
+    const chatMessages = [
+      { role: 'system', content: 'You are FitFuel AI, an elite personal trainer and sports nutritionist. Respond with strict JSON only. Never use emojis or code block wrappers.' },
+      { role: 'user', content: planPrompt }
+    ];
+
+    const aiRes = await callOpenRouterAiPipeline({
+      chatMessages,
+      requestedModel: body.selectedModel || body.model,
+      isJson: true,
+      userOpenRouterKey: body.openRouterKey
+    });
+
+    if (aiRes && aiRes.content) {
+      try {
+        let clean = aiRes.content.replace(/```json/gi, '').replace(/```/g, '').trim();
+        const s = clean.indexOf('{');
+        const e = clean.lastIndexOf('}');
+        if (s !== -1 && e > s) clean = clean.slice(s, e + 1);
+        const parsed = JSON.parse(clean);
+        if (parsed.cal && parsed.meals && parsed.workout) {
+          return json(res, 200, { ok: true, provider: 'openrouter', model: aiRes.model, plan: parsed, latency: aiRes.latency });
+        }
+      } catch (e) {}
+    }
+
+    const fallbackJson = generateDynamicPlanJson(planPrompt);
+    return json(res, 200, { ok: true, provider: 'fitfuel-calc-engine', model: 'fitfuel-metabolic-math', plan: JSON.parse(fallbackJson) });
+  },
+
   'POST /api/ai/chat': async (req, res) => {
     const body = await readBody(req);
-    const { prompt, systemPrompt, messages, geminiKey: userGeminiKey, openRouterKey: userOpenRouterKey } = body || {};
+    const { prompt, systemPrompt, messages, geminiKey: userGeminiKey, openRouterKey: userOpenRouterKey, selectedModel, model } = body || {};
 
     const isJson = (systemPrompt && systemPrompt.toLowerCase().includes('json')) || (prompt && prompt.toLowerCase().includes('json'));
 
@@ -540,7 +690,7 @@ const routes = {
       : (body.images && typeof body.images === 'object' ? Object.values(body.images) : []);
     const allImages = [body.image, ...incomingImages].filter(Boolean);
 
-    // Format messages for OpenAI / OpenRouter standard
+    // Format messages for standard Chat Completion API
     let chatMessages = [];
     if (Array.isArray(messages) && messages.length > 0) {
       chatMessages.push({ role: 'system', content: baseSystemPrompt });
@@ -588,7 +738,7 @@ const routes = {
       for (const gModel of geminiModels) {
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 25000);
+          const timeoutId = setTimeout(() => controller.abort(), 20000);
 
           const geminiContents = chatMessages
             .filter(m => m.role !== 'system')
@@ -646,69 +796,17 @@ const routes = {
       }
     }
 
-    // 2. OpenRouter Cascade across live free models
-    const orKey = userOpenRouterKey || process.env.OPENROUTER_API_KEY;
-    if (orKey) {
-      const callOrModel = async (model, timeoutMs = 28000) => {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-        try {
-          const fetchRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            signal: controller.signal,
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + orKey,
-              'Content-Type': 'application/json',
-              'HTTP-Referer': 'https://fitfuel.app',
-              'X-Title': 'FitFuel AI Live Coach'
-            },
-            body: JSON.stringify({
-              model: model,
-              messages: chatMessages,
-              temperature: isJson ? 0.2 : 0.6,
-              max_tokens: 2200,
-              reasoning: { max_tokens: 120 }
-            })
-          });
-          clearTimeout(timeoutId);
+    // 2. OpenRouter Cascade across live free models (Nemotron-first primary pipeline)
+    const aiRes = await callOpenRouterAiPipeline({
+      chatMessages,
+      requestedModel: selectedModel || model,
+      isJson,
+      hasImages: allImages.length > 0,
+      userOpenRouterKey: userOpenRouterKey
+    });
 
-          if (!fetchRes.ok) throw new Error('Status ' + fetchRes.status);
-          const data = await fetchRes.json();
-          const extracted = extractAiMessage(data);
-          if (isValidAiOutput(extracted)) {
-            return { model: data.model || model, content: extracted };
-          }
-          throw new Error('Invalid or error content from ' + model);
-        } catch (err) {
-          clearTimeout(timeoutId);
-          throw err;
-        }
-      };
-
-      // Free models directly from Image 3 (LFM2.5-2.6B, Laguna, Xing4.0, Nemotron, MiniMax, North Mini Code)
-      const requestedModel = body.selectedModel || body.model;
-      const primaryModels = [
-        requestedModel && requestedModel !== 'auto' ? requestedModel : null,
-        'liquid/lfm-2.5-2.6b:free',
-        'cohere/north-mini-code:free',
-        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-        'xing/xing-4.0-29b-a4b:free',
-        'minimax/minimax-m3.1-flash:free',
-        'nvidia/nemotron-3.5-super-vl:free',
-        'google/gemma-2-9b-it:free',
-        'openrouter/free'
-      ].filter((m, idx, arr) => m && arr.indexOf(m) === idx);
-
-      for (const m of primaryModels) {
-        try {
-          const resData = await callOrModel(m, 6000);
-          if (resData && resData.content) {
-            return json(res, 200, { ok: true, provider: 'openrouter', model: resData.model || m, content: formatOutputContent(resData.content, isJson) });
-          }
-        } catch (err) {
-          // Cascade quickly to next free model
-        }
-      }
+    if (aiRes && aiRes.content) {
+      return json(res, 200, { ok: true, provider: 'openrouter', model: aiRes.model, content: aiRes.content, latency: aiRes.latency });
     }
 
     // 3. Fallback Handling
@@ -741,6 +839,159 @@ const routes = {
   }
 };
 
+const NEMOTRON_FREE_MODELS = [
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+  'nvidia/nemotron-3.5-super-vl:free',
+  'nvidia/nemotron-3.5-lightning:free'
+];
+
+const OPENROUTER_FALLBACK_MODELS = [
+  'google/gemma-4-26b-a4b-it:free',
+  'google/gemma-4-31b-it:free',
+  'xingchen-agi/xing4.0-29b-a4b:free',
+  'recursive/flint-v1.0:free',
+  'dots-studio/dots-3-note-preview:free',
+  'cohere/north-mini-code:free',
+  'thinkingmachines/inkling-small:free',
+  'thinkingmachines/inkling:free',
+  'liquid/lfm-2.5-2.6b:free',
+  'openrouter/free'
+];
+
+function canonicalizeModelId(raw) {
+  if (!raw || typeof raw !== 'string') return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  const m = raw.trim().toLowerCase();
+  if (m === 'auto') return 'auto';
+  if (m.includes('laguna') || m.includes('poolside')) return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  if (m === 'nvidia/nemotron-3-ultra:free' || m.includes('nemotron-3-ultra')) return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  if (m === 'nvidia/nemotron-3-nano-omni:free' || m.includes('nemotron-3-nano')) return 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
+  if (m === 'nvidia/nemotron-3.5-super:free' || m === 'nvidia/nemotron-3.5-vl:free' || m.includes('nemotron-3.5-super-vl')) return 'nvidia/nemotron-3.5-super-vl:free';
+  if (m === 'nvidia/nemotron-3.5-lightning:free' || m.includes('nemotron-3.5-lightning')) return 'nvidia/nemotron-3.5-lightning:free';
+  if (m === 'google/gemma-4-26b-a4b:free' || m.includes('gemma-4-26b')) return 'google/gemma-4-26b-a4b-it:free';
+  if (m === 'google/gemma-4-31b:free' || m.includes('gemma-4-31b')) return 'google/gemma-4-31b-it:free';
+  if (m === 'xingchen-agi/xing4.0-29b-a4b:free' || m.includes('xing4.0') || m.includes('xing-4.0')) return 'xingchen-agi/xing4.0-29b-a4b:free';
+  if (m.includes('inkling-small')) return 'thinkingmachines/inkling-small:free';
+  if (m.includes('inkling')) return 'thinkingmachines/inkling:free';
+  return raw.trim();
+}
+
+function getOpenRouterKeys(userKey) {
+  const keys = [];
+  if (userKey && typeof userKey === 'string' && userKey.trim()) {
+    keys.push(userKey.trim());
+  }
+  const envVal = process.env.OPENROUTER_API_KEY || '';
+  if (envVal) {
+    const parts = envVal.split(/[,;\n\r]+/).map(k => k.trim()).filter(Boolean);
+    for (const p of parts) {
+      if (!keys.includes(p)) keys.push(p);
+    }
+  }
+  return keys;
+}
+
+function isForbiddenModel(modelId) {
+  if (!modelId || typeof modelId !== 'string') return false;
+  const m = modelId.toLowerCase();
+  return m.includes('laguna') || m.includes('poolside');
+}
+
+async function callOpenRouterAiPipeline({
+  chatMessages,
+  requestedModel = null,
+  isJson = false,
+  hasImages = false,
+  userOpenRouterKey = null,
+  timeoutMs = null,
+  maxTokens = 2500
+}) {
+  const keys = getOpenRouterKeys(userOpenRouterKey);
+  if (!keys.length) return null;
+
+  const candidateModels = [];
+  const normalizedRequested = requestedModel ? canonicalizeModelId(requestedModel) : null;
+  if (normalizedRequested && normalizedRequested !== 'auto' && !isForbiddenModel(normalizedRequested)) {
+    candidateModels.push(normalizedRequested);
+  }
+
+  if (hasImages) {
+    if (!candidateModels.includes('nvidia/nemotron-3.5-super-vl:free')) {
+      candidateModels.unshift('nvidia/nemotron-3.5-super-vl:free');
+    }
+  }
+
+  for (const m of NEMOTRON_FREE_MODELS) {
+    if (!candidateModels.includes(m)) candidateModels.push(m);
+  }
+
+  for (const m of OPENROUTER_FALLBACK_MODELS) {
+    if (!candidateModels.includes(m) && !isForbiddenModel(m)) {
+      candidateModels.push(m);
+    }
+  }
+
+  const effectiveTimeout = timeoutMs || (isJson ? 25000 : 16000);
+
+  for (const orKey of keys) {
+    let keyDailyLimitHit = false;
+
+    for (const model of candidateModels) {
+      if (keyDailyLimitHit) break;
+      const t0 = Date.now();
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), effectiveTimeout);
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          signal: controller.signal,
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + orKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://fitfuel.app',
+            'X-Title': 'FitFuel AI Nemotron Gateway',
+            'User-Agent': 'FitFuel-AI-Agent/2.0'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: chatMessages,
+            temperature: isJson ? 0.2 : 0.7,
+            max_tokens: maxTokens
+          })
+        });
+        clearTimeout(timer);
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = (errData.error?.message || '').toLowerCase();
+          const limitSource = errData.error?.metadata?.limit_source;
+          if (res.status === 429 && (limitSource === 'openrouter_free_tier_daily' || errMsg.includes('free-models-per-day'))) {
+            // Key exhausted daily limit - break candidate loop for this key
+            keyDailyLimitHit = true;
+            break;
+          }
+          continue;
+        }
+
+        const data = await res.json();
+        const extracted = extractAiMessage(data, isJson);
+        if (isValidAiOutput(extracted)) {
+          return {
+            ok: true,
+            provider: 'openrouter',
+            model: data.model || model,
+            content: formatOutputContent(extracted, isJson),
+            latency: Date.now() - t0
+          };
+        }
+      } catch (e) {
+        clearTimeout(timer);
+      }
+    }
+  }
+  return null;
+}
+
 function cleanReasoningToMarkdown(raw) {
   if (!raw || typeof raw !== 'string') return '';
   let text = raw.trim();
@@ -771,7 +1022,7 @@ function formatOutputContent(raw, isJson) {
   return text;
 }
 
-function extractAiMessage(data) {
+function extractAiMessage(data, isJson = false) {
   const choice = data?.choices?.[0];
   if (!choice || !choice.message) return null;
   const msg = choice.message;
@@ -780,8 +1031,13 @@ function extractAiMessage(data) {
   }
   const reasoning = msg.reasoning || (Array.isArray(msg.reasoning_details) ? msg.reasoning_details.map(d => d.text).join('\n') : null);
   if (reasoning && typeof reasoning === 'string') {
+    if (isJson) {
+      const match = reasoning.match(/\{[\s\S]*\}/);
+      if (match) return match[0];
+    }
     const cleaned = cleanReasoningToMarkdown(reasoning);
     if (cleaned && cleaned.length >= 8) return stripEmojis(cleaned).trim();
+    if (reasoning.trim().length >= 8) return stripEmojis(reasoning).trim();
   }
   return null;
 }
@@ -1029,6 +1285,148 @@ function generateDynamicBodyCompJson(prompt = '') {
 }
 
 async function generateBodyTransformationAnalysis(goal = 'lean_athletic', preferences = {}, images = {}) {
+  const age = Number(preferences.age) || 26;
+  const exp = preferences.experience || 'intermediate';
+  const curW = Number(preferences.weight) || 72;
+  const hCm = Number(preferences.height) || 178;
+  const daysPerWeek = Number(preferences.daysPerWeek) || 4;
+  const durationMin = Number(preferences.durationMin) || 45;
+  const equipment = preferences.equipment || 'gym';
+  const dietary = preferences.dietary || 'balanced';
+  const customGoalText = preferences.customGoalText || '';
+
+  const incomingImages = Array.isArray(images)
+    ? images
+    : (images && typeof images === 'object' ? Object.values(images) : []);
+  const allImages = incomingImages.filter(Boolean);
+
+  const scanPrompt = `Conduct a comprehensive 4D physique, posture, and anthropometric transformation analysis:
+- User Profile: Age ${age}, Current Weight ${curW} kg, Height ${hCm} cm
+- Target Physique Goal: ${goal} ${customGoalText ? '(' + customGoalText + ')' : ''}
+- Training Schedule: ${daysPerWeek} days / week, ${durationMin} minutes per session, Equipment: ${equipment}
+- Dietary Preference: ${dietary}
+- Visual Data: ${allImages.length} body scans / physique photos provided.
+
+Never use emojis. Output ONLY valid JSON with this exact structure:
+{
+  "summary": "Detailed 2-3 sentence anthropometric and biomechanical summary.",
+  "posture_observations": {
+    "apparent_head_position": "Observation on cervical alignment",
+    "visible_shoulder_alignment": "Observation on biacromial clavicle level",
+    "left_vs_right_symmetry": "Observation on lateral torso & deltoid balance",
+    "coronal_trunk_alignment": "Observation on spinal contour and ribcage position",
+    "hip_and_knee_positioning": "Observation on pelvic level and knee tracking",
+    "general_stance_and_balance": "Observation on bilateral grounding"
+  },
+  "possible_alignment_considerations": [
+    "Specific alignment or mobility consideration 1",
+    "Specific alignment or mobility consideration 2"
+  ],
+  "estimated_physical_characteristics": {
+    "estimated_body_fat_range": "15-17%",
+    "fitness_category": "Healthy Athletic Range",
+    "estimated_lean_muscle_mass": "${Math.round(curW * 0.82)} kg",
+    "estimated_adipose_tissue_mass": "${Math.round(curW * 0.18)} kg"
+  },
+  "reassessment_interval": "6 to 8 weeks",
+  "training_structure": {
+    "methodology": "Targeted Progressive Hypertrophy & Biomechanics",
+    "weekly_split": "${daysPerWeek} Days / Week",
+    "session_duration_minutes": ${durationMin},
+    "exercise_intensity": "RPE 7.5-8.5",
+    "progressive_overload_guidance": "Add 1-2.5 kg or 1 rep weekly"
+  },
+  "macronutrient_distribution": {
+    "daily_calories": 2350,
+    "daily_protein_grams": ${Math.round(curW * 2.1)},
+    "daily_carbohydrates_grams": 260,
+    "daily_fats_grams": 65,
+    "daily_water_liters": 3.0,
+    "sample_daily_meals": [
+      { "meal_name": "Breakfast", "description": "High-protein meal description (macros)" },
+      { "meal_name": "Lunch", "description": "High-protein meal description (macros)" },
+      { "meal_name": "Snack", "description": "High-protein meal description (macros)" },
+      { "meal_name": "Dinner", "description": "High-protein meal description (macros)" }
+    ],
+    "nutrition_rules": [
+      "Protein timing and hydration guideline 1",
+      "Nutrient density guideline 2"
+    ]
+  },
+  "recovery_protocols": {
+    "restorative_sleep_hours": "7.5 to 8.5 hours nightly",
+    "sleep_hygiene_rules": ["Keep bedroom cool and dark", "Zero screens 45m before sleep"],
+    "recoveryProtocols": ["Post-workout foam rolling", "Contrast recovery"]
+  }
+}`;
+
+  let chatMessages = [];
+  if (allImages.length > 0) {
+    chatMessages = [
+      { role: 'system', content: 'You are an elite anthropometric scientist and sports biomechanics specialist. Output strict JSON only. Never use markdown code blocks or emojis.' },
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: scanPrompt },
+          ...allImages.map(img => ({ type: 'image_url', image_url: { url: img } }))
+        ]
+      }
+    ];
+  } else {
+    chatMessages = [
+      { role: 'system', content: 'You are an elite anthropometric scientist and sports biomechanics specialist. Output strict JSON only. Never use markdown code blocks or emojis.' },
+      { role: 'user', content: scanPrompt }
+    ];
+  }
+
+  try {
+    const aiRes = await callOpenRouterAiPipeline({
+      chatMessages,
+      requestedModel: allImages.length > 0 ? 'nvidia/nemotron-3.5-super-vl:free' : 'nvidia/nemotron-3-ultra-550b-a55b:free',
+      isJson: true,
+      hasImages: allImages.length > 0,
+      maxTokens: 2500
+    });
+
+    if (aiRes && aiRes.content) {
+      let clean = aiRes.content.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const s = clean.indexOf('{');
+      const e = clean.lastIndexOf('}');
+      if (s !== -1 && e > s) clean = clean.slice(s, e + 1);
+      const parsed = JSON.parse(clean);
+      if (parsed.summary || parsed.posture_observations || parsed.postureObservations || parsed.macronutrient_distribution) {
+        const baseline = generateDynamicBodyTransformationFallback(goal, preferences, images);
+
+        const merged = {
+          ...baseline,
+          ...parsed,
+          provider: 'openrouter',
+          model: aiRes.model,
+          summary: parsed.summary || parsed.assessmentSummary || baseline.summary,
+          assessmentSummary: parsed.summary || parsed.assessmentSummary || baseline.summary,
+          posture_observations: { ...baseline.posture_observations, ...(parsed.posture_observations || parsed.postureObservations || {}) },
+          postureObservations: { ...baseline.postureObservations, ...(parsed.posture_observations || parsed.postureObservations || {}) },
+          possible_alignment_considerations: parsed.possible_alignment_considerations || parsed.possibleAlignmentConcerns || baseline.possible_alignment_considerations,
+          possibleAlignmentConcerns: parsed.possible_alignment_considerations || parsed.possibleAlignmentConcerns || baseline.possibleAlignmentConcerns,
+          estimated_physical_characteristics: { ...baseline.estimated_physical_characteristics, ...(parsed.estimated_physical_characteristics || parsed.estimatedPhysicalCharacteristics || {}) },
+          estimatedPhysicalCharacteristics: { ...baseline.estimatedPhysicalCharacteristics, ...(parsed.estimated_physical_characteristics || parsed.estimatedPhysicalCharacteristics || {}) },
+          training_structure: { ...baseline.training_structure, ...(parsed.training_structure || parsed.trainingStructure || {}) },
+          macronutrient_distribution: { ...baseline.macronutrient_distribution, ...(parsed.macronutrient_distribution || parsed.nutritionGuidance || {}) },
+          nutritionGuidance: { ...baseline.nutritionGuidance, ...(parsed.macronutrient_distribution || parsed.nutritionGuidance || {}) },
+          recovery_protocols: { ...baseline.recovery_protocols, ...(parsed.recovery_protocols || parsed.recoveryAndSleepRecommendations || {}) },
+          recoveryAndSleepRecommendations: { ...baseline.recoveryAndSleepRecommendations, ...(parsed.recovery_protocols || parsed.recoveryAndSleepRecommendations || {}) }
+        };
+        return merged;
+      }
+    }
+  } catch (err) {
+    // OpenRouter fallback
+  }
+
+  return generateDynamicBodyTransformationFallback(goal, preferences, images);
+}
+
+function generateDynamicBodyTransformationFallback(goal = 'lean_athletic', preferences = {}, images = {}) {
   const age = Number(preferences.age) || 26;
   const isMinor = age < 18;
   const exp = preferences.experience || 'intermediate';

@@ -31,7 +31,23 @@ function safeJsonParse(raw) {
   throw new Error('Could not parse AI response');
 }
 
-/* FitFuel API client — server se data save/load. Server na mile to localStorage pe chalta rehta hai. */
+function canonicalizeModelId(raw) {
+  if (!raw || typeof raw !== 'string') return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  const m = raw.trim().toLowerCase();
+  if (m === 'auto') return 'auto';
+  if (m.includes('laguna') || m.includes('poolside')) return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  if (m === 'nvidia/nemotron-3-ultra:free' || m.includes('nemotron-3-ultra')) return 'nvidia/nemotron-3-ultra-550b-a55b:free';
+  if (m === 'nvidia/nemotron-3-nano-omni:free' || m.includes('nemotron-3-nano')) return 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
+  if (m === 'nvidia/nemotron-3.5-super:free' || m === 'nvidia/nemotron-3.5-vl:free' || m.includes('nemotron-3.5-super-vl')) return 'nvidia/nemotron-3.5-super-vl:free';
+  if (m === 'nvidia/nemotron-3.5-lightning:free' || m.includes('nemotron-3.5-lightning')) return 'nvidia/nemotron-3.5-lightning:free';
+  if (m === 'google/gemma-4-26b-a4b:free' || m.includes('gemma-4-26b')) return 'google/gemma-4-26b-a4b-it:free';
+  if (m === 'google/gemma-4-31b:free' || m.includes('gemma-4-31b')) return 'google/gemma-4-31b-it:free';
+  if (m === 'xingchen-agi/xing4.0-29b-a4b:free' || m.includes('xing4.0') || m.includes('xing-4.0')) return 'xingchen-agi/xing4.0-29b-a4b:free';
+  if (m.includes('inkling-small')) return 'thinkingmachines/inkling-small:free';
+  if (m.includes('inkling')) return 'thinkingmachines/inkling:free';
+  return raw.trim();
+}
+
 const FF = {
   token: typeof localStorage !== 'undefined' ? (localStorage.getItem('ff_token') || null) : null,
   user: null,
@@ -232,12 +248,26 @@ const FF = {
     return (typeof localStorage !== 'undefined' ? localStorage.getItem('ff_openrouter_key') : '') || '';
   },
   freeModels: [
-    'openrouter/free',
-    'minimax/minimax-m3.1-flash:free',
-    'nvidia/nemotron-3.5-lightning:free',
+    'nvidia/nemotron-3-ultra-550b-a55b:free',
     'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-    'nvidia/nemotron-3.5-super-vl:free'
+    'nvidia/nemotron-3.5-super-vl:free',
+    'nvidia/nemotron-3.5-lightning:free',
+    'google/gemma-4-26b-a4b-it:free',
+    'xingchen-agi/xing4.0-29b-a4b:free',
+    'thinkingmachines/inkling-small:free'
   ],
+
+  async aiCoach(prompt, options = {}) {
+    const { image, images, model } = options || {};
+    try {
+      const res = await this.req('POST', '/api/ai-coach', { prompt, image, images, selectedModel: model, ...options });
+      if (res && res.content) {
+        this.lastAiModel = res.model || 'nvidia/nemotron-3-ultra-550b-a55b:free';
+        return stripEmojis(res.content).trim();
+      }
+    } catch (e) {}
+    return await this.callAI(prompt, 'You are FitFuel Dedicated AI Fitness Coach — an elite sports nutritionist and strength coach.', null, options);
+  },
 
   async callAI(prompt, systemPrompt = 'You are an elite sports nutritionist and fitness AI coach.', messages = null, options = {}) {
     const geminiKey = this.getGeminiKey();
@@ -246,7 +276,8 @@ const FF = {
 
     const baseSystemPrompt = (systemPrompt ? systemPrompt + ' ' : '') + 'Never use emojis in your response. Output clean, professional markdown only.';
     const { image, images, model } = options || {};
-    const selectedModel = model || (typeof localStorage !== 'undefined' ? localStorage.getItem('fitfuel_selected_ai_model') : 'liquid/lfm-2.5-2.6b:free') || 'liquid/lfm-2.5-2.6b:free';
+    const storedModel = typeof localStorage !== 'undefined' ? localStorage.getItem('fitfuel_selected_ai_model') : '';
+    let selectedModel = canonicalizeModelId(model || storedModel || 'nvidia/nemotron-3-ultra-550b-a55b:free');
     const imagesArray = Array.isArray(images)
       ? images.filter(Boolean)
       : (images && typeof images === 'object' ? Object.values(images).filter(Boolean) : []);
@@ -297,7 +328,7 @@ const FF = {
         ? [{ role: 'system', content: baseSystemPrompt }, ...messages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: stripEmojis(m.content || m.text) }))]
         : [{ role: 'system', content: baseSystemPrompt }, { role: 'user', content: stripEmojis(prompt) }];
 
-      const fetchModel = async (model, timeoutMs = 25000) => {
+      const fetchModel = async (modelToCall, timeoutMs = 25000) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         try {
@@ -311,11 +342,10 @@ const FF = {
               'X-Title': 'FitFuel AI Live Coach'
             },
             body: JSON.stringify({
-              model: model,
+              model: modelToCall,
               messages: clientMessages,
               temperature: isJson ? 0.2 : 0.6,
-              max_tokens: 2200,
-              reasoning: { max_tokens: 120 }
+              max_tokens: 2200
             })
           });
           clearTimeout(timeoutId);
@@ -323,7 +353,7 @@ const FF = {
           const data = await resp.json();
           const extracted = extractAiMessage(data);
           if (isValidAiOutput(extracted)) return extracted;
-          throw new Error('Invalid or error content from ' + model);
+          throw new Error('Invalid or error content from ' + modelToCall);
         } catch (err) {
           clearTimeout(timeoutId);
           throw err;
@@ -331,14 +361,18 @@ const FF = {
       };
 
       const clientModels = [
-        'minimax/minimax-m3.1-flash:free',
-        'openrouter/free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-3.5-super-vl:free',
         'nvidia/nemotron-3.5-lightning:free',
-        'liquid/lfm-2.5-2.6b:free'
+        'google/gemma-4-26b-a4b-it:free',
+        'xingchen-agi/xing4.0-29b-a4b:free',
+        'thinkingmachines/inkling-small:free',
+        'openrouter/free'
       ];
-      for (const model of clientModels) {
+      for (const mId of clientModels) {
         try {
-          const content = await fetchModel(model, 20000);
+          const content = await fetchModel(mId, 18000);
           if (content) return content;
         } catch (e) {}
       }
@@ -383,6 +417,13 @@ Return ONLY valid JSON matching this exact structure:
   },
 
   async aiGeneratePlan(profileData) {
+    try {
+      const res = await this.req('POST', '/api/ai-plan', { profileData, ...profileData });
+      if (res && res.plan && res.plan.cal && res.plan.workout) {
+        return res.plan;
+      }
+    } catch (e) {}
+
     const prompt = `Create a complete, highly personalized nutrition and workout plan for this user:
 - Weight: ${profileData.wKg} kg (${profileData.units})
 - Height: ${profileData.hCm} cm
@@ -508,7 +549,7 @@ function cleanReasoningToMarkdown(raw) {
   return text;
 }
 
-function extractAiMessage(data) {
+function extractAiMessage(data, isJson = false) {
   const choice = data?.choices?.[0];
   if (!choice || !choice.message) return null;
   const msg = choice.message;
@@ -517,8 +558,13 @@ function extractAiMessage(data) {
   }
   const reasoning = msg.reasoning || (Array.isArray(msg.reasoning_details) ? msg.reasoning_details.map(d => d.text).join('\n') : null);
   if (reasoning && typeof reasoning === 'string') {
+    if (isJson) {
+      const match = reasoning.match(/\{[\s\S]*\}/);
+      if (match) return match[0];
+    }
     const cleaned = cleanReasoningToMarkdown(reasoning);
     if (cleaned && cleaned.length >= 8) return stripEmojis(cleaned).trim();
+    if (reasoning.trim().length >= 8) return stripEmojis(reasoning).trim();
   }
   return null;
 }

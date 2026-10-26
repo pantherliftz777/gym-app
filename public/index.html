@@ -31,31 +31,45 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=5.2.0">
+  <link rel="stylesheet" href="styles.css?v=5.9.1">
   <link rel="stylesheet" href="exercise-animations.css?v=1.0">
 </head>
 <body>
 <div class="app-shell">
   <!-- ================= SIDEBAR ================= -->
   <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <span class="brand-mark">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
-          <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
-        </svg>
-      </span>
-      <span class="brand-title">Fit<span class="mint" style="color:#16c79a;font-weight:900;">Fuel</span></span>
-      <button type="button" class="sidebar-collapse-toggle-btn" id="sidebarCollapseToggleBtn" title="Hide/Show Navigation" aria-label="Toggle navigation">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
-        </svg>
-      </button>
+    <!-- Brand / Logo Section (Slid higher) -->
+    <div class="sidebar-brand-wrapper">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16c79a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity">
+            <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
+          </svg>
+        </span>
+        <span class="brand-title">Fit<span class="mint" style="color:#16c79a;font-weight:900;">Fuel</span></span>
+      </div>
     </div>
 
-    <div class="sidebar-label">YOUR SPACE</div>
+    <!-- Partition divider line below logo & brand -->
+    <div class="sidebar-partition-line"></div>
 
-    <nav class="primary-nav" aria-label="Main navigation">
-      <button class="nav-link selected" data-view="today">
+    <!-- Three lines toggle button bar -->
+    <div class="sidebar-control-bar">
+      <button type="button" class="sidebar-collapse-toggle-btn" id="sidebarCollapseToggleBtn" title="Toggle Your Space (Click to stabilize/close, hover to preview)" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <span class="sidebar-space-title">YOUR SPACE</span>
+    </div>
+
+    <!-- Smoothly scrollable primary navigation -->
+    <nav class="primary-nav" id="sidebarPrimaryNav" aria-label="Main navigation">
+      <!-- 1. OVERVIEW -->
+      <div class="nav-group-header">OVERVIEW</div>
+      <button class="nav-link selected" data-view="today" id="sidebarTodayBtn" title="Today Overview">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>
         </svg>
@@ -63,39 +77,18 @@
         <span class="nav-active-dot"></span>
       </button>
 
-      <!-- DEDICATED AI FITNESS COACH (REFERENCE IMAGE 2) -->
-      <button class="nav-link" data-view="ai-coach" id="sidebarAiCoachBtn">
+      <!-- 2. AI & MOTION -->
+      <div class="nav-group-header">AI &amp; MOTION</div>
+      <button class="nav-link" data-view="ai-coach" id="sidebarAiCoachBtn" title="AI Fitness Coach">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"></path>
           <path d="M9 10h.01"></path><path d="M15 10h.01"></path>
         </svg>
         <span>AI Coach</span>
-        <span style="font-size:0.62rem;background:rgba(22,199,154,0.18);color:#16C79A;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(22,199,154,0.35);">LIVE</span>
+        <span class="nav-badge-pill live">LIVE</span>
       </button>
 
-      <!-- DEDICATED AI BODY ANALYSIS & TRANSFORMATION PLANNER -->
-      <button class="nav-link" data-view="body-analysis" id="sidebarBodyAnalysisBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="5" r="3"></circle>
-          <path d="M12 8v8"></path>
-          <path d="m8 12 4 1 4-1"></path>
-          <path d="m9 21 3-5 3 5"></path>
-        </svg>
-        <span>Body Analysis</span>
-        <span style="font-size:0.62rem;background:rgba(2,132,199,0.18);color:#0284c7;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(2,132,199,0.35);">AI SCAN</span>
-      </button>
-
-      <!-- LIVE ACTIVITY & GPS TRACKER (SECTION 13 & 14) -->
-      <button class="nav-link" data-view="activity" id="sidebarActivityBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-        </svg>
-        <span>Activity &amp; GPS</span>
-      </button>
-
-      <!-- CAMERA-BASED AI POSTURE TRACKER & FORM CHECKER (SECTION 16 & 17) -->
-      <button class="nav-link" data-view="posture" id="sidebarPostureBtn">
+      <button class="nav-link" data-view="posture" id="sidebarPostureBtn" title="Camera Posture AI">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
           <circle cx="12" cy="13" r="4"></circle>
@@ -103,14 +96,28 @@
         <span>Posture AI</span>
       </button>
 
-      <button class="nav-link" data-view="food-log">
+      <button class="nav-link" data-view="activity" id="sidebarActivityBtn" title="Activity & GPS Tracker">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
         </svg>
-        <span>Food log</span>
+        <span>Activity &amp; GPS</span>
       </button>
 
-      <button class="nav-link" data-view="workouts">
+      <button class="nav-link" data-view="body-analysis" id="sidebarBodyAnalysisBtn" title="AI Body Analysis & Scan">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="5" r="3"></circle>
+          <path d="M12 8v8"></path>
+          <path d="m8 12 4 1 4-1"></path>
+          <path d="m9 21 3-5 3 5"></path>
+        </svg>
+        <span>Body Analysis</span>
+        <span class="nav-badge-pill scan">AI SCAN</span>
+      </button>
+
+      <!-- 3. TRAINING -->
+      <div class="nav-group-header">TRAINING</div>
+      <button class="nav-link" data-view="workouts" id="sidebarWorkoutsBtn" title="Workouts & Training Plans">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
           <path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path>
@@ -120,43 +127,57 @@
         <span>Workouts</span>
       </button>
 
-      <button class="nav-link" data-view="starting-load">
+      <button class="nav-link" data-view="exercise-library" id="sidebarExerciseLibraryBtn" title="Exercise Library">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>
-        </svg>
-        <span>Smart Start</span>
-      </button>
-
-      <button class="nav-link" data-view="exercise-library">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
         </svg>
         <span>Exercise library</span>
       </button>
 
-      <button class="nav-link" data-view="my-foods">
+      <button class="nav-link" data-view="starting-load" id="sidebarSmartStartBtn" title="Smart Start Calculator">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path>
+          <path d="m12 2 10 5-10 5-10-5Z"></path>
+          <path d="m2 12 10 5 10-5"></path>
+          <path d="m2 17 10 5 10-5"></path>
+        </svg>
+        <span>Smart Start</span>
+      </button>
+
+      <!-- 4. NUTRITION -->
+      <div class="nav-group-header">NUTRITION</div>
+      <button class="nav-link" data-view="food-log" id="sidebarFoodLogBtn" title="Daily Food Log">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+        </svg>
+        <span>Food log</span>
+      </button>
+
+      <button class="nav-link" data-view="my-foods" id="sidebarMyFoodsBtn" title="My Foods & Custom Recipes">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
+          <path d="M10 2c1 .5 2 2 2 5"></path>
         </svg>
         <span>My foods</span>
       </button>
 
-      <button class="nav-link" data-view="challenge">
+      <!-- 5. OTHER -->
+      <div class="nav-group-header">OTHER</div>
+      <button class="nav-link" data-view="challenge" id="sidebarChallengeBtn" title="30-Day Fitness Challenge">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
         </svg>
         <span>Challenge</span>
       </button>
 
-      <button class="nav-link" data-view="tracking">
+      <button class="nav-link" data-view="tracking" id="sidebarTrackingBtn" title="Progress & Body Tracking">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>
         </svg>
         <span>Tracking</span>
       </button>
 
-      <!-- CUSTOMIZATION PANEL (REFERENCE IMAGE 1) -->
-      <button class="nav-link" data-view="customization" id="sidebarCustomizationBtn">
+      <button class="nav-link" data-view="customization" id="sidebarCustomizationBtn" title="Settings & Customization">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -164,25 +185,17 @@
         <span>Customization</span>
       </button>
 
-      <button class="nav-link" data-view="profile">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle>
-        </svg>
-        <span>Profile</span>
-      </button>
-
-      <!-- Dedicated Admin Portal Navigation Link (Shown for Admins) -->
-      <button class="nav-link admin-only-link" data-view="admin" id="sidebarAdminNavBtn" style="display:none;color:#38bdf8;">
+      <!-- Admin Portal (Shown for Admins) -->
+      <button class="nav-link admin-only-link" data-view="admin" id="sidebarAdminNavBtn" style="display:none;color:#38bdf8;" title="Admin Portal">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
           <path d="m9 12 2 2 4-4"></path>
         </svg>
         <span>Admin Portal</span>
-        <span style="font-size:0.65rem;background:#1e3a8a;color:#38bdf8;padding:2px 7px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid #38bdf8;">ADMIN</span>
+        <span class="nav-badge-pill admin">ADMIN</span>
       </button>
     </nav>
-
-    <div class="sidebar-bottom">
+<div class="sidebar-bottom">
       <div class="weekly-mini">
         <div class="week-mini-top">
           <span>WEEKLY STREAK</span>
@@ -302,6 +315,7 @@
         <!-- ================= A STRONGER YOU HERO BANNER (USER REFERENCE DESIGN) ================= -->
         <div class="stronger-you-hero-card">
           <!-- TOP BAR INSIDE HERO -->
+          <div class="sy-hero-top-bar">
             <!-- Brand / Logo (Image 5: 100% Unified with Sidebar) -->
             <div class="sy-hero-brand" title="FitFuel Athletic Performance">
               <span class="sy-brand-icon brand-mark">
@@ -376,29 +390,29 @@
               </div>
             </div>
 
-            <!-- Right side metric cards column: Calories, Workout, Protein stacked neatly ON THE SIDE -->
+            <!-- Right side metric cards column: Hydration, Workout, Streak stacked neatly ON THE SIDE -->
             <div class="sy-hero-metrics-col">
               <div class="sy-metrics-stack">
-                <!-- Side Card 1: Calories -->
-                <div class="sy-side-card sy-card-calories" id="syFloatCaloriesTrigger" role="button" tabindex="0" title="Click to open Calorie &amp; Nutrition tracker">
+                <!-- Side Card 1: Hydration -->
+                <div class="sy-side-card sy-card-water" id="syFloatWaterTrigger" role="button" tabindex="0" title="Click to view hydration details">
                   <div class="sy-scard-left">
-                    <div class="sy-scard-icon-badge flame">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                    <div class="sy-scard-icon-badge water" style="background:rgba(2,132,199,0.12);color:#0284c7;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                       </svg>
                     </div>
                     <div class="sy-card-info">
-                      <span class="sy-card-label">Calories</span>
-                      <b class="sy-card-val"><span id="syHeroCalBurned">1,250</span> / <span id="syHeroCalTarget">2,200</span> <small>kcal</small></b>
+                      <span class="sy-card-label">Hydration</span>
+                      <b class="sy-card-val"><span id="syHeroWaterCurrent">1.0</span> / <span id="syHeroWaterTarget">2.8</span> <small>L</small></b>
                     </div>
                   </div>
                   <div class="sy-scard-right">
                     <div class="sy-card-ring-box">
                       <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
-                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(37,99,235,0.12)" stroke-width="3.5"/>
-                        <path class="sy-circle-fill sy-cyan-stroke" stroke-dasharray="57, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round"/>
+                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(2,132,199,0.12)" stroke-width="3.5"/>
+                        <path class="sy-circle-fill sy-cyan-stroke" stroke-dasharray="40, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round"/>
                       </svg>
-                      <span class="sy-ring-pct" style="color:#0284c7;">57%</span>
+                      <span class="sy-ring-pct" style="color:#0284c7;" id="syHeroWaterPct">40%</span>
                     </div>
                     <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
                   </div>
@@ -423,36 +437,29 @@
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
                     </button>
-                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
                   </div>
                 </div>
 
-                <!-- Side Card 3: Protein -->
-                <div class="sy-side-card sy-card-protein" id="syFloatProteinTrigger" role="button" tabindex="0" title="Click to open Protein &amp; Food Log">
+                <!-- Side Card 3: Consistency Streak -->
+                <div class="sy-side-card sy-card-streak" id="syFloatStreakTrigger" role="button" tabindex="0" title="Click to view habit streak tracking">
                   <div class="sy-scard-left">
-                    <div class="sy-scard-icon-badge protein">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"/>
-                        <circle cx="6" cy="6" r="2.5"/>
-                        <circle cx="18" cy="6" r="2.5"/>
-                        <circle cx="12" cy="19" r="2.5"/>
-                        <line x1="8" y1="8" x2="10" y2="10"/>
-                        <line x1="16" y1="8" x2="14" y2="10"/>
-                        <line x1="12" y1="15" x2="12" y2="16.5"/>
+                    <div class="sy-scard-icon-badge streak" style="background:rgba(245,158,11,0.12);color:#f59e0b;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
                       </svg>
                     </div>
                     <div class="sy-card-info">
-                      <span class="sy-card-label">Protein</span>
-                      <b class="sy-card-val"><span id="syHeroProteinEaten">120g</span> / <span id="syHeroProteinTarget">180g</span></b>
+                      <span class="sy-card-label">Consistency</span>
+                      <b class="sy-card-val"><span id="syHeroStreakDays">12</span> <small>Days Active</small></b>
                     </div>
                   </div>
                   <div class="sy-scard-right">
                     <div class="sy-card-ring-box">
                       <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
-                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(16,185,129,0.12)" stroke-width="3.5"/>
-                        <path class="sy-circle-fill sy-mint-stroke" stroke-dasharray="67, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(245,158,11,0.12)" stroke-width="3.5"/>
+                        <path class="sy-circle-fill sy-amber-stroke" stroke-dasharray="85, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
                       </svg>
-                      <span class="sy-ring-pct" style="color:#10b981;">67%</span>
+                      <span class="sy-ring-pct" style="color:#f59e0b;">85%</span>
                     </div>
                     <button type="button" class="sy-scard-menu-dots" aria-label="More options">•••</button>
                   </div>
@@ -529,30 +536,29 @@
               </div>
             </div>
 
-            <!-- Card 2: Calorie & Nutrition (Mint theme) -->
-            <div class="sy-bottom-card sy-card-mint" id="syBottomCardNutrition" role="button" tabindex="0">
+            <!-- Card 2: Hydration Engine (Cyan/Blue theme) -->
+            <div class="sy-bottom-card sy-card-cyan" id="syBottomCardWater" role="button" tabindex="0">
               <div class="sy-bcard-top-row">
                 <button type="button" class="sy-bcard-menu-dots" aria-label="Options">•••</button>
               </div>
               <div class="sy-bcard-center">
-                <div class="sy-bcard-big-badge mint">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
-                    <path d="M10 2c1 .5 2 2 2 5"></path>
+                <div class="sy-bcard-big-badge cyan" style="background:rgba(2,132,199,0.12);color:#0284c7;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                   </svg>
                 </div>
-                <h3 class="sy-bcard-title">Calorie &amp; Nutrition</h3>
-                <p class="sy-bcard-sub">Track calories, protein, carbs and fats with ease</p>
+                <h3 class="sy-bcard-title">Hydration Architecture</h3>
+                <p class="sy-bcard-sub">Daily water calculation, weather adaptation &amp; creatine support</p>
               </div>
               <div class="sy-bcard-bottom-row">
-                <button type="button" class="sy-bcard-action-btn mint" aria-label="Go to Calorie & Nutrition">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" class="sy-bcard-action-btn cyan" aria-label="Go to Hydration Tracker" style="background:#0284c7;color:#fff;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
                 </button>
                 <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
-                  <path d="M0 26 C 40 22, 80 34, 120 18 C 140 12, 150 16, 160 22" stroke="#10b981" stroke-width="2.8" stroke-linecap="round"/>
+                  <path d="M0 26 C 40 22, 80 34, 120 18 C 140 12, 150 16, 160 22" stroke="#0284c7" stroke-width="2.8" stroke-linecap="round"/>
                 </svg>
               </div>
             </div>
@@ -648,51 +654,51 @@
 
         <!-- 4 DASHBOARD METRICS CARDS (REFERENCE IMAGE 3) -->
         <div class="dash-metrics-grid-v2" id="dashMetricsGridV2">
-          <!-- CARD 1: CALORIES -->
-          <div class="metric-card-v2" id="metricCardCalTrigger" style="cursor:pointer;" title="Click to view calorie log">
+          <!-- CARD 1: HYDRATION -->
+          <div class="metric-card-v2" id="metricCardWaterTrigger" style="cursor:pointer;" title="Click to view hydration breakdown">
             <div class="metric-info">
               <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
-                <span style="width:24px;height:24px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;color:#2563eb;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                <span style="width:24px;height:24px;border-radius:50%;background:rgba(2,132,199,0.12);display:flex;align-items:center;justify-content:center;color:#0284c7;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                 </span>
-                Calories
+                Hydration
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="metricV2CalVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">1,850</span>
-                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / 2,200 kcal</span>
+                <span class="metric-val" id="metricV2WaterVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">1.0</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / <span id="metricV2WaterGoalVal">2.8</span> L</span>
               </div>
-              <span class="metric-sub" id="metricV2CalSub" style="font-size:.76rem;color:#2563eb;font-weight:700;">350 kcal remaining</span>
+              <span class="metric-sub" id="metricV2WaterSub" style="font-size:.76rem;color:#0284c7;font-weight:700;">1.8 L remaining · Optimal</span>
             </div>
             <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
               <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2CalCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-dasharray="84, 100" stroke-linecap="round" />
+                <path id="metricV2WaterCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-dasharray="36, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" id="metricV2CalPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">84%</span>
+              <span class="pct-text" id="metricV2WaterPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">36%</span>
             </div>
           </div>
 
-          <!-- CARD 2: PROTEIN -->
-          <div class="metric-card-v2" id="metricCardProteinTrigger" style="cursor:pointer;" title="Click to view macro targets">
+          <!-- CARD 2: ACTIVE ENERGY -->
+          <div class="metric-card-v2" id="metricCardEnergyTrigger" style="cursor:pointer;" title="Click to view activity details">
             <div class="metric-info">
               <span class="metric-label" style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ff-text-secondary);text-transform:uppercase;letter-spacing:.04em;">
-                <span style="width:24px;height:24px;border-radius:50%;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;color:#8b5cf6;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span style="width:24px;height:24px;border-radius:50%;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;color:#f59e0b;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                 </span>
-                Protein
+                Active Burn
               </span>
               <div style="margin:6px 0 2px;">
-                <span class="metric-val" id="metricV2ProteinVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">120</span>
-                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> / 180 g</span>
+                <span class="metric-val" id="metricV2EnergyVal" style="font-size:1.65rem;font-weight:900;color:var(--ff-text-primary);letter-spacing:-.02em;">420</span>
+                <span style="font-size:.86rem;color:var(--ff-text-muted);font-weight:600;"> kcal</span>
               </div>
-              <span class="metric-sub" id="metricV2ProteinSub" style="font-size:.76rem;color:#8b5cf6;font-weight:700;">60 g left to reach target</span>
+              <span class="metric-sub" id="metricV2EnergySub" style="font-size:.76rem;color:#f59e0b;font-weight:700;">Daily Movement &amp; Workout</span>
             </div>
             <div class="progress-circle-wrap" style="width:52px;height:52px;position:relative;">
               <svg viewBox="0 0 36 36" style="width:52px;height:52px;">
                 <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(207, 229, 255, 0.4)" stroke-width="3.5" />
-                <path id="metricV2ProteinCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#8b5cf6" stroke-width="3.5" stroke-dasharray="67, 100" stroke-linecap="round" />
+                <path id="metricV2EnergyCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-dasharray="70, 100" stroke-linecap="round" />
               </svg>
-              <span class="pct-text" id="metricV2ProteinPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">67%</span>
+              <span class="pct-text" id="metricV2EnergyPct" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--ff-text-primary);">70%</span>
             </div>
           </div>
 
@@ -752,146 +758,88 @@
 
         <!-- DASHBOARD MIDDLE ANALYTICS ROW (IMAGE 3) -->
         <div class="dash-analytics-row-v2" id="dashAnalyticsRowV2">
-          <!-- CARD 1: CALORIE INTAKE VS GOAL (BAR CHART) -->
-          <div class="panel" style="padding:20px 22px;">
-            <div class="card-heading-v2" style="margin-bottom:12px;">
-              <div>
-                <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">Calorie Intake vs Goal</h3>
-                <span style="font-size:.75rem;color:var(--ff-text-secondary);">Oct 14 – 20 · Daily Tracking</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:12px;font-size:.74rem;font-weight:700;">
-                <span style="display:flex;align-items:center;gap:5px;color:var(--ff-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#2563eb;"></span>Intake</span>
-                <span style="display:flex;align-items:center;gap:5px;color:var(--ff-text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:#16c79a;"></span>Goal</span>
-              </div>
-            </div>
-
-            <!-- Dual Bars SVG Container -->
-            <div style="position:relative;height:160px;margin:14px 0 6px;">
-              <!-- Target baseline line (2,200 kcal) -->
-              <div style="position:absolute;top:22%;left:0;right:0;border-top:1px dashed rgba(22,199,154,0.5);display:flex;justify-content:flex-end;">
-                <span style="font-size:.68rem;color:var(--glass-accent-mint);background:rgba(22,199,154,0.12);padding:1px 6px;border-radius:4px;font-weight:700;">Goal: 2,200 kcal</span>
+          <!-- CARD 1: DAILY HYDRATION ARCHITECTURE & WATER INTAKE -->
+          <article class="panel water-panel" id="todayWaterIntakePanel" style="padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div class="panel-heading" style="margin-bottom:12px;">
+                <div>
+                  <span class="section-kicker" style="color:#0284c7;font-weight:800;letter-spacing:0.05em;">DAILY HYDRATION ARCHITECTURE</span>
+                  <h3 style="font-size:1.15rem;font-weight:800;color:var(--ff-text-primary);margin:2px 0 0;">Water Intake &amp; Balance</h3>
+                </div>
+                <button class="quiet-icon" aria-label="Reset water intake" id="resetWaterBtn" title="Reset water intake" style="cursor:pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path>
+                  </svg>
+                </button>
               </div>
 
-              <!-- 7 Days Dual Bars -->
-              <div style="display:flex;align-items:flex-end;justify-content:space-between;height:100%;padding:0 4px;gap:8px;">
-                <!-- Mon Oct 14 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:88%;background:#2563eb;border-radius:4px 4px 0 0;" title="Mon Oct 14: 1,950 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+              <!-- FRONT SCREEN DAILY WATER ESTIMATE & WEATHER ADVISORY -->
+              <div class="front-water-advisory-card" id="frontWaterAdvisoryCard" style="margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                  <div>
+                    <span style="font-size:.72rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;">PERSONALIZED HYDRATION TARGET</span>
+                    <div style="font-size:1.25rem;font-weight:900;color:var(--glass-text-primary);margin-top:2px;">
+                      Target: <span id="frontCalculatedWaterL">2.8</span> L / day
+                    </div>
                   </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">14</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">M</span>
+                  <button type="button" class="header-weather-temp" id="frontWeatherBadgeBtn" title="Click to adjust climate temperature" style="cursor:pointer;">
+                    <span id="frontWeatherIcon">☀️</span> <span id="frontWeatherTemp">29°C</span> · <span id="frontWeatherLabel">Warm</span>
+                  </button>
                 </div>
-                <!-- Tue Oct 15 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:95%;background:#2563eb;border-radius:4px 4px 0 0;" title="Tue Oct 15: 2,100 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+
+                <!-- Interactive Creatine Input & Weather Breakdown -->
+                <div class="front-water-breakdown-row" style="margin-top:10px;">
+                  <div class="front-water-pill">
+                    <span>Base Demand</span>
+                    <b id="waterBreakdownBase">2.4 L</b>
                   </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">15</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">T</span>
-                </div>
-                <!-- Wed Oct 16 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:82%;background:#2563eb;border-radius:4px 4px 0 0;" title="Wed Oct 16: 1,820 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  <div class="front-water-pill">
+                    <span>Creatine Added</span>
+                    <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+                      <input type="number" id="frontCreatineGramsInput" min="0" max="30" step="1" value="5" style="width:48px;padding:2px 4px;font-weight:800;border:1.5px solid #cbd5e1;border-radius:6px;font-size:.85rem;color:var(--glass-text-primary);background:#fff;" title="Grams of creatine taken today" />
+                      <span style="font-size:.74rem;font-weight:700;color:var(--glass-text-secondary);">g (<span id="waterBreakdownCreatine">+500</span>ml)</span>
+                    </div>
                   </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">16</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">W</span>
-                </div>
-                <!-- Thu Oct 17 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:102%;background:#2563eb;border-radius:4px 4px 0 0;" title="Thu Oct 17: 2,250 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  <div class="front-water-pill">
+                    <span>Weather Impact</span>
+                    <b id="waterBreakdownWeather">+250 ml (Warm)</b>
                   </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">17</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">T</span>
-                </div>
-                <!-- Fri Oct 18 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:93%;background:#2563eb;border-radius:4px 4px 0 0;" title="Fri Oct 18: 2,050 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
+                  <div class="front-water-pill">
+                    <span>Workout Demand</span>
+                    <b id="waterBreakdownWorkout">+300 ml</b>
                   </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">18</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">F</span>
                 </div>
-                <!-- Sat Oct 19 -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:99%;background:#2563eb;border-radius:4px 4px 0 0;" title="Sat Oct 19: 2,180 kcal"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
-                  </div>
-                  <span style="font-size:.7rem;color:var(--ff-text-muted);font-weight:700;">19</span>
-                  <span style="font-size:.64rem;color:var(--ff-text-muted);">S</span>
+              </div>
+
+              <!-- Water Readout & Progress -->
+              <div class="water-readout" style="display:flex;align-items:baseline;justify-content:space-between;margin:12px 0 8px;">
+                <div>
+                  <strong id="waterDisplay" style="font-size:1.85rem;font-weight:900;color:#0284c7;">1.0<small style="font-size:1rem;color:var(--ff-text-muted);"> L</small></strong>
+                  <span style="font-size:0.85rem;color:var(--ff-text-secondary);margin-left:6px;">of <span id="waterGoalDisplay">2.8</span> L goal</span>
                 </div>
-                <!-- Sun Oct 20 (Today) -->
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
-                  <div style="display:flex;align-items:flex-end;gap:3px;height:80%;">
-                    <div style="width:10px;height:84%;background:#2563eb;border-radius:4px 4px 0 0;box-shadow:0 0 8px rgba(37,99,235,0.4);" title="Sun Oct 20: 1,850 kcal (Today)"></div>
-                    <div style="width:10px;height:100%;background:#16c79a;border-radius:4px 4px 0 0;opacity:.7;" title="Goal: 2,200 kcal"></div>
-                  </div>
-                  <span style="font-size:.7rem;color:#2563eb;font-weight:800;">20</span>
-                  <span style="font-size:.64rem;color:#2563eb;font-weight:700;">S</span>
+                <!-- Quick Log Action Pills -->
+                <div style="display:flex;gap:6px;">
+                  <button type="button" class="solid-button small" id="quickAddWater250Btn" style="padding:4px 10px;font-size:0.75rem;background:rgba(2,132,199,0.12);color:#0284c7;border:1px solid rgba(2,132,199,0.3);border-radius:99px;cursor:pointer;" title="Quick log one 250ml glass">+250 ml</button>
+                  <button type="button" class="solid-button small" id="quickAddWater500Btn" style="padding:4px 10px;font-size:0.75rem;background:#0284c7;color:#fff;border:none;border-radius:99px;cursor:pointer;" title="Quick log a 500ml shaker">+500 ml</button>
                 </div>
+              </div>
+
+              <!-- 12 Interactive Water Glasses -->
+              <div class="water-cups" id="waterCups" style="margin:10px 0;">
+                <!-- Dynamically populated 12 cups with glass SVG -->
               </div>
             </div>
 
-            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--ff-glass-border-subtle);font-size:0.78rem;color:var(--ff-text-secondary);">
-              <span>Daily Avg: <b style="color:var(--ff-text-primary);">2,028 kcal</b></span>
-              <span style="color:#16c79a;font-weight:700;">Target Adherence: 94%</span>
-            </div>
-          </div>
-
-          <!-- CARD 2: MACRONUTRIENT DISTRIBUTION (DONUT) -->
-          <div class="panel" style="padding:20px 22px;">
-            <div class="card-heading-v2" style="margin-bottom:12px;">
-              <div>
-                <h3 style="font-size:1.05rem;font-weight:800;color:var(--ff-text-primary);margin:0;">Macronutrient Distribution</h3>
-                <span style="font-size:.75rem;color:var(--ff-text-secondary);">Today's Macro Breakdown</span>
-              </div>
-              <span style="font-size:0.74rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);font-weight:700;padding:2px 8px;border-radius:99px;">Balanced</span>
-            </div>
-
-            <!-- Donut with centered 1,850 kcal -->
-            <div style="display:flex;align-items:center;justify-content:center;margin:10px 0;">
-              <div class="progress-circle-wrap" style="width:130px;height:130px;position:relative;">
-                <svg viewBox="0 0 36 36" style="width:130px;height:130px;">
-                  <!-- Background ring -->
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(207,229,255,0.3)" stroke-width="4.5" />
-                  <!-- Protein: 26% (Blue) -->
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#2563eb" stroke-width="4.5" stroke-dasharray="26, 100" stroke-dashoffset="0" />
-                  <!-- Carbs: 48% (Mint) -->
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#16c79a" stroke-width="4.5" stroke-dasharray="48, 100" stroke-dashoffset="-26" />
-                  <!-- Fats: 26% (Amber) -->
-                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="26, 100" stroke-dashoffset="-74" />
+            <div class="water-foot" style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.76rem;color:var(--ff-text-muted);">Smart dynamic tracking (250 ml / glass)</span>
+              <button type="button" id="adjustWaterBtn" style="cursor:pointer;background:none;border:none;color:#0284c7;font-weight:700;font-size:0.82rem;display:inline-flex;align-items:center;gap:4px;">
+                Adjust Climate / Target
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
                 </svg>
-                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-                  <span style="font-size:1.25rem;font-weight:900;color:var(--ff-text-primary);line-height:1;" id="donutCenterKcal">1,850</span>
-                  <span style="font-size:.68rem;color:var(--ff-text-muted);font-weight:600;margin-top:2px;">kcal</span>
-                </div>
-              </div>
+              </button>
             </div>
-
-            <!-- Legend strip -->
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#2563eb;"></span>Protein (26%)</span>
-                <b id="donutProteinVal" style="color:var(--ff-text-primary);">120g / 180g</b>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#16c79a;"></span>Carbs (48%)</span>
-                <b id="donutCarbsVal" style="color:var(--ff-text-primary);">222g / 240g</b>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;">
-                <span style="display:flex;align-items:center;gap:6px;color:var(--ff-text-secondary);"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>Fats (26%)</span>
-                <b id="donutFatsVal" style="color:var(--ff-text-primary);">53g / 65g</b>
-              </div>
-            </div>
-          </div>
+          </article>
 
           <!-- CARD 3: 3D BODY COMPOSITION & ANATOMY -->
           <div class="panel" style="padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;">
@@ -946,16 +894,16 @@
               <!-- Task 1 -->
               <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  Oats with Banana &amp; Almonds
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Morning Hydration (500 ml water)
                 </span>
-                <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
+                <span style="font-size:0.7rem;background:rgba(2,132,199,0.15);color:#0284c7;padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
               </div>
               <!-- Task 2 -->
               <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16C79A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  Grilled Chicken &amp; Quinoa Bowl
+                  Mobility &amp; Dynamic Core Warmup
                 </span>
                 <span style="font-size:0.7rem;background:rgba(22,199,154,0.15);color:var(--glass-accent-mint);padding:2px 7px;border-radius:99px;font-weight:800;">DONE</span>
               </div>
@@ -963,7 +911,7 @@
               <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                  Workout: Back &amp; Biceps
+                  Workout: Back &amp; Biceps Hypertrophy
                 </span>
                 <span style="font-size:0.7rem;background:rgba(37,99,235,0.12);color:#2563eb;padding:2px 7px;border-radius:99px;font-weight:800;">IN PROGRESS</span>
               </div>
@@ -971,7 +919,7 @@
               <div class="plan-item-v2" style="padding:8px 10px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:0.84rem;font-weight:600;display:flex;align-items:center;gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                  Dinner: Paneer &amp; Brown Rice
+                  Evening Posture Recovery &amp; Walk
                 </span>
                 <span style="font-size:0.7rem;color:var(--ff-text-muted);font-weight:600;">UPCOMING</span>
               </div>
@@ -1211,169 +1159,47 @@
         </div>
 
         <div class="dashboard-grid">
-          <!-- CALORIES PANEL -->
-          <article class="panel calories-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="section-kicker">NUTRITION</span>
-                <h3>Calories today</h3>
-              </div>
-              <button class="text-button" id="goToFoodLogFromDash">
-                Food log
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </button>
-            </div>
-
-            <div class="calories-content">
-              <div class="calorie-ring" id="dashCalRing" style="background:conic-gradient(#38bdf8 188deg, #ecefe8 0deg)">
-                <div class="ring-inner">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"></path>
-                  </svg>
-                  <strong id="dashCalLeft">1,000</strong>
-                  <span>kcal left</span>
-                </div>
-              </div>
-
-              <div class="calories-number">
+          <!-- AI MOTION & POSTURE PREVIEW PANEL -->
+          <article class="panel posture-ai-preview-panel" style="padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div class="panel-heading" style="margin-bottom:12px;">
                 <div>
-                  <strong id="dashCalConsumed">1,100</strong>
-                  <span> / <span id="dashCalGoal">2,100</span> kcal</span>
+                  <span class="section-kicker" style="color:#8b5cf6;font-weight:800;letter-spacing:0.05em;">AI MOTION &amp; REPS</span>
+                  <h3 style="font-size:1.15rem;font-weight:800;color:var(--ff-text-primary);margin:2px 0 0;">Posture AI Form Detector</h3>
                 </div>
-                <p>
-                  <span class="positive">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                <span class="card-dropdown-pill" style="background:rgba(139,92,246,0.12);color:#8b5cf6;font-weight:700;">IR Rep Track</span>
+              </div>
+
+              <div style="background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);border-radius:12px;padding:14px;margin-bottom:14px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:38px;height:38px;border-radius:10px;background:rgba(139,92,246,0.15);display:flex;align-items:center;justify-content:center;color:#8b5cf6;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
                     </svg>
-                    <span id="dashPctNum">52%</span>
-                  </span>
-                  of your daily nutrition target
-                </p>
-                <div class="calorie-meter">
-                  <i id="dashCalMeterBar" style="width:52%"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="macro-summary">
-              <div class="macro-line">
-                <span class="macro-dot protein-dot"></span>
-                <span>Protein</span>
-                <b><span id="dashP">93</span>g</b>
-              </div>
-              <div class="macro-line">
-                <span class="macro-dot carbs-dot"></span>
-                <span>Carbs</span>
-                <b><span id="dashC">106</span>g</b>
-              </div>
-              <div class="macro-line">
-                <span class="macro-dot fat-dot"></span>
-                <span>Fat</span>
-                <b><span id="dashF">32</span>g</b>
-              </div>
-            </div>
-          </article>
-
-          <!-- WATER PANEL -->
-          <article class="panel water-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="section-kicker">HYDRATION</span>
-                <h3>Water intake</h3>
-              </div>
-              <button class="quiet-icon" aria-label="Reset water intake" id="resetWaterBtn" title="Reset water">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path>
-                </svg>
-              </button>
-            </div>
-
-            <!-- FRONT SCREEN DAILY WATER ESTIMATE & WEATHER ADVISORY -->
-            <div class="front-water-advisory-card" id="frontWaterAdvisoryCard">
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-                <div>
-                  <span style="font-size:.72rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;">DAILY WATER ESTIMATE &amp; ADVISORY</span>
-                  <div style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin-top:2px;">
-                    Target: <span id="frontCalculatedWaterL">2.8</span> L / day
+                  </div>
+                  <div>
+                    <b style="font-size:0.92rem;color:var(--ff-text-primary);display:block;">Precision Form Guidance</b>
+                    <span style="font-size:0.78rem;color:var(--ff-text-secondary);display:block;line-height:1.4;">
+                      Computer-vision posture scoring, infrared-accuracy rep counting, and audio feedback.
+                    </span>
                   </div>
                 </div>
-                <button type="button" class="header-weather-temp" id="frontWeatherBadgeBtn" title="Click to adjust temperature">
-                  <span id="frontWeatherIcon"></span> <span id="frontWeatherTemp">29°C</span> · <span id="frontWeatherLabel">Warm</span> 
-                </button>
-              </div>
-
-              <!-- Interactive Creatine Input & Weather Breakdown -->
-              <div class="front-water-breakdown-row">
-                <div class="front-water-pill">
-                  <span>Base Weight Demand</span>
-                  <b id="waterBreakdownBase">2.4 L</b>
-                </div>
-                <div class="front-water-pill">
-                  <span>Creatine Amount</span>
-                  <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
-                    <input type="number" id="frontCreatineGramsInput" min="0" max="30" step="1" value="5" style="width:52px;padding:2px 4px;font-weight:800;border: 1.5px solid #cbd5e1;border-radius:6px;font-size:.88rem;color:var(--glass-text-primary);background:#fff;" title="Enter grams of creatine taken today" />
-                    <span style="font-size:.78rem;font-weight:700;color:var(--glass-text-secondary);">g (<span id="waterBreakdownCreatine">+500</span>ml)</span>
-                  </div>
-                </div>
-                <div class="front-water-pill">
-                  <span>Weather Impact</span>
-                  <b id="waterBreakdownWeather">+250 ml (Warm)</b>
-                </div>
-                <div class="front-water-pill">
-                  <span>Workout Demand</span>
-                  <b id="waterBreakdownWorkout">+300 ml</b>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+                  <span style="font-size:.72rem;background:rgba(37,99,235,0.1);color:#2563eb;padding:2px 8px;border-radius:99px;font-weight:700;">Barbell Squats</span>
+                  <span style="font-size:.72rem;background:rgba(22,199,154,0.1);color:#16c79a;padding:2px 8px;border-radius:99px;font-weight:700;">Push-ups</span>
+                  <span style="font-size:.72rem;background:rgba(139,92,246,0.1);color:#8b5cf6;padding:2px 8px;border-radius:99px;font-weight:700;">Lunges</span>
+                  <span style="font-size:.72rem;background:rgba(245,158,11,0.1);color:#f59e0b;padding:2px 8px;border-radius:99px;font-weight:700;">Plank Hold</span>
                 </div>
               </div>
             </div>
 
-            <div class="water-readout">
-              <strong id="waterDisplay">1.0<small> L</small></strong>
-              <span>of <span id="waterGoalDisplay">2.5</span> L goal</span>
-            </div>
-
-            <!-- 12 Interactive Water Glasses -->
-            <div class="water-cups" id="waterCups">
-              <!-- Dynamically populated 12 cups with glass SVG -->
-            </div>
-
-            <div class="water-foot">
-              <span>Personal estimate (250 ml / glass)</span>
-              <button id="adjustWaterBtn">
-                Adjust
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
-                </svg>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+              <span style="font-size:0.76rem;color:var(--ff-text-muted);">Real-time camera form evaluation</span>
+              <button type="button" class="solid-button small" id="todayLaunchPostureBtn" onclick="switchView('posture');" style="background:#8b5cf6;color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:0.8rem;cursor:pointer;">
+                Launch Posture AI →
               </button>
             </div>
-          </article>
-
-          <!-- MEALS & SNACKS PANEL -->
-          <article class="panel meals-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="section-kicker">TODAY’S FUEL</span>
-                <h3>Meals &amp; snacks</h3>
-              </div>
-              <button class="solid-button small" id="dashAddFoodBtn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"></path><path d="M12 5v14"></path>
-                </svg>
-                Add food
-              </button>
-            </div>
-
-            <div class="meal-list" id="dashMealList">
-              <!-- Populated dynamically with photo cards or user entries -->
-            </div>
-
-            <button class="list-link" id="viewAllFoodEntriesBtn">
-              View all food entries
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </button>
           </article>
 
           <!-- WORKOUT PANEL -->
@@ -1391,7 +1217,7 @@
             </div>
 
             <div class="workout-feature" data-title="Daily Workout Session">
-              <img src="images/fitfuel-workout-seated.jpg" alt="FitFuel Stronger You Dumbbell Training" id="dashWorkoutImg" style="pointer-events:none;">
+              <img src="images/model-3d-reference.jpg" alt="FitFuel Stronger You Dumbbell Training" id="dashWorkoutImg" style="pointer-events:none;">
               <div class="workout-overlay">
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1996,7 +1822,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
                 <span>Back to Photos</span>
               </button>
-              <button type="button" class="ba-primary-btn disabled" id="baRunAnalysisBtn" disabled>
+              <button type="button" class="ba-primary-btn" id="baRunAnalysisBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 <span>Run AI Transformation Analysis</span>
               </button>
@@ -2294,6 +2120,29 @@
 
       <!-- ================= VIEW 2: FOOD LOG ================= -->
       <section class="view" id="view-food-log">
+
+        <!-- NUTRITION & DIET UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Nutrition &amp; Diet Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+              <span>Daily Food Log</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="my-foods" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path></svg>
+              <span>My Foods &amp; Custom</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" data-tab-action="open-recipes" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path><line x1="6" y1="17" x2="18" y2="17"></line></svg>
+              <span>Fitness Recipes</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" data-tab-action="open-water" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+              <span>Hydration Tracker</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro">
           <div>
             <span class="section-kicker" id="foodLogDateTag">TODAY</span>
@@ -2383,6 +2232,31 @@
 
       <!-- ================= VIEW 3: WORKOUTS ================= -->
       <section class="view" id="view-workouts">
+
+        <!-- WORKOUTS & EXERCISES UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Workouts &amp; Exercises Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="workouts" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg>
+              <span>Training Plans</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="challenge" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              <span>Challenges</span>
+              <span class="hub-tab-badge">30D</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="starting-load" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+              <span>Smart Start</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="exercise-library" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+              <span>Exercise Library</span>
+              <span class="hub-tab-badge">1,318+</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro">
           <div>
             <span class="section-kicker">TRAINING PLAN</span>
@@ -2396,7 +2270,7 @@
           <article class="panel workout-card-full">
             <div class="workout-card-hero">
               <div style="position:relative;border-radius:14px;overflow:hidden;">
-                <img src="images/fitfuel-workout-seated.jpg" alt="FitFuel Stronger You Dumbbell Training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;pointer-events:none;">
+                <img src="images/model-3d-reference.jpg" alt="FitFuel Stronger You Dumbbell Training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;pointer-events:none;">
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
                 <div>
@@ -2485,6 +2359,31 @@
 
       <!-- ================= Starting Load Calculator (1RM-free) ================= -->
       <section class="view" id="view-starting-load">
+
+        <!-- WORKOUTS & EXERCISES UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Workouts &amp; Exercises Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="workouts" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg>
+              <span>Training Plans</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="challenge" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              <span>Challenges</span>
+              <span class="hub-tab-badge">30D</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="starting-load" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+              <span>Smart Start</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="exercise-library" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+              <span>Exercise Library</span>
+              <span class="hub-tab-badge">1,318+</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro" style="text-align:center;max-width:720px;margin:0 auto 20px;">
           <div>
             <span class="section-kicker">SMART START · AUTONOMOUS CALIBRATION</span>
@@ -2539,10 +2438,66 @@
             Ramp protocol: empty Olympic bar (20 kg) &rarr; 50–60% ceiling warmup &rarr; calibrated work sets at RPE 6–7.
           </p>
         </div>
+
+        <!-- 1,318+ EXERCISE PRECISION CALCULATOR -->
+        <div class="panel smart-start-section-card" id="slAnyExercisePanel" style="margin-bottom:28px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <span class="section-kicker">INTERACTIVE STARTING WEIGHT CALCULATOR</span>
+              <h3 style="font-size:1.25rem;color:var(--glass-text-primary);margin:4px 0 0;">Calculate Starting Load for Any Movement</h3>
+              <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:4px 0 0;">Search through all 1,318+ exercises to get your personalized working weight and warmup sequence.</p>
+            </div>
+            <div style="min-width:260px;flex:1;max-width:380px;">
+              <input type="text" id="slExerciseSearchInput" placeholder="Search any exercise (e.g. Incline Bench, Leg Press)..." style="width:100%;padding:10px 16px;border:1.5px solid var(--ff-glass-border-subtle);border-radius:12px;outline:none;font-size:.9rem;background:var(--ff-surface);" />
+            </div>
+          </div>
+          <div id="slExerciseCalcResult">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- SMART START FOUNDATION ROUTINES FROM 1,318 CATALOG -->
+        <div class="panel smart-start-section-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+            <div>
+              <span class="section-kicker">CURATED LAUNCHPAD ROUTINES</span>
+              <h3 style="font-size:1.25rem;color:var(--glass-text-primary);margin:4px 0 0;">Smart Start Baseline Programs</h3>
+              <p style="color:var(--glass-text-secondary);font-size:.86rem;margin:4px 0 0;">Ready-to-train foundational routines calibrated with your precision working weights.</p>
+            </div>
+          </div>
+          <div class="smart-start-routines-grid" id="slStarterRoutinesGrid">
+            <!-- Populated dynamically with routines from EXERCISES_LIBRARY -->
+          </div>
+        </div>
       </section>
 
       <!-- ================= VIEW 4: EXERCISE LIBRARY ================= -->
       <section class="view" id="view-exercise-library">
+
+        <!-- WORKOUTS & EXERCISES UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Workouts &amp; Exercises Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="workouts" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg>
+              <span>Training Plans</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="challenge" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              <span>Challenges</span>
+              <span class="hub-tab-badge">30D</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="starting-load" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+              <span>Smart Start</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="exercise-library" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+              <span>Exercise Library</span>
+              <span class="hub-tab-badge">1,318+</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro">
           <div>
             <span class="section-kicker">MOVEMENT LIBRARY</span>
@@ -2565,6 +2520,10 @@
           <!-- Sub-tags -->
         </div>
 
+        <div class="equipment-filter-bar" id="libEquipmentFilters">
+          <!-- Equipment filters populated dynamically -->
+        </div>
+
         <div class="library-heading" style="margin:20px 0 12px;display:flex;justify-content:space-between;">
           <div>
             <span class="section-kicker" id="libFilterHeader">LEGS · QUADS / HAMSTRINGS / GLUTES</span>
@@ -2580,6 +2539,29 @@
 
       <!-- ================= VIEW 5: MY FOODS ================= -->
       <section class="view" id="view-my-foods">
+
+        <!-- NUTRITION & DIET UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Nutrition &amp; Diet Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+              <span>Daily Food Log</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="my-foods" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path></svg>
+              <span>My Foods &amp; Custom</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" data-tab-action="open-recipes" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path><line x1="6" y1="17" x2="18" y2="17"></line></svg>
+              <span>Fitness Recipes</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="food-log" data-tab-action="open-water" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+              <span>Hydration Tracker</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro">
           <div>
             <span class="section-kicker">YOUR PERSONAL COLLECTION</span>
@@ -2691,7 +2673,30 @@
                 </p>
               </div>
 
-              <label class="full-field">
+                            <label>
+                Target Goal Weight
+                <div class="input-unit">
+                  <input type="number" id="pfTargetWeightInput" value="68" placeholder="68">
+                  <span>kg</span>
+                </div>
+              </label>
+
+              <label>
+                Biological Sex
+                <select id="pfSexSelect">
+                  <option value="male" selected>Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </label>
+
+              <div style="grid-column:1 / -1;display:flex;gap:10px;align-items:center;margin:4px 0 10px;">
+                <button type="button" class="outline-button small" id="pfAutoCalculateTargetsBtn" style="font-size:0.8rem;padding:6px 14px;border-color:var(--ff-accent,#2563eb);color:var(--ff-accent,#2563eb);font-weight:700;">
+                  ⚡ Auto-Calculate Macros from BMR &amp; Goal
+                </button>
+                <span style="font-size:0.75rem;color:var(--glass-text-secondary);">Mifflin-St Jeor TDEE calibration</span>
+              </div>
+
+<label class="full-field">
                 Target Calorie Goal
                 <div class="input-unit">
                   <input type="number" id="pfCalorieInput" value="2100" placeholder="2100">
@@ -2769,6 +2774,31 @@
 
       <!-- ================= VIEW 7: CHALLENGE ================= -->
       <section class="view" id="view-challenge">
+
+        <!-- WORKOUTS & EXERCISES UNIFIED HUB TAB BAR -->
+        <div class="hub-tabs-container">
+          <div class="hub-segmented-control" role="tablist" aria-label="Workouts &amp; Exercises Navigation">
+            <button type="button" class="hub-tab-btn" data-hub-target="workouts" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg>
+              <span>Training Plans</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="challenge" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+              <span>Challenges</span>
+              <span class="hub-tab-badge">30D</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="starting-load" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+              <span>Smart Start</span>
+            </button>
+            <button type="button" class="hub-tab-btn" data-hub-target="exercise-library" role="tab">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+              <span>Exercise Library</span>
+              <span class="hub-tab-badge">1,318+</span>
+            </button>
+          </div>
+        </div>
+
         <div class="view-intro">
           <div>
             <span class="section-kicker">YOUR SPACE · TARGETED ROADMAP</span>
@@ -2921,57 +2951,52 @@
               <!-- AI Model Selector (Image 3) -->
               <div class="ai-model-picker-wrap" id="coachModelPickerWrap">
                 <button type="button" class="ai-model-picker-btn" id="coachModelPickerBtn" title="Choose AI Reasoning Model (Image 3)">
-                  <span class="model-dot model-dot-blue" id="coachModelActiveDot"></span>
-                  <span id="coachModelActiveName">LFM2.5–2.6B</span>
-                  <span class="model-tag-free">free</span>
+                  <span class="model-dot model-dot-orange" id="coachModelActiveDot"></span>
+                  <span id="coachModelActiveName">Nemotron 3 Ultra</span>
+                  <span class="model-tag-free">primary</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div class="ai-model-dropdown-menu" id="coachModelMenu">
-                  <div class="ai-model-menu-title">Select AI Agent (Image 3)</div>
-                  <div class="ai-model-item selected" data-model="liquid/lfm-2.5-2.6b:free">
-                    <span class="model-dot model-dot-blue"></span>
-                    <span>LFM2.5–2.6B</span>
-                    <span class="model-tag-free">free</span>
-                  </div>
-                  <div class="ai-model-item" data-model="laguna/laguna-xs-2.1">
-                    <span class="model-dot model-dot-emerald"></span>
-                    <span>Laguna XS 2.1</span>
-                  </div>
-                  <div class="ai-model-item" data-model="xing/xing-4.0-29b-a4b:free">
-                    <span class="model-dot model-dot-amber"></span>
-                    <span>Xing4.0 29B A4B</span>
-                    <span class="model-tag-free">free</span>
+                  <div class="ai-model-menu-title">Select Free AI Agent (Nemotron Primary)</div>
+                  <div class="ai-model-item selected" data-model="nvidia/nemotron-3-ultra-550b-a55b:free">
+                    <span class="model-dot model-dot-orange"></span>
+                    <span>Nemotron 3 Ultra</span>
+                    <span class="model-tag-free">primary</span>
                   </div>
                   <div class="ai-model-item" data-model="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">
-                    <span class="model-dot model-dot-orange"></span>
+                    <span class="model-dot model-dot-amber"></span>
                     <span>Nemotron 3 Nano Omni</span>
                     <span class="model-tag-free">free</span>
-                  </div>
-                  <div class="ai-model-item" data-model="minimax/minimax-m3.1-flash:free">
-                    <span class="model-dot model-dot-coral"></span>
-                    <span>MiniMax M3.1 Flash</span>
                   </div>
                   <div class="ai-model-item" data-model="nvidia/nemotron-3.5-super-vl:free">
                     <span class="model-dot model-dot-purple"></span>
                     <span>Nemotron 3.5 Super VL</span>
+                    <span class="model-tag-free">vision</span>
                   </div>
-                  <div class="ai-model-item" data-model="laguna/laguna-s-2.1">
-                    <span class="model-dot model-dot-lime"></span>
-                    <span>Laguna S 2.1</span>
+                  <div class="ai-model-item" data-model="nvidia/nemotron-3.5-lightning:free">
+                    <span class="model-dot model-dot-cyan"></span>
+                    <span>Nemotron 3.5 Lightning</span>
+                    <span class="model-tag-free">fast</span>
                   </div>
-                  <div class="ai-model-item" data-model="cohere/north-mini-code:free">
-                    <span class="model-dot model-dot-purple"></span>
-                    <span>North Mini Code</span>
+                  <div class="ai-model-item" data-model="google/gemma-4-26b-a4b-it:free">
+                    <span class="model-dot model-dot-blue"></span>
+                    <span>Gemma 4 26B</span>
                     <span class="model-tag-free">free</span>
                   </div>
-                  <div class="ai-model-item" data-model="nvidia/nemotron-3.5-content-safety">
-                    <span class="model-dot model-dot-cyan"></span>
-                    <span>Nemotron 3.5 Content Safety</span>
+                  <div class="ai-model-item" data-model="xingchen-agi/xing4.0-29b-a4b:free">
+                    <span class="model-dot model-dot-emerald"></span>
+                    <span>Xing4.0 29B</span>
+                    <span class="model-tag-free">free</span>
+                  </div>
+                  <div class="ai-model-item" data-model="thinkingmachines/inkling-small:free">
+                    <span class="model-dot model-dot-coral"></span>
+                    <span>Inkling Small</span>
+                    <span class="model-tag-free">free</span>
                   </div>
                   <div class="ai-model-item" data-model="auto">
                     <span class="model-dot model-dot-gray"></span>
-                    <span>Others / Auto Free Agent</span>
-                    <span class="model-tag-free">fast</span>
+                    <span>Auto Nemotron Agent</span>
+                    <span class="model-tag-free">smart</span>
                   </div>
                 </div>
               </div>
@@ -3522,7 +3547,7 @@
                     <div>
                       <b style="font-size:1.05rem;color:#ffffff;display:block;">Camera Is Currently Off</b>
                       <span style="font-size:0.82rem;color:#94a3b8;display:block;margin-top:4px;">
-                        Click "Start Camera" below to grant camera access and track your posture.<br>Step back 2-3 meters so your full body is in frame.
+                        Click "Start Camera &amp; Form Analysis" below to grant camera access and track your posture.<br>Step back 2-3 meters so your full body is in frame.
                       </span>
                     </div>
                   </div>
@@ -3563,15 +3588,24 @@
                   <label style="font-size:0.82rem;font-weight:700;color:#94a3b8;display:flex;align-items:center;gap:6px;">
                     Exercise:
                     <select id="postureExerciseSelect" style="padding:6px 12px;border-radius:8px;background:#1e293b;border:1px solid rgba(255,255,255,0.2);color:#ffffff;font-size:0.85rem;font-weight:700;">
-                      <option value="squat" selected>Barbell / Bodyweight Squat</option>
-                      <option value="lunge">Forward Lunge</option>
-                      <option value="pushup">Push-Up (Chest Depth)</option>
+                      <option value="squat" selected>Barbell / Bodyweight Squat (Knee Depth)</option>
+                      <option value="lunge">Forward / Reverse Lunge (Knee Drop)</option>
+                      <option value="pushup">Push-Up (Chest Depth &amp; Lockout)</option>
+                      <option value="jumping_jacks">Jumping Jacks (Arm &amp; Leg Abduction)</option>
+                      <option value="bicep_curls">Bicep Curls (Elbow Peak Flexion)</option>
+                      <option value="overhead_press">Overhead Shoulder Press (Vertical Lockout)</option>
+                      <option value="lateral_raises">Lateral Dumbbell Raises (Shoulder Plane 90°)</option>
+                      <option value="plank">Core Plank Hold (Spine Alignment)</option>
+                      <option value="glute_bridge">Glute Bridge / Hip Thrust (Pelvic Extension)</option>
+                      <option value="high_knees">High Knees Sprint (Hip Flexion Rate)</option>
+                      <option value="mountain_climbers">Mountain Climbers (Plank Knee Drive)</option>
+                      <option value="standing_side_bends">Standing Oblique Side Crunch (Lateral Flexion)</option>
                     </select>
                   </label>
                 </div>
                 <div style="display:flex;gap:8px;align-items:center;">
                   <button type="button" class="solid-button" id="postureStartBtn" style="padding:8px 18px;font-size:0.86rem;">
-                    Start Camera
+                    Start Camera &amp; Form Analysis
                   </button>
                   <button type="button" class="outline-button" id="postureFlipCamBtn" style="padding:8px 12px;font-size:0.84rem;color:#ffffff;display:none;" title="Switch Front/Rear Camera">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.055 4.17 2.7 5.46L4 20h6v-6l-2.4 2.4C6.38 15.22 5.5 13.72 5.5 12c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5c0 1.72-.88 3.22-2.1 4.4L18 18.8c1.645-1.29 2.7-3.25 2.7-5.46z"/><circle cx="12" cy="12" r="2"/></svg>
@@ -3598,7 +3632,7 @@
                 <h3>Form Criteria &amp; Rules</h3>
                 <span style="font-size:0.75rem;color:var(--ff-emerald);font-weight:700;">Computer Vision</span>
               </div>
-              <div style="display:flex;flex-direction:column;gap:10px;font-size:0.82rem;color:var(--ff-text-secondary);">
+              <div id="postureCriteriaList" style="display:flex;flex-direction:column;gap:10px;font-size:0.82rem;color:var(--ff-text-secondary);">
                 <div style="padding:8px 12px;border-radius:10px;background:rgba(22,199,154,0.1);border-left:3px solid #16C79A;">
                   <b style="color:var(--ff-text-primary);display:block;">Squat Depth (<95° Flexion)</b>
                   Hips must sink until knees reach 90° or less. Green indicator triggers rep inflection.
@@ -4525,57 +4559,52 @@
           <h4 class="floating-panel-bot-title">FitFuel Assistant</h4>
           <span class="floating-panel-bot-status" id="floatingModelTrigger" title="Click to change AI Agent" style="cursor:pointer;">
             <span class="online-dot"></span>
-            <span id="floatingActiveModelLabel">LFM2.5–2.6B</span>
+            <span id="floatingActiveModelLabel">Nemotron 3 Ultra</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
         </div>
       </div>
       <div class="ai-model-dropdown-menu" id="floatingModelMenu" style="top:52px;right:10px;width:250px;">
-        <div class="ai-model-menu-title">Select Free AI Agent (Image 3)</div>
-        <div class="ai-model-item selected" data-model="liquid/lfm-2.5-2.6b:free">
-          <span class="model-dot model-dot-blue"></span>
-          <span>LFM2.5–2.6B</span>
-          <span class="model-tag-free">free</span>
-        </div>
-        <div class="ai-model-item" data-model="laguna/laguna-xs-2.1">
-          <span class="model-dot model-dot-emerald"></span>
-          <span>Laguna XS 2.1</span>
-        </div>
-        <div class="ai-model-item" data-model="xing/xing-4.0-29b-a4b:free">
-          <span class="model-dot model-dot-amber"></span>
-          <span>Xing4.0 29B A4B</span>
-          <span class="model-tag-free">free</span>
+        <div class="ai-model-menu-title">Select Free AI Agent (Nemotron Primary)</div>
+        <div class="ai-model-item selected" data-model="nvidia/nemotron-3-ultra-550b-a55b:free">
+          <span class="model-dot model-dot-orange"></span>
+          <span>Nemotron 3 Ultra</span>
+          <span class="model-tag-free">primary</span>
         </div>
         <div class="ai-model-item" data-model="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">
-          <span class="model-dot model-dot-orange"></span>
+          <span class="model-dot model-dot-amber"></span>
           <span>Nemotron 3 Nano Omni</span>
           <span class="model-tag-free">free</span>
-        </div>
-        <div class="ai-model-item" data-model="minimax/minimax-m3.1-flash:free">
-          <span class="model-dot model-dot-coral"></span>
-          <span>MiniMax M3.1 Flash</span>
         </div>
         <div class="ai-model-item" data-model="nvidia/nemotron-3.5-super-vl:free">
           <span class="model-dot model-dot-purple"></span>
           <span>Nemotron 3.5 Super VL</span>
+          <span class="model-tag-free">vision</span>
         </div>
-        <div class="ai-model-item" data-model="laguna/laguna-s-2.1">
-          <span class="model-dot model-dot-lime"></span>
-          <span>Laguna S 2.1</span>
+        <div class="ai-model-item" data-model="nvidia/nemotron-3.5-lightning:free">
+          <span class="model-dot model-dot-cyan"></span>
+          <span>Nemotron 3.5 Lightning</span>
+          <span class="model-tag-free">fast</span>
         </div>
-        <div class="ai-model-item" data-model="cohere/north-mini-code:free">
-          <span class="model-dot model-dot-purple"></span>
-          <span>North Mini Code</span>
+        <div class="ai-model-item" data-model="google/gemma-4-26b-a4b-it:free">
+          <span class="model-dot model-dot-blue"></span>
+          <span>Gemma 4 26B</span>
           <span class="model-tag-free">free</span>
         </div>
-        <div class="ai-model-item" data-model="nvidia/nemotron-3.5-content-safety">
-          <span class="model-dot model-dot-cyan"></span>
-          <span>Nemotron 3.5 Content Safety</span>
+        <div class="ai-model-item" data-model="xingchen-agi/xing4.0-29b-a4b:free">
+          <span class="model-dot model-dot-emerald"></span>
+          <span>Xing4.0 29B</span>
+          <span class="model-tag-free">free</span>
+        </div>
+        <div class="ai-model-item" data-model="thinkingmachines/inkling-small:free">
+          <span class="model-dot model-dot-coral"></span>
+          <span>Inkling Small</span>
+          <span class="model-tag-free">free</span>
         </div>
         <div class="ai-model-item" data-model="auto">
           <span class="model-dot model-dot-gray"></span>
-          <span>Auto Free Agent</span>
-          <span class="model-tag-free">fast</span>
+          <span>Auto Nemotron Agent</span>
+          <span class="model-tag-free">smart</span>
         </div>
       </div>
       <div class="floating-panel-controls">
@@ -5248,6 +5277,8 @@
       </button>
     </div>
   </div>
+</div>
+
 <!-- ================= FITFUEL PREMIUM PAID PLANS MODAL (IMAGE 4) ================= -->
 <div class="modal-backdrop" id="premiumPlansModal" style="display:none;">
   <div class="modal-card premium-plans-modal-card">
@@ -5904,6 +5935,6 @@
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
 <script src="exercise-animation.js?v=1.0"></script>
-<script src="fitfuel.js?v=4.2.0"></script>
+<script src="fitfuel.js?v=5.9.1"></script>
 </body>
 </html>
