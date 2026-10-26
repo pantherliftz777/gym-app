@@ -346,8 +346,59 @@ const soundFX = {
       whiteNoise.start(now + 0.4);
       whiteNoise.stop(now + 2.3);
     } catch (e) {}
+  },
+  tap() {
+    this.pop();
+  },
+  bellChime() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      [1318.51, 987.77].forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.18, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.31);
+      });
+    } catch (e) {
+      this.notification();
+    }
+  },
+  complete() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        gain.gain.setValueAtTime(0.18, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.32);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.33);
+      });
+    } catch (e) {
+      this.victoryCelebration();
+    }
+  },
+  celebrate() {
+    this.victoryCelebration();
   }
 };
+window.soundFX = soundFX;
 
 /* ================= WEATHER TEMPERATURE STATE & ENGINE ================= */
 let weatherState = store.get('weatherState', {
@@ -1957,6 +2008,7 @@ function renderDashboard() {
   const stepsPct = Math.min(100, Math.round((currentSteps / 10000) * 100));
   if ($('#dashBigStreakNum')) $('#dashBigStreakNum').textContent = streakCount || 12;
   if ($('#actStepsTopVal')) $('#actStepsTopVal').textContent = currentSteps.toLocaleString();
+  if (typeof initTodayListeners === 'function') initTodayListeners();
 }
 
 // Dashboard Buttons Navigation
@@ -2022,6 +2074,20 @@ if ($('#featCardGps')) $('#featCardGps').onclick = () => switchView('activity');
 if ($('#featCardNutrition')) $('#featCardNutrition').onclick = () => switchView('food-log');
 if ($('#metricCardStepsTrigger')) $('#metricCardStepsTrigger').onclick = () => switchView('activity');
 if ($('#dashOpenActivityBtn')) $('#dashOpenActivityBtn').onclick = () => switchView('activity');
+if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
+function initTodayListeners() {
+  if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
+  if ($('#dashOpenActivityBtn')) $('#dashOpenActivityBtn').onclick = () => switchView('activity');
+  if ($('#dashWorkoutStartBtn')) {
+    $('#dashWorkoutStartBtn').onclick = (e) => {
+      e.stopPropagation();
+      soundFX.bellChime();
+      switchView('workouts');
+      toast('Opening workout routine!');
+    };
+  }
+}
+initTodayListeners();
 if ($('#bodyCompScanBadge')) $('#bodyCompScanBadge').onclick = () => openModal('#bodyAnalysisModal');
 if ($('#topbarSearchInput')) {
   $('#topbarSearchInput').onkeydown = (e) => {
@@ -4986,60 +5052,60 @@ function renderChatMessages() {
 
   const coachStream = $('#coachChatStream');
   if (coachStream) {
-    if (chatHistory.length === 0) {
-      coachStream.innerHTML = `
-        <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
+    const welcomeHtml = `
+      <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
+          <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
+          <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">ACTIVE</span>
+        </div>
+        <p style="margin:0 0 10px;font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">
+          Welcome to your dedicated coaching room! I have your daily targets loaded (2,200 kcal, 140g protein, Upper-Body strength day). How can I optimize your training or nutrition right now?
+        </p>
+        <div class="ai-plan-preview-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <b style="font-size:0.9rem;color:var(--ff-text-primary);">Recommended Upper-Body Hypertrophy Plan</b>
+            <span style="font-size:0.72rem;background:rgba(22,199,154,0.2);color:#0d9488;padding:2px 8px;border-radius:99px;font-weight:700;">RPE 8</span>
+          </div>
+          <div class="ai-card-grid-2x2">
+            <div class="ai-card-pill-item"><b>Bench Press:</b> 4 sets × 8-10 reps</div>
+            <div class="ai-card-pill-item"><b>Incline Dumbbell:</b> 3 sets × 10 reps</div>
+            <div class="ai-card-pill-item"><b>Cable Lateral Raise:</b> 4 sets × 15 reps</div>
+            <div class="ai-card-pill-item"><b>Overhead Extension:</b> 3 sets × 12 reps</div>
+          </div>
+          <div class="ai-chat-action-btns-row">
+            <button type="button" class="ai-chat-btn-mini primary" id="coachPlanAddToWorkoutBtn">Save to My Workouts</button>
+            <button type="button" class="ai-chat-btn-mini" id="coachPlanInspectFormBtn">View Form Biomechanics</button>
+            <button type="button" class="ai-chat-btn-mini" id="coachPlanModifyVolBtn">Adjust Volume</button>
+          </div>
+        </div>
+      </div>`;
+
+    const chatItemsHtml = chatHistory.map(msg => {
+      const isBot = msg.role === 'assistant';
+      const formatted = formatChatMarkdown(msg.text);
+      if (isBot) {
+        return `<div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);margin-bottom:10px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
             <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
-            <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">ACTIVE</span>
+            <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">REASONING</span>
           </div>
-          <p style="margin:0 0 10px;font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">
-            Welcome to your dedicated coaching room! I have your daily targets loaded (2,200 kcal, 140g protein, Upper-Body strength day). How can I optimize your training or nutrition right now?
-          </p>
-          <div class="ai-plan-preview-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-              <b style="font-size:0.9rem;color:var(--ff-text-primary);">Recommended Upper-Body Hypertrophy Plan</b>
-              <span style="font-size:0.72rem;background:rgba(22,199,154,0.2);color:#0d9488;padding:2px 8px;border-radius:99px;font-weight:700;">RPE 8</span>
-            </div>
-            <div class="ai-card-grid-2x2">
-              <div class="ai-card-pill-item"><b>Bench Press:</b> 4 sets × 8-10 reps</div>
-              <div class="ai-card-pill-item"><b>Incline Dumbbell:</b> 3 sets × 10 reps</div>
-              <div class="ai-card-pill-item"><b>Cable Lateral Raise:</b> 4 sets × 15 reps</div>
-              <div class="ai-card-pill-item"><b>Overhead Extension:</b> 3 sets × 12 reps</div>
-            </div>
-            <div class="ai-chat-action-btns-row">
-              <button type="button" class="ai-chat-btn-mini primary" onclick="switchView('workouts')">Save to My Workouts</button>
-              <button type="button" class="ai-chat-btn-mini" onclick="switchView('posture')">Check Exercise Form</button>
-              <button type="button" class="ai-chat-btn-mini" onclick="openModal('#customWorkoutModal')">Customize Volume</button>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      coachStream.innerHTML = chatHistory.map(msg => {
-        const isBot = msg.role === 'assistant';
-        const formatted = formatChatMarkdown(msg.text);
-        if (isBot) {
-          return `<div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-              <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
-              <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
-              <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">REASONING</span>
-            </div>
-            <div style="font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">${formatted}</div>
-          </div>`;
-        } else {
-          const imgHtml = msg.image ? `<img src="${msg.image}" class="chat-bubble-image-thumb" onclick="if(typeof openLightboxModal==='function')openLightboxModal('${msg.image}','Uploaded Photo');">` : '';
-          return `<div class="ai-msg user" style="margin-left:auto;max-width:85%;background:linear-gradient(135deg,rgba(22,199,154,0.18),rgba(56,189,248,0.15));border:1px solid rgba(22,199,154,0.3);border-radius:18px;padding:12px 16px;margin-bottom:10px;">
-            <b style="font-size:0.75rem;color:var(--ff-emerald);display:block;margin-bottom:2px;">YOU</b>
-            ${imgHtml}
-            <div style="font-size:0.88rem;color:var(--ff-text-primary);">${formatted}</div>
-          </div>`;
-        }
-      }).join('');
-    }
+          <div style="font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">${formatted}</div>
+        </div>`;
+      } else {
+        const imgHtml = msg.image ? `<img src="${msg.image}" class="chat-bubble-image-thumb" onclick="if(typeof openLightboxModal==='function')openLightboxModal('${msg.image}','Uploaded Photo');">` : '';
+        return `<div class="ai-msg user" style="margin-left:auto;max-width:85%;background:linear-gradient(135deg,rgba(22,199,154,0.18),rgba(56,189,248,0.15));border:1px solid rgba(22,199,154,0.3);border-radius:18px;padding:12px 16px;margin-bottom:10px;">
+          <b style="font-size:0.75rem;color:var(--ff-emerald);display:block;margin-bottom:2px;">YOU</b>
+          ${imgHtml}
+          <div style="font-size:0.88rem;color:var(--ff-text-primary);">${formatted}</div>
+        </div>`;
+      }
+    }).join('');
+
+    coachStream.innerHTML = welcomeHtml + chatItemsHtml;
     coachStream.scrollTop = coachStream.scrollHeight;
+    if (typeof initCoachListeners === 'function') initCoachListeners();
   }
 }
 
@@ -6964,6 +7030,53 @@ if ($('#coachCmdBoostBtn')) {
   $('#coachCmdBoostBtn').onclick = () => handleUserAiQuery('/boost');
 }
 
+function initCoachListeners() {
+  if ($('#coachPlanAddToWorkoutBtn')) {
+    $('#coachPlanAddToWorkoutBtn').onclick = () => {
+      const recPlan = {
+        name: 'Recommended Upper-Body Hypertrophy Plan',
+        focus: 'Upper Body · Hypertrophy',
+        benefit: 'Targeted chest, shoulders, and triceps volume for muscle growth (RPE 8).',
+        moves: [
+          { name: 'Bench Press', sets: '4 sets × 8-10 reps', tip: 'Control descent to lower chest; drive explosively.' },
+          { name: 'Incline Dumbbell Press', sets: '3 sets × 10 reps', tip: 'Maintain 30-degree incline; squeeze clavicular head.' },
+          { name: 'Cable Lateral Raise', sets: '4 sets × 15 reps', tip: 'Keep slight forward lean and lead with elbows.' },
+          { name: 'Overhead Tricep Extension', sets: '3 sets × 12 reps', tip: 'Keep elbows tucked and get a full triceps stretch.' }
+        ]
+      };
+      if (Array.isArray(WORKOUT_PLANS) && !WORKOUT_PLANS.some(w => w.name === recPlan.name)) {
+        WORKOUT_PLANS.unshift(recPlan);
+        store.set('workoutPlans', WORKOUT_PLANS);
+      }
+      activeWorkoutIdx = 0;
+      if (typeof renderWorkouts === 'function') renderWorkouts();
+      if (soundFX && soundFX.complete) soundFX.complete();
+      toast('Upper-Body Hypertrophy plan added to your workouts!');
+      switchView('workouts');
+    };
+  }
+
+  if ($('#coachPlanInspectFormBtn')) {
+    $('#coachPlanInspectFormBtn').onclick = () => {
+      switchView('posture');
+      if (typeof startPostureCamera === 'function') {
+        startPostureCamera(false);
+      }
+    };
+  }
+
+  if ($('#coachPlanModifyVolBtn')) {
+    $('#coachPlanModifyVolBtn').onclick = () => {
+      if ($('#quickOptionsModal')) {
+        openModal('#quickOptionsModal');
+      } else {
+        switchView('customization');
+      }
+    };
+  }
+}
+initCoachListeners();
+
 // Coach Quick Actions
 if ($('#coachActionAnalyzeMeal')) $('#coachActionAnalyzeMeal').onclick = () => openModal('#mealAnalysisModal');
 if ($('#coachActionCustomWorkout')) $('#coachActionCustomWorkout').onclick = () => openModal('#customWorkoutModal');
@@ -7769,12 +7882,15 @@ let postureLastRepTime = 0;
 let postureAngles = [];
 let postureWarnings = 0;
 let postureExercise = 'squat';
+window.postureExercise = postureExercise;
 let postureAudioEnabled = true;
 let postureFacingMode = 'user';
 let isPostureDemoMode = false;
 
 function renderPostureView() {
   renderPostureHistory();
+  if (typeof updatePostureExerciseGuide === 'function') updatePostureExerciseGuide(postureExercise);
+  if (typeof initPostureCameraListeners === 'function') initPostureCameraListeners();
   if (navigator.permissions && navigator.permissions.query) {
     try {
       navigator.permissions.query({ name: 'camera' }).then(p => {
@@ -8146,6 +8262,78 @@ if ($('#postureAudioToggleBtn')) {
   };
 }
 if ($('#refreshPostureHistoryBtn')) $('#refreshPostureHistoryBtn').onclick = () => renderPostureHistory();
+
+const postureExerciseGuides = {
+  squat: {
+    badge: 'Squat (CV)',
+    html: `
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(22,199,154,0.1);border-left:3px solid #16C79A;">
+        <b style="color:var(--ff-text-primary);display:block;">Squat Depth (&lt;95&deg; Flexion)</b>
+        Hips must sink until knees reach 90&deg; or less. Green indicator triggers rep inflection.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(56,189,248,0.1);border-left:3px solid #38BDF8;">
+        <b style="color:var(--ff-text-primary);display:block;">Torso Angle (&lt;45&deg; Lean)</b>
+        Maintain proud chest and neutral lumbar spine throughout the descent.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(245,158,11,0.1);border-left:3px solid #F59E0B;">
+        <b style="color:var(--ff-text-primary);display:block;">Debounced Counting (1.2s Cadence)</b>
+        Eliminates double counts or jitter. You must return to full lockout standing.
+      </div>`
+  },
+  lunge: {
+    badge: 'Lunge (CV)',
+    html: `
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(22,199,154,0.1);border-left:3px solid #16C79A;">
+        <b style="color:var(--ff-text-primary);display:block;">Lead Knee Angle (&sim;90&deg;)</b>
+        Step forward until front thigh is parallel to floor. Knee stays stacked over mid-foot.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(56,189,248,0.1);border-left:3px solid #38BDF8;">
+        <b style="color:var(--ff-text-primary);display:block;">Rear Knee Clearance (&lt;3 inches)</b>
+        Lower trailing knee directly toward the floor without banging. Keep torso vertical.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(245,158,11,0.1);border-left:3px solid #F59E0B;">
+        <b style="color:var(--ff-text-primary);display:block;">Cadence &amp; Push-Off</b>
+        Drive forcefully through front heel to return to tall standing posture.
+      </div>`
+  },
+  pushup: {
+    badge: 'Push-Up (CV)',
+    html: `
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(22,199,154,0.1);border-left:3px solid #16C79A;">
+        <b style="color:var(--ff-text-primary);display:block;">Elbow Flexion (&lt;90&deg;)</b>
+        Lower chest until elbows reach 90&deg; bend or chest touches fist-height off floor.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(56,189,248,0.1);border-left:3px solid #38BDF8;">
+        <b style="color:var(--ff-text-primary);display:block;">Rigid Plank Alignment</b>
+        Maintain straight line from head through hips and ankles. Avoid sagging or piking.
+      </div>
+      <div style="padding:8px 12px;border-radius:10px;background:rgba(245,158,11,0.1);border-left:3px solid #F59E0B;">
+        <b style="color:var(--ff-text-primary);display:block;">Full Lockout Extension</b>
+        Push floor away to full elbow extension and protract scapulae at top of each rep.
+      </div>`
+  }
+};
+
+function updatePostureExerciseGuide(exercise) {
+  const guide = postureExerciseGuides[exercise] || postureExerciseGuides.squat;
+  const badge = $('#postureExerciseBadge');
+  const guideContainer = $('#postureGuideText');
+  if (badge) badge.textContent = guide.badge;
+  if (guideContainer) guideContainer.innerHTML = guide.html;
+}
+
+function initPostureCameraListeners() {
+  const select = $('#postureExerciseSelect');
+  if (select) {
+    select.onchange = () => {
+      postureExercise = select.value;
+      window.postureExercise = postureExercise;
+      updatePostureExerciseGuide(postureExercise);
+      toast(`Posture tracking exercise set to: ${select.options[select.selectedIndex]?.text || select.value}`);
+    };
+  }
+}
+initPostureCameraListeners();
 
 /* ==========================================================================
    MODULE: CUSTOMIZATION PANEL (REFERENCE IMAGE 1)

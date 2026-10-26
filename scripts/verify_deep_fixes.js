@@ -1,278 +1,288 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
 
 (async () => {
-  console.log('=== RUNNING DEEP VERIFICATION FOR ALL TASK REQUIREMENTS ===\n');
+  console.log('=== Starting Deep Verification of v7.5.0 Fixes ===');
+
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream']
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
+
   const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
+  await page.setViewport({ width: 1280, height: 850 });
 
-  await page.goto('http://localhost:3000', { waitUntil: 'networkidle2', timeout: 20000 });
-  await new Promise(r => setTimeout(r, 1500));
+  const consoleErrors = [];
+  const uncaughtExceptions = [];
 
-  let passed = 0;
-  let failed = 0;
-
-  function assert(desc, condition) {
-    if (condition) {
-      console.log(`  [PASS] ${desc}`);
-      passed++;
-    } else {
-      console.error(`  [FAIL] ${desc}`);
-      failed++;
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      const text = msg.text();
+      // Ignore network errors if favicon or external CDN is blocked offline
+      if (!text.includes('favicon') && !text.includes('Failed to load resource')) {
+        console.error('Browser console error:', text);
+        consoleErrors.push(text);
+      }
     }
+  });
+
+  page.on('pageerror', err => {
+    console.error('Page uncaught error:', err.message);
+    uncaughtExceptions.push(err.message);
+  });
+
+  await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+  await new Promise(r => setTimeout(r, 800));
+
+  console.log('\n--- 1. Testing soundFX Object Methods directly ---');
+  const soundFxMethods = await page.evaluate(() => {
+    return {
+      hasTap: typeof soundFX.tap === 'function',
+      hasBellChime: typeof soundFX.bellChime === 'function',
+      hasComplete: typeof soundFX.complete === 'function',
+      hasCelebrate: typeof soundFX.celebrate === 'function',
+      hasPop: typeof soundFX.pop === 'function',
+      hasNotification: typeof soundFX.notification === 'function'
+    };
+  });
+  console.log('soundFX methods inspection:', soundFxMethods);
+  if (!soundFxMethods.hasTap || !soundFxMethods.hasBellChime || !soundFxMethods.hasComplete || !soundFxMethods.hasCelebrate) {
+    throw new Error('soundFX missing required methods: ' + JSON.stringify(soundFxMethods));
   }
 
-  // -------------------------------------------------------------
-  // TEST 1: Posture AI Camera Auto-Start Removal
-  // -------------------------------------------------------------
-  console.log('--- TEST 1: Posture AI Camera Auto-Start & Permission ---');
+  // Safely invoke soundFX methods in page to ensure they run with zero errors
+  await page.evaluate(() => {
+    soundFX.tap();
+    soundFX.bellChime();
+    soundFX.complete();
+    soundFX.celebrate();
+  });
+  console.log('soundFX invocation executed smoothly without throws.');
+
+  console.log('\n--- 2. Testing Today Dashboard #dashWorkoutStartBtn ---');
+  await page.evaluate(() => switchView('today'));
+  await new Promise(r => setTimeout(r, 400));
+  
+  const startBtnExists = await page.$('#dashWorkoutStartBtn');
+  console.log('#dashWorkoutStartBtn exists:', !!startBtnExists);
+  await page.click('#dashWorkoutStartBtn');
+  await new Promise(r => setTimeout(r, 500));
+
+  const activeViewAfterStart = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    return active ? active.id : null;
+  });
+  console.log('Active view after #dashWorkoutStartBtn:', activeViewAfterStart);
+  if (activeViewAfterStart !== 'view-workouts') {
+    throw new Error(`Expected view-workouts after clicking start button, got ${activeViewAfterStart}`);
+  }
+
+  console.log('\n--- 3. Testing Today Dashboard #dashViewAllActivityBtn ---');
+  await page.evaluate(() => switchView('today'));
+  await new Promise(r => setTimeout(r, 400));
+
+  const viewAllBtnExists = await page.$('#dashViewAllActivityBtn');
+  console.log('#dashViewAllActivityBtn exists:', !!viewAllBtnExists);
+  await page.click('#dashViewAllActivityBtn');
+  await new Promise(r => setTimeout(r, 500));
+
+  const activeViewAfterActivity = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    return active ? active.id : null;
+  });
+  console.log('Active view after #dashViewAllActivityBtn:', activeViewAfterActivity);
+  if (activeViewAfterActivity !== 'view-activity') {
+    throw new Error(`Expected view-activity after clicking view all activity, got ${activeViewAfterActivity}`);
+  }
+
+  console.log('\n--- 4. Testing AI Coach /boost and /goal ---');
+  await page.evaluate(() => switchView('ai-coach'));
+  await new Promise(r => setTimeout(r, 500));
+
+  // Type /goal and send
+  await page.type('#coachChatInput', '/goal');
+  await page.click('#coachChatSendBtn');
+  await new Promise(r => setTimeout(r, 600));
+
+  const bodyModalOpen = await page.evaluate(() => {
+    const m = document.querySelector('#bodyAnalysisModal');
+    return m && m.classList.contains('open');
+  });
+  console.log('After /goal: bodyAnalysisModal is open:', bodyModalOpen);
+  if (!bodyModalOpen) {
+    throw new Error('Expected #bodyAnalysisModal to open after /goal command');
+  }
+  // Dismiss modal so input is clear
+  await page.evaluate(() => closeModal(document.querySelector('#bodyAnalysisModal')));
+  await new Promise(r => setTimeout(r, 400));
+
+  // Type /boost and send
+  await page.type('#coachChatInput', '/boost');
+  await page.click('#coachChatSendBtn');
+  await new Promise(r => setTimeout(r, 1600));
+
+  const activeViewAfterBoost = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    return active ? active.id : null;
+  });
+  console.log('Active view after /boost (launches posture):', activeViewAfterBoost);
+  if (activeViewAfterBoost !== 'view-posture') {
+    throw new Error(`Expected view-posture after /boost, got ${activeViewAfterBoost}`);
+  }
+
+  console.log('\n--- 5. Testing Coach Plan Buttons ---');
+  await page.evaluate(() => switchView('ai-coach'));
+  await new Promise(r => setTimeout(r, 400));
+
+  // 5a. #coachPlanAddToWorkoutBtn
+  await page.click('#coachPlanAddToWorkoutBtn');
+  await new Promise(r => setTimeout(r, 500));
+  const activeViewAfterAddToWorkouts = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    const title = document.querySelector('#planWorkoutTitle')?.textContent;
+    return { id: active ? active.id : null, title };
+  });
+  console.log('After #coachPlanAddToWorkoutBtn:', activeViewAfterAddToWorkouts);
+  if (activeViewAfterAddToWorkouts.id !== 'view-workouts') {
+    throw new Error('Expected view-workouts after adding coach plan');
+  }
+
+  // 5b. #coachPlanInspectFormBtn
+  await page.evaluate(() => switchView('ai-coach'));
+  await new Promise(r => setTimeout(r, 400));
+  await page.click('#coachPlanInspectFormBtn');
+  await new Promise(r => setTimeout(r, 500));
+  const activeViewAfterInspectForm = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    return active ? active.id : null;
+  });
+  console.log('After #coachPlanInspectFormBtn:', activeViewAfterInspectForm);
+  if (activeViewAfterInspectForm !== 'view-posture') {
+    throw new Error('Expected view-posture after coach form inspection');
+  }
+
+  // 5c. #coachPlanModifyVolBtn
+  await page.evaluate(() => switchView('ai-coach'));
+  await new Promise(r => setTimeout(r, 400));
+  await page.click('#coachPlanModifyVolBtn');
+  await new Promise(r => setTimeout(r, 500));
+  const quickModalOpen = await page.evaluate(() => {
+    const m = document.querySelector('#quickOptionsModal');
+    return m && m.classList.contains('open');
+  });
+  console.log('After #coachPlanModifyVolBtn: quickOptionsModal is open:', quickModalOpen);
+  if (!quickModalOpen) {
+    throw new Error('Expected #quickOptionsModal to be open after modify volume click');
+  }
+  // Close quick modal
+  await page.evaluate(() => closeModal(document.querySelector('#quickOptionsModal')));
+  await new Promise(r => setTimeout(r, 300));
+
+  console.log('\n--- 6. Testing #postureExerciseSelect Dynamic UI Adaptations ---');
   await page.evaluate(() => switchView('posture'));
   await new Promise(r => setTimeout(r, 400));
 
-  const cameraState = await page.evaluate(() => {
-    const video = document.querySelector('#postureVideo');
-    const startBtn = document.querySelector('#postureStartBtn');
-    const placeholder = document.querySelector('#posturePlaceholder');
+  // Test selecting 'lunge'
+  await page.select('#postureExerciseSelect', 'lunge');
+  await new Promise(r => setTimeout(r, 300));
+  const lungeState = await page.evaluate(() => {
     return {
-      streamIsNull: window.postureStream === null || window.postureStream === undefined,
-      videoSrcObject: video ? video.srcObject : 'no video',
-      startBtnText: startBtn ? startBtn.textContent.trim() : '',
-      startBtnVisible: startBtn ? getComputedStyle(startBtn).display !== 'none' : false,
-      placeholderVisible: placeholder ? getComputedStyle(placeholder).display !== 'none' : false
+      exercise: window.postureExercise || document.querySelector('#postureExerciseSelect')?.value,
+      badge: document.querySelector('#postureExerciseBadge')?.textContent,
+      guideSnippet: document.querySelector('#postureGuideText')?.textContent?.trim().slice(0, 40)
     };
   });
-
-  assert('Webcam stream is null when entering Posture view (NO auto-start)', cameraState.streamIsNull);
-  assert('Video element srcObject is null', cameraState.videoSrcObject === null);
-  assert('Start button is visible with text "Start Camera & Form Analysis"', cameraState.startBtnText.includes('Start Camera & Form Analysis'));
-  assert('Camera placeholder is visible instructing user to start camera', cameraState.placeholderVisible);
-
-  // -------------------------------------------------------------
-  // TEST 2: Expanded Workout Options (12 Exercises & Criteria)
-  // -------------------------------------------------------------
-  console.log('\n--- TEST 2: Posture AI Workout Selection (12 Camera Exercises) ---');
-  const exerciseOptions = await page.evaluate(() => {
-    const select = document.querySelector('#postureExerciseSelect');
-    if (!select) return [];
-    return Array.from(select.options).map(o => ({ value: o.value, text: o.text }));
-  });
-  console.log(`  Found ${exerciseOptions.length} exercises in dropdown.`);
-  assert('Has at least 8+ options (12 supported)', exerciseOptions.length >= 10);
-
-  const requiredExercises = [
-    'squat', 'lunge', 'pushup', 'jumping_jacks', 'bicep_curls',
-    'overhead_press', 'lateral_raises', 'plank', 'glute_bridge',
-    'high_knees', 'mountain_climbers', 'standing_side_bends'
-  ];
-  for (const exKey of requiredExercises) {
-    const found = exerciseOptions.some(o => o.value === exKey);
-    assert(`Exercise option "${exKey}" is present in select`, found);
+  console.log('Posture state after selecting lunge:', lungeState);
+  if (lungeState.exercise !== 'lunge' || !lungeState.badge.includes('Lunge')) {
+    throw new Error('Posture exercise guide failed to update for lunge');
   }
 
-  // Verify criteria UI updates when switching exercise
-  const criteriaCheck = await page.evaluate(() => {
-    const select = document.querySelector('#postureExerciseSelect');
-    select.value = 'glute_bridge';
-    select.dispatchEvent(new Event('change'));
-    const criteriaText = document.querySelector('#postureCriteriaList').textContent;
-    return criteriaText;
-  });
-  assert('Criteria card updates for glute_bridge', criteriaCheck.includes('Pelvic Extension Lockout'));
-
-  // -------------------------------------------------------------
-  // TEST 3: Speech Synthesis Termination on View Navigation
-  // -------------------------------------------------------------
-  console.log('\n--- TEST 3: Speech Synthesis Background Cancellation ---');
-  // Start demo mode in Posture AI so speech queue is active
-  await page.evaluate(() => {
-    startPostureCamera(true);
-    speakPostureCue("Stand tall. Step back until your full body is in frame for form analysis.");
-  });
-  await new Promise(r => setTimeout(r, 200));
-
-  const speechStatusBefore = await page.evaluate(() => {
-    return {
-      activeView: window.activeView,
-      isDemoMode: window.isPostureDemoMode
-    };
-  });
-  console.log('  Posture active before navigation:', speechStatusBefore);
-
-  // Navigate all the way to Profile!
-  await page.evaluate(() => switchView('profile'));
+  // Test selecting 'pushup'
+  await page.select('#postureExerciseSelect', 'pushup');
   await new Promise(r => setTimeout(r, 300));
-
-  const speechStatusAfter = await page.evaluate(() => {
+  const pushupState = await page.evaluate(() => {
     return {
-      activeView: window.activeView,
-      isDemoMode: window.isPostureDemoMode,
-      speaking: window.speechSynthesis ? window.speechSynthesis.speaking : false,
-      pending: window.speechSynthesis ? window.speechSynthesis.pending : false,
-      cameraStream: window.postureStream
+      exercise: window.postureExercise || document.querySelector('#postureExerciseSelect')?.value,
+      badge: document.querySelector('#postureExerciseBadge')?.textContent,
+      guideSnippet: document.querySelector('#postureGuideText')?.textContent?.trim().slice(0, 40)
     };
   });
-  assert('Active view switched to profile', speechStatusAfter.activeView === 'profile');
-  assert('Camera demo mode halted', speechStatusAfter.isDemoMode === false);
-  assert('Camera stream is null', speechStatusAfter.cameraStream === null);
-  assert('Speech synthesis queue is cleared (speaking === false)', speechStatusAfter.speaking === false);
-  assert('Speech synthesis pending is empty (pending === false)', speechStatusAfter.pending === false);
+  console.log('Posture state after selecting pushup:', pushupState);
+  if (pushupState.exercise !== 'pushup' || !pushupState.badge.includes('Push-Up')) {
+    throw new Error('Posture exercise guide failed to update for pushup');
+  }
 
-  // Test that speakPostureCue is rejected when not in posture view
-  const rejectedSpeech = await page.evaluate(() => {
-    speakPostureCue("Should not speak while on profile page");
-    return window.speechSynthesis ? window.speechSynthesis.speaking : false;
+  console.log('\n--- 7. Testing Settings -> Customization and Save Customization ---');
+  // Open Settings modal
+  await page.evaluate(() => openModal('#settingsModal'));
+  await new Promise(r => setTimeout(r, 400));
+
+  // Click #settingsGoToCustomizationBtn -> triggers soundFX.tap()
+  await page.click('#settingsGoToCustomizationBtn');
+  await new Promise(r => setTimeout(r, 500));
+
+  const activeViewAfterSettingsNav = await page.evaluate(() => {
+    const active = document.querySelector('.view.active');
+    return active ? active.id : null;
   });
-  assert('speakPostureCue strictly rejects utterances when activeView !== "posture"', rejectedSpeech === false);
+  console.log('Active view after settings customization nav:', activeViewAfterSettingsNav);
+  if (activeViewAfterSettingsNav !== 'view-customization') {
+    throw new Error('Expected view-customization after settings navigation');
+  }
 
-  // -------------------------------------------------------------
-  // TEST 4: Multi-Zone IR Rep Counting & Depth Hold Preservation
-  // -------------------------------------------------------------
-  console.log('\n--- TEST 4: Multi-Zone IR Method & Kinematics Engine ---');
-  await page.evaluate(() => {
-    switchView('posture');
-    const select = document.querySelector('#postureExerciseSelect');
-    select.value = 'squat';
-    select.dispatchEvent(new Event('change'));
-    startPostureCamera(true); // Demo mode for deterministic verification
-  });
-  await new Promise(r => setTimeout(r, 300));
+  // Click #saveCustomizationBtn -> triggers soundFX.complete()
+  await page.click('#saveCustomizationBtn');
+  await new Promise(r => setTimeout(r, 400));
+  console.log('Successfully saved customization without errors.');
 
-  // Verify IR Multi-Zone and Inflection state machine transitions
-  const repStateTransitions = await page.evaluate(() => {
-    const conf = POSTURE_EXERCISES.squat;
-    const history = [];
+  console.log('\n--- 8. Verifying 0 Uncaught Errors in Browser ---');
+  console.log('Uncaught page errors count:', uncaughtExceptions.length);
+  console.log('Console errors count:', consoleErrors.length);
+  if (uncaughtExceptions.length > 0) {
+    throw new Error('Found uncaught exceptions: ' + JSON.stringify(uncaughtExceptions));
+  }
+  if (consoleErrors.length > 0) {
+    throw new Error('Found browser console errors: ' + JSON.stringify(consoleErrors));
+  }
 
-    // Step 1: Start lockout (170°)
-    evaluateExerciseRepIR(conf, 170);
-    history.push({ angle: 170, state: window.postureState, reps: window.postureReps });
+  console.log('\n--- 9. Capturing Verification Screenshots ---');
+  const shotsDir = path.join(__dirname, '..', 'brain_verify');
+  if (!fs.existsSync(shotsDir)) fs.mkdirSync(shotsDir, { recursive: true });
 
-    // Step 2: In descent (130°)
-    evaluateExerciseRepIR(conf, 130);
-    history.push({ angle: 130, state: window.postureState, reps: window.postureReps });
+  const artifactDirs = [
+    shotsDir,
+    'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\d22a54bb-6331-45b2-8bcf-1c9b6f6e91a7',
+    'C:\\Users\\pandi\\.gemini\\antigravity\\brain\\eb8ed369-d3cf-459b-8060-0898be809b6e'
+  ];
 
-    // Step 3: Bottom parallel depth achieved (92°)
-    evaluateExerciseRepIR(conf, 92);
-    history.push({ angle: 92, state: window.postureState, reps: window.postureReps });
+  // Save posture view screenshot
+  await page.evaluate(() => switchView('posture'));
+  await new Promise(r => setTimeout(r, 400));
+  const postureShotBuffer = await page.screenshot({ fullPage: false });
 
-    // Step 4: Stationary bottom pause (holding depth 92° - velocity 0)
-    evaluateExerciseRepIR(conf, 92);
-    history.push({ angle: 92, state: window.postureState, reps: window.postureReps });
+  // Save coach view screenshot
+  await page.evaluate(() => switchView('ai-coach'));
+  await new Promise(r => setTimeout(r, 400));
+  const coachShotBuffer = await page.screenshot({ fullPage: false });
 
-    // Step 5: Ascent / returning to lockout (140°)
-    evaluateExerciseRepIR(conf, 140);
-    history.push({ angle: 140, state: window.postureState, reps: window.postureReps });
+  // Save today view screenshot
+  await page.evaluate(() => switchView('today'));
+  await new Promise(r => setTimeout(r, 400));
+  const todayShotBuffer = await page.screenshot({ fullPage: false });
 
-    // Step 6: Full standing lockout (168°) -> completes rep!
-    window.postureLastRepTime = 0; // bypass cadence debounce for test
-    evaluateExerciseRepIR(conf, 168);
-    history.push({ angle: 168, state: window.postureState, reps: window.postureReps });
+  for (const d of artifactDirs) {
+    try {
+      if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+      fs.writeFileSync(path.join(d, 'verification_posture_v750.png'), postureShotBuffer);
+      fs.writeFileSync(path.join(d, 'verification_coach_v750.png'), coachShotBuffer);
+      fs.writeFileSync(path.join(d, 'verification_today_v750.png'), todayShotBuffer);
+      console.log('Saved verification screenshots to:', d);
+    } catch (e) {
+      console.warn('Could not write to artifact dir:', d, e.message);
+    }
+  }
 
-    return history;
-  });
-
-  console.log('  State transitions:', repStateTransitions.map(s => `${s.angle}° -> ${s.state} (reps: ${s.reps})`).join(' | '));
-  assert('State transitioned to IN_PROGRESS at 130°', repStateTransitions[1].state === 'IN_PROGRESS');
-  assert('State transitioned to TARGET_ACHIEVED at parallel 92°', repStateTransitions[2].state === 'TARGET_ACHIEVED');
-  assert('Holding depth pause preserved TARGET_ACHIEVED state (anti-zero hold)', repStateTransitions[3].state === 'TARGET_ACHIEVED');
-  assert('Ascending transitioned to RETURNING', repStateTransitions[4].state === 'RETURNING');
-  assert('Lockout completion incremented reps to 1', repStateTransitions[5].reps === 1);
-
-  await page.evaluate(() => stopPostureCamera());
-
-  // -------------------------------------------------------------
-  // TEST 5: Challenge Generator (Home Workout & Cardio Customization)
-  // -------------------------------------------------------------
-  console.log('\n--- TEST 5: Challenge Generator (Home Workout + Cardio) ---');
-
-  const challengeTest = await page.evaluate(async () => {
-    // Generate a 15-day challenge for Home + Cardio, 45 min, Moderate intensity
-    const motive = 'Burn Fat & Lean Out';
-    const durationDays = 15;
-    const targetMinutes = 45;
-    const intensity = 'Moderate';
-    const workoutTypes = ['Home', 'Cardio'];
-
-    const planDays = buildDayByDayRoutines(motive, durationDays, 70, 175, targetMinutes, intensity, workoutTypes);
-
-    const GYM_TERMS = window.GYM_FORBIDDEN_TERMS || [
-      'barbell', 'cable', 'smith machine', 'leverage machine', 'leg press',
-      'hack squat', 'lat pulldown', 'seated row machine', 't-bar', 'pec deck',
-      'chest press machine', 'shoulder press machine', 'leg curl machine',
-      'leg extension machine', 'calf machine', 'preacher bench', 'assisted pull-up machine',
-      'treadmill', 'stair climber', 'elliptical', 'rower', 'battle ropes', 'cable row', 'rack'
-    ];
-
-    let gymViolations = [];
-    let allExercises = [];
-    let uniqueDayTitles = new Set();
-
-    planDays.forEach(day => {
-      uniqueDayTitles.add(day.title);
-      day.exercises.forEach(ex => {
-        allExercises.push(ex);
-        const nameLower = (ex.name + ' ' + (ex.subMuscle || '') + ' ' + (ex.category || '')).toLowerCase();
-        if (GYM_TERMS.some(term => nameLower.includes(term))) {
-          gymViolations.push({ day: day.dayNumber, exercise: ex.name, term: term });
-        }
-        if (!isHomeExercise(ex)) {
-          gymViolations.push({ day: day.dayNumber, exercise: ex.name, reason: 'failed isHomeExercise' });
-        }
-      });
-    });
-
-    return {
-      daysCount: planDays.length,
-      totalExercisesCount: allExercises.length,
-      sampleDay1Title: planDays[0].title,
-      sampleDay1Exercises: planDays[0].exercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps })),
-      sampleDay2Exercises: planDays[1].exercises.map(e => e.name),
-      gymViolations,
-      uniqueDayTitles: Array.from(uniqueDayTitles)
-    };
-  });
-
-  console.log('  Challenge days generated:', challengeTest.daysCount);
-  console.log('  Total exercises generated:', challengeTest.totalExercisesCount);
-  console.log('  Day 1 title:', challengeTest.sampleDay1Title);
-  console.log('  Day 1 exercises:', challengeTest.sampleDay1Exercises);
-  console.log('  Day 2 exercises:', challengeTest.sampleDay2Exercises);
-  console.log('  Gym violations:', challengeTest.gymViolations);
-
-  assert('Generated exactly 15 days', challengeTest.daysCount === 15);
-  assert('Generated exercises tailored to 45 min session (5 exercises/day)', challengeTest.sampleDay1Exercises.length === 5);
-  assert('Zero gym equipment violations in Home Cardio challenge (0 barbells, cables, machines)', challengeTest.gymViolations.length === 0);
-  assert('Exercise repetition across days is varied (Day 1 vs Day 2 differ)', challengeTest.sampleDay1Exercises[0].name !== challengeTest.sampleDay2Exercises[0].name);
-
-  // Test Home vs Gym mutual exclusivity in setup UI checkboxes
-  const exclusivityTest = await page.evaluate(() => {
-    // Check Home
-    const homeCb = Array.from(document.querySelectorAll('#chTypesOptionsList input')).find(i => i.value === 'Home');
-    const gymCb = Array.from(document.querySelectorAll('#chTypesOptionsList input')).find(i => i.value === 'Gym');
-    if (!homeCb || !gymCb) return { error: 'checkboxes missing' };
-
-    homeCb.checked = true;
-    homeCb.dispatchEvent(new Event('change'));
-
-    const gymCheckedAfterHome = gymCb.checked;
-
-    // Check Gym
-    gymCb.checked = true;
-    gymCb.dispatchEvent(new Event('change'));
-    const homeCheckedAfterGym = homeCb.checked;
-
-    return {
-      gymCheckedAfterHome,
-      homeCheckedAfterGym
-    };
-  });
-  console.log('  Exclusivity UI check:', exclusivityTest);
-  assert('Checking "Home" unchecks "Gym"', exclusivityTest.gymCheckedAfterHome === false);
-  assert('Checking "Gym" unchecks "Home"', exclusivityTest.homeCheckedAfterGym === false);
-
-  console.log(`\n=== VERIFICATION COMPLETE: ${passed} PASSED, ${failed} FAILED ===`);
   await browser.close();
-  process.exit(failed > 0 ? 1 : 0);
+  console.log('\n=== ALL DEEP VERIFICATION CHECKS PASSED PERFECTLY (0 ERRORS) ===');
 })();
