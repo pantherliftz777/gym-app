@@ -1,0 +1,71 @@
+name: FitFuel CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-verify:
+    name: Build, Syntax & Smoke Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Syntax and Node Compilation Check
+        run: |
+          node --check server.js
+          node --check scripts/init_turso.js
+          node --check scripts/migrate_activity.js
+          node --check scripts/migrate_body_scan.js
+          node --check scripts/convert-exercises.js
+
+      - name: Credential Leak Prevention Guard
+        run: |
+          echo "Scanning tracked files for accidental secrets..."
+          if git grep -q -i "eyJhbGciOi" -- ':!.github/workflows/ci.yml' ':!scripts/test_v5_suite.js'; then
+            echo "ERROR: Potential hardcoded JWT or Turso token detected!"
+            exit 1
+          fi
+          echo "No credentials or private tokens detected in tracked repository files."
+
+      - name: Run Integration Test Suite
+        run: node scripts/test_v5_suite.js
+
+      - name: Run Server Smoke Test & Health Check
+        run: |
+          echo "Starting FitFuel HTTP server in background..."
+          PORT=3000 node server.js &
+          SERVER_PID=$!
+          sleep 3
+
+          echo "Querying /api/health..."
+          HEALTH_RESP=$(curl -s -f http://127.0.0.1:3000/api/health || echo "FAILED")
+          echo "Health Response: $HEALTH_RESP"
+          if [[ "$HEALTH_RESP" == *"healthy"* ]]; then
+            echo "API Health Check PASSED!"
+          else
+            echo "API Health Check FAILED!"
+            kill $SERVER_PID
+            exit 1
+          fi
+
+          echo "Verifying PWA assets..."
+          curl -s -f http://127.0.0.1:3000/manifest.json > /dev/null
+          curl -s -f http://127.0.0.1:3000/sw.js > /dev/null
+          echo "PWA assets accessible."
+
+          kill $SERVER_PID
+          echo "Smoke test successfully completed."
