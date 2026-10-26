@@ -1,5 +1,5 @@
 /* FitFuel Service Worker v1.0.0 — Offline Gym Mode */
-const CACHE_NAME = 'fitfuel-cache-v7-3';
+const CACHE_NAME = 'fitfuel-cache-v7-4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
