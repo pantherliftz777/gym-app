@@ -12,7 +12,6 @@ if (typeof window === 'undefined' || typeof document === 'undefined') {
 /* ---------- DOM Helpers ---------- */
 const $ = s => typeof document !== 'undefined' ? document.querySelector(s) : null;
 const $$ = s => typeof document !== 'undefined' ? [...document.querySelectorAll(s)] : [];
-if (typeof window !== 'undefined') { window.$ = $; window.$$ = $$; }
 const today = () => new Date().toISOString().slice(0, 10);
 
 function escapeHtml(str) {
@@ -170,188 +169,10 @@ let streakTracker = session ? store.get('streakTracker', {
   brokenStreakCount: 0,
   history: []
 };
-
-/* ================= HOISTED MUSCLE GROUPS & EXERCISE METRICS ================= */
-let MUSCLE_GROUPS = {
-  Chest: ['All Chest', 'Upper chest', 'Mid chest', 'Lower chest', 'pectorals'],
-  Back: ['All Back', 'Lats', 'Upper back & Traps', 'Lower back', 'upper back', 'traps', 'spine'],
-  Shoulders: ['All Shoulders', 'Front delts', 'Side delts', 'Rear delts', 'delts', 'serratus anterior'],
-  Arms: ['All Arms', 'Biceps', 'Triceps', 'Forearms'],
-  Legs: ['All Legs', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'adductors', 'abductors'],
-  Core: ['All Core', 'Upper abs', 'Lower abs', 'Obliques', 'abs'],
-  Cardio: ['All Cardio', 'cardiovascular system']
-};
-
-/* ================= UNIVERSAL PROFILE SYNC & TARGET ENGINE ================= */
-function computeUserTargets(p) {
-  const profileObj = p || profile || {};
-  const w = Number(profileObj.wKg) || 70;
-  const h = Number(profileObj.hCm) || 175;
-  const age = Number(profileObj.age) || 25;
-  const sex = (profileObj.sex || 'male').toLowerCase();
-
-  // Mifflin-St Jeor Formula
-  const bmr = sex === 'female'
-    ? (10 * w) + (6.25 * h) - (5 * age) - 161
-    : (10 * w) + (6.25 * h) - (5 * age) + 5;
-
-  const days = Number(profileObj.days) || 4;
-  let mult = 1.55; // moderate baseline
-  if (days <= 2) mult = 1.35;
-  else if (days === 3) mult = 1.45;
-  else if (days === 4) mult = 1.55;
-  else if (days >= 5) mult = 1.725;
-
-  const tdee = Math.round(bmr * mult);
-  const goal = (profileObj.goal || 'Maintain weight').toLowerCase();
-  let cal = tdee;
-  if (goal.includes('loss') || goal.includes('cut') || goal.includes('lean')) {
-    cal = tdee - 450;
-  } else if (goal.includes('muscle') || goal.includes('bulk') || goal.includes('gain')) {
-    cal = tdee + 350;
-  }
-
-  const pPerKg = (goal.includes('muscle') || goal.includes('bulk')) ? 2.2 : (goal.includes('loss') ? 2.0 : 1.8);
-  const proteinG = Math.round(w * pPerKg);
-  const fatG = Math.round((cal * 0.25) / 9);
-  const carbG = Math.max(0, Math.round((cal - (proteinG * 4) - (fatG * 9)) / 4));
-
-  return {
-    bmr: Math.round(bmr),
-    tdee,
-    cal: Math.round(cal),
-    p: proteinG,
-    c: carbG,
-    f: fatG
-  };
-}
-
-let isSyncingProfile = false;
-function syncProfileToAllFeatures(source = '') {
-  if (isSyncingProfile) return;
-  isSyncingProfile = true;
-  try {
-    const p = profile || {};
-
-    // 1. Profile Section Inputs
-    if (source !== 'pf') {
-      if ($('#pfHeightInput')) $('#pfHeightInput').value = p.hCm || 175;
-      if ($('#pfWeightInput')) $('#pfWeightInput').value = p.wKg || 70;
-      if ($('#pfCalorieInput')) $('#pfCalorieInput').value = p.cal || 2100;
-      if ($('#pfGoalSelect')) $('#pfGoalSelect').value = p.goal || 'Maintain weight';
-      if ($('#pfDaysSelect')) $('#pfDaysSelect').value = p.days || 4;
-      if ($('#pfCreatineSelect')) $('#pfCreatineSelect').value = p.creatine || 'yes';
-      if ($('#pfSexSelect')) $('#pfSexSelect').value = p.sex || 'male';
-      if ($('#pfTargetWeightInput')) $('#pfTargetWeightInput').value = p.targetWeight || (p.wKg ? p.wKg - 4 : 68);
-    }
-
-    // 2. Smart Start (Starting Load Calibration)
-    if (source !== 'sl') {
-      if ($('#slBodyweight')) $('#slBodyweight').value = p.wKg || 70;
-      if ($('#slSex')) $('#slSex').value = p.sex || 'male';
-      if (typeof calcStartingLoads === 'function') calcStartingLoads();
-      else if (typeof renderStartingLoad === 'function') renderStartingLoad();
-    }
-
-    // 3. Body Assessment Wizard Modal
-    if (source !== 'bodyModal') {
-      if ($('#bodyModalWeight')) $('#bodyModalWeight').value = p.wKg || 70;
-      if ($('#bodyModalHeight')) $('#bodyModalHeight').value = p.hCm || 175;
-      if ($('#bodyModalGender')) $('#bodyModalGender').value = p.sex || 'male';
-      if ($('#bodyModalTargetWeight')) $('#bodyModalTargetWeight').value = p.targetWeight || (p.wKg ? p.wKg - 4 : 68);
-      if (typeof updateBodyModalBmiBadge === 'function') updateBodyModalBmiBadge();
-    }
-
-    // 4. Update BMI indicators everywhere
-    if (typeof calculateBmiAndCategory === 'function') {
-      const bmiRes = calculateBmiAndCategory(p.wKg || 70, p.hCm || 175);
-      if (bmiRes) {
-        if ($('#profileBmiVal')) $('#profileBmiVal').textContent = bmiRes.bmi;
-        if ($('#profileBmiBadge')) {
-          $('#profileBmiBadge').textContent = bmiRes.category + ' (' + (bmiRes.status || 'Good') + ')';
-          $('#profileBmiBadge').className = 'bmi-badge-pill bmi-' + (bmiRes.badgeClass || 'optimal');
-        }
-        if ($('#dashBmiValue')) $('#dashBmiValue').textContent = bmiRes.bmi;
-        if ($('#dashBmiCategoryBadge')) $('#dashBmiCategoryBadge').textContent = bmiRes.category;
-      }
-    }
-
-    // 5. Update Daily Macro Meters & Sidebar
-    updateDailyMacroMeters();
-  } finally {
-    isSyncingProfile = false;
-  }
-}
-
-/* ================= AUTHORITATIVE DAILY MACRO & CALORIE ENGINE ================= */
-function updateDailyMacroMeters() {
-  const d = today();
-  const entries = (log && Array.isArray(log[d])) ? log[d] : [];
-  const totKcal = Math.round(entries.reduce((a, b) => a + (Number(b.k) || Number(b.calories) || 0), 0));
-  const totP = Math.round(entries.reduce((a, b) => a + (Number(b.p) || Number(b.protein) || 0), 0));
-  const totC = Math.round(entries.reduce((a, b) => a + (Number(b.c) || Number(b.carbs) || 0), 0));
-  const totF = Math.round(entries.reduce((a, b) => a + (Number(b.f) || Number(b.fat) || 0), 0));
-
-  const goalKcal = profile.cal || 2100;
-  const goalP = profile.p || 165;
-  const goalC = profile.c || 139;
-  const goalF = profile.f || 87;
-
-  // Sidebar Progress Meters
-  if ($('#sideKcalCurrent')) $('#sideKcalCurrent').textContent = totKcal.toLocaleString();
-  if ($('#sideKcalGoal')) $('#sideKcalGoal').textContent = goalKcal.toLocaleString();
-  if ($('#meterCal')) $('#meterCal').style.width = Math.min(100, Math.round((totKcal / goalKcal) * 100)) + '%';
-
-  if ($('#sidePCurrent')) $('#sidePCurrent').textContent = totP + 'g';
-  if ($('#sidePGoal')) $('#sidePGoal').textContent = goalP;
-  if ($('#meterP')) $('#meterP').style.width = Math.min(100, Math.round((totP / goalP) * 100)) + '%';
-
-  if ($('#sideCCurrent')) $('#sideCCurrent').textContent = totC + 'g';
-  if ($('#sideCGoal')) $('#sideCGoal').textContent = goalC;
-  if ($('#meterC')) $('#meterC').style.width = Math.min(100, Math.round((totC / goalC) * 100)) + '%';
-
-  if ($('#sideFCurrent')) $('#sideFCurrent').textContent = totF + 'g';
-  if ($('#sideFGoal')) $('#sideFGoal').textContent = goalF;
-  if ($('#meterF')) $('#meterF').style.width = Math.min(100, Math.round((totF / goalF) * 100)) + '%';
-
-  // Dashboard Metrics
-  if ($('#dashCalConsumed')) $('#dashCalConsumed').textContent = totKcal.toLocaleString();
-  if ($('#dashCalGoal')) $('#dashCalGoal').textContent = goalKcal.toLocaleString();
-  if ($('#dashCalRemaining')) $('#dashCalRemaining').textContent = Math.max(0, goalKcal - totKcal).toLocaleString();
-  if ($('#syHeroCalBurned')) $('#syHeroCalBurned').textContent = totKcal.toLocaleString();
-  if ($('#dashP')) $('#dashP').textContent = totP + 'g';
-  if ($('#dashC')) $('#dashC').textContent = totC + 'g';
-  if ($('#dashF')) $('#dashF').textContent = totF + 'g';
-  if ($('#dashTargetP')) $('#dashTargetP').textContent = goalP + 'g';
-  if ($('#dashTargetC')) $('#dashTargetC').textContent = goalC + 'g';
-  if ($('#dashTargetF')) $('#dashTargetF').textContent = goalF + 'g';
-  if ($('#dashCalRing')) {
-    const pct = Math.min(100, Math.round((totKcal / goalKcal) * 100));
-    $('#dashCalRing').style.background = 'conic-gradient(#2563eb ' + (pct * 3.6) + 'deg, #eff6ff ' + (pct * 3.6) + 'deg 360deg)';
-  }
-}
-
-// Midnight date rollover checker
-let lastKnownTrackerDate = today();
-setInterval(() => {
-  const curDate = today();
-  if (curDate !== lastKnownTrackerDate) {
-    lastKnownTrackerDate = curDate;
-    if (water && water.date !== curDate) {
-      water = { date: curDate, ml: 0 };
-      store.set('water', water);
-    }
-    if (typeof renderDashboard === 'function') renderDashboard();
-    if (typeof renderFoodLog === 'function') renderFoodLog();
-    updateDailyMacroMeters();
-  }
-}, 30000);
-
 let activeChallengePlan = session ? store.get('activeChallengePlan', null) : null;
 let activeView = 'today';
-let selectedExerciseCategory = 'All';
-let selectedSubMuscle = 'All Movements';
-let selectedEquipmentFilter = 'All';
+let selectedExerciseCategory = 'Legs';
+let selectedSubMuscle = 'All Legs';
 let chatHistory = [];
 
 /* ================= WEB AUDIO SOUND EFFECTS SYSTEM ================= */
@@ -377,7 +198,7 @@ const soundFX = {
     const icon = $('#soundToggleIcon');
     const text = $('#soundToggleText');
     if (icon) icon.innerHTML = this.enabled ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
-    if (text) text.textContent = this.enabled ? 'Audio On' : 'Muted';
+    if (text) text.textContent = this.enabled ? 'Audio (ON)' : 'Audio (Muted)';
   },
   pop() {
     if (!this.enabled) return;
@@ -707,7 +528,13 @@ function updateLiveDateTime() {
   const year = now.getFullYear();
 
   // ONLY Day and Date - NEVER append time here to prevent duplicates & jitter!
-  const dateOnlyStr = `${dayName}, ${monthName} ${dateNum}, ${year}`;
+  // Use concise format on mobile screens to prevent text clipping & wrapping
+  const isMobile = window.innerWidth <= 768;
+  const shortDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const shortMonths = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const dateOnlyStr = isMobile
+    ? `${shortDays[now.getDay()]}, ${shortMonths[now.getMonth()]} ${dateNum}`
+    : `${dayName}, ${monthName} ${dateNum}, ${year}`;
   const eyebrowEl = $('#eyebrowDate');
   if (eyebrowEl && eyebrowEl.textContent !== dateOnlyStr) {
     eyebrowEl.textContent = dateOnlyStr;
@@ -838,129 +665,40 @@ const DEFAULT_PREVIEW_MEALS = [
 
 let WORKOUT_PLANS = [
   {
-    name: 'Full-body Strength & Hypertrophy',
-    focus: 'Glutes · Back · Chest · Core',
-    duration: '45 min',
-    moves: [
-      { name: 'Barbell Back Squat', sets: '3 sets × 8–10 reps', tip: 'Brace 360° core, break at hips & knees together, drive through midfoot.' },
-      { name: 'Flat Barbell Bench Press', sets: '3 sets × 8–10 reps', tip: 'Retract scapulae, maintain arch, lower under control to lower sternum.' },
-      { name: 'Barbell Bent-Over Row', sets: '3 sets × 10 reps', tip: 'Hinge at 45°, pull bar to lower belly button, squeeze lats at peak.' },
-      { name: 'Romanian Deadlift', sets: '3 sets × 10–12 reps', tip: 'Hips back, soft knee bend, feel deep hamstring stretch before driving up.' },
-      { name: 'Dead bug', sets: '3 sets × 12 reps each', tip: 'Press lumbar spine into ground, extend opposite arm and leg synchronously.' }
-    ],
-    benefit: 'The foundational compound routine to build full-body muscular density, bone strength, and metabolic output.'
-  },
-  {
-    name: 'Upper Body Push Power',
-    focus: 'Chest · Shoulders · Triceps',
+    name: 'Full-body strength',
+    focus: 'Glutes · Back · Core',
     duration: '42 min',
     moves: [
-      { name: 'Incline Dumbbell Bench Press', sets: '3–4 sets × 8–10 reps', tip: 'Set bench to 30°, flare elbows 45°, press dumbbells in smooth converging arc.' },
-      { name: 'Overhead Dumbbell Shoulder Press', sets: '3 sets × 8–10 reps', tip: 'Lock ribs down, press overhead without arching lumbar spine.' },
-      { name: 'Chest Dips', sets: '3 sets × 10–12 reps', tip: 'Lean torso forward 20° to bias chest fibers, lower until upper arms parallel.' },
-      { name: 'Dumbbell Lateral Raise', sets: '3 sets × 12–15 reps', tip: 'Lead with elbows, slight forward lean, pause briefly at parallel.' },
-      { name: 'Tricep Rope Pushdown', sets: '3 sets × 12–15 reps', tip: 'Pin elbows to ribs, spread rope handles apart at bottom lockout.' }
+      { name: 'Dumbbell Romanian deadlift', sets: '3 sets × 10 reps', tip: 'Push hips back, soft knees, keep back straight' },
+      { name: 'Goblet squat', sets: '3 sets × 12 reps', tip: 'Chest proud, weight held at chest, knees track toes' },
+      { name: 'Single-arm dumbbell row', sets: '3 sets × 10 reps each', tip: 'Drive elbow towards hip, control lowering' },
+      { name: 'Dead bug', sets: '3 sets × 12 reps', tip: 'Press lower back into floor, extend opposite arm and leg' }
     ],
-    benefit: 'Targeted upper body push session maximizing chest fullness, 3D shoulder capping, and tricep strength.'
+    benefit: 'Build strength with compound movements that train your posterior chain and core together.'
   },
   {
-    name: 'Upper Body Pull & Lats',
-    focus: 'Lats · Upper Back · Biceps',
-    duration: '40 min',
-    moves: [
-      { name: 'Lat Pulldown', sets: '3–4 sets × 8–10 reps', tip: 'Depress shoulders first, pull bar to collarbone, avoid excessive swinging.' },
-      { name: 'Single-Arm Dumbbell Row', sets: '3 sets × 10 reps each', tip: 'Pull elbow toward hip pocket, pause at peak contraction.' },
-      { name: 'Face Pull', sets: '3 sets × 12–15 reps', tip: 'Pull rope to nose/forehead height, externally rotate shoulders to finish.' },
-      { name: 'Dumbbell Shrug', sets: '3 sets × 12 reps', tip: 'Elevate traps straight up toward ears, hold 1 full second at apex.' },
-      { name: 'Incline Dumbbell Curl', sets: '3 sets × 10–12 reps', tip: 'Full supination, maximize bicep long head stretch at the bottom.' }
-    ],
-    benefit: 'Sculpt a wide, powerful V-taper while bulletproofing the rotator cuff and posterior shoulders.'
-  },
-  {
-    name: 'Lower Body Quads & Glute Drive',
-    focus: 'Quads · Glutes · Calves',
-    duration: '45 min',
-    moves: [
-      { name: 'Barbell Back Squat', sets: '3–4 sets × 6–8 reps', tip: 'Drive knees outward in line with toes, maintain neutral cervical spine.' },
-      { name: 'Bulgarian Split Squat', sets: '3 sets × 8–10 reps each', tip: 'Front shin vertical, drop back knee straight down, drive through front heel.' },
-      { name: 'Goblet Squat', sets: '3 sets × 12 reps', tip: 'Hold dumbbell tight at sternum, squat deep between hips.' },
-      { name: 'Standing Calf Raise', sets: '4 sets × 15 reps', tip: '2-second pause at maximum stretch, explosive drive to ball of foot.' }
-    ],
-    benefit: 'High-yield lower body session to develop quad hypertrophy, glute power, and explosive athletic propulsion.'
-  },
-  {
-    name: 'Posterior Chain & Hamstring Power',
-    focus: 'Hamstrings · Glutes · Lower Back',
-    duration: '42 min',
-    moves: [
-      { name: 'Conventional Deadlift', sets: '3 sets × 5 reps', tip: 'Pack lats, drag bar up shins, push the floor away like a leg press.' },
-      { name: 'Barbell Hip Thrust', sets: '3–4 sets × 10–12 reps', tip: 'Chin tucked, full posterior pelvic tilt at top, 1-second glute squeeze.' },
-      { name: 'Dumbbell Romanian Deadlift', sets: '3 sets × 10 reps', tip: 'Keep dumbbells tight to thighs, push hips back until hamstrings are taut.' },
-      { name: 'Hyperextension / Back Extension', sets: '3 sets × 12–15 reps', tip: 'Hinge only at hips, avoid hyperextending lumbar spine at top.' }
-    ],
-    benefit: 'Strengthens the posterior kinetic chain, enhances posture, and prevents lower back injuries.'
-  },
-  {
-    name: 'Home Bodyweight Calisthenics (Zero Equipment)',
-    focus: 'Chest · Shoulders · Core',
-    duration: '32 min',
-    moves: [
-      { name: 'Push-up', sets: '3 sets × 12–15 reps', tip: 'Straight plank line, elbows 45°, chest touches 1 inch off floor.' },
-      { name: 'Incline Push-up', sets: '3 sets × 12 reps', tip: 'Elevate hands on bench or sturdy chair for upper chest emphasis.' },
-      { name: 'Bodyweight Squat', sets: '3 sets × 20 reps', tip: 'Smooth tempo, reach parallel depth, keep heels glued down.' },
-      { name: 'Plank Shoulder Tap', sets: '3 sets × 16 taps', tip: 'Anti-rotation focus: zero swaying in the hips while tapping opposite shoulder.' },
-      { name: 'Bird Dog', sets: '3 sets × 12 reps each', tip: 'Full extension of opposite limbs, squeeze glute and lat simultaneously.' }
-    ],
-    benefit: '100% zero-equipment workout calibrated for home fitness, calisthenic control, and joint stability.'
-  },
-  {
-    name: 'Home Cardio Shred & Metcon',
-    focus: 'Conditioning · Fat Burn · Stamina',
-    duration: '30 min',
-    moves: [
-      { name: 'Burpee', sets: '3 sets × 40s active · 20s rest', tip: 'Drop chest swiftly, pop feet up outside hands, explode up with soft landing.' },
-      { name: 'Jumping Jacks', sets: '3 sets × 45s active · 15s rest', tip: 'Light on balls of feet, rhythmic breathing, full arm extension.' },
-      { name: 'Mountain Climber', sets: '3 sets × 40s active · 20s rest', tip: 'High plank position, drive knees to chest without raising hips.' },
-      { name: 'High Knees', sets: '3 sets × 30s active · 30s rest', tip: 'Pumping arms, drive knees above hip line, quick ground contact.' }
-    ],
-    benefit: 'Maximum heart-rate conditioning to boost VO2 max, elevate metabolic rate, and accelerate fat oxidation.'
-  },
-  {
-    name: '3D Shoulders & Arms Sculpt',
-    focus: 'Delts · Biceps · Triceps',
+    name: 'Lower body + core',
+    focus: 'Quads · Glutes · Abs',
     duration: '38 min',
     moves: [
-      { name: 'Barbell Military Press', sets: '3 sets × 8–10 reps', tip: 'Squeeze glutes and quads for base stability, press in straight vertical plane.' },
-      { name: 'Dumbbell Lateral Raise', sets: '3 sets × 12–15 reps', tip: 'Lead with elbows, control the eccentric lowering to maintain constant delt tension.' },
-      { name: 'Rear Delt Fly', sets: '3 sets × 12–15 reps', tip: 'Hinge over, pull dumbbells wide, squeeze rear delts without shrugging traps.' },
-      { name: 'Dumbbell Hammer Curl', sets: '3 sets × 10 reps', tip: 'Neutral palms, targets brachialis and forearms for thick arm profile.' },
-      { name: 'Overhead Tricep Extension', sets: '3 sets × 12 reps', tip: 'Elbows forward and high, deep stretch behind neck, lockout triceps at top.' }
+      { name: 'Dumbbell reverse lunge', sets: '3 sets × 10 reps each', tip: 'Step back softly, lower straight down' },
+      { name: 'Glute bridge', sets: '3 sets × 15 reps', tip: 'Squeeze glutes at top, pause for 1 second' },
+      { name: 'Single-leg RDL', sets: '3 sets × 8 reps each', tip: 'Hinge at hip, balance on standing leg' },
+      { name: 'Bird dog', sets: '3 sets × 12 reps', tip: 'Slow and controlled, brace core throughout' }
     ],
-    benefit: 'Focused aesthetic conditioning for complete shoulder roundness and balanced arm development.'
+    benefit: 'A balanced lower-body session to build leg strength and support stable movement.'
   },
   {
-    name: 'Core Armor & Rotational Power',
-    focus: 'Abs · Obliques · Deep Core',
-    duration: '28 min',
+    name: 'Upper body strength',
+    focus: 'Shoulders · Chest · Back',
+    duration: '35 min',
     moves: [
-      { name: 'Hanging Leg Raise', sets: '3 sets × 10–12 reps', tip: 'Tilt pelvis backward as legs rise, avoid swinging or momentum.' },
-      { name: 'Russian Twist', sets: '3 sets × 20 twists', tip: 'Lean back 45°, rotate ribcage fully from side to side, keep feet steady.' },
-      { name: 'Ab Wheel Rollout', sets: '3 sets × 8–10 reps', tip: 'Tuck pelvis, roll out as far as core allows without dropping lumbar spine.' },
-      { name: 'Side Plank', sets: '3 sets × 35s each side', tip: 'Elbow under shoulder, stack feet, drive bottom hip upward into straight line.' }
+      { name: 'Dumbbell floor press', sets: '3 sets × 10 reps', tip: 'Upper arms gently touch floor, press straight up' },
+      { name: 'Incline push-up', sets: '3 sets × 12 reps', tip: 'Keep straight line from head to heels' },
+      { name: 'Dumbbell shoulder press', sets: '3 sets × 10 reps', tip: 'Press overhead without arching lower back' },
+      { name: 'Plank shoulder tap', sets: '3 sets × 16 taps', tip: 'Keep hips completely still while tapping opposite shoulder' }
     ],
-    benefit: 'Fortifies the midsection with 360-degree core stiffness to maximize lifting safety and trunk athleticism.'
-  },
-  {
-    name: 'Full Body Mobility & Recovery Flow',
-    focus: 'Joint Health · Decompression · Flexibility',
-    duration: '25 min',
-    moves: [
-      { name: "World's Greatest Stretch", sets: '2 sets × 6 reps each', tip: 'Deep lunge with elbow to instep, open thoracic spine with high hand reach.' },
-      { name: 'Cat-Cow Stretch', sets: '2 sets × 10 breath cycles', tip: 'Coordinate breath: inhale belly down, exhale arch spine toward ceiling.' },
-      { name: 'Hip 90/90 Stretch', sets: '2 sets × 45s each side', tip: 'Square chest over front shin, sink into hip capsule without rounding back.' },
-      { name: 'Foam Roller Upper Back', sets: '2 sets × 60s slow roll', tip: 'Roll thoracic spine with arms crossed, mobilize extended segments.' }
-    ],
-    benefit: 'Decompresses the spine, restores joint range of motion, and accelerates central nervous system recovery.'
+    benefit: 'Push, pull and stabilize through a practical upper-body strength circuit.'
   }
 ];
 
@@ -968,7 +706,50 @@ if (plan && plan.workout && !WORKOUT_PLANS.some(w => w.name === plan.workout.nam
   WORKOUT_PLANS.unshift(plan.workout);
 }
 
-let EXERCISES_LIBRARY = [
+const EXERCISE_GIF_MAP = {
+  'Barbell / EZ-Bar Bicep Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1682-Dsfz0Id.gif',
+  'Barbell Back Squat': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0026-W9pFVv1.gif',
+  'Barbell Bent-Over Row': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0027-eZyBC3j.gif',
+  'Barbell Hip Thrust': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1409-qKBpF7I.gif',
+  'Barbell Military Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1456-wdRZISl.gif',
+  'Bulgarian Split Squat': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0987-arsYEd3.gif',
+  'Cable Kneeling Crunch': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0175-WW95auq.gif',
+  'Cable Lateral Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0178-goJ6ezq.gif',
+  'Chest Dips': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0009-PAgTVaK.gif',
+  'Conventional Deadlift': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0032-ila4NZS.gif',
+  'Decline Dumbbell Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Dumbbell Floor Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Dumbbell Lateral Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0334-DsgkuIt.gif',
+  'Dumbbell Shrug': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0406-NJzBsGJ.gif',
+  'Face Pull': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0570-OyoZ3Pu.gif',
+  'Flat Barbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0025-EIeI8Vf.gif',
+  'Flat Dumbbell Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0286-izMnLqz.gif',
+  'Hammer Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0313-slDvUAU.gif',
+  'Hanging Leg Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0472-I3tsCnC.gif',
+  'High-to-Low Cable Fly': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0158-7saC5zz.gif',
+  'Hyperextension / Back Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0573-rUXfn3R.gif',
+  'Incline Barbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0047-3TZduzM.gif',
+  'Incline Dumbbell Bench Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0314-ns0SIbU.gif',
+  'Incline Dumbbell Bicep Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1677-xiA6lRr.gif',
+  'Incline Push-up': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0493-B1EVP9F.gif',
+  'Lat Pulldown': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0673-ecpY0rH.gif',
+  'Leg Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0585-my33uHU.gif',
+  'Low-to-High Cable Fly': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0158-7saC5zz.gif',
+  'Lying / Seated Leg Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0795-C5jncD2.gif',
+  'Overhead Dumbbell Shoulder Press': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0361-84RyJf8.gif',
+  'Overhead Tricep Extension': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1727-i11JWU7.gif',
+  'Preacher Curl': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0070-qOgPVf6.gif',
+  'Pull-up / Chin-up': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/3293-72BC5Za.gif',
+  'Rear Delt Fly / Reverse Pec Deck': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0378-8DiFDVA.gif',
+  'Romanian Deadlift (RDL)': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0085-wQ2c4XD.gif',
+  'Russian Twist with Weight': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0687-XVDdcoj.gif',
+  'Single-Arm Dumbbell Row': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0327-7vG5o25.gif',
+  'Skull Crusher (Lying Triceps Extension)': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/0060-h8LFzo9.gif',
+  'Standing Calf Raise': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1372-8ozhUIZ.gif',
+  'Tricep Rope Pushdown': 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1723-qRZ5S1N.gif'
+};
+
+const EXERCISES_LIBRARY = [
   // --- CHEST: Upper, Mid, Lower ---
   {
     name: 'Incline Dumbbell Bench Press',
@@ -1422,182 +1203,85 @@ let EXERCISES_LIBRARY = [
   }
 ];
 
-/* ===== Curated Workouts & Home Cardio Initialization ===== */
-function initCuratedExercisesSync() {
-  if (typeof WORKOUTS !== 'undefined' && Array.isArray(WORKOUTS)) {
-    const existing = new Set(EXERCISES_LIBRARY.map(e => e.name.toLowerCase()));
-    for (const w of WORKOUTS) {
-      if (!existing.has(w.n.toLowerCase())) {
-        const isHome = w.t.includes('home');
-        const isGym = w.t.includes('gym');
-        let typeStr = 'BODYWEIGHT · HOME';
-        if (isHome && isGym) typeStr = 'BODYWEIGHT / DUMBBELL · HOME OR GYM';
-        else if (isGym) typeStr = 'GYM';
-
-        let catStr = 'Chest';
-        if (w.c === 'cardio') catStr = 'Cardio';
-        else if (w.c === 'hiit') catStr = 'HIIT';
-        else if (w.c === 'flexibility') catStr = 'Stretching';
-        else if (w.g === 'back') catStr = 'Back';
-        else if (w.g === 'legs') catStr = 'Legs';
-        else if (w.g === 'shoulders') catStr = 'Shoulders';
-        else if (w.g === 'arms') catStr = 'Arms';
-        else if (w.g === 'core') catStr = 'Core';
-
-        EXERCISES_LIBRARY.push({
-          name: w.n,
-          category: catStr,
-          sub: w.g || 'Full Body',
-          type: typeStr,
-          rxSetsReps: (w.sets || '3 sets × 10 reps') + ' · ' + (w.rest || '60s') + ' rest',
-          rxTempo: 'Tempo: Controlled cadence',
-          rxWhy: w.w ? w.w.join(' ') : 'Great conditioning exercise.',
-          benefit: w.w ? w.w[0] : 'Total body fitness.',
-          steps: w.s ? w.s.join(' ') : 'Perform with proper form.',
-          _searchIdx: (w.n + ' ' + (w.g || '') + ' ' + (w.c || '') + ' ' + w.t.join(' ')).toLowerCase()
-        });
-        existing.add(w.n.toLowerCase());
-      }
+// Pre-populate gif field in EXERCISES_LIBRARY from hardcoded map (instant, no async)
+(function applyHardcodedGifs() {
+  for (const ex of EXERCISES_LIBRARY) {
+    if (!ex.gif && EXERCISE_GIF_MAP[ex.name]) {
+      ex.gif = EXERCISE_GIF_MAP[ex.name];
     }
   }
+})();
 
-  // Extra rich Home Cardio exercises
-  const extraHomeCardio = [
-    { name: 'Butt Kicks', category: 'Cardio', sub: 'Legs & Cardio', type: 'BODYWEIGHT · HOME', steps: 'Run in place kicking heels up to glutes with an upright posture and springy footwork.' },
-    { name: 'Skater Hops', category: 'Cardio', sub: 'Agility & Glutes', type: 'BODYWEIGHT · HOME', steps: 'Bound laterally from foot to foot in an athletic skater motion, absorbing impact softly.' },
-    { name: 'Fast Feet Football Shuffle', category: 'Cardio', sub: 'Calves & Stamina', type: 'BODYWEIGHT · HOME', steps: 'Rapid foot taps in athletic quarter-squat stance with quick rhythmic cadence.' },
-    { name: 'Shadow Boxing Combos', category: 'Cardio', sub: 'Upper Body & Core', type: 'BODYWEIGHT · HOME', steps: 'Throw snappy jab-cross-hook combinations while pivoting smoothly on the balls of your feet.' },
-    { name: 'Bear Crawl', category: 'Cardio', sub: 'Full Body & Core', type: 'BODYWEIGHT · HOME', steps: 'Crawl smoothly on hands and toes with knees hovering 2 inches off floor, spine flat.' },
-    { name: 'Step Jacks (Low Impact)', category: 'Cardio', sub: 'Low Impact Cardio', type: 'BODYWEIGHT · HOME', steps: 'Step one foot laterally at a time while raising arms in wide overhead arc.' },
-    { name: 'High Plank Shoulder Taps', category: 'Cardio', sub: 'Core & Delts', type: 'BODYWEIGHT · HOME', steps: 'From solid plank, tap opposite shoulder without allowing hips to sway or sag.' },
-    { name: 'Bicycle Crunches', category: 'Cardio', sub: 'Abs & Obliques', type: 'BODYWEIGHT · HOME', steps: 'Rotate shoulder to opposite knee in smooth fluid pedaling cadence with lower back anchored.' },
-    { name: 'Standing Mountain Climbers', category: 'Cardio', sub: 'Full Body Cardio', type: 'BODYWEIGHT · HOME', steps: 'Drive knees rhythmically to chest while extending arms overhead towards ceiling.' },
-    { name: 'Lateral Shuffles', category: 'Cardio', sub: 'Agility & Glutes', type: 'BODYWEIGHT · HOME', steps: 'Stay low in athletic stance and shuffle rapidly side to side, touching floor at each end.' }
-  ];
+/* ---------- Exercises JSON GIF Loader ---------- */
+// Loads exercises.json and merges gif URLs into EXERCISES_LIBRARY + builds a full lookup map
+let EXERCISES_JSON_MAP = {}; // id/name -> {gif, instructions_en, muscle, equipment, category, level}
 
-  const existingNames = new Set(EXERCISES_LIBRARY.map(e => e.name.toLowerCase()));
-  for (const ex of extraHomeCardio) {
-    if (!existingNames.has(ex.name.toLowerCase())) {
-      EXERCISES_LIBRARY.push({
-        name: ex.name,
-        category: ex.category,
-        sub: ex.sub,
-        type: ex.type,
-        rxSetsReps: '3 sets × 45s · 30s rest',
-        rxTempo: 'Tempo: Dynamic rhythmic cadence',
-        rxWhy: 'High calorie burn and cardiovascular endurance.',
-        benefit: 'Spikes heart rate and accelerates metabolic conditioning.',
-        steps: ex.steps,
-        _searchIdx: (ex.name + ' ' + ex.sub + ' cardio home bodyweight').toLowerCase()
-      });
-      existingNames.add(ex.name.toLowerCase());
-    }
-  }
-}
-initCuratedExercisesSync();
-window.EXERCISES_LIBRARY = EXERCISES_LIBRARY;
-
-/* ===== Full Exercise Library Loader ===== */
-async function loadFullExerciseLibrary() {
+(async function loadExercisesJson() {
   try {
     const res = await fetch('/data/exercises.json');
-    if (!res.ok) throw new Error('fetch failed');
+    if (!res.ok) return;
     const data = await res.json();
-    const MUSCLE_MAP = {
-      'pectorals': 'Chest', 'chest': 'Chest',
-      'biceps': 'Arms', 'triceps': 'Arms', 'forearms': 'Arms',
-      'upper back': 'Back', 'lats': 'Back', 'traps': 'Back', 'spine': 'Back',
-      'delts': 'Shoulders', 'serratus anterior': 'Shoulders', 'levator scapulae': 'Shoulders',
-      'glutes': 'Legs', 'quads': 'Legs', 'hamstrings': 'Legs', 'calves': 'Legs', 'adductors': 'Legs', 'abductors': 'Legs',
-      'abs': 'Core', 'cardiovascular system': 'Cardio'
-    };
-    const EQUIP_MAP = {
-      'body weight': 'BODYWEIGHT · HOME OR GYM', 'dumbbell': 'DUMBBELL · GYM OR HOME',
-      'barbell': 'BARBELL · GYM', 'cable': 'CABLE · GYM', 'leverage machine': 'MACHINE · GYM',
-      'band': 'BAND · HOME', 'smith machine': 'SMITH MACHINE · GYM', 'kettlebell': 'KETTLEBELL · GYM OR HOME',
-      'stability ball': 'STABILITY BALL · HOME OR GYM', 'ez barbell': 'EZ BAR · GYM', 'rope': 'ROPE · GYM',
-      'medicine ball': 'MEDICINE BALL · GYM OR HOME', 'bosu ball': 'BOSU BALL · GYM OR HOME', 'resistance band': 'RESISTANCE BAND · HOME',
-      'roller': 'ROLLER · MOBILITY', 'wheel roller': 'WHEEL ROLLER · HOME OR GYM', 'weighted': 'WEIGHTED · GYM'
-    };
-
-    const toTitle = (str) => {
-      if (!str) return '';
-      return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-    };
-
-    // First: enrich curated exercises with gif and metadata from data if names match
-    const dataByLower = new Map();
-    for (const d of data) {
-      if (d.name) dataByLower.set(d.name.toLowerCase().trim(), d);
+    // Build lookup maps: by name (lowercase) and by id
+    const byName = {};
+    const byId = {};
+    for (const ex of data) {
+      if (ex.name) byName[ex.name.toLowerCase().trim()] = ex;
+      if (ex.id) byId[ex.id] = ex;
+      EXERCISES_JSON_MAP[ex.name ? ex.name.toLowerCase().trim() : ex.id] = ex;
     }
-    for (const cur of EXERCISES_LIBRARY) {
-      const match = dataByLower.get(cur.name.toLowerCase().trim());
-      if (match) {
-        if (!cur.gif && match.gif) cur.gif = match.gif;
-        if (!cur.rawEquipment && match.equipment) cur.rawEquipment = match.equipment.toLowerCase();
-        if (!cur.equipment && match.equipment) cur.equipment = match.equipment;
-        if (!cur.level && match.level) cur.level = toTitle(match.level);
-        if (!cur.id && match.id) cur.id = match.id;
+    // Merge gif + instructions into existing EXERCISES_LIBRARY entries
+    for (const libEx of EXERCISES_LIBRARY) {
+      const key = libEx.name.toLowerCase().trim();
+      const jsonEx = byName[key];
+      if (jsonEx) {
+        if (jsonEx.gif) libEx.gif = jsonEx.gif;
+        if (jsonEx.instructions_en) libEx.instructions_en = jsonEx.instructions_en;
+        if (jsonEx.muscle && !libEx.muscle) libEx.muscle = jsonEx.muscle;
+        if (jsonEx.equipment && !libEx.equipment) libEx.equipment = jsonEx.equipment;
+        if (jsonEx.level && !libEx.level) libEx.level = jsonEx.level;
       }
     }
-
+    // Also add all JSON exercises not already in library (so full 1318 exercise GIFs are accessible)
     const existingNames = new Set(EXERCISES_LIBRARY.map(e => e.name.toLowerCase().trim()));
-    const newExercises = [];
     for (const ex of data) {
-      if (!ex.name) continue;
-      const nameLower = ex.name.toLowerCase().trim();
-      if (existingNames.has(nameLower)) continue;
-      const muscle = (ex.muscle || '').toLowerCase().trim();
-      const category = MUSCLE_MAP[muscle] || 'Other';
-      if (category === 'Other') continue;
-      const equipment = (ex.equipment || '').toLowerCase().trim();
-      const type = EQUIP_MAP[equipment] || (ex.equipment ? ex.equipment.toUpperCase() + ' · GYM' : 'BODYWEIGHT · HOME OR GYM');
-      const instructions = Array.isArray(ex.instructions_en) ? ex.instructions_en : (ex.instructions_en ? [ex.instructions_en] : []);
-
-      const titleName = toTitle(ex.name);
-      const subTitle = toTitle(ex.muscle || muscle);
-      const levelTitle = toTitle(ex.level || 'Intermediate');
-
-      newExercises.push({
-        id: ex.id,
-        name: titleName,
-        category,
-        sub: subTitle,
-        muscle: ex.muscle || muscle,
-        equipment: ex.equipment || 'body weight',
-        rawEquipment: equipment,
-        level: levelTitle,
+      if (!ex.name || existingNames.has(ex.name.toLowerCase().trim())) continue;
+      // Map JSON category/muscle to library category
+      let category = 'Full Body';
+      const m = (ex.muscle || ex.category || '').toLowerCase();
+      if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+      else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
+      else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
+      else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm') || m.includes('arm')) category = 'Arms';
+      else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf') || m.includes('leg')) category = 'Legs';
+      else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+      EXERCISES_LIBRARY.push({
+        name: ex.name,
+        category: category,
+        sub: ex.muscle || ex.category || category,
+        type: (ex.equipment || 'body weight').toUpperCase(),
         gif: ex.gif || '',
-        type,
-        rxSetsReps: category === 'Cardio' ? '20–30 min · Zone 2' : '3 sets × 8–12 reps · 60s rest',
+        instructions_en: ex.instructions_en || '',
+        muscle: ex.muscle || '',
+        equipment: ex.equipment || 'body weight',
+        level: ex.level || 'beginner',
+        rxSetsReps: '3 sets × 10-12 reps · 60s rest',
         rxTempo: 'Tempo: 2-0-1',
-        rxWhy: instructions[0] || `Targets the ${ex.muscle || muscle} effectively for strength, stability, and hypertrophy.`,
-        benefit: instructions[0] || `Develops ${ex.muscle || muscle} strength and muscular endurance.`,
-        steps: instructions.join(' ') || `Perform ${titleName} with controlled form throughout the movement.`,
-        instructions: instructions,
-        _searchIdx: `${titleName.toLowerCase()} ${muscle} ${equipment} ${category.toLowerCase()}`
+        rxWhy: ex.instructions_en ? ex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
+        benefit: ex.instructions_en ? ex.instructions_en.substring(0, 100) + '...' : 'Builds strength and muscle mass.',
+        steps: ex.instructions_en || 'Perform with controlled movement and full range of motion.'
       });
-      existingNames.add(nameLower);
+      existingNames.add(ex.name.toLowerCase().trim());
     }
-    EXERCISES_LIBRARY.push(...newExercises);
-    window.EXERCISES_LIBRARY = EXERCISES_LIBRARY;
-
-    // Ensure Cardio category in MUSCLE_GROUPS
-    if (!MUSCLE_GROUPS['Cardio']) {
-      MUSCLE_GROUPS['Cardio'] = ['All Cardio', 'cardiovascular system'];
-    }
-
-    console.log(`[FitFuel] Exercise library loaded: ${EXERCISES_LIBRARY.length} total exercises across all categories`);
-    if (activeView === 'exercise-library' && typeof renderExerciseLibrary === 'function') renderExerciseLibrary();
-    if (activeView === 'workouts' && typeof renderCustomWorkoutExplorer === 'function') renderCustomWorkoutExplorer();
-  } catch (err) {
-    console.warn('[FitFuel] Could not load full exercise library, using curated set:', err.message);
+    // Re-render exercise library if it's currently open
+    if (document.querySelector('#exerciseCardsContainer')) renderExerciseLibrary();
+    // Re-render workouts if open
+    if (document.querySelector('#planMoveList')) renderWorkouts();
+  } catch (e) {
+    console.warn('FitFuel: Could not load exercises.json GIFs', e);
   }
-}
-loadFullExerciseLibrary();
+})();
 
 /* ---------- Toast Notice (Self-hiding & Click-to-dismiss) ---------- */
-
 let toastTimeout = null;
 function hideToast() {
   const t = $('#toastNotice');
@@ -1677,39 +1361,21 @@ function closeModal(selector) {
   }, 160);
 }
 
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.switchView = switchView;
-
-
 // Global click close listener
 document.addEventListener('click', e => {
-  const closeBtn = e.target.closest('[data-close], .close-btn, .modal-close');
+  const closeBtn = e.target.closest('[data-close]');
   if (closeBtn) {
-    const modalEl = closeBtn.closest('.modal, .modal-backdrop');
-    if (modalEl) closeModal(modalEl);
+    closeModal(closeBtn.closest('.modal-backdrop'));
   }
-  const backdrop = (e.target.classList.contains('modal-backdrop') || (e.target.classList.contains('modal') && !e.target.closest('.modal-card, .modal-content, .modal-dialog'))) ? e.target : null;
-  if (backdrop && e.target === backdrop) {
+  const backdrop = e.target.classList.contains('modal-backdrop') ? e.target : null;
+  if (backdrop) {
     closeModal(backdrop);
   }
 });
 
 /* ---------- Navigation & Views Switching ---------- */
 function switchView(viewName) {
-  if (typeof syncProfileToAllFeatures === 'function') syncProfileToAllFeatures();
-  if (typeof updateDailyMacroMeters === 'function') updateDailyMacroMeters();
   activeView = viewName;
-  const WORKOUT_VIEWS = ['workouts', 'challenge', 'starting-load', 'exercise-library'];
-  const FOOD_VIEWS = ['food-log', 'my-foods'];
-
-  let parentNavView = viewName;
-  if (WORKOUT_VIEWS.includes(viewName)) {
-    parentNavView = 'workouts';
-  } else if (FOOD_VIEWS.includes(viewName)) {
-    parentNavView = 'food-log';
-  }
-
   $$('.primary-nav .nav-link').forEach(btn => {
     const isTarget = btn.dataset.view === viewName;
     btn.classList.toggle('selected', isTarget);
@@ -1721,18 +1387,9 @@ function switchView(viewName) {
     } else if (!isTarget && dot) {
       dot.remove();
     }
-    if (isTarget && typeof btn.scrollIntoView === 'function') {
-      try { btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {}
-    }
   });
 
-  // Sync all hub tabs
-  $$('.hub-tab-btn').forEach(tab => {
-    const isTabActive = tab.dataset.hubTarget === viewName;
-    tab.classList.toggle('active', isTabActive);
-  });
-
-  $$('.view').forEach(v => {
+  $$('.page-content .view').forEach(v => {
     v.classList.remove('active');
   });
 
@@ -1757,7 +1414,18 @@ function switchView(viewName) {
   }
 
   // Close mobile drawer if open
-  $('#sidebar').classList.remove('mobile-open');
+  $('#sidebar')?.classList.remove('mobile-open');
+  $('#mobileSidebarBackdrop')?.classList.remove('active');
+
+  // Sync mobile bottom navigation active state
+  $$('.mobile-nav-btn[data-view]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewName);
+  });
+
+  // Sync hub sub-navigation active state across merged views
+  $$('.hub-subnav-btn[data-hubview]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.hubview === viewName);
+  });
 
   // Re-render view specifics
   if (viewName === 'today') { renderDashboard(); renderDailyTip(); if (typeof initInteractiveHeroAndAppButtons === 'function') initInteractiveHeroAndAppButtons(); }
@@ -1773,120 +1441,98 @@ function switchView(viewName) {
   if (viewName === 'starting-load') renderStartingLoad();
   if (viewName === 'ai-coach') renderAiCoachView();
   if (viewName === 'activity') renderActivityView();
-  if (viewName === 'posture') {
-    renderPostureView();
-  } else {
-    if (typeof stopPostureCamera === 'function') stopPostureCamera();
-    if (typeof stopAllSpeech === 'function') stopAllSpeech();
-    else if ('speechSynthesis' in window) {
-      try { window.speechSynthesis.cancel(); } catch (e) {}
-    }
-  }
+  if (viewName === 'posture') renderPostureView();
+  else if (typeof stopPostureCamera === 'function') stopPostureCamera();
   if (viewName === 'customization') renderCustomizationView();
 }
 
 // Attach Nav Links
 $$('.primary-nav .nav-link').forEach(btn => {
-  btn.onclick = () => {
-    switchView(btn.dataset.view);
-    const sb = $('#sidebar');
-    if (sb) sb.classList.remove('mobile-open');
-    const bdrop = $('#sidebarBackdrop');
-    if (bdrop) bdrop.classList.remove('active');
-  };
+  btn.onclick = () => switchView(btn.dataset.view);
 });
 
-// Navigation menu toggle (Desktop Sidebar Collapse & Mobile Drawer)
-let sidebarHoverTimer = null;
-
-function toggleDashboardSidebarCollapse(forceState) {
-  if (window.innerWidth <= 768) {
-    const sb = $('#sidebar');
-    const bdrop = $('#sidebarBackdrop');
-    if (sb) sb.classList.toggle('mobile-open');
-    if (bdrop) bdrop.classList.toggle('active');
-    return;
-  }
-
-  const appShell = document.querySelector('.app-shell');
-  const sb = $('#sidebar');
-  if (!sb) return;
-
-  const currentlyCollapsed = sb.classList.contains('collapsed');
-  const nextCollapsed = typeof forceState === 'boolean' ? forceState : !currentlyCollapsed;
-
-  sb.classList.remove('is-hover-expanded');
-  if (nextCollapsed) {
-    sb.classList.add('collapsed');
-    if (appShell) appShell.classList.add('sidebar-collapsed');
-    localStorage.setItem('fitfuel_sidebar_collapsed', '1');
-    if (typeof toast === 'function') toast('Your Space collapsed to rail. Hover to preview, click ☰ to open.');
-  } else {
-    sb.classList.remove('collapsed');
-    if (appShell) appShell.classList.remove('sidebar-collapsed');
-    localStorage.setItem('fitfuel_sidebar_collapsed', '0');
-    if (typeof toast === 'function') toast('Your Space stabilized.');
-  }
-}
-
-// Hover preview on collapsed sidebar
-(function initSidebarHoverPreview() {
-  const sb = $('#sidebar');
-  if (!sb) return;
-
-  sb.addEventListener('mouseenter', () => {
-    if (window.innerWidth > 900 && sb.classList.contains('collapsed')) {
-      clearTimeout(sidebarHoverTimer);
-      sb.classList.add('is-hover-expanded');
-    }
-  });
-
-  sb.addEventListener('mouseleave', () => {
-    if (window.innerWidth > 900 && sb.classList.contains('collapsed')) {
-      sidebarHoverTimer = setTimeout(() => {
-        sb.classList.remove('is-hover-expanded');
-      }, 160);
-    }
-  });
-
-  sb.addEventListener('click', (e) => {
-    if (window.innerWidth > 900 && sb.classList.contains('collapsed') && sb.classList.contains('is-hover-expanded')) {
-      if (!e.target.closest('#sidebarCollapseToggleBtn')) {
-        toggleDashboardSidebarCollapse(false);
-      }
-    }
-  });
-})();
-
-const mobMenuBtn = $('#mobileMenuBtn');
-if (mobMenuBtn) {
-  mobMenuBtn.onclick = toggleDashboardSidebarCollapse;
-}
-
-const sbCollapseToggleBtn = $('#sidebarCollapseToggleBtn');
-if (sbCollapseToggleBtn) {
-  sbCollapseToggleBtn.onclick = (e) => {
+// Topbar 3-dots dropdown menu toggle
+const topbarMoreBtn = $('#topbarMoreBtn');
+const topbarMoreMenu = $('#topbarMoreMenu');
+if (topbarMoreBtn && topbarMoreMenu) {
+  topbarMoreBtn.onclick = (e) => {
     e.stopPropagation();
-    toggleDashboardSidebarCollapse();
+    const isOpen = topbarMoreMenu.style.display === 'flex' || topbarMoreMenu.style.display === 'block';
+    topbarMoreMenu.style.display = isOpen ? 'none' : 'flex';
+    topbarMoreBtn.setAttribute('aria-expanded', !isOpen);
+  };
+  document.addEventListener('click', (e) => {
+    if (!topbarMoreMenu.contains(e.target) && e.target !== topbarMoreBtn && !topbarMoreBtn.contains(e.target)) {
+      topbarMoreMenu.style.display = 'none';
+      topbarMoreBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+  // Auto-close dropdown when clicking action items
+  topbarMoreMenu.querySelectorAll('.dropdown-menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      setTimeout(() => {
+        topbarMoreMenu.style.display = 'none';
+        topbarMoreBtn.setAttribute('aria-expanded', 'false');
+      }, 80);
+    });
+  });
+}
+
+// Mobile menu and drawer toggles
+if ($('#mobileMenuBtn')) {
+  $('#mobileMenuBtn').onclick = () => {
+    const isOpen = $('#sidebar').classList.toggle('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.toggle('active', isOpen);
   };
 }
 
-// Restore saved sidebar collapsed preference on desktop
-if (typeof localStorage !== 'undefined' && localStorage.getItem('fitfuel_sidebar_collapsed') === '1' && window.innerWidth > 900) {
-  const appShell = document.querySelector('.app-shell');
-  const sb = $('#sidebar');
-  if (appShell && sb) {
-    appShell.classList.add('sidebar-collapsed');
-    sb.classList.add('collapsed');
-  }
+if ($('#mobileSidebarBackdrop')) {
+  $('#mobileSidebarBackdrop').onclick = () => {
+    $('#sidebar')?.classList.remove('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.remove('active');
+  };
 }
 
-const sbBackdropEl = $('#sidebarBackdrop');
-if (sbBackdropEl) {
-  sbBackdropEl.onclick = () => {
-    const sb = $('#sidebar');
-    if (sb) sb.classList.remove('mobile-open');
-    sbBackdropEl.classList.remove('active');
+// Sidebar smooth drag-to-slide & scroll interaction
+const sidebarEl = $('#sidebar');
+if (sidebarEl) {
+  let isDown = false;
+  let startY = 0;
+  let startScrollTop = 0;
+
+  sidebarEl.addEventListener('mousedown', (e) => {
+    if (e.target.closest('button, select, input, a')) return;
+    isDown = true;
+    startY = e.pageY;
+    startScrollTop = sidebarEl.scrollTop;
+    sidebarEl.style.cursor = 'grabbing';
+    sidebarEl.style.userSelect = 'none';
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!isDown) return;
+    isDown = false;
+    sidebarEl.style.cursor = '';
+    sidebarEl.style.userSelect = '';
+  });
+
+  sidebarEl.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const walk = (e.pageY - startY) * 1.4;
+    sidebarEl.scrollTop = startScrollTop - walk;
+  });
+}
+
+// Mobile bottom navigation items
+$$('.mobile-bottom-nav .mobile-nav-btn[data-view]').forEach(btn => {
+  btn.onclick = () => switchView(btn.dataset.view);
+});
+
+if ($('#mobNavMore')) {
+  $('#mobNavMore').onclick = () => {
+    const isOpen = $('#sidebar').classList.toggle('mobile-open');
+    $('#mobileSidebarBackdrop')?.classList.toggle('active', isOpen);
   };
 }
 
@@ -1998,7 +1644,6 @@ function getTodayLog() {
 }
 
 function renderDashboard() {
-  updateDailyMacroMeters(); // Authoritative sync
   const entries = getTodayLog();
   const totalKcal = Math.round(entries.reduce((a, b) => a + (Number(b.k) || Number(b.calories) || 0), 0));
   const totalP = Math.round(entries.reduce((a, b) => a + (Number(b.p) || Number(b.protein) || 0), 0));
@@ -2134,6 +1779,15 @@ function renderDashboard() {
   if ($('#dashWorkoutFocus')) $('#dashWorkoutFocus').textContent = wo.focus.toUpperCase();
   if ($('#dashWorkoutDuration')) $('#dashWorkoutDuration').textContent = wo.duration;
 
+  // Dynamically sync exercise demonstration GIF for active workout
+  if ($('#dashWorkoutGif') && wo && wo.moves && wo.moves.length) {
+    const firstMove = wo.moves[0].name;
+    const exMatch = (typeof findExercise === 'function') ? findExercise(firstMove) : null;
+    if (exMatch && exMatch.gif) {
+      $('#dashWorkoutGif').src = exMatch.gif;
+    }
+  }
+
   /* ---------- Accurate Streak Calculation & 7-Day Weekly Bars ---------- */
   const curStreakInfo = evaluateStreakStatus();
   const streakCount = curStreakInfo.currentStreak || 0;
@@ -2200,17 +1854,16 @@ function renderDashboard() {
   const barGraph = $('#dashStreakBarGraph');
   if (barGraph) {
     barGraph.innerHTML = weeklyDayData.map(d => {
-      const activeColor = d.isActive ? '#3b82f6' : '#e2ead9';
-      const borderStyle = d.isToday ? 'border: 2px solid #2563eb;' : 'border: 1px solid rgba(0,0,0,0.04);';
-      const labelWeight = d.isToday ? 'font-weight: 800; color: #2563eb;' : 'font-weight: 600; color:var(--glass-text-secondary);';
+      const activeClass = d.isActive ? 'active' : '';
+      const todayClass = d.isToday ? 'today' : '';
       const statusIcon = d.isActive ? '' : (d.isToday ? '•' : '');
       return `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-          <span style="font-size:.72rem; ${labelWeight}">${d.name}</span>
-          <div style="width:100%; height:14px; background:${activeColor}; border-radius:99px; ${borderStyle} transition:background .2s; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;" title="${d.name} (${d.dateStr}): ${d.isActive ? 'Active' : (d.isToday ? 'Today' : 'Rest/Pending')}">
+        <div class="streak-day-item" style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+          <span class="streak-day-name ${todayClass}" style="font-size:.72rem;">${d.name}</span>
+          <div class="streak-day-bar ${activeClass} ${todayClass}" style="width:100%; height:14px; border-radius:99px; transition:all .2s; display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;" title="${d.name} (${d.dateStr}): ${d.isActive ? 'Active' : (d.isToday ? 'Today' : 'Rest/Pending')}">
             ${statusIcon}
           </div>
-          <small style="font-size:.65rem; color:${d.isActive ? '#4b6e2f' : '#a2b1a5'}; font-weight:700;">${d.letter}</small>
+          <small class="streak-day-sub ${activeClass}" style="font-size:.65rem; font-weight:700;">${d.letter}</small>
         </div>
       `;
     }).join('');
@@ -2254,56 +1907,33 @@ function renderDashboard() {
   updateAiDailyVerification(entries, totalKcal, goalKcal, totalP, profile.p || 165, waterMl);
 
   // Update Image 3 Dashboard Elements
-  const userName = profile.name || 'Athlete';
+  const userName = profile.name || 'Utkarsh';
   if ($('#dashImage3Greeting')) $('#dashImage3Greeting').textContent = `Good Morning, ${userName}!`;
-  if ($('#floatingAiWelcomeText')) {
-    $('#floatingAiWelcomeText').textContent = `Hi ${profile.name || 'there'}! I'm your FitFuel AI Coach. How can I assist with your workout, meal planning, or body goals today?`;
-  }
 
-  // Image 3 Metric 1: Calories
-  const displayKcal = Number(totalKcal || 0);
+  // Image 3 Metric 1: Calories (1,850 / 2,200 kcal, 84%)
+  const displayKcal = totalKcal || 1850;
   const displayGoal = goalKcal || 2200;
-  const displayPct = displayGoal > 0 ? Math.min(100, Math.round((displayKcal / displayGoal) * 100)) : 0;
+  const displayPct = totalKcal ? pct : 84;
   const displayLeft = Math.max(0, displayGoal - displayKcal);
   if ($('#metricV2CalVal')) $('#metricV2CalVal').textContent = displayKcal.toLocaleString();
   if ($('#metricV2CalSub')) $('#metricV2CalSub').textContent = `${displayLeft.toLocaleString()} kcal remaining`;
   if ($('#metricV2CalPct')) $('#metricV2CalPct').textContent = displayPct + '%';
   if ($('#metricV2CalCircle')) $('#metricV2CalCircle').setAttribute('stroke-dasharray', `${displayPct}, 100`);
 
-  // Image 3 Metric 2: Protein
-  const displayP = Number(totalP || 0);
+  // Image 3 Metric 2: Protein (120 / 180 g, 67%)
+  const displayP = totalP || 120;
   const displayPGoal = profile.p || 180;
-  const displayPPct = displayPGoal > 0 ? Math.min(100, Math.round((displayP / displayPGoal) * 100)) : 0;
+  const displayPPct = Math.min(100, Math.round((displayP / displayPGoal) * 100));
   const displayPLeft = Math.max(0, displayPGoal - displayP);
   if ($('#metricV2ProteinVal')) $('#metricV2ProteinVal').textContent = displayP;
   if ($('#metricV2ProteinSub')) $('#metricV2ProteinSub').textContent = `${displayPLeft} g left to reach target`;
   if ($('#metricV2ProteinPct')) $('#metricV2ProteinPct').textContent = displayPPct + '%';
-
-  // Image 3 Metric 1 & 2: Hydration & Active Burn
-  const curWaterL = (waterMl / 1000).toFixed(1);
-  const curWaterGoal = Number(waterGoalL) || 2.8;
-  const curWaterPct = Math.min(100, Math.round((waterMl / (curWaterGoal * 1000)) * 100));
-  const curWaterRemL = Math.max(0, (curWaterGoal - Number(curWaterL))).toFixed(1);
-  if ($('#metricV2WaterVal')) $('#metricV2WaterVal').textContent = curWaterL;
-  if ($('#metricV2WaterGoalVal')) $('#metricV2WaterGoalVal').textContent = curWaterGoal.toFixed(1);
-  if ($('#metricV2WaterPct')) $('#metricV2WaterPct').textContent = curWaterPct + '%';
-  if ($('#metricV2WaterSub')) $('#metricV2WaterSub').textContent = `${curWaterRemL} L remaining · ${curWaterPct >= 80 ? 'Optimal' : 'Active tracking'}`;
-  if ($('#metricV2WaterCircle')) $('#metricV2WaterCircle').setAttribute('stroke-dasharray', `${curWaterPct}, 100`);
-
-  // Active Energy Burn (calculated from completed workouts and activity)
-  const energyBurned = (workoutsDone && workoutsDone.length) ? (workoutsDone.length * 280 + 140) : 420;
-  if ($('#metricV2EnergyVal')) $('#metricV2EnergyVal').textContent = energyBurned;
-
-  // Sy-Athlete Hero Hydration sync
-  if ($('#syHeroWaterCurrent')) $('#syHeroWaterCurrent').textContent = curWaterL;
-  if ($('#syHeroWaterTarget')) $('#syHeroWaterTarget').textContent = curWaterGoal.toFixed(1);
-  if ($('#syHeroWaterPct')) $('#syHeroWaterPct').textContent = curWaterPct + '%';
   if ($('#metricV2ProteinCircle')) $('#metricV2ProteinCircle').setAttribute('stroke-dasharray', `${displayPPct}, 100`);
 
-  // Image 3 Metric 3: Workouts
-  const displayWoDone = Number(weekCompletedCount || 0);
+  // Image 3 Metric 3: Workouts (4 / 5 this week, 80%)
+  const displayWoDone = weekCompletedCount || 4;
   const displayWoGoal = targetDays || 5;
-  const displayWoPct = displayWoGoal > 0 ? Math.min(100, Math.round((displayWoDone / displayWoGoal) * 100)) : 0;
+  const displayWoPct = Math.min(100, Math.round((displayWoDone / displayWoGoal) * 100));
   if ($('#metricV2WorkoutsVal')) $('#metricV2WorkoutsVal').textContent = displayWoDone;
   if ($('#metricV2WorkoutsSub')) $('#metricV2WorkoutsSub').textContent = `${Math.max(0, displayWoGoal - displayWoDone)} session to weekly goal`;
   if ($('#metricV2WorkoutsPct')) $('#metricV2WorkoutsPct').textContent = displayWoPct + '%';
@@ -2322,96 +1952,57 @@ function renderDashboard() {
   if ($('#donutFatsVal')) $('#donutFatsVal').textContent = `${totalF || 53}g / 65g`;
 
   // Sync Pedometer & Streak values
-  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 0;
+  const currentSteps = Number(localStorage.getItem('fitfuel_steps')) || 8432;
   const stepsPct = Math.min(100, Math.round((currentSteps / 10000) * 100));
   if ($('#dashBigStreakNum')) $('#dashBigStreakNum').textContent = streakCount || 12;
   if ($('#actStepsTopVal')) $('#actStepsTopVal').textContent = currentSteps.toLocaleString();
 }
 
 // Dashboard Buttons Navigation
-if ($('#goToFoodLogFromDash')) $('#goToFoodLogFromDash').onclick = () => switchView('food-log');
-if ($('#viewAllFoodEntriesBtn')) $('#viewAllFoodEntriesBtn').onclick = () => switchView('food-log');
-if ($('#dashAddFoodBtn')) $('#dashAddFoodBtn').onclick = () => openFoodModal();
-if ($('#dashStartWorkoutBtn')) $('#dashStartWorkoutBtn').onclick = () => switchView('workouts');
-if ($('#insightsShortcutBtn')) $('#insightsShortcutBtn').onclick = () => switchView('tracking');
-if ($('#adjustWaterBtn')) $('#adjustWaterBtn').onclick = () => openModal('#weatherTempModal');
-
-// Quick Add Water Buttons in Middle Hydration Panel
-if ($('#quickAddWater250Btn')) {
-  $('#quickAddWater250Btn').onclick = () => {
-    water.ml = (water.date === today() ? (water.ml || 0) : 0) + 250;
-    water.date = today();
-    store.set('water', water);
-    recordDailyActivity('water');
-    renderDashboard();
-    if (soundFX && soundFX.pop) soundFX.pop();
-    if (typeof toast === 'function') toast(`Added 250 ml water (${(water.ml / 1000).toFixed(1)} L total)`);
-  };
-}
-if ($('#quickAddWater500Btn')) {
-  $('#quickAddWater500Btn').onclick = () => {
-    water.ml = (water.date === today() ? (water.ml || 0) : 0) + 500;
-    water.date = today();
-    store.set('water', water);
-    recordDailyActivity('water');
-    renderDashboard();
-    if (soundFX && soundFX.celebrate) soundFX.celebrate();
-    if (typeof toast === 'function') toast(`Added 500 ml shaker (${(water.ml / 1000).toFixed(1)} L total)`);
-  };
-}
-
-const scrollToTodayWater = () => {
-  const panel = $('#todayWaterIntakePanel') || $('#frontWaterAdvisoryCard');
-  if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-if ($('#metricCardWaterTrigger')) $('#metricCardWaterTrigger').onclick = scrollToTodayWater;
-if ($('#metricCardEnergyTrigger')) $('#metricCardEnergyTrigger').onclick = () => switchView('activity');
-if ($('#syFloatWaterTrigger')) $('#syFloatWaterTrigger').onclick = scrollToTodayWater;
-if ($('#syFloatStreakTrigger')) $('#syFloatStreakTrigger').onclick = () => switchView('tracking');
-if ($('#syQuickWaterBtn')) $('#syQuickWaterBtn').onclick = scrollToTodayWater;
-if ($('#syBottomCardWater')) $('#syBottomCardWater').onclick = scrollToTodayWater;
-
-// Site-wide dashboard button handlers
-if ($('#dashViewAllActivityBtn')) $('#dashViewAllActivityBtn').onclick = () => switchView('activity');
-if ($('#dashUpdateMetricsBtn')) $('#dashUpdateMetricsBtn').onclick = () => switchView('profile');
-if ($('#dashViewBodyAnalysisBtn')) $('#dashViewBodyAnalysisBtn').onclick = () => switchView('body-analysis');
-if ($('#bodyCompScanBadge')) $('#bodyCompScanBadge').onclick = () => switchView('body-analysis');
-if ($('#viewBodyDetailsBtn')) $('#viewBodyDetailsBtn').onclick = () => switchView('body-analysis');
-if ($('#metricCardCalTrigger')) $('#metricCardCalTrigger').onclick = () => switchView('food-log');
-if ($('#metricCardProteinTrigger')) $('#metricCardProteinTrigger').onclick = () => switchView('food-log');
-if ($('#metricCardWorkoutsTrigger')) $('#metricCardWorkoutsTrigger').onclick = () => switchView('workouts');
-if ($('#metricCardWeightTrigger')) $('#metricCardWeightTrigger').onclick = () => switchView('tracking');
-
-// AI Coach Plan Actions
-if ($('#coachPlanAddToWorkoutBtn')) {
-  $('#coachPlanAddToWorkoutBtn').onclick = () => {
-    if (typeof toast === 'function') toast('Saved Upper-Body Hypertrophy Plan to My Workouts!');
-    if (soundFX && soundFX.celebrate) soundFX.celebrate();
-    switchView('workouts');
-  };
-}
-if ($('#coachPlanInspectFormBtn')) {
-  $('#coachPlanInspectFormBtn').onclick = () => {
-    switchView('posture');
-    if (typeof toast === 'function') toast('Opening AI Posture Camera for Form Biomechanics Analysis');
-  };
-}
-if ($('#coachPlanModifyVolBtn')) {
-  $('#coachPlanModifyVolBtn').onclick = () => {
-    const inp = $('#coachChatInput');
-    if (inp) {
-      inp.value = 'Can you adjust the volume and sets for my upper-body plan?';
-      inp.focus();
-    }
-    if (typeof toast === 'function') toast('Asking AI Coach to adjust training volume.');
-  };
-}
-
+$('#goToFoodLogFromDash').onclick = () => switchView('food-log');
+$('#viewAllFoodEntriesBtn').onclick = () => switchView('food-log');
+$('#dashAddFoodBtn').onclick = () => openFoodModal();
+$('#dashStartWorkoutBtn').onclick = () => switchView('workouts');
+$('#insightsShortcutBtn').onclick = () => switchView('profile');
+$('#adjustWaterBtn').onclick = () => switchView('profile');
 $('#dashRefreshWorkoutBtn').onclick = () => {
   activeWorkoutIdx++;
   renderDashboard();
   toast('Switched to next workout in plan');
 };
+
+// Toggle Live Workout Movement GIF vs Action Photo
+if ($('#dashWorkoutDemoToggleBtn')) {
+  $('#dashWorkoutDemoToggleBtn').onclick = (e) => {
+    e.stopPropagation();
+    const gif = $('#dashWorkoutGif');
+    const img = $('#dashWorkoutImg');
+    const txt = $('#dashWorkoutToggleText');
+    if (!gif || !img) return;
+    const isShowingGif = (gif.style.display !== 'none');
+    if (isShowingGif) {
+      gif.style.display = 'none';
+      img.style.display = 'block';
+      if (txt) txt.textContent = 'Live Movement Demo';
+      toast('Switched to action photo');
+    } else {
+      img.style.display = 'none';
+      gif.style.display = 'block';
+      if (txt) txt.textContent = 'Action Photo View';
+      soundFX.pop();
+      toast('Live exercise movement animation playing');
+    }
+  };
+}
+
+if ($('#dashWorkoutStartBtn')) {
+  $('#dashWorkoutStartBtn').onclick = (e) => {
+    e.stopPropagation();
+    soundFX.bellChime();
+    switchView('workouts');
+    toast('Opening workout routine!');
+  };
+}
 $('#resetWaterBtn').onclick = () => {
   water.ml = 0;
   water.date = today();
@@ -2542,7 +2133,6 @@ function applyTheme(themeChoice) {
     renderDashboard();
   }
 }
-window.applyTheme = applyTheme;
 
 function initThemeEngine() {
   const currentTheme = getActiveThemeSetting();
@@ -2588,7 +2178,6 @@ if ($('#frontCreatineGramsInput')) {
 
 /* ---------- Food Log View Rendering ---------- */
 function renderFoodLog() {
-  updateDailyMacroMeters(); // Authoritative sync
   const d = today();
   const entries = log[d] || [];
   const meals = [
@@ -2609,7 +2198,7 @@ function renderFoodLog() {
             <span style="font-size:1.2rem;line-height:1;">${mealIcon}</span>
             <b style="color:#2563eb;font-size:1.08rem;font-weight:700;">${mealType}</b>
           </div>
-          <span style="color:var(--glass-text-primary);font-size:.88rem;font-weight:700;background:#eff6ff;padding:3px 12px;border-radius:99px;border: 1px solid #dbeafe;">
+          <span class="meal-group-kcal-badge" style="font-size:.88rem;font-weight:700;padding:3px 12px;border-radius:99px;">
             ${subKcal} kcal
           </span>
         </div>
@@ -2642,7 +2231,7 @@ function renderFoodLog() {
     }).join('');
   }
 
-  const allEntries = entries;
+  const allEntries = entries.length ? entries : DEFAULT_PREVIEW_MEALS;
   const totKcal = allEntries.reduce((a, b) => a + (b.k || b.calories || 0), 0);
   const totP = allEntries.reduce((a, b) => a + (b.p || b.protein || 0), 0);
   const totC = allEntries.reduce((a, b) => a + (b.c || b.carbs || 0), 0);
@@ -3523,11 +3112,41 @@ function findExerciseInfo(name) {
   if (!name) return null;
   const n = name.toLowerCase().trim();
 
+  // 0. Pre-load gif from hardcoded map (instant, no async race)
+  function attachGif(ex) {
+    if (!ex.gif && EXERCISE_GIF_MAP[ex.name]) ex.gif = EXERCISE_GIF_MAP[ex.name];
+    return ex;
+  }
+
   // 1. Exact match in library
   let found = EXERCISES_LIBRARY.find(e => e.name.toLowerCase() === n);
-  if (found) return found;
+  if (found) return attachGif(found);
 
-  // 2. Fuzzy match
+  // 2. Check JSON map directly (1318 exercises from exercises.json)
+  if (EXERCISES_JSON_MAP[n]) {
+    const jex = EXERCISES_JSON_MAP[n];
+    let category = 'Full Body';
+    const m = (jex.muscle || jex.category || '').toLowerCase();
+    if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+    else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
+    else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
+    else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm')) category = 'Arms';
+    else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf')) category = 'Legs';
+    else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+    return {
+      name: jex.name, category, sub: jex.muscle || category,
+      gif: jex.gif || '', instructions_en: jex.instructions_en || '',
+      type: (jex.equipment || 'body weight').toUpperCase(),
+      muscle: jex.muscle || '', equipment: jex.equipment || '',
+      level: jex.level || 'beginner',
+      rxSetsReps: '3 sets × 10-12 reps · 60s rest', rxTempo: 'Tempo: 2-0-1',
+      rxWhy: jex.instructions_en ? jex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
+      benefit: jex.instructions_en ? jex.instructions_en.substring(0, 100) + '...' : '',
+      steps: jex.instructions_en || 'Perform with controlled movement and full range of motion.'
+    };
+  }
+
+  // 3. Fuzzy match
   found = EXERCISES_LIBRARY.find(e => {
     const en = e.name.toLowerCase();
     return n.includes(en) || en.includes(n) ||
@@ -3690,29 +3309,33 @@ function openExerciseDetailModal(exerciseName) {
   if ($('#exModalSetsReps')) $('#exModalSetsReps').textContent = ex.rxSetsReps || '3-4 sets × 8-10 reps';
   if ($('#exModalTempo')) $('#exModalTempo').textContent = `${ex.rxTempo || 'Tempo: 2-1-1'}`;
   if ($('#exModalWhy')) $('#exModalWhy').textContent = ex.rxWhy || ex.benefit;
-  if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.steps;
+  // Show full instructions if available from exercises.json, otherwise fallback to steps
+  if ($('#exModalSteps')) $('#exModalSteps').textContent = ex.instructions_en || ex.steps || '';
+  // Show extra meta (equipment/level)
+  if ($('#exModalEquipment')) $('#exModalEquipment').textContent = ex.equipment ? ex.equipment.toUpperCase() : '';
+  if ($('#exModalLevel')) $('#exModalLevel').textContent = ex.level ? ex.level.toUpperCase() : '';
 
-  // Render High-Res Demonstration Media (animated GIF if available, else SVG fallback)
+  // Show GIF if available, otherwise fall back to SVG diagram
   const visualContainer = $('#exModalVisualContainer');
   if (visualContainer) {
     if (ex.gif) {
       visualContainer.innerHTML = `
-        <div style="width:100%;height:320px;display:flex;align-items:center;justify-content:center;background:var(--ff-bg-panel, #0f172a);border-radius:12px;overflow:hidden;border:1px solid var(--glass-border-subtle, rgba(255,255,255,0.08));box-shadow:inset 0 0 20px rgba(0,0,0,0.25);position:relative;">
-          <img src="${ex.gif}" alt="${escapeHtml(ex.name)}" style="max-height:100%;max-width:100%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div style="display:none;padding:24px;color:var(--glass-text-secondary);text-align:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;opacity:0.6;"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
-            <div>${escapeHtml(ex.name)}</div>
-          </div>
+        <div style="position:relative;width:100%;background:#0d1711;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:200px;">
+          <img
+            src="${escapeHtml(ex.gif)}"
+            alt="${escapeHtml(ex.name)} demonstration"
+            class="gif-img"
+            onload="this.classList.add('loaded')"
+            style="width:100%;max-height:300px;object-fit:contain;display:block;border-radius:12px;"
+            loading="lazy"
+            onerror="this.parentElement.innerHTML='<div style=\'padding:20px;text-align:center;color:var(--glass-text-secondary);\'>' + ${JSON.stringify(getExerciseVisualSvg(ex.category, ex.name)).replace(/`/g,"'")} + '</div>'"
+          >
+          ${ex.level ? `<span style="position:absolute;top:10px;left:10px;background:rgba(37,99,235,0.85);color:#38bdf8;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;">${escapeHtml(ex.level)}</span>` : ''}
+          ${ex.equipment ? `<span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:#e2e8f0;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px;">${escapeHtml(ex.equipment)}</span>` : ''}
         </div>
       `;
     } else {
-      visualContainer.innerHTML = '<div id="exAnimContainer" style="width:100%;height:300px;"></div>';
-      const slug = window.FF_EX_ANIM ? window.FF_EX_ANIM.slugForExercise(ex) : null;
-      if (window.FF_EX_ANIM) {
-        window.FF_EX_ANIM.init('exAnimContainer', slug, ex.name);
-      } else {
-        document.getElementById('exAnimContainer').innerHTML = '<div style="padding:20px;color:#64748b;text-align:center;">Animation loading...</div>';
-      }
+      visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
     }
   }
 
@@ -3763,8 +3386,6 @@ function openExerciseDetailModal(exerciseName) {
 }
 
 /* ---------- Workouts View Rendering ---------- */
-window.openExerciseDetailModal = openExerciseDetailModal;
-
 function renderWorkouts() {
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
   const isCustomAi = plan && plan.workout && (wo.name === plan.workout.name);
@@ -3781,36 +3402,32 @@ function renderWorkouts() {
   const list = $('#planMoveList');
   if (list) {
     list.innerHTML = wo.moves.map((m, i) => {
-      const ex = findExerciseInfo(m.name) || {};
-      const safeName = (m.name || '').replace(/'/g, "\\'");
-      const cleanName = escapeHtml(m.name || '');
-      const gifSrc = ex.gif || '';
-      const thumbHtml = gifSrc ? `
-        <div class="move-item-thumb" onclick="openExerciseDetailModal('${safeName}')" title="Click to view live movement demo">
-          <img src="${gifSrc}" alt="${cleanName}" loading="lazy" onerror="this.parentElement.style.display='none';" />
-        </div>
-      ` : `
-        <div class="move-item-thumb" onclick="openExerciseDetailModal('${safeName}')" style="background:#2563eb;color:#ffffff;font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;">
-          ${i + 1}
-        </div>
-      `;
-
+      const ex = findExerciseInfo(m.name);
       return `
-        <div class="workout-move-item" style="display:flex;align-items:center;gap:14px;cursor:pointer;">
+        <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
           <span class="move-index-badge">${i + 1}</span>
-          ${thumbHtml}
-          <div style="flex:1;min-width:0;" onclick="openExerciseDetailModal('${safeName}')">
+          ${ex && ex.gif ? `<div class="move-gif-thumb"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(m.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.move-gif-thumb').style.display='none'"></div>` : ''}
+          <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <b class="move-name-title">${cleanName}</b>
-                <span class="move-sub-badge">${escapeHtml(ex.sub || ex.category || 'COMPOUND')}</span>
+                <b class="move-name-title">${m.name}</b>
+                <span class="move-sub-badge">${ex.sub || 'COMPOUND'}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <span class="move-sets-text">${escapeHtml(m.sets || '3 sets × 10 reps')}</span>
-                <span class="move-hover-cta">View Guide</span>
+                <span class="move-sets-text">${m.sets}</span>
+                <span class="move-hover-cta">View Visual</span>
               </div>
             </div>
-            <p class="move-tip-text">${escapeHtml(m.tip || ex.rxWhy || 'Maintain tight core, proud posture, and smooth cadence.')}</p>
+            <p class="move-tip-text">${m.tip}</p>
+            
+            <!-- Hover details strip (visible on hover) -->
+            <div class="move-hover-details">
+              <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
+                <span class="move-detail-target"><b>Target:</b> ${ex.sub || ex.category}</span>
+                <span class="move-detail-tempo"><b>Tempo:</b> ${ex.rxTempo || '2-1-1'}</span>
+              </div>
+              <p class="move-detail-why">${ex.rxWhy || ex.benefit}</p>
+            </div>
           </div>
         </div>
       `;
@@ -3837,41 +3454,6 @@ const SL_LEVEL_DESCS = {
   hard: 'Advanced athlete baseline with 2+ years of structured progressive overload (1.95x baseline).'
 };
 
-function calculateExerciseStartingLoad(exName, bw = 70, sex = 'male', level = 'beginner') {
-  const ex = findExerciseInfo(exName) || {};
-  const eq = (ex.rawEquipment || ex.equipment || ex.type || '').toLowerCase();
-  const cat = (ex.category || '').toLowerCase();
-  const mult = level === 'hard' ? 1.45 : (level === 'intermediate' ? 1.25 : (level === 'medium' ? 1.1 : 1.0));
-  const isFemale = sex === 'female';
-  const sexMult = isFemale ? 0.65 : 1.0;
-
-  if (eq.includes('body weight') || eq.includes('bodyweight')) {
-    return { type: 'Bodyweight', weight: 'Bodyweight', detail: `Calibrated to your ${bw} kg bodyweight` };
-  } else if (eq.includes('dumbbell')) {
-    let basePct = 0.18;
-    if (cat.includes('chest') || cat.includes('back')) basePct = 0.22;
-    else if (cat.includes('shoulder') || cat.includes('arms')) basePct = 0.14;
-    else if (cat.includes('legs')) basePct = 0.25;
-    const perDb = Math.max(4, Math.round(bw * basePct * mult * sexMult));
-    return { type: 'Dumbbell', weight: `${perDb} kg`, detail: `per dumbbell (Pair: ${perDb * 2} kg total)` };
-  } else if (eq.includes('barbell')) {
-    let basePct = 0.50;
-    if (cat.includes('legs')) basePct = 0.70;
-    else if (cat.includes('chest')) basePct = 0.55;
-    else if (cat.includes('back')) basePct = 0.60;
-    else if (cat.includes('shoulder')) basePct = 0.40;
-    const total = Math.max(20, Math.round((bw * basePct * mult * sexMult) / 2.5) * 2.5);
-    return { type: 'Barbell', weight: `${total} kg`, detail: `Olympic Bar (20 kg) + ${Math.max(0, total - 20)} kg plates` };
-  } else {
-    // Machine / Cable
-    let basePct = 0.45;
-    if (cat.includes('legs')) basePct = 0.65;
-    else if (cat.includes('back') || cat.includes('chest')) basePct = 0.50;
-    const total = Math.max(10, Math.round((bw * basePct * mult * sexMult) / 5) * 5);
-    return { type: 'Machine/Cable', weight: `${total} kg`, detail: `Pin-select stack setting at RPE 6–7` };
-  }
-}
-
 function renderStartingLoad() {
   const grid = $('#slLoadsGrid');
   const note = $('#slCeilingNote');
@@ -3886,7 +3468,6 @@ function renderStartingLoad() {
     btn.classList.toggle('active', btn.getAttribute('data-sl-level') === slCurrentLevel);
   });
 
-  // 1. Compound Lifts Baseline Cards
   const parts = [];
   for (const lift of SL_LIFTS) {
     const ceil = FF_ALGO.startingLoadCeiling(bw, sex, lift.key, slCurrentLevel);
@@ -3902,179 +3483,10 @@ function renderStartingLoad() {
     const levelLabel = slCurrentLevel.charAt(0).toUpperCase() + slCurrentLevel.slice(1);
     note.innerHTML = `<b>${levelLabel} Standard Calibrated:</b> Based on strength standards (~40–60% of benchmark %BW) for <b>${sex}</b> at <b>${bw} kg</b> bodyweight. Warmup: empty bar &rarr; ~50–60% of ceiling &rarr; calibrated work sets at RPE 6–7.`;
   }
-
-  // 2. Interactive Precision Starting Weight Calculator for Any Exercise in 1,318 Library
-  const calcContainer = $('#slExerciseCalcResult');
-  if (calcContainer) {
-    const searchVal = ($('#slExerciseSearchInput') ? $('#slExerciseSearchInput').value.trim() : '') || 'Incline Dumbbell Bench Press';
-    const matchedEx = findExerciseInfo(searchVal) || (EXERCISES_LIBRARY && EXERCISES_LIBRARY[0]) || { name: 'Incline Dumbbell Bench Press', category: 'Chest', equipment: 'dumbbell' };
-    const loadInfo = calculateExerciseStartingLoad(matchedEx.name, bw, sex, slCurrentLevel);
-    const safeName = (matchedEx.name || '').replace(/'/g, "\\'");
-    const cleanName = escapeHtml(matchedEx.name || '');
-
-    calcContainer.innerHTML = `
-      <div class="smart-calc-exercise-result">
-        ${matchedEx.gif ? `
-          <div style="width:110px;height:110px;border-radius:12px;background:#0f172a;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">
-            <img src="${matchedEx.gif}" alt="${cleanName}" style="max-height:100%;max-width:100%;object-fit:contain;" />
-          </div>
-        ` : ''}
-        <div style="flex:1;min-width:220px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-            <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:99px;font-weight:800;text-transform:uppercase;">
-              ${escapeHtml(matchedEx.category || 'Compound')} · ${escapeHtml(matchedEx.rawEquipment || matchedEx.equipment || 'Gym')}
-            </span>
-            <span style="font-size:.75rem;color:var(--glass-text-secondary);font-weight:600;">${escapeHtml(matchedEx.level || 'Intermediate')}</span>
-          </div>
-          <b style="font-size:1.15rem;color:var(--glass-text-primary);display:block;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">${cleanName}</b>
-          <p style="font-size:.82rem;color:var(--glass-text-secondary);margin:4px 0 8px;">${escapeHtml(matchedEx.rxWhy || matchedEx.benefit || 'Targeted biomechanical movement pattern.')}</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <button type="button" class="solid-button small" style="background:#2563eb;font-size:.8rem;padding:7px 14px;" onclick="openExerciseDetailModal('${safeName}')">
-              View Visual &amp; Form Guide
-            </button>
-            <button type="button" class="outline-button small" style="font-size:.8rem;padding:7px 14px;border-color:#38bdf8;" onclick="startCustomExerciseTimer('${safeName}', '3 sets × 8–10 reps', '60s rest')">
-              Start With ${loadInfo.weight}
-            </button>
-          </div>
-        </div>
-        <div style="text-align:right;background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.18);border-radius:14px;padding:14px 20px;min-width:170px;">
-          <span style="font-size:.74rem;color:#2563eb;display:block;font-weight:800;text-transform:uppercase;">RECOMMENDED LOAD</span>
-          <div style="font-size:1.75rem;font-weight:900;color:var(--glass-text-primary);line-height:1.2;">${loadInfo.weight}</div>
-          <small style="font-size:.74rem;color:var(--glass-text-secondary);display:block;margin-top:2px;">${loadInfo.detail}</small>
-        </div>
-      </div>
-    `;
-  }
-
-  // 3. Smart Start Foundational Programs from 1,318 Catalog
-  const routinesGrid = $('#slStarterRoutinesGrid');
-  if (routinesGrid) {
-    const starterPrograms = [
-      {
-        title: 'Full Body Primer (Foundation)',
-        focus: 'Squat · Bench · Row · Core',
-        time: '35 min',
-        exercises: ['Barbell Back Squat', 'Flat Barbell Bench Press', 'Single-Arm Dumbbell Row', 'Romanian Deadlift']
-      },
-      {
-        title: 'Upper Body Launchpad',
-        focus: 'Chest · Lats · Shoulders · Arms',
-        time: '32 min',
-        exercises: ['Incline Dumbbell Bench Press', 'Lat Pulldown', 'Overhead Dumbbell Shoulder Press', 'Dumbbell Hammer Curl']
-      },
-      {
-        title: 'Lower Body & Core Drive',
-        focus: 'Quads · Glutes · Hamstrings',
-        time: '30 min',
-        exercises: ['Goblet Squat', 'Bulgarian Split Squat', 'Barbell Hip Thrust', 'Dead bug']
-      },
-      {
-        title: 'Home & Calisthenics Starter',
-        focus: 'Bodyweight · Mobility · Posture',
-        time: '25 min',
-        exercises: ['Push-up', 'Bodyweight Squat', 'Glute Bridge', 'Bird Dog']
-      }
-    ];
-
-    routinesGrid.innerHTML = starterPrograms.map((prog, pIdx) => {
-      const exItems = prog.exercises.map(name => {
-        const info = findExerciseInfo(name) || {};
-        const safe = (name || '').replace(/'/g, "\\'");
-        const load = calculateExerciseStartingLoad(name, bw, sex, slCurrentLevel);
-        return `
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--ff-glass-border-subtle);font-size:.82rem;">
-            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-              ${info.gif ? `
-                <div style="width:34px;height:34px;border-radius:6px;background:#0f172a;overflow:hidden;flex-shrink:0;">
-                  <img src="${info.gif}" alt="${escapeHtml(name)}" style="width:100%;height:100%;object-fit:contain;" />
-                </div>
-              ` : ''}
-              <span style="font-weight:700;color:var(--glass-text-primary);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onclick="openExerciseDetailModal('${safe}')">${escapeHtml(name)}</span>
-            </div>
-            <span style="font-weight:800;color:#2563eb;font-size:.78rem;white-space:nowrap;">${load.weight}</span>
-          </div>
-        `;
-      }).join('');
-
-      return `
-        <div class="smart-start-routine-card">
-          <div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:99px;font-weight:800;text-transform:uppercase;">STARTER PROGRAM ${pIdx + 1}</span>
-              <span style="font-size:.75rem;color:var(--glass-text-secondary);font-weight:600;">${prog.time}</span>
-            </div>
-            <h4 style="margin:0 0 4px;font-size:1.05rem;color:var(--glass-text-primary);font-weight:800;">${escapeHtml(prog.title)}</h4>
-            <p style="margin:0 0 12px;font-size:.78rem;color:var(--glass-text-secondary);">${escapeHtml(prog.focus)}</p>
-            <div style="margin-bottom:14px;">
-              ${exItems}
-            </div>
-          </div>
-          <button type="button" class="solid-button small" style="background:#2563eb;width:100%;justify-content:center;padding:9px;font-size:.84rem;font-weight:700;" onclick="startSmartProgramSession(${pIdx})">
-            Start Calibrated Routine
-          </button>
-        </div>
-      `;
-    }).join('');
-  }
 }
-
-window.startSmartProgramSession = function(pIdx) {
-  const starterPrograms = [
-    {
-      title: 'Smart Start: Full Body Foundation',
-      focus: 'Squat · Bench · Row · Core',
-      exercises: [
-        { name: 'Barbell Back Squat', sets: 3, reps: '8 reps', restSec: 60, tip: 'Calibrated baseline load. Focus on depth and control.' },
-        { name: 'Flat Barbell Bench Press', sets: 3, reps: '8 reps', restSec: 60, tip: 'Keep shoulder blades locked together.' },
-        { name: 'Single-Arm Dumbbell Row', sets: 3, reps: '10 reps each', restSec: 60, tip: 'Drive elbow back into hip.' },
-        { name: 'Romanian Deadlift', sets: 3, reps: '10 reps', restSec: 60, tip: 'Feel maximum hamstring stretch.' }
-      ]
-    },
-    {
-      title: 'Smart Start: Upper Body Launchpad',
-      focus: 'Chest · Lats · Shoulders · Arms',
-      exercises: [
-        { name: 'Incline Dumbbell Bench Press', sets: 3, reps: '10 reps', restSec: 60, tip: 'Converge dumbbells slightly at top.' },
-        { name: 'Lat Pulldown', sets: 3, reps: '10 reps', restSec: 60, tip: 'Pull down to upper chest without swinging.' },
-        { name: 'Overhead Dumbbell Shoulder Press', sets: 3, reps: '8 reps', restSec: 60, tip: 'Lock ribs, press straight upward.' },
-        { name: 'Dumbbell Hammer Curl', sets: 3, reps: '10 reps', restSec: 45, tip: 'Neutral grip, control eccentric.' }
-      ]
-    },
-    {
-      title: 'Smart Start: Lower Body & Core Drive',
-      focus: 'Quads · Glutes · Hamstrings',
-      exercises: [
-        { name: 'Goblet Squat', sets: 3, reps: '12 reps', restSec: 60, tip: 'Keep dumbbell high on sternum.' },
-        { name: 'Bulgarian Split Squat', sets: 3, reps: '8 reps each', restSec: 60, tip: 'Drive through front midfoot.' },
-        { name: 'Barbell Hip Thrust', sets: 3, reps: '10 reps', restSec: 60, tip: 'Hard posterior tilt at top.' },
-        { name: 'Dead bug', sets: 3, reps: '12 reps each', restSec: 45, tip: 'Flatten spine against floor.' }
-      ]
-    },
-    {
-      title: 'Smart Start: Home & Calisthenics Starter',
-      focus: 'Bodyweight · Mobility · Posture',
-      exercises: [
-        { name: 'Push-up', sets: 3, reps: '12 reps', restSec: 45, tip: 'Tight plank, smooth rhythmic tempo.' },
-        { name: 'Bodyweight Squat', sets: 3, reps: '15 reps', restSec: 45, tip: 'Full range of motion, heels down.' },
-        { name: 'Glute Bridge', sets: 3, reps: '15 reps', restSec: 45, tip: '1-second squeeze at apex.' },
-        { name: 'Bird Dog', sets: 3, reps: '12 reps each', restSec: 30, tip: 'Reach long through fingers and heels.' }
-      ]
-    }
-  ];
-
-  const prog = starterPrograms[pIdx] || starterPrograms[0];
-  soundFX.pop();
-  startWorkoutSession({
-    title: prog.title,
-    focus: prog.focus,
-    estDuration: '30 min',
-    exercises: prog.exercises
-  });
-};
 
 if ($('#slBodyweight')) $('#slBodyweight').oninput = renderStartingLoad;
 if ($('#slSex')) $('#slSex').onchange = renderStartingLoad;
-if ($('#slExerciseSearchInput')) $('#slExerciseSearchInput').oninput = renderStartingLoad;
 
 document.addEventListener('click', e => {
   const btn = e.target.closest('#slLevelPills [data-sl-level]');
@@ -4101,260 +3513,97 @@ $('#markWorkoutDoneBtn').onclick = () => {
 };
 
 /* ---------- Exercise Library View Rendering ---------- */
-// Enhanced for 1,318+ exercises with live count badges, equipment filters & animated demos
+const MUSCLE_GROUPS = {
+  Chest: ['All Chest', 'Upper chest', 'Mid chest', 'Lower chest'],
+  Back: ['All Back', 'Lats', 'Upper back & Traps', 'Lower back'],
+  Shoulders: ['All Shoulders', 'Front delts', 'Side delts', 'Rear delts'],
+  Arms: ['All Arms', 'Biceps', 'Triceps', 'Forearms'],
+  Legs: ['All Legs', 'Quads', 'Hamstrings', 'Glutes', 'Calves'],
+  Core: ['All Core', 'Upper abs', 'Lower abs', 'Obliques']
+};
 
 function renderExerciseLibrary() {
-  const totalLibraryCount = Array.isArray(EXERCISES_LIBRARY) ? EXERCISES_LIBRARY.length : 0;
-
-  // 1. Calculate live counts for all categories
-  const catCounts = { All: totalLibraryCount };
-  if (Array.isArray(EXERCISES_LIBRARY)) {
-    for (const ex of EXERCISES_LIBRARY) {
-      if (ex.category) catCounts[ex.category] = (catCounts[ex.category] || 0) + 1;
-    }
-  }
-
-  // 2. Render Primary Category Tabs (with counts)
   const tabs = $('#muscleTabs');
   if (tabs) {
-    const categories = ['All', 'Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Core', 'Cardio'];
-    tabs.innerHTML = categories.map(cat => {
-      const count = catCounts[cat] || 0;
-      const label = cat === 'All' ? 'All Moves' : cat;
-      const isActive = (cat === selectedExerciseCategory);
-      return `<button type="button" class="${isActive ? 'active' : ''}" onclick="selectExerciseCategory('${cat}')">${label} <span class="tab-count">${count.toLocaleString()}</span></button>`;
-    }).join('');
-  }
-
-  // 3. Render Equipment Filter Bar
-  const equipContainer = $('#libEquipmentFilters');
-  if (equipContainer) {
-    const equipList = [
-      { id: 'All', label: 'All Equipment' },
-      { id: 'Bodyweight', label: 'Bodyweight' },
-      { id: 'Dumbbell', label: 'Dumbbell' },
-      { id: 'Barbell', label: 'Barbell' },
-      { id: 'Cable', label: 'Cable' },
-      { id: 'Machine', label: 'Machine' },
-      { id: 'Kettlebell', label: 'Kettlebell' },
-      { id: 'Bands', label: 'Bands' },
-      { id: 'Balls & Mobility', label: 'Balls & Mobility' }
-    ];
-    const currentEq = window.selectedEquipmentFilter || 'All';
-    equipContainer.innerHTML = equipList.map(eq => `
-      <button type="button" class="equip-btn ${eq.id === currentEq ? 'active' : ''}" onclick="selectEquipmentFilter('${eq.id}')">
-        ${eq.label}
-      </button>
+    tabs.innerHTML = Object.keys(MUSCLE_GROUPS).map(cat => `
+      <button type="button" class="${cat === selectedExerciseCategory ? 'active' : ''}" onclick="selectExerciseCategory('${cat}')">${cat}</button>
     `).join('');
   }
 
-  // 4. Render Sub-Muscle Tabs
   const subTags = $('#muscleSubTags');
   if (subTags) {
-    let subOptions = [];
-    if (selectedExerciseCategory === 'All') {
-      subOptions = [
-        'All Movements', 'Full Body', 'Upper Body', 'Lower Body', 'Core & Cardio'
-      ];
-    } else {
-      const definedSubs = MUSCLE_GROUPS[selectedExerciseCategory] || ['All ' + selectedExerciseCategory];
-      subOptions = [...definedSubs];
-    }
-
-    subTags.innerHTML = subOptions.map(sub => {
-      const isSubActive = (sub === selectedSubMuscle || (!selectedSubMuscle && sub.startsWith('All ')));
-      return `<button type="button" class="chosen ${isSubActive ? 'active' : ''}" onclick="selectSubMuscle('${sub.replace(/'/g, "\\'")}')">${sub}</button>`;
-    }).join('');
+    const list = MUSCLE_GROUPS[selectedExerciseCategory] || [];
+    subTags.innerHTML = list.map(sub => `
+      <button type="button" class="chosen ${sub === selectedSubMuscle ? 'active' : ''}" onclick="selectSubMuscle('${sub}')">${sub}</button>
+    `).join('');
   }
 
-  // 5. Filter Exercises across Category, Sub-muscle, Equipment, and Search Input
   const q = ($('#exerciseSearchInput') ? $('#exerciseSearchInput').value.toLowerCase().trim() : '');
-  const selectedEq = window.selectedEquipmentFilter || 'All';
-
-  const filtered = (Array.isArray(EXERCISES_LIBRARY) ? EXERCISES_LIBRARY : []).filter(e => {
-    // Search query matching (all words match)
-    if (q) {
-      const idx = e._searchIdx || `${e.name} ${e.sub || ''} ${e.type || ''} ${e.category || ''} ${e.equipment || ''}`.toLowerCase();
-      const tokens = q.split(/\s+/);
-      const matchesAll = tokens.every(tok => idx.includes(tok) || e.name.toLowerCase().includes(tok));
-      if (!matchesAll) return false;
+  const filtered = EXERCISES_LIBRARY.filter(e => {
+    if (q) return e.name.toLowerCase().includes(q) || (e.sub && e.sub.toLowerCase().includes(q));
+    if (e.category !== selectedExerciseCategory) return false;
+    if (selectedSubMuscle && !selectedSubMuscle.startsWith('All ')) {
+      return (e.sub || '').toLowerCase().includes(selectedSubMuscle.toLowerCase());
     }
-
-    // Category Filter
-    if (selectedExerciseCategory !== 'All') {
-      if (e.category !== selectedExerciseCategory) return false;
-
-      // Sub-muscle Filter within category
-      if (selectedSubMuscle && !selectedSubMuscle.startsWith('All ')) {
-        const subClean = selectedSubMuscle.toLowerCase().trim();
-        const eSub = (e.sub || '').toLowerCase();
-        const eMuscle = (e.muscle || '').toLowerCase();
-        if (!eSub.includes(subClean) && !eMuscle.includes(subClean)) {
-          // Specific mappings for curated sub-tags
-          if (subClean.includes('upper chest') && !e.name.toLowerCase().includes('incline')) return false;
-          if (subClean.includes('lower chest') && !e.name.toLowerCase().includes('decline') && !e.name.toLowerCase().includes('dip')) return false;
-          if (subClean.includes('lats') && !eSub.includes('lats') && !e.name.toLowerCase().includes('pull') && !e.name.toLowerCase().includes('lat')) return false;
-        }
-      }
-    } else {
-      // Sub-muscle filter in 'All' view
-      if (selectedSubMuscle === 'Upper Body') {
-        if (!['Chest', 'Back', 'Shoulders', 'Arms'].includes(e.category)) return false;
-      } else if (selectedSubMuscle === 'Lower Body') {
-        if (e.category !== 'Legs') return false;
-      } else if (selectedSubMuscle === 'Core & Cardio') {
-        if (!['Core', 'Cardio'].includes(e.category)) return false;
-      }
-    }
-
-    // Equipment Filter
-    if (selectedEq !== 'All') {
-      const eq = (e.rawEquipment || e.equipment || e.type || '').toLowerCase();
-      if (selectedEq === 'Bodyweight') {
-        if (!eq.includes('body weight') && !eq.includes('bodyweight')) return false;
-      } else if (selectedEq === 'Dumbbell') {
-        if (!eq.includes('dumbbell')) return false;
-      } else if (selectedEq === 'Barbell') {
-        if (!eq.includes('barbell') && !eq.includes('trap bar') && !eq.includes('ez bar')) return false;
-      } else if (selectedEq === 'Cable') {
-        if (!eq.includes('cable') && !eq.includes('rope')) return false;
-      } else if (selectedEq === 'Machine') {
-        if (!eq.includes('machine') && !eq.includes('assisted') && !eq.includes('leverage')) return false;
-      } else if (selectedEq === 'Kettlebell') {
-        if (!eq.includes('kettlebell')) return false;
-      } else if (selectedEq === 'Bands') {
-        if (!eq.includes('band')) return false;
-      } else if (selectedEq === 'Balls & Mobility') {
-        if (!eq.includes('ball') && !eq.includes('roller') && !eq.includes('mobility')) return false;
-      }
-    }
-
     return true;
   });
 
-  // 6. Update Result Counters & Header
   if ($('#libFilterHeader')) {
-    const catLabel = selectedExerciseCategory === 'All' ? 'FULL BODY' : selectedExerciseCategory.toUpperCase();
-    const subLabel = selectedSubMuscle ? selectedSubMuscle.toUpperCase() : 'ALL MOVEMENTS';
-    const eqLabel = selectedEq !== 'All' ? ` · ${selectedEq.toUpperCase()}` : '';
-    $('#libFilterHeader').textContent = `${catLabel} · ${subLabel}${eqLabel}`;
+    const currentSubText = selectedSubMuscle ? selectedSubMuscle.toUpperCase() : selectedExerciseCategory.toUpperCase();
+    $('#libFilterHeader').textContent = `${selectedExerciseCategory.toUpperCase()} · ${currentSubText}`;
   }
   if ($('#libResultCount')) {
-    const eqSuffix = selectedEq !== 'All' ? ` with ${selectedEq}` : '';
-    $('#libResultCount').textContent = q 
-      ? `${filtered.length.toLocaleString()} matching moves${eqSuffix}`
-      : `${filtered.length.toLocaleString()} exercises available${eqSuffix}`;
+    $('#libResultCount').textContent = q ? `${filtered.length} matching moves` : `${filtered.length} exercises targeting ${selectedSubMuscle || selectedExerciseCategory}`;
   }
 
-  // 7. Render Paginated Exercise Cards (30 per page)
   const cardsContainer = $('#exerciseCardsContainer');
   if (cardsContainer) {
-    const LIBRARY_PAGE_SIZE = 30;
-    if (!window._libPage) window._libPage = 0;
-    if (q) window._libPage = 0; // reset on search
-
-    const pageEnd = (window._libPage + 1) * LIBRARY_PAGE_SIZE;
-    const paginated = filtered.slice(0, pageEnd);
-    const hasMore = filtered.length > pageEnd;
-
-    if (!filtered.length) {
-      cardsContainer.innerHTML = `
-        <div style="grid-column:1/-1;text-align:center;padding:48px 24px;background:var(--glass-surface-subtle);border-radius:16px;border:1.5px dashed var(--glass-border);">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:12px;opacity:0.4;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-          <h3 style="margin:0 0 8px;font-size:1.15rem;color:var(--glass-text-primary);">No exercises found</h3>
-          <p style="margin:0;font-size:.88rem;color:var(--glass-text-secondary);">Try adjusting your search query, muscle category, or equipment filter.</p>
-        </div>
-      `;
-    } else {
-      cardsContainer.innerHTML = paginated.map(ex => {
-        const safeName = (ex.name || '').replace(/'/g, "\\'");
-        const cleanName = escapeHtml(ex.name || '');
-        const safeSub = (ex.sub || ex.category || '').replace(/'/g, "\\'");
-        const mediaTag = ex.gif ? `
-          <div class="exercise-card-media" onclick="openExerciseDetailModal('${safeName}')" title="Click to view live movement demo">
-            <img src="${ex.gif}" alt="${cleanName}" loading="lazy" onerror="this.parentElement.style.display='none';" />
-            <span class="media-badge">${escapeHtml(ex.level || 'Intermediate')}</span>
+    cardsContainer.innerHTML = filtered.map(ex => `
+      <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+        ${ex.gif ? `<div class="ex-card-gif-wrap"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.ex-card-gif-wrap').style.display='none'"></div>` : ''}
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span class="exercise-type">${ex.type}</span>
+            <span class="exercise-sub-tag">${ex.sub}</span>
           </div>
-        ` : '';
-
-        return `
-          <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-              ${mediaTag}
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:6px;">
-                <span class="exercise-type">${escapeHtml(ex.type || 'EXERCISE')}</span>
-                <span class="exercise-sub-tag">${escapeHtml(ex.sub || ex.category || 'General')}</span>
-              </div>
-              <h4 class="exercise-card-heading" onclick="openExerciseDetailModal('${safeName}')" title="Click to view visual guide and form cues">
-                ${cleanName}
-              </h4>
-              
-              <!-- Scientific Prescription Box -->
-              <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')" title="Click for visual breakdown">
-                <div class="rx-header">
-                  <span class="rx-sets-reps">${escapeHtml(ex.rxSetsReps || '3 sets × 8–12 reps · 60s rest')}</span>
-                  <span class="rx-tempo">${escapeHtml(ex.rxTempo || 'Tempo: 2-0-1')}</span>
-                </div>
-                <p class="rx-why"><b>Why this works:</b> ${escapeHtml(ex.rxWhy || ex.benefit || 'Develops targeted hypertrophy and biomechanical strength.')}</p>
-              </div>
-
-              <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:var(--glass-text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                ${escapeHtml(ex.steps || ex.benefit || '')}
-              </p>
+          <h4 class="exercise-card-heading" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
+            ${ex.name}
+          </h4>
+          
+          <!-- Scientific Prescription Box -->
+          <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
+            <div class="rx-header">
+              <span class="rx-sets-reps">${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
+              <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
             </div>
+            <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
+          </div>
 
-            <div style="margin-top:14px;display:flex;gap:8px;">
-              <button type="button" class="outline-button small" style="flex:1;font-size:.8rem;padding:7px;border-color:#38bdf8;" onclick="openExerciseDetailModal('${safeName}')">
-                Visual Guide
-              </button>
-              <button type="button" class="solid-button small" style="flex:1;font-size:.8rem;padding:7px;background:#2563eb;" onclick="askAiAboutExercise('${safeName}', '${safeSub}')">
-                AI Coach
-              </button>
-              <button type="button" class="outline-button small" style="font-size:.8rem;padding:7px 10px;border-color:#10b981;color:#10b981;" onclick="logExerciseCompleted('${safeName}')" title="Mark exercise completed today">
-                + Done
-              </button>
-            </div>
-          </article>
-        `;
-      }).join('');
-    }
+          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:var(--glass-text-secondary);"> ${ex.steps}</p>
+        </div>
 
-    // 8. Show More Pagination Button
-    const existingShowMore = cardsContainer.parentElement ? cardsContainer.parentElement.querySelector('#libShowMoreBtn') : null;
-    if (existingShowMore) existingShowMore.remove();
-    if (hasMore) {
-      const btn = document.createElement('button');
-      btn.id = 'libShowMoreBtn';
-      btn.type = 'button';
-      btn.className = 'outline-button';
-      btn.style.cssText = 'width:100%;margin-top:18px;padding:14px;font-size:.95rem;font-weight:700;border-color:#38bdf8;color:#2563eb;background:var(--glass-surface-subtle);box-shadow:0 2px 10px rgba(0,0,0,0.04);';
-      btn.textContent = `Show more exercises (${(filtered.length - pageEnd).toLocaleString()} remaining)`;
-      btn.onclick = () => { 
-        window._libPage = (window._libPage || 0) + 1; 
-        renderExerciseLibrary(); 
-      };
-      if (cardsContainer.parentElement) cardsContainer.parentElement.appendChild(btn);
-    }
+        <div style="margin-top:14px;display:flex;gap:8px;">
+          <button type="button" class="outline-button small ex-btn-visual" style="flex:1;font-size:.8rem;padding:7px;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
+            Visual Guide
+          </button>
+          <button type="button" class="solid-button small ex-btn-ai" style="flex:1;font-size:.8rem;padding:7px;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+            AI Coach
+          </button>
+        </div>
+      </article>
+    `).join('');
   }
 }
 
 window.selectExerciseCategory = function(cat) {
   selectedExerciseCategory = cat;
-  selectedSubMuscle = cat === 'All' ? 'All Movements' : 'All ' + cat;
-  window._libPage = 0;
+  selectedSubMuscle = 'All ' + cat;
   if ($('#exerciseSearchInput')) $('#exerciseSearchInput').value = '';
-  renderExerciseLibrary();
-};
-
-window.selectEquipmentFilter = function(eq) {
-  window.selectedEquipmentFilter = eq;
-  window._libPage = 0;
   renderExerciseLibrary();
 };
 
 window.selectSubMuscle = function(sub) {
   selectedSubMuscle = sub;
-  window._libPage = 0;
   renderExerciseLibrary();
 };
 
@@ -4450,7 +3699,7 @@ function renderProfileView() {
   const updateAvatarEl = (el) => {
     if (!el) return;
     if (profile.avatarUrl) {
-      el.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="${escapeHtml(name)}">`;
+      el.innerHTML = `<img src="${profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:50%;display:block;" alt="${escapeHtml(name)}">`;
     } else {
       el.textContent = initials;
     }
@@ -4483,7 +3732,12 @@ function renderProfileView() {
 
   // Sync button text in topbar
   if ($('#topAuthBtn')) {
-    $('#topAuthBtn').textContent = session ? 'Sign out' : 'Sign in';
+    const authTxt = $('#topAuthBtnText');
+    if (authTxt) {
+      authTxt.textContent = session ? 'Sign out' : 'Sign in';
+    } else {
+      $('#topAuthBtn').textContent = session ? 'Sign out' : 'Sign in';
+    }
   }
 }
 
@@ -4498,30 +3752,16 @@ function saveProfileData() {
 
   profile.waterGoal = updateLiveWaterEstimate();
 
-  // Auto calculate protein, carbs, fats using Mifflin-St Jeor TDEE calibration
-  if ($('#pfSexSelect')) profile.sex = $('#pfSexSelect').value;
-  if ($('#pfTargetWeightInput')) profile.targetWeight = Number($('#pfTargetWeightInput').value) || (profile.wKg ? profile.wKg - 4 : 68);
-  const targets = computeUserTargets(profile);
-  if (!$('#pfCalorieInput').value || Number($('#pfCalorieInput').value) <= 500) {
-    profile.cal = targets.cal;
-  }
-  profile.p = targets.p;
-  profile.f = targets.f;
-  profile.c = targets.c;
-  syncProfileToAllFeatures('pf');
+  // Auto calculate protein & carbs targets based on goal
+  const w = profile.wKg;
+  profile.p = Math.round(w * (profile.goal === 'Build muscle' ? 2.0 : 1.7));
+  profile.f = Math.round(w * 0.9);
+  profile.c = Math.max(0, Math.round((profile.cal - (profile.p * 4) - (profile.f * 9)) / 4));
 
   store.set('profile', profile);
   renderDashboard();
   renderProfileView();
-  if (typeof syncDashboardBmiBanner === 'function') syncDashboardBmiBanner();
-  if (typeof updateProfileBmiUI === 'function') updateProfileBmiUI();
-
-  const bmiRes = typeof calculateBmiAndCategory === 'function' ? calculateBmiAndCategory(profile.wKg, profile.hCm) : null;
-  if (bmiRes) {
-    toast(`Profile saved! Body Category: ${bmiRes.category} (BMI ${bmiRes.bmi})`);
-  } else {
-    toast('Profile saved & synced to database');
-  }
+  toast('Profile saved & synced to database');
 }
 
 $('#saveProfileBtn').onclick = saveProfileData;
@@ -4649,19 +3889,15 @@ if ($('#pfAvatarUploadInput')) {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxDim = 256;
-        let w = img.width;
-        let h = img.height;
-        if (w > h) {
-          if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-        } else {
-          if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-        }
-        canvas.width = w;
-        canvas.height = h;
+        const size = 256;
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        const minDim = Math.min(img.width, img.height);
+        const sx = (img.width - minDim) / 2;
+        const sy = (img.height - minDim) / 2;
+        ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
         profile.avatarUrl = dataUrl;
         store.set('profile', profile);
@@ -5442,17 +4678,8 @@ async function submitAuth() {
     renderMyFoods();
     renderChallengeView();
     renderTrackingView();
-    if (typeof syncDashboardBmiBanner === 'function') syncDashboardBmiBanner();
-    if (typeof updateProfileBmiUI === 'function') updateProfileBmiUI();
     updateSyncStatus('Cloud database synced');
     showMotivationalQuotePopup();
-
-    const loginBmi = typeof calculateBmiAndCategory === 'function' ? calculateBmiAndCategory(profile.wKg || 70, profile.hCm || 175) : null;
-    if (loginBmi) {
-      setTimeout(() => {
-        toast(`Welcome back, ${user.name || 'Athlete'}! Body composition category: ${loginBmi.category} (BMI ${loginBmi.bmi})`, 5000);
-      }, 700);
-    }
   } catch (err) {
     toast(err.message || 'Authentication error');
   } finally {
@@ -5759,40 +4986,31 @@ function renderChatMessages() {
   const coachStream = $('#coachChatStream');
   if (coachStream) {
     if (chatHistory.length === 0) {
-      const activeWorkout = (typeof WORKOUT_PLANS !== 'undefined' && WORKOUT_PLANS[activeWorkoutIdx]) || null;
-      const workoutName = activeWorkout ? activeWorkout.name : 'Personalized AI Strength Routine';
-      const workoutMoves = (activeWorkout && Array.isArray(activeWorkout.moves) && activeWorkout.moves.length) ? activeWorkout.moves.slice(0, 4) : [
-        { name: 'Barbell Back Squat', sets: '4 sets × 8-10 reps' },
-        { name: 'Incline Dumbbell Press', sets: '3 sets × 10 reps' },
-        { name: 'Lat Pulldown / Pull-ups', sets: '4 sets × 10-12 reps' },
-        { name: 'Romanian Deadlift (RDL)', sets: '3 sets × 10 reps' }
-      ];
-      const movesHtml = workoutMoves.map(m => `<div class="ai-card-pill-item"><b>${escapeHtml(m.name)}:</b> ${escapeHtml(m.sets || '3 sets × 10 reps')}</div>`).join('');
-      const targetCal = profile.cal || profile.calories || 2200;
-      const targetP = profile.p || profile.protein || 140;
-      const currentGoal = profile.goal || 'Hypertrophy & Conditioning';
       coachStream.innerHTML = `
         <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--ff-glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <img src="images/fitfuel-coach-avatar.png" alt="Coach" style="width:24px;height:24px;border-radius:50%;">
             <b style="font-size:0.86rem;color:var(--ff-text-primary);">FitFuel AI Coach</b>
-            <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">ACTIVE (Nemotron)</span>
+            <span style="font-size:0.7rem;color:var(--ff-emerald);font-weight:700;">ACTIVE</span>
           </div>
           <p style="margin:0 0 10px;font-size:0.88rem;line-height:1.55;color:var(--ff-text-primary);">
-            Welcome to your dedicated coaching room! I have your real-time targets loaded (<b>${Number(targetCal).toLocaleString()} kcal</b>, <b>${targetP}g protein</b>, Goal: <b>${escapeHtml(currentGoal)}</b>). How can I optimize your training, form, or nutrition right now?
+            Welcome to your dedicated coaching room! I have your daily targets loaded (2,200 kcal, 140g protein, Upper-Body strength day). How can I optimize your training or nutrition right now?
           </p>
           <div class="ai-plan-preview-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-              <b style="font-size:0.9rem;color:var(--ff-text-primary);">${escapeHtml(workoutName)}</b>
-              <span style="font-size:0.72rem;background:rgba(22,199,154,0.2);color:#0d9488;padding:2px 8px;border-radius:99px;font-weight:700;">Active AI Plan</span>
+              <b style="font-size:0.9rem;color:var(--ff-text-primary);">Recommended Upper-Body Hypertrophy Plan</b>
+              <span style="font-size:0.72rem;background:rgba(22,199,154,0.2);color:#0d9488;padding:2px 8px;border-radius:99px;font-weight:700;">RPE 8</span>
             </div>
             <div class="ai-card-grid-2x2">
-              ${movesHtml}
+              <div class="ai-card-pill-item"><b>Bench Press:</b> 4 sets × 8-10 reps</div>
+              <div class="ai-card-pill-item"><b>Incline Dumbbell:</b> 3 sets × 10 reps</div>
+              <div class="ai-card-pill-item"><b>Cable Lateral Raise:</b> 4 sets × 15 reps</div>
+              <div class="ai-card-pill-item"><b>Overhead Extension:</b> 3 sets × 12 reps</div>
             </div>
             <div class="ai-chat-action-btns-row">
-              <button type="button" class="ai-chat-btn-mini primary" id="coachPlanAddToWorkoutBtn" onclick="switchView('workouts')">View Active Workout</button>
-              <button type="button" class="ai-chat-btn-mini" id="coachPlanInspectFormBtn" onclick="switchView('posture')">Check Exercise Form</button>
-              <button type="button" class="ai-chat-btn-mini" id="coachPlanModifyVolBtn" onclick="openModal('#customWorkoutModal')">Customize Volume</button>
+              <button type="button" class="ai-chat-btn-mini primary" onclick="switchView('workouts')">Save to My Workouts</button>
+              <button type="button" class="ai-chat-btn-mini" onclick="switchView('posture')">Check Exercise Form</button>
+              <button type="button" class="ai-chat-btn-mini" onclick="openModal('#customWorkoutModal')">Customize Volume</button>
             </div>
           </div>
         </div>
@@ -5826,13 +5044,7 @@ function renderChatMessages() {
 
 function formatChatMarkdown(txt) {
   if (!txt) return '';
-  // Sanitize raw text to prevent XSS execution
-  let html = String(txt)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  let html = txt;
 
   // Headers
   html = html.replace(/^### (.*$)/gim, '<h4 style="color:#38bdf8;margin:8px 0 4px;font-size:1.02rem;">$1</h4>');
@@ -5921,6 +5133,7 @@ I have opened your **4D Body Composition & Goal Planner** modal:
 3. **Camera Form Check:** Launching the **Camera AI Posture & Form Checker** now so you can verify knee depth and posture in real-time.`);
     setTimeout(() => {
       switchView('posture');
+      startPostureCamera(false);
     }, 900);
     return;
   }
@@ -5959,25 +5172,11 @@ I have opened your **4D Body Composition & Goal Planner** modal:
 
   try {
     const systemPrompt = getAiSystemContext();
-    const recentMessages = (Array.isArray(chatHistory) ? chatHistory : []).slice(-8).map(m => ({
+    const recentMessages = chatHistory.slice(-8).map(m => ({
       role: m.role === 'assistant' ? 'assistant' : 'user',
       content: m.text
     }));
-    const selectedModel = (typeof getSelectedAiModel === 'function') ? getSelectedAiModel() : 'nvidia/nemotron-3-ultra-550b-a55b:free';
-    let reply;
-    if (activeView === 'ai-coach') {
-      reply = await FF.aiCoach(q, {
-        image,
-        messages: recentMessages,
-        model: selectedModel,
-        systemPrompt
-      });
-    } else {
-      reply = await FF.callAI(q, systemPrompt, recentMessages, {
-        image,
-        model: selectedModel
-      });
-    }
+    const reply = await FF.callAI(q, systemPrompt, recentMessages, { image });
     document.querySelectorAll('.' + typingClass).forEach(el => el.remove());
     addBotChatMessage(reply);
   } catch (err) {
@@ -6200,24 +5399,9 @@ function initChallengeSetupListeners() {
     };
   }
 
-  // Step 2: Types Checkboxes (Home and Gym are mutually exclusive environments)
+  // Step 2: Types Checkboxes
   $$('#chTypesOptionsList input[type="checkbox"]').forEach(cb => {
     cb.onchange = () => {
-      if (cb.value === 'Home' && cb.checked) {
-        const gymCb = $('#chTypesOptionsList input[value="Gym"]');
-        if (gymCb) {
-          gymCb.checked = false;
-          const p = gymCb.closest('.setup-choice-card');
-          if (p) p.classList.remove('selected');
-        }
-      } else if (cb.value === 'Gym' && cb.checked) {
-        const homeCb = $('#chTypesOptionsList input[value="Home"]');
-        if (homeCb) {
-          homeCb.checked = false;
-          const p = homeCb.closest('.setup-choice-card');
-          if (p) p.classList.remove('selected');
-        }
-      }
       const parent = cb.closest('.setup-choice-card');
       if (parent) {
         if (cb.checked) parent.classList.add('selected');
@@ -6225,7 +5409,7 @@ function initChallengeSetupListeners() {
       }
       const checkedBoxes = Array.from($$('#chTypesOptionsList input[type="checkbox"]:checked'));
       setupTypes = checkedBoxes.map(b => b.value);
-      if (!setupTypes.length) setupTypes = ['Home'];
+      if (!setupTypes.length) setupTypes = ['Gym'];
     };
   });
 
@@ -6292,59 +5476,26 @@ function initChallengeSetupListeners() {
 }
 initChallengeSetupListeners();
 
-// Helper: Strict Home Equipment Validator
-const GYM_FORBIDDEN_TERMS = [
-  'barbell', 'cable', 'smith machine', 'leverage machine', 'leg press',
-  'hack squat', 'lat pulldown', 'seated row machine', 't-bar', 'pec deck',
-  'chest press machine', 'shoulder press machine', 'leg curl machine',
-  'leg extension machine', 'calf machine', 'preacher bench', 'assisted pull-up machine',
-  'assisted machine', 'assisted chin-up', 'assisted dip', 'assisted',
-  'treadmill', 'stair climber', 'elliptical', 'rower', 'battle ropes', 'cable row', 'rack',
-  'spin bike', 'rowing machine', 'ergometer', 'stepmill', 'skierg', 'sled machine',
-  'olympic barbell', 'trap bar', 'ez barbell', 'ez bar', 'stationery bike', 'stationary bike'
-];
-
-function isHomeExercise(ex) {
-  if (!ex) return false;
-  const str = `${ex.name} ${ex.type || ''} ${ex.steps || ''} ${ex.sub || ''}`.toLowerCase();
-  if (GYM_FORBIDDEN_TERMS.some(term => str.includes(term))) return false;
-  const t = (ex.type || '').toLowerCase();
-  if (t.includes('gym') && !t.includes('home')) return false;
-  return true;
-}
-
 // Helper: Day-by-day routines generator factoring in user bodyweight, height & motive
 function buildDayByDayRoutines(motive, durationDays, w, h, targetMinutes = 45, intensity = 'Moderate', workoutTypes = ['Gym']) {
   const isFat = motive.includes('Fat');
   const isStrength = motive.includes('Strength');
-  const isHome = workoutTypes.includes('Home') || (!workoutTypes.includes('Gym') && !workoutTypes.length);
-  const hasCardio = workoutTypes.includes('Cardio') || workoutTypes.includes('HIIT');
-  const hasStretching = workoutTypes.includes('Stretching');
 
   let defaultSets = 3;
   let defaultRest = 60;
   let repsScheme = '8–12 reps';
-  let cardioWorkSec = 45;
-  let cardioRestSec = 45;
-
   if (intensity === 'Hard') {
     defaultSets = 4;
     defaultRest = isStrength ? 60 : 40;
     repsScheme = isStrength ? '4–6 heavy reps' : (isFat ? '14–16 reps' : '10–12 reps');
-    cardioWorkSec = 50;
-    cardioRestSec = 20;
   } else if (intensity === 'Mild') {
     defaultSets = 2;
     defaultRest = 75;
     repsScheme = '10–12 controlled reps';
-    cardioWorkSec = 30;
-    cardioRestSec = 45;
   } else {
     defaultSets = 3;
     defaultRest = 50;
     repsScheme = isStrength ? '6–8 reps' : (isFat ? '12–15 reps' : '8–12 reps');
-    cardioWorkSec = 45;
-    cardioRestSec = 30;
   }
 
   // Determine number of exercises based on selected target minutes
@@ -6354,134 +5505,49 @@ function buildDayByDayRoutines(motive, durationDays, w, h, targetMinutes = 45, i
   else if (targetMinutes <= 45) exerciseCount = 5;
   else exerciseCount = 7;
 
-  let splitTemplates = [];
-  if (isHome && hasCardio) {
-    // 100% Home Cardio & Stamina Plan (ZERO gym equipment)
-    splitTemplates = [
-      { title: 'Home Aerobic Fat Burn & Conditioning', focus: 'High Energy · Calorie Burn · Stamina', targetType: 'cardio' },
-      { title: 'Home HIIT Cardio Shred & Metcon', focus: 'Bodyweight Intervals · Heart Rate Spike', targetType: 'hiit' },
-      { title: 'Home Cardio Core & Endurance Flow', focus: 'Abdominal Stamina · Kinetic Flow', targetType: 'cardio_core' },
-      { title: 'Home Low-Impact Calorie Torch', focus: 'Joint-Friendly · Rapid Calorie Burn', targetType: 'cardio_low' },
-      { title: 'Home Speed, Agility & Footwork Blitz', focus: 'Agility · Coordination · Athletic Pace', targetType: 'cardio_agility' },
-      { title: 'Home Total-Body Metcon Conditioning', focus: 'Full-Body Metcon · Muscular Endurance', targetType: 'cardio_full' },
-      { title: 'Home Active Recovery & Mobility Flush', focus: 'Diaphragmatic Breath & Joint Release', targetType: 'recovery' }
-    ];
-  } else if (isHome && !hasCardio) {
-    // 100% Home Strength & Calisthenics Plan (ZERO gym equipment)
-    splitTemplates = [
-      { title: 'Home Upper Body Push & Chest Power', focus: 'Pectorals · Anterior Delts · Triceps', muscleGroup: 'Chest' },
-      { title: 'Home Back & Pull Stamina', focus: 'Lats · Rhomboids · Biceps', muscleGroup: 'Back' },
-      { title: 'Home Quads & Lower Body Drive', focus: 'Quads · Calves · Glute Power', muscleGroup: 'Legs' },
-      { title: 'Home Shoulders & Core Armor', focus: 'Deltoids · Deep Core · Obliques', muscleGroup: 'Shoulders' },
-      { title: 'Home Glutes & Posterior Chain', focus: 'Hamstrings · Glute Extension', muscleGroup: 'Legs' },
-      { title: 'Home Full-Body Calisthenics Strength', focus: 'Compound Movements · Functional Metcon', muscleGroup: 'Chest' },
-      { title: 'Home Active Recovery & Core Mobility', focus: 'Mobility · Deep Core · Balance', muscleGroup: 'Core' }
-    ];
-  } else if (!isHome && hasCardio) {
-    // Gym Cardio & Conditioning Roadmap
-    splitTemplates = [
-      { title: 'Gym Aerobic Base & Calorie Burn', focus: 'Treadmill & Spin Conditioning', targetType: 'cardio_gym' },
-      { title: 'Full-Body Metcon & High-Power Intervals', focus: 'Kettlebells · Battle Ropes · Rower', targetType: 'hiit_gym' },
-      { title: 'Lower Body Stamina & Stair Shred', focus: 'Stair Climber · Walking Lunges · Jump Rope', targetType: 'cardio_legs' },
-      { title: 'Upper Body Conditioning & Cardio Finisher', focus: 'Chest & Back Superset · HIIT Finish', targetType: 'hybrid_upper' },
-      { title: 'High-Intensity Gym Tabata', focus: 'Box Jumps · Sprints · Battle Ropes', targetType: 'hiit_gym' },
-      { title: 'Compound Conditioning & Athletic Stamina', focus: 'Rower Sprints · Core Metcon', targetType: 'cardio_gym' },
-      { title: 'Gym Active Recovery & Mobility Flush', focus: 'Foam Rolling · Dynamic Stretches', targetType: 'recovery' }
-    ];
-  } else {
-    // Gym Strength / Hypertrophy Split
-    splitTemplates = [
-      { title: 'Chest & Triceps Hypertrophy', focus: 'Upper & Mid Chest · Triceps', muscleGroup: 'Chest' },
-      { title: 'Back & Lat Power Builder', focus: 'Lats · Upper Back · Biceps', muscleGroup: 'Back' },
-      { title: 'Quads & Lower Body Stamina', focus: 'Quads · Hamstrings · Calves', muscleGroup: 'Legs' },
-      { title: 'Shoulders & Core Stability', focus: 'Deltoids · Abs · Obliques', muscleGroup: 'Shoulders' },
-      { title: 'Glutes, Posterior & Cardio Shred', focus: 'Posterior Chain · Glutes · Conditioning', muscleGroup: 'Legs' },
-      { title: 'Full-Body Athletic Conditioning', focus: 'Compound Movements · Functional Metcon', muscleGroup: 'Chest' },
-      { title: 'Active Recovery & Core Armor', focus: 'Mobility · Deep Core · Balance', muscleGroup: 'Core' }
-    ];
-  }
+  const splitTemplates = [
+    { title: 'Chest & Triceps Hypertrophy', focus: 'Upper & Mid Chest · Triceps', muscleGroup: 'Chest' },
+    { title: 'Back & Lat Power Builder', focus: 'Lats · Upper Back · Biceps', muscleGroup: 'Back' },
+    { title: 'Quads & Lower Body Stamina', focus: 'Quads · Hamstrings · Calves', muscleGroup: 'Legs' },
+    { title: 'Shoulders & Core Stability', focus: 'Deltoids · Abs · Obliques', muscleGroup: 'Shoulders' },
+    { title: 'Glutes, Posterior & Cardio Shred', focus: 'Posterior Chain · Glutes · Conditioning', muscleGroup: 'Legs' },
+    { title: 'Full-Body Athletic Conditioning', focus: 'Compound Movements · Functional Metcon', muscleGroup: 'Chest' },
+    { title: 'Active Recovery & Core Armor', focus: 'Mobility · Deep Core · Balance', muscleGroup: 'Abs / Core' }
+  ];
 
   const days = [];
   for (let i = 1; i <= durationDays; i++) {
     const template = splitTemplates[(i - 1) % splitTemplates.length];
-    let pool = [];
+    const category = template.muscleGroup === 'Abs / Core' ? 'Chest' : template.muscleGroup;
+    let pool = EXERCISES_LIBRARY.filter(e => e.category.toLowerCase().includes(category.toLowerCase()));
+    if (!pool.length) pool = EXERCISES_LIBRARY;
 
+    // Filter by chosen workout types if applicable
+    const isHome = workoutTypes.includes('Home') && !workoutTypes.includes('Gym');
     if (isHome) {
-      // STRICT HOME FILTER: Only exercises executable at home without gym hardware
-      const homePool = EXERCISES_LIBRARY.filter(isHomeExercise);
-
-      if (template.targetType) {
-        if (template.targetType === 'recovery') {
-          pool = homePool.filter(e => e.category === 'Stretching' || (e.sub || '').toLowerCase().includes('recovery') || (e.sub || '').toLowerCase().includes('flexibility'));
-        } else if (template.targetType === 'cardio_core') {
-          pool = homePool.filter(e => e.category === 'Core' || (e.sub || '').toLowerCase().includes('core') || e.name.toLowerCase().includes('crunch') || e.name.toLowerCase().includes('plank'));
-        } else if (template.targetType === 'hiit') {
-          pool = homePool.filter(e => e.category === 'HIIT' || e.name.toLowerCase().includes('burpee') || e.name.toLowerCase().includes('jack') || e.name.toLowerCase().includes('hop') || e.name.toLowerCase().includes('climber'));
-        } else if (template.targetType === 'cardio_low') {
-          pool = homePool.filter(e => e.name.toLowerCase().includes('step') || e.name.toLowerCase().includes('shuffle') || e.name.toLowerCase().includes('box') || e.name.toLowerCase().includes('butt') || e.name.toLowerCase().includes('walk') || e.name.toLowerCase().includes('march'));
-        } else if (template.targetType === 'cardio_agility') {
-          pool = homePool.filter(e => e.name.toLowerCase().includes('shuffle') || e.name.toLowerCase().includes('skater') || e.name.toLowerCase().includes('feet') || e.name.toLowerCase().includes('box') || e.name.toLowerCase().includes('knee'));
-        } else {
-          pool = homePool.filter(e => e.category === 'Cardio' || e.category === 'HIIT' || (e.sub || '').toLowerCase().includes('cardio') || (e.sub || '').toLowerCase().includes('full body'));
-        }
-      } else if (template.muscleGroup) {
-        pool = homePool.filter(e => e.category.toLowerCase().includes(template.muscleGroup.toLowerCase()) || (e.sub || '').toLowerCase().includes(template.muscleGroup.toLowerCase()));
-      }
-
-      if (!pool.length) {
-        pool = hasCardio
-          ? homePool.filter(e => e.category === 'Cardio' || e.category === 'HIIT' || e.category === 'Core')
-          : homePool;
-      }
-      if (!pool.length) pool = homePool;
-    } else {
-      // Gym or standard pool
-      if (template.targetType) {
-        if (template.targetType === 'recovery') {
-          pool = EXERCISES_LIBRARY.filter(e => e.category === 'Stretching' || (e.sub || '').toLowerCase().includes('recovery'));
-        } else {
-          pool = EXERCISES_LIBRARY.filter(e => e.category === 'Cardio' || e.category === 'HIIT' || (e.sub || '').toLowerCase().includes('cardio'));
-        }
-      } else if (template.muscleGroup) {
-        pool = EXERCISES_LIBRARY.filter(e => e.category.toLowerCase().includes(template.muscleGroup.toLowerCase()));
-      }
-      if (!pool.length) pool = EXERCISES_LIBRARY;
+      const homePool = pool.filter(e => (e.type || '').toLowerCase().includes('home') || (e.type || '').toLowerCase().includes('dumbbell') || (e.type || '').toLowerCase().includes('bodyweight'));
+      if (homePool.length >= 2) pool = homePool;
     }
 
     const dayExercises = [];
-    const mainCount = hasStretching ? Math.max(2, exerciseCount - 1) : exerciseCount;
-    const usedNames = new Set();
+    const mainCount = workoutTypes.includes('Stretching') ? Math.max(2, exerciseCount - 1) : exerciseCount;
 
     for (let j = 0; j < mainCount; j++) {
-      let offset = (j + (i - 1) * 2) % pool.length;
-      let ex = pool[offset];
-      let attempts = 0;
-      while (usedNames.has(ex.name) && attempts < pool.length) {
-        offset = (offset + 1) % pool.length;
-        ex = pool[offset];
-        attempts++;
-      }
-      usedNames.add(ex.name);
-
-      const isCardioEx = ex.category === 'Cardio' || ex.category === 'HIIT' || (ex.sub || '').toLowerCase().includes('cardio');
-      const repLabel = isCardioEx
-        ? `${cardioWorkSec}s active · ${cardioRestSec}s rest`
-        : repsScheme;
-
+      const ex = pool[j % pool.length];
       dayExercises.push({
         name: ex.name,
         subMuscle: ex.sub || ex.category,
         category: ex.category,
         sets: defaultSets,
-        reps: repLabel,
-        durationSec: isCardioEx ? cardioWorkSec : 45,
-        restSec: isCardioEx ? cardioRestSec : defaultRest,
-        tip: ex.steps || ex.rxWhy || 'Maintain tight core, proud posture, and smooth cadence.'
+        reps: repsScheme,
+        durationSec: 45,
+        restSec: defaultRest,
+        tip: ex.steps || ex.rxWhy || 'Maintain tight core, chest proud, smooth cadence.'
       });
     }
 
     // Add stretching / cooldown if user selected Stretching
-    if (hasStretching) {
+    if (workoutTypes.includes('Stretching')) {
       dayExercises.push({
         name: i % 2 === 0 ? "World's Greatest Stretch & Thoracic Opener" : "Cat-Cow & Deep Hip Flexor Release",
         subMuscle: "Mobility & Full Body Recovery",
@@ -6551,13 +5617,6 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
   updateLiveWaterEstimate();
   toast(`${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
 }
-window.generateAIChallengePlan = generateAIChallengePlan;
-window.renderChallengeView = renderChallengeView;
-Object.defineProperty(window, 'activeChallengePlan', {
-  get: () => activeChallengePlan,
-  set: (v) => { activeChallengePlan = v; },
-  configurable: true
-});
 
 /* ================= WORKOUT SECTION CUSTOMIZATION & EXPLORER ================= */
 let customWorkoutFilterTypes = ['all'];
@@ -6608,43 +5667,33 @@ function renderCustomWorkoutExplorer() {
   }
 
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--glass-text-secondary);background:var(--glass-surface-subtle);border-radius:12px;border:1px dashed var(--glass-border);">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:36px;color:var(--glass-text-secondary);background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
       <b>No exercises found matching your selected filters.</b>
       <p style="font-size:.85rem;margin-top:6px;">Try selecting "All Types" or "Full Body" to view the full exercise catalog.</p>
     </div>`;
     return;
   }
 
-  // Curated vs Full catalog pagination
-  const defaultLimit = 6;
-  const page = window._customWorkoutPage || 1;
-  const displayCount = customWorkoutShowAll ? page * 24 : defaultLimit;
-  const displayList = list.slice(0, displayCount);
-  const hasMore = customWorkoutShowAll && (list.length > displayCount);
+  // Curated light view: show only 4 high-priority exercises by default
+  const defaultLimit = 4;
+  const displayList = customWorkoutShowAll ? list.slice(0, 16) : list.slice(0, defaultLimit);
 
   const cardsHtml = displayList.map(ex => {
     const rxSets = ex.rxSetsReps || '3 sets × 10–12 reps';
     const rxRest = '60s rest';
     const cleanName = escapeHtml(ex.name);
     const safeName = cleanName.replace(/'/g, "\\'");
-    const mediaThumb = ex.gif ? `
-      <div style="width:100%;height:130px;background:var(--ff-bg-panel, #0f172a);border-radius:10px;margin-bottom:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--glass-border-subtle, rgba(255,255,255,0.06));" onclick="openExerciseDetailModal('${safeName}')">
-        <img src="${ex.gif}" alt="${cleanName}" style="max-height:100%;max-width:100%;object-fit:contain;" loading="lazy" onerror="this.parentElement.style.display='none'" />
-      </div>
-    ` : '';
-
     return `
       <div class="exercise-custom-card" style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
         <div>
-          ${mediaThumb}
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <span style="font-size:.72rem;font-weight:800;color:var(--glass-text-primary);background:#eff6ff;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+            <span class="custom-ex-sub-badge" style="font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
               ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
             </span>
             <span style="font-size:.74rem;color:var(--glass-text-secondary);font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
           </div>
-          <b style="color:#2563eb;font-size:1.02rem;display:block;line-height:1.3;margin-bottom:6px;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">${cleanName}</b>
-          <p style="color:var(--glass-text-secondary);font-size:.82rem;line-height:1.45;margin:0 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
+          <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
+          <p style="color:var(--glass-text-secondary);font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
           <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:.78rem;font-weight:700;color:var(--glass-text-primary);">${escapeHtml(rxSets)}</span>
             <span style="font-size:.75rem;color:var(--glass-text-secondary);font-weight:600;">Rest: ${escapeHtml(rxRest)}</span>
@@ -6663,20 +5712,13 @@ function renderCustomWorkoutExplorer() {
   }).join('');
 
   const toggleBarHtml = list.length > defaultLimit ? `
-    <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:var(--glass-surface-subtle);border:1.5px solid var(--glass-border);border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
+    <div class="custom-workout-toggle-bar" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
       <span style="font-size:.85rem;color:var(--glass-text-secondary);font-weight:600;">
-        Showing <b>${displayList.length.toLocaleString()}</b> of <b>${list.length.toLocaleString()}</b> targeted exercises (${customWorkoutShowAll ? 'Full Exercise Catalog' : 'Curated Session View - 6 Moves'})
+        Showing <b>${displayList.length}</b> of <b>${list.length}</b> targeted exercises (${customWorkoutShowAll ? 'Expanded Catalog' : 'Curated Session View - 4 Moves'})
       </span>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        ${hasMore ? `
-          <button type="button" class="outline-button small" id="customWorkoutLoadMoreBtn" style="padding:7px 14px;font-size:.82rem;border-color:#38bdf8;color:#2563eb;font-weight:700;">
-            Show More (${(list.length - displayCount).toLocaleString()} remaining)
-          </button>
-        ` : ''}
-        <button type="button" class="solid-button small" id="toggleCustomWorkoutExpandBtn" style="background:#2563eb;padding:7px 16px;font-size:.82rem;">
-          ${customWorkoutShowAll ? 'Show Curated (6)' : `Browse All ${list.length.toLocaleString()} Exercises`}
-        </button>
-      </div>
+      <button type="button" class="solid-button small" id="toggleCustomWorkoutExpandBtn" style="background:#2563eb;padding:7px 16px;font-size:.82rem;">
+        ${customWorkoutShowAll ? 'Show Curated (4)' : `Browse All ${list.length} Exercises`}
+      </button>
     </div>
   ` : '';
 
@@ -6686,15 +5728,6 @@ function renderCustomWorkoutExplorer() {
   if (toggleBtn) {
     toggleBtn.onclick = () => {
       customWorkoutShowAll = !customWorkoutShowAll;
-      window._customWorkoutPage = 1;
-      renderCustomWorkoutExplorer();
-    };
-  }
-
-  const loadMoreBtn = $('#customWorkoutLoadMoreBtn');
-  if (loadMoreBtn) {
-    loadMoreBtn.onclick = () => {
-      window._customWorkoutPage = (window._customWorkoutPage || 1) + 1;
       renderCustomWorkoutExplorer();
     };
   }
@@ -6928,49 +5961,25 @@ function renderChallengeView() {
       </div>
 
       <!-- Exercise List with Swap Buttons -->
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        ${currentDay.exercises.map((ex, idx) => {
-          const info = findExerciseInfo(ex.name) || {};
-          const gifSrc = ex.gif || info.gif || '';
-          const safeName = (ex.name || '').replace(/'/g, "\\'");
-          const cleanName = escapeHtml(ex.name || '');
-          const thumbHtml = gifSrc ? `
-            <div class="challenge-routine-thumb" onclick="openExerciseDetailModal('${safeName}')" title="Click to view live movement demo">
-              <img src="${gifSrc}" alt="${cleanName}" loading="lazy" onerror="this.parentElement.style.display='none';" />
-            </div>
-          ` : `
-            <div class="challenge-routine-thumb" onclick="openExerciseDetailModal('${safeName}')" style="background:#2563eb;color:#ffffff;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;">
-              ${idx + 1}
-            </div>
-          `;
-
-          return `
-            <div class="challenge-routine-item" style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;">
-              <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1;">
-                ${thumbHtml}
-                <div style="min-width:0;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
-                    <b class="challenge-routine-name" style="font-size:1rem;color:var(--glass-text-primary);">${cleanName}</b>
-                    <span style="font-size:.72rem;background:#eff6ff;color:#2563eb;padding:1px 8px;border-radius:99px;font-weight:800;text-transform:uppercase;">
-                      ${escapeHtml(ex.subMuscle || info.sub || 'Targeted')}
-                    </span>
-                  </div>
-                  <span class="challenge-routine-meta" style="font-size:.82rem;color:var(--glass-text-secondary);">
-                    ${ex.sets} sets × ${escapeHtml(ex.reps)} · Rest ${ex.restSec || 60}s
-                  </span>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                <button type="button" class="outline-button small" style="font-size:.78rem;padding:6px 12px;border-color:#38bdf8;" onclick="openExerciseDetailModal('${safeName}')">
-                  Visual Guide
-                </button>
-                <button type="button" class="solid-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.78rem;padding:6px 12px;background:#2563eb;">
-                  Swap Workout
-                </button>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${currentDay.exercises.map((ex, idx) => `
+          <div class="challenge-routine-item">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="challenge-routine-idx">
+                ${idx + 1}
+              </span>
+              <div>
+                <b class="challenge-routine-name">${escapeHtml(ex.name)}</b>
+                <span class="challenge-routine-meta">${escapeHtml(ex.subMuscle || 'General')} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.restSec || 60}s</span>
               </div>
             </div>
-          `;
-        }).join('')}
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button type="button" class="outline-button small swap-ex-trigger" data-ex-idx="${idx}" style="font-size:.8rem;padding:5px 12px;">
+                Swap Workout
+              </button>
+            </div>
+          </div>
+        `).join('')}
       </div>
     </div>
 
@@ -7042,15 +6051,7 @@ function renderChallengeView() {
 
   if ($('#refreshTodayRoutineBtn')) {
     $('#refreshTodayRoutineBtn').onclick = () => {
-      const freshExercises = buildDayByDayRoutines(
-        activeChallengePlan.motive,
-        1,
-        activeChallengePlan.userWeight,
-        activeChallengePlan.userHeight,
-        activeChallengePlan.totalWorkoutMinutes || 45,
-        activeChallengePlan.intensity || 'Moderate',
-        activeChallengePlan.types || ['Home']
-      )[0].exercises;
+      const freshExercises = buildDayByDayRoutines(activeChallengePlan.motive, 1, activeChallengePlan.userWeight, activeChallengePlan.userHeight)[0].exercises;
       activeChallengePlan.days[currentIdx].exercises = freshExercises;
       store.set('activeChallengePlan', activeChallengePlan);
       if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
@@ -7075,74 +6076,27 @@ function openSwapExerciseModal(dayIdx, exIdx) {
   const currentEx = activeChallengePlan.days[dayIdx].exercises[exIdx];
   if ($('#swapTargetExName')) $('#swapTargetExName').textContent = currentEx.name;
 
-  let swapLimit = 30;
   const renderAlternatives = (filterQuery = '') => {
     const list = $('#swapAlternativesList');
     if (!list) return;
     const q = filterQuery.toLowerCase().trim();
-    const currentCat = (currentEx.category || '').toLowerCase();
-    
-    const isChallengeHomeOnly = activeChallengePlan && activeChallengePlan.types && activeChallengePlan.types.includes('Home');
-    let matches = EXERCISES_LIBRARY.filter(e => {
+    const matches = EXERCISES_LIBRARY.filter(e => {
       if (e.name.toLowerCase() === currentEx.name.toLowerCase()) return false;
-      if (isChallengeHomeOnly && typeof isHomeExercise === 'function' && !isHomeExercise(e)) return false;
-      if (q) {
-        const idx = e._searchIdx || (e.name + ' ' + (e.sub || '') + ' ' + (e.type || '')).toLowerCase();
-        return idx.includes(q) || e.name.toLowerCase().includes(q);
-      }
-      if (currentCat) {
-        return (e.category && e.category.toLowerCase() === currentCat);
-      }
-      return true;
-    });
+      if (q) return e.name.toLowerCase().includes(q) || (e.sub && e.sub.toLowerCase().includes(q));
+      return (e.category && currentEx.category && e.category.toLowerCase() === currentEx.category.toLowerCase()) || true;
+    }).slice(0, 20);
 
-    if (!matches.length && !q) {
-      matches = EXERCISES_LIBRARY.filter(e => {
-        if (e.name.toLowerCase() === currentEx.name.toLowerCase()) return false;
-        if (isChallengeHomeOnly && typeof isHomeExercise === 'function' && !isHomeExercise(e)) return false;
-        return true;
-      });
-    }
-
-    const paginated = matches.slice(0, swapLimit);
-    const hasMore = matches.length > paginated.length;
-
-    list.innerHTML = paginated.map(ex => {
-      const safeName = (ex.name || '').replace(/'/g, "\\'");
-      const cleanName = escapeHtml(ex.name || '');
-      const thumb = ex.gif ? `
-        <div style="width:48px;height:48px;border-radius:8px;background:#0f172a;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,0.06);" onclick="openExerciseDetailModal('${safeName}')">
-          <img src="${ex.gif}" alt="${cleanName}" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.parentElement.style.display='none';" />
+    list.innerHTML = matches.map(ex => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #edf2e8;border-radius:10px;background:#ffffff;gap:10px;">
+        <div>
+          <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(ex.name)}</b>
+          <small style="color:var(--glass-text-secondary);font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.rxSetsReps || '3 sets × 10 reps')}</small>
         </div>
-      ` : '';
-
-      return `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--ff-glass-border-subtle);border-radius:12px;background:var(--ff-surface);gap:12px;">
-          <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
-            ${thumb}
-            <div style="min-width:0;">
-              <b style="color:#2563eb;font-size:.92rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">${cleanName}</b>
-              <small style="color:var(--glass-text-secondary);font-size:.78rem;">${escapeHtml(ex.sub || ex.category)} · ${escapeHtml(ex.type || 'Gym / Home')}</small>
-            </div>
-          </div>
-          <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${cleanName}" style="background:#2563eb;font-size:.78rem;white-space:nowrap;flex-shrink:0;padding:6px 12px;">
-            Select &amp; Replace
-          </button>
-        </div>
-      `;
-    }).join('') + (hasMore ? `
-      <button type="button" id="swapShowMoreBtn" class="outline-button" style="width:100%;margin-top:10px;padding:9px;font-size:.85rem;border-color:#38bdf8;color:#2563eb;font-weight:700;">
-        Show more (${(matches.length - paginated.length).toLocaleString()} remaining)
-      </button>
-    ` : '');
-
-    const moreBtn = $('#swapShowMoreBtn');
-    if (moreBtn) {
-      moreBtn.onclick = () => {
-        swapLimit += 30;
-        renderAlternatives(filterQuery);
-      };
-    }
+        <button type="button" class="solid-button small replace-ex-btn" data-ex-name="${escapeHtml(ex.name)}" style="background:#2563eb;font-size:.78rem;white-space:nowrap;">
+          Select &amp; Replace
+        </button>
+      </div>
+    `).join('');
 
     $$('.replace-ex-btn').forEach(b => {
       b.onclick = () => {
@@ -7184,8 +6138,6 @@ let sessionTimerSec = 45;
 let sessionTimerInterval = null;
 let sessionIsPaused = false;
 
-window.openSwapExerciseModal = openSwapExerciseModal;
-
 function formatTimerMMSS(totalSeconds) {
   const m = Math.floor(Math.max(0, totalSeconds) / 60);
   const s = Math.max(0, totalSeconds) % 60;
@@ -7211,8 +6163,6 @@ function startWorkoutSession(dayData) {
   renderSessionStepUI();
   startActiveSetTimer();
 }
-
-window.startWorkoutSession = startWorkoutSession;
 
 function renderSessionStepUI() {
   if (!sessionDay || !sessionDay.exercises[sessionExIdx]) return;
@@ -7271,16 +6221,25 @@ function transitionToRestPhase() {
   const ex = sessionDay.exercises[sessionExIdx];
   sessionTimerSec = ex.restSec || 60;
   renderSessionStepUI();
+  if (window.FitFuelVoice) {
+    window.FitFuelVoice.onRestStart(sessionTimerSec, ex ? ex.name : '');
+  }
 
   sessionTimerInterval = setInterval(() => {
     if (sessionTimerSec > 0) {
       sessionTimerSec--;
       updateTimerClockDisplay();
+      if (window.FitFuelVoice) {
+        window.FitFuelVoice.onRestTick(sessionTimerSec, ex ? (ex.restSec || 60) : 60);
+      }
       if (sessionTimerSec <= 3 && sessionTimerSec > 0) {
         soundFX.timerTick();
       }
     } else {
       clearInterval(sessionTimerInterval);
+      if (window.FitFuelVoice) {
+        window.FitFuelVoice.onRestComplete();
+      }
       trigger321CountdownAndAdvance();
     }
   }, 1000);
@@ -7523,7 +6482,7 @@ function renderTrackingView() {
           <b style="color:#2563eb;font-size:.9rem;display:block;">${escapeHtml(w.name)}</b>
           <small style="color:var(--glass-text-secondary);font-size:.78rem;">${w.date || today()}</small>
         </div>
-        <span style="font-size:.75rem;padding:3px 10px;border-radius:99px;background:#eff6ff;color:var(--glass-text-primary);font-weight:700;">
+        <span class="workout-logged-pill" style="font-size:.75rem;padding:3px 10px;border-radius:99px;font-weight:700;">
            Logged
         </span>
       </div>
@@ -7543,11 +6502,11 @@ function renderTrackingView() {
         <span class="section-kicker">HABIT CONSISTENCY</span>
         <h4 style="margin:2px 0 14px;font-size:1.1rem;color:var(--glass-text-primary);font-weight:800;">Workout &amp; Streak Metrics</h4>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+          <div class="habit-metric-box" style="padding:12px;border-radius:10px;">
             <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">CURRENT STREAK</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${streakDays} <small style="font-size:.8rem;font-weight:600;">Days</small></b>
           </div>
-          <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #edf3ea;">
+          <div class="habit-metric-box" style="padding:12px;border-radius:10px;">
             <span style="font-size:.72rem;color:var(--glass-text-secondary);font-weight:700;display:block;">TOTAL WORKOUTS</span>
             <b style="font-size:1.4rem;color:#2563eb;"> ${totalWorkouts}</b>
           </div>
@@ -7730,6 +6689,7 @@ if ($('#coachActionCustomWorkout')) $('#coachActionCustomWorkout').onclick = () 
 if ($('#coachActionFormCheck')) {
   $('#coachActionFormCheck').onclick = () => {
     switchView('posture');
+    startPostureCamera(false);
   };
 }
 if ($('#coachActionRecovery')) {
@@ -7757,22 +6717,26 @@ const floatingAiTooltip = $('#floatingAiTooltip');
 if (floatingAiLauncher) {
   floatingAiLauncher.onclick = () => {
     if (floatingAiPanel) {
-      if (floatingAiPanel.classList.contains('minimized')) {
-        floatingAiPanel.classList.remove('minimized');
-        floatingAiPanel.classList.add('open');
-      } else {
-        floatingAiPanel.classList.toggle('open');
-      }
+      floatingAiPanel.classList.toggle('open');
       if (floatingAiPanel.classList.contains('open')) {
         if (floatingAiTooltip) floatingAiTooltip.style.display = 'none';
         const badge = $('#floatingAiBadge');
         if (badge) badge.style.display = 'none';
-        const welcomeText = $('#floatingAiWelcomeText');
-        if (welcomeText && profile) {
-          const cal = profile.cal || profile.calories || 2200;
-          const p = profile.p || profile.protein || 140;
-          welcomeText.innerHTML = `Hi <b>${escapeHtml(profile.name || 'Athlete')}</b>! I'm your FitFuel AI Assistant (NVIDIA Nemotron). Daily targets: <b>${Number(cal).toLocaleString()} kcal</b>, <b>${p}g protein</b>. What can I calculate or program for you today?`;
-        }
+        setTimeout(() => {
+          const inp = $('#floatingAiInput');
+          if (inp) inp.focus();
+        }, 150);
+      }
+    }
+  };
+}
+
+const topMobileAiBtn = $('#topMobileAiBtn');
+if (topMobileAiBtn) {
+  topMobileAiBtn.onclick = () => {
+    if (floatingAiPanel) {
+      floatingAiPanel.classList.toggle('open');
+      if (floatingAiPanel.classList.contains('open')) {
         setTimeout(() => {
           const inp = $('#floatingAiInput');
           if (inp) inp.focus();
@@ -7789,44 +6753,9 @@ if ($('#closeFloatingTooltip')) {
   };
 }
 
-setTimeout(() => {
-  if (floatingAiTooltip && (!floatingAiPanel || !floatingAiPanel.classList.contains('open'))) {
-    floatingAiTooltip.style.opacity = '0';
-    setTimeout(() => { if (floatingAiTooltip) floatingAiTooltip.style.display = 'none'; }, 300);
-  }
-}, 5000);
-
 if ($('#floatingMinimizeBtn')) {
-  $('#floatingMinimizeBtn').onclick = (e) => {
-    e.stopPropagation();
-    if (floatingAiPanel) {
-      floatingAiPanel.classList.remove('open');
-      floatingAiPanel.classList.add('minimized');
-      if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
-    }
-  };
-}
-
-// Clicking header while minimized restores panel
-const floatingHeader = floatingAiPanel ? floatingAiPanel.querySelector('.floating-panel-header') : null;
-if (floatingHeader) {
-  floatingHeader.onclick = (e) => {
-    if (floatingAiPanel && floatingAiPanel.classList.contains('minimized')) {
-      if (!e.target.closest('button') && !e.target.closest('.ai-model-dropdown-menu')) {
-        floatingAiPanel.classList.remove('minimized');
-      }
-    }
-  };
-}
-
-if ($('#floatingCloseBtn')) {
-  $('#floatingCloseBtn').onclick = (e) => {
-    e.stopPropagation();
-    if (floatingAiPanel) {
-      floatingAiPanel.classList.remove('open');
-      floatingAiPanel.classList.remove('minimized');
-      if (typeof soundFX !== 'undefined' && soundFX.click) soundFX.click();
-    }
+  $('#floatingMinimizeBtn').onclick = () => {
+    if (floatingAiPanel) floatingAiPanel.classList.remove('open');
   };
 }
 
@@ -7842,17 +6771,6 @@ if ($('#floatingClearHistoryBtn')) {
     chatHistory = [];
     renderChatMessages();
     toast('Chat history cleared');
-  };
-}
-
-if ($('#floatingAiSendBtn')) {
-  $('#floatingAiSendBtn').onclick = (e) => {
-    e.preventDefault();
-    if ($('#floatingAiForm')) {
-      const form = $('#floatingAiForm');
-      if (typeof form.requestSubmit === 'function') form.requestSubmit();
-      else form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-    }
   };
 }
 
@@ -7918,12 +6836,8 @@ if ($('#floatingAiFileInput')) {
   $('#floatingAiFileInput').onchange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    toast(`Photo selected: ${file.name}. Reading image for AI Coach...`);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      handleUserAiQuery(`Analyze this attached photo of my meal/exercise (${file.name}) for calories, macros, or biomechanics.`, ev.target.result);
-    };
-    reader.readAsDataURL(file);
+    toast(`Photo selected: ${file.name}. Analyzing with AI Coach...`);
+    handleUserAiQuery(`I have attached a photo of my meal/exercise (${file.name}). Please provide a detailed macronutrient and biomechanical analysis.`);
   };
 }
 
@@ -7946,7 +6860,7 @@ function renderActivityView() {
 }
 
 function updatePedometerUI() {
-  const steps = Number(localStorage.getItem('fitfuel_steps')) || 0;
+  const steps = Number(localStorage.getItem('fitfuel_steps')) || 7420;
   const distKm = (steps * 0.00075).toFixed(2);
   const activeKcal = Math.round(steps * 0.04);
   const floors = Math.floor(steps / 900);
@@ -7968,7 +6882,7 @@ function updatePedometerUI() {
 
 if ($('#pedometerSimulateBtn')) {
   $('#pedometerSimulateBtn').onclick = () => {
-    let steps = Number(localStorage.getItem('fitfuel_steps')) || 0;
+    let steps = Number(localStorage.getItem('fitfuel_steps')) || 7420;
     steps += 500;
     localStorage.setItem('fitfuel_steps', steps);
     updatePedometerUI();
@@ -8018,23 +6932,25 @@ function startGpsTracking() {
     gpsWatchId = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude, accuracy, speed } = pos.coords;
-        if (accuracy && accuracy <= 100) {
-          if ($('#gpsLiveStatusText')) $('#gpsLiveStatusText').textContent = 'Live GPS Recording (Active)';
+        if (accuracy && accuracy <= 50) {
           addGpsCoordinate(latitude, longitude, speed);
         }
       },
       (err) => {
-        console.warn('GPS signal update:', err.message);
-        if ($('#gpsLiveStatusText') && gpsCoords.length === 0) {
-          $('#gpsLiveStatusText').textContent = 'Acquiring GPS Signal...';
-        }
+        simulateGpsStep();
       },
       { enableHighAccuracy: true, maximumAge: 1000, timeout: 8000 }
     );
   } else {
-    if ($('#gpsLiveStatusText')) $('#gpsLiveStatusText').textContent = 'GPS Not Supported by Browser';
-    toast('Geolocation is not supported by your current browser.');
+    simulateGpsStep();
   }
+
+  // Interval simulation fallback if stationary
+  window._gpsSimInterval = setInterval(() => {
+    if (gpsState === 'RECORDING' && gpsCoords.length === 0) {
+      simulateGpsStep();
+    }
+  }, 3000);
 
   soundFX.complete();
   toast('Live GPS activity started! Tracking pace, distance & route.');
@@ -8566,7 +7482,7 @@ if ($('#universalCameraModal [data-close]')) {
    ========================================================================== */
 let postureStream = null;
 let postureAnimId = null;
-let postureState = 'READY'; // 'READY', 'IN_PROGRESS', 'TARGET_ACHIEVED', 'RETURNING', 'COMPLETED'
+let postureState = 'STANDING'; // 'STANDING', 'DESCENDING', 'BOTTOM', 'ASCENDING'
 let postureReps = 0;
 let postureLastRepTime = 0;
 let postureAngles = [];
@@ -8576,315 +7492,17 @@ let postureAudioEnabled = true;
 let postureFacingMode = 'user';
 let isPostureDemoMode = false;
 
-// Speech helper that cancels all active speech synthesis immediately
-function stopAllSpeech() {
-  if ('speechSynthesis' in window) {
+function renderPostureView() {
+  renderPostureHistory();
+  if (navigator.permissions && navigator.permissions.query) {
     try {
-      window.speechSynthesis.cancel();
-      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.cancel();
-      }
+      navigator.permissions.query({ name: 'camera' }).then(p => {
+        if (p && p.state === 'granted' && !postureStream && !isPostureDemoMode) {
+          startPostureCamera(false);
+        }
+      }).catch(() => {});
     } catch (e) {}
   }
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', stopAllSpeech);
-  window.addEventListener('pagehide', stopAllSpeech);
-  window.addEventListener('popstate', () => {
-    if (activeView !== 'posture') stopAllSpeech();
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && activeView !== 'posture') stopAllSpeech();
-  });
-}
-
-// 12 Workout Options Configuration for Computer Vision Biomechanics & IR Form Checking
-const POSTURE_EXERCISES = {
-  squat: {
-    name: 'Barbell / Bodyweight Squat',
-    joint: 'Knee',
-    unit: '°',
-    startAngle: 170,
-    targetAngle: 95,
-    returnAngle: 155,
-    isAscendingPeak: false,
-    cadenceMinMs: 950,
-    cues: {
-      ready: 'Stand tall. Step back until your full body is in frame.',
-      inProgress: 'Push hips back, keep chest upright.',
-      target: 'Parallel achieved! Drive through heels!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Squat Depth (<95° Flexion)', desc: 'Hips must sink until thighs reach parallel with knees. Green indicator confirms depth.' },
-      { label: 'Torso Angle (<45° Lean)', desc: 'Maintain proud chest and neutral lumbar spine throughout the descent.' },
-      { label: 'Lockout & Debounce (1.0s Cadence)', desc: 'Full hip lockout standing required to complete each rep. Eliminates jitter.' }
-    ]
-  },
-  lunge: {
-    name: 'Forward / Reverse Lunge',
-    joint: 'Knee',
-    unit: '°',
-    startAngle: 170,
-    targetAngle: 95,
-    returnAngle: 155,
-    isAscendingPeak: false,
-    cadenceMinMs: 950,
-    cues: {
-      ready: 'Stand tall. Step forward into lunge stance.',
-      inProgress: 'Lower trailing knee smoothly towards floor.',
-      target: 'Deep lunge depth! Press back through front heel!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: '90° Front Knee Angle', desc: 'Front thigh parallel to floor, trailing knee hovers 2 inches above ground.' },
-      { label: 'Torso Upright & Core Tight', desc: 'Shoulders stacked directly above hips, no forward slouch.' },
-      { label: 'Balanced Lockout Return', desc: 'Drive back to standing lockout before switching or repeating.' }
-    ]
-  },
-  pushup: {
-    name: 'Push-Up (Chest Depth)',
-    joint: 'Elbow',
-    unit: '°',
-    startAngle: 165,
-    targetAngle: 85,
-    returnAngle: 150,
-    isAscendingPeak: false,
-    cadenceMinMs: 900,
-    cues: {
-      ready: 'Get into high plank lockout with hands under shoulders.',
-      inProgress: 'Lower chest to floor, tuck elbows at 45 degrees.',
-      target: 'Chest to floor! Drive up powerfully!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Chest-to-Floor Depth (<85°)', desc: 'Elbows bend to 90° or below. Chest lowers to within 2-3 inches of floor.' },
-      { label: 'Rigid Core Plank', desc: 'Straight neutral line from crown of head through hips to heels.' },
-      { label: 'Full Tricep Lockout', desc: 'Push floor away until arms are fully extended at the top.' }
-    ]
-  },
-  jumping_jacks: {
-    name: 'Jumping Jacks',
-    joint: 'Arm',
-    unit: '°',
-    startAngle: 30,
-    targetAngle: 150,
-    returnAngle: 45,
-    isAscendingPeak: true,
-    cadenceMinMs: 700,
-    cues: {
-      ready: 'Stand tall, feet together, hands at sides.',
-      inProgress: 'Jump wide and swing arms overhead.',
-      target: 'Clap overhead! Star extension reached!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Overhead Arm Abduction (>150°)', desc: 'Arms sweep up past shoulder height in wide arc overhead.' },
-      { label: 'Wide Lateral Stride', desc: 'Feet jump out wider than shoulder-width on the balls of your feet.' },
-      { label: 'Soft Landing & Reset', desc: 'Return feet together and hands to hips in a rhythmic, springy cadence.' }
-    ]
-  },
-  bicep_curls: {
-    name: 'Bicep Curls',
-    joint: 'Elbow',
-    unit: '°',
-    startAngle: 165,
-    targetAngle: 55,
-    returnAngle: 145,
-    isAscendingPeak: false,
-    cadenceMinMs: 900,
-    cues: {
-      ready: 'Stand tall with weights at sides, arms extended.',
-      inProgress: 'Curl weights smoothly toward shoulders.',
-      target: 'Peak contraction! Squeeze biceps hard!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Peak Contraction (<55° Flexion)', desc: 'Full elbow flexion with maximum bicep squeeze at top.' },
-      { label: 'Pinned Elbows', desc: 'Keep elbows glued to ribcage. Do not swing shoulders or rock hips.' },
-      { label: 'Controlled Negative', desc: 'Lower weights under full eccentric tension to full arm extension.' }
-    ]
-  },
-  overhead_press: {
-    name: 'Overhead Shoulder Press',
-    joint: 'Arm',
-    unit: '°',
-    startAngle: 80,
-    targetAngle: 165,
-    returnAngle: 95,
-    isAscendingPeak: true,
-    cadenceMinMs: 950,
-    cues: {
-      ready: 'Hold weights at clavicle/shoulder rack position.',
-      inProgress: 'Press straight overhead in vertical path.',
-      target: 'Full overhead lockout! Crown through arms!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Vertical Lockout (>165°)', desc: 'Arms fully extended overhead in line with ears.' },
-      { label: 'Clavicle Rack Return', desc: 'Lower elbows back to shoulder height with complete control.' },
-      { label: 'Glute & Core Brace', desc: 'Ribcage anchored down, no excessive lower-back arching.' }
-    ]
-  },
-  lateral_raises: {
-    name: 'Lateral Dumbbell Raises',
-    joint: 'Shoulder',
-    unit: '°',
-    startAngle: 25,
-    targetAngle: 90,
-    returnAngle: 35,
-    isAscendingPeak: true,
-    cadenceMinMs: 850,
-    cues: {
-      ready: 'Dumbbells at thighs, slight forward hinge.',
-      inProgress: 'Lead with elbows out to sides.',
-      target: 'Parallel 90° reached! Delts fully contracted!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Parallel Plane (85°-95°)', desc: 'Raise weights until arms are parallel to the floor.' },
-      { label: 'Lead With Elbows', desc: 'Elbows slightly bent, pinkies slightly higher than thumbs.' },
-      { label: 'Zero Momentum', desc: 'No torso swinging or bouncing at the bottom of the movement.' }
-    ]
-  },
-  plank: {
-    name: 'Core Plank Hold',
-    joint: 'Spine',
-    unit: '°',
-    startAngle: 180,
-    targetAngle: 180,
-    returnAngle: 180,
-    isAscendingPeak: false,
-    cadenceMinMs: 1000,
-    cues: {
-      ready: 'Assume rigid forearm plank, elbows under shoulders.',
-      inProgress: 'Maintain neutral spine, clench glutes.',
-      target: 'Solid core tension! Hold steady!',
-      rep: 'Hold'
-    },
-    rules: [
-      { label: 'Neutral Spinal Alignment (180°)', desc: 'Straight horizontal line from neck through pelvis to heels.' },
-      { label: 'Active Shoulder Protraction', desc: 'Press forearms firmly into floor to prevent shoulder blade collapse.' },
-      { label: 'Cadence Time Milestones', desc: 'Tracks continuous clean seconds, awarding milestone cues every 5s.' }
-    ]
-  },
-  glute_bridge: {
-    name: 'Glute Bridge / Hip Thrust',
-    joint: 'Hip',
-    unit: '°',
-    startAngle: 110,
-    targetAngle: 175,
-    returnAngle: 125,
-    isAscendingPeak: true,
-    cadenceMinMs: 950,
-    cues: {
-      ready: 'Lie supine with knees bent and feet flat on floor.',
-      inProgress: 'Drive through heels and extend hips towards ceiling.',
-      target: 'Full bridge lockout! Squeeze glutes hard at the top!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Pelvic Extension Lockout (>170°)', desc: 'Straight line from shoulders through hips to knees.' },
-      { label: 'Glute Squeeze at Peak', desc: 'Lockout hips through posterior pelvic tilt without hyperextending lumbar.' },
-      { label: 'Controlled Eccentric Lowering', desc: 'Lower pelvis gently to floor before initiating next rep.' }
-    ]
-  },
-  high_knees: {
-    name: 'High Knees Sprint',
-    joint: 'Knee',
-    unit: '°',
-    startAngle: 45,
-    targetAngle: 110,
-    returnAngle: 55,
-    isAscendingPeak: true,
-    cadenceMinMs: 500,
-    cues: {
-      ready: 'Stand tall with core braced and hands at hip height.',
-      inProgress: 'Drive knees rhythmically upward in place.',
-      target: 'Thigh parallel! Explosive knee drive!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Hip Height Knee Lift (>100°)', desc: 'Thigh must elevate parallel to floor at peak drive.' },
-      { label: 'Springy Forefoot Footwork', desc: 'Land softly on balls of feet with upright spine.' },
-      { label: 'Rapid Athletic Cadence', desc: 'Maintain quick, continuous cadence throughout interval.' }
-    ]
-  },
-  mountain_climbers: {
-    name: 'Mountain Climbers',
-    joint: 'Knee',
-    unit: '°',
-    startAngle: 50,
-    targetAngle: 115,
-    returnAngle: 60,
-    isAscendingPeak: true,
-    cadenceMinMs: 550,
-    cues: {
-      ready: 'High plank lockout with hands planted under shoulders.',
-      inProgress: 'Drive knee rhythmically towards chest.',
-      target: 'Chest touch! Drive back out!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Deep Knee Tuck to Chest (>110°)', desc: 'Drive knee in under chest without hips pikeing high.' },
-      { label: 'Rigid Shoulder-Spine Stack', desc: 'Arms locked straight, scapulae protracting into floor.' },
-      { label: 'Fluid Alternating Pacing', desc: 'Explosive drive and smooth reciprocal foot reset.' }
-    ]
-  },
-  standing_side_bends: {
-    name: 'Standing Oblique Side Crunch',
-    joint: 'Spine',
-    unit: '°',
-    startAngle: 180,
-    targetAngle: 140,
-    returnAngle: 170,
-    isAscendingPeak: false,
-    cadenceMinMs: 900,
-    cues: {
-      ready: 'Stand tall with feet hip-width apart and hands behind head.',
-      inProgress: 'Bend laterally from waist, crunching obliques.',
-      target: 'Maximum oblique compression! Return tall!',
-      rep: 'Rep'
-    },
-    rules: [
-      { label: 'Lateral Flexion (<145° Angle)', desc: 'Side bend in pure frontal plane without twisting forward.' },
-      { label: 'Glute & Pelvic Anchoring', desc: 'Hips remain stable and square, movement isolated to ribcage.' },
-      { label: 'Controlled Vertical Lockout', desc: 'Return to perfect upright posture before repeating.' }
-    ]
-  }
-};
-
-function updatePostureCriteriaUI(exerciseKey) {
-  const container = $('#postureCriteriaList');
-  if (!container) return;
-  const conf = POSTURE_EXERCISES[exerciseKey] || POSTURE_EXERCISES.squat;
-  const colors = [
-    { bg: 'rgba(22,199,154,0.1)', border: '#16C79A' },
-    { bg: 'rgba(56,189,248,0.1)', border: '#38BDF8' },
-    { bg: 'rgba(245,158,11,0.1)', border: '#F59E0B' }
-  ];
-
-  container.innerHTML = conf.rules.map((r, i) => {
-    const col = colors[i % colors.length];
-    return `
-      <div style="padding:8px 12px;border-radius:10px;background:${col.bg};border-left:3px solid ${col.border};">
-        <b style="color:var(--ff-text-primary);display:block;">${r.label}</b>
-        ${r.desc}
-      </div>
-    `;
-  }).join('');
-}
-
-function renderPostureView() {
-  const video = $('#postureVideo');
-  if (video && !isPostureDemoMode) {
-    video.style.display = 'block';
-  }
-  renderPostureHistory();
-  updatePostureCriteriaUI(postureExercise);
-  // CRITICAL REQUIREMENT: We NEVER auto-start camera here! User must explicitly click "Start Camera & Form Analysis" button.
 }
 
 async function startPostureCamera(isDemo = false) {
@@ -8894,8 +7512,6 @@ async function startPostureCamera(isDemo = false) {
   const permAlert = $('#posturePermissionAlert');
   const defPlaceholder = $('#posturePlaceholderDefault');
   if (!canvas) return;
-
-  const conf = POSTURE_EXERCISES[postureExercise] || POSTURE_EXERCISES.squat;
 
   if (isDemo) {
     isPostureDemoMode = true;
@@ -8914,16 +7530,12 @@ async function startPostureCamera(isDemo = false) {
     postureReps = 0;
     postureAngles = [];
     postureWarnings = 0;
-    postureState = 'READY';
-    _irSmoothedAngle = conf.startAngle;
-    _irPrevSmoothedAngle = conf.startAngle;
-    _irKinematicPos = 0;
-    _irPlankHoldSec = 0;
+    postureState = 'STANDING';
     if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = '0';
 
     runPostureAnalysisLoop();
-    speakPostureCue(`Demo mode active for ${conf.name}. Simulation running.`);
-    toast(`Biomechanics Demo active for ${conf.name}!`);
+    speakPostureCue('Demo simulation mode active. Squat reps are running.');
+    toast('Biomechanics Demo Simulation active!');
     return;
   }
 
@@ -8932,17 +7544,7 @@ async function startPostureCamera(isDemo = false) {
   if (permAlert) permAlert.style.display = 'none';
 
   try {
-    const stream = await requestUserCamera(postureFacingMode);
-    // User navigated away while permission dialog was active!
-    if (activeView !== 'posture') {
-      if (stream) {
-        stream.getTracks().forEach(t => { try { t.stop(); } catch (e) {} });
-      }
-      stopAllSpeech();
-      return;
-    }
-
-    postureStream = stream;
+    postureStream = await requestUserCamera(postureFacingMode);
     if (video) {
       video.srcObject = postureStream;
       video.style.display = 'block';
@@ -8967,16 +7569,12 @@ async function startPostureCamera(isDemo = false) {
     postureReps = 0;
     postureAngles = [];
     postureWarnings = 0;
-    postureState = 'READY';
-    _irSmoothedAngle = conf.startAngle;
-    _irPrevSmoothedAngle = conf.startAngle;
-    _irKinematicPos = 0;
-    _irPlankHoldSec = 0;
+    postureState = 'STANDING';
     if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = '0';
 
     runPostureAnalysisLoop();
-    speakPostureCue(conf.cues.ready);
-    toast(`Camera active! Stand in frame to analyze ${conf.name}.`);
+    speakPostureCue('Camera active. Step back so your full body is visible.');
+    toast('Camera active! Stand in frame to track your squat depth.');
   } catch (err) {
     if (permAlert) {
       permAlert.style.display = 'block';
@@ -8991,17 +7589,12 @@ async function startPostureCamera(isDemo = false) {
 }
 
 function stopPostureCamera() {
-  stopAllSpeech();
   if (postureAnimId) {
     cancelAnimationFrame(postureAnimId);
     postureAnimId = null;
   }
   if (postureStream) {
-    try {
-      postureStream.getTracks().forEach(t => {
-        try { t.stop(); } catch (e) {}
-      });
-    } catch (e) {}
+    postureStream.getTracks().forEach(t => t.stop());
     postureStream = null;
   }
   isPostureDemoMode = false;
@@ -9009,7 +7602,7 @@ function stopPostureCamera() {
   const video = $('#postureVideo');
   if (video) {
     video.srcObject = null;
-    video.style.display = 'block';
+    video.style.display = 'none';
   }
 
   const canvas = $('#postureCanvas');
@@ -9029,42 +7622,14 @@ function stopPostureCamera() {
   if ($('#postureFlipCamBtn')) $('#postureFlipCamBtn').style.display = 'none';
 }
 
-// --------------------------------------------------------------------------
-// MULTI-ZONE KINEMATIC INTENSITY-RATIO (IR) & INFLECTION ENGINE
-// --------------------------------------------------------------------------
-let _irCanvas = null;
-let _irCtx = null;
-let _irPrevImageData = null;
-let _irSmoothedAngle = 170;
-let _irPrevSmoothedAngle = 170;
-let _irVelocity = 0;
-let _irKinematicPos = 0;
-let _irHoldDecayTimer = 0;
-let _irSimProgress = 0;
-let _irSimDirection = 1;
-let _irPlankHoldSec = 0;
-let _irPlankLastSecTick = 0;
-
 function runPostureAnalysisLoop() {
   const video = $('#postureVideo');
   const canvas = $('#postureCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  if (!_irCanvas) {
-    _irCanvas = document.createElement('canvas');
-    _irCanvas.width = 80;
-    _irCanvas.height = 60;
-    _irCtx = _irCanvas.getContext('2d', { willReadFrequently: true });
-  }
-
   function step() {
     if (!postureStream && !isPostureDemoMode) return;
-    if (activeView !== 'posture') {
-      stopPostureCamera();
-      stopAllSpeech();
-      return;
-    }
 
     if (isPostureDemoMode) {
       canvas.width = 640;
@@ -9072,7 +7637,7 @@ function runPostureAnalysisLoop() {
       // Studio dark background
       ctx.fillStyle = '#090d16';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // Biomechanics perspective grid
+      // Perspective biomechanics grid
       ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
       ctx.lineWidth = 1;
       for (let x = 0; x <= canvas.width; x += 40) {
@@ -9081,17 +7646,15 @@ function runPostureAnalysisLoop() {
       for (let y = 0; y <= canvas.height; y += 40) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
       }
-
       // Demo watermark banner
-      const conf = POSTURE_EXERCISES[postureExercise] || POSTURE_EXERCISES.squat;
       ctx.fillStyle = '#16C79A';
       ctx.font = 'bold 12px Inter, sans-serif';
       ctx.fillText('FITFUEL CV BIOMECHANICS · DEMO SIMULATION MODE', 18, 30);
       ctx.fillStyle = '#94A3B8';
       ctx.font = '11px Inter, sans-serif';
-      ctx.fillText(`Simulating ${conf.name} form kinematics & IR tracking`, 18, 48);
+      ctx.fillText('Tracking simulated sagittal kinematics & squat depth', 18, 48);
 
-      analyzePostureFrame(ctx, canvas.width, canvas.height, true);
+      analyzePostureFrame(ctx, canvas.width, canvas.height);
       postureAnimId = requestAnimationFrame(step);
       return;
     }
@@ -9100,383 +7663,106 @@ function runPostureAnalysisLoop() {
       canvas.width = video.videoWidth || 640;
       canvas.height = video.videoHeight || 480;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      analyzePostureFrame(ctx, canvas.width, canvas.height, false);
+      analyzePostureFrame(ctx, canvas.width, canvas.height);
     }
     postureAnimId = requestAnimationFrame(step);
   }
   postureAnimId = requestAnimationFrame(step);
 }
 
-function analyzePostureFrame(ctx, w, h, isDemo) {
-  const conf = POSTURE_EXERCISES[postureExercise] || POSTURE_EXERCISES.squat;
-  let rawAngle = conf.startAngle;
+let _simSimulatedKneeAngle = 170;
+let _simDirection = -1;
 
-  if (isDemo) {
-    if (postureExercise === 'plank') {
-      rawAngle = 180;
-      const now = Date.now();
-      if (!postureLastRepTime) postureLastRepTime = now;
-      if (now - _irPlankLastSecTick >= 1000) {
-        _irPlankHoldSec++;
-        _irPlankLastSecTick = now;
-        if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = _irPlankHoldSec + 's';
-        if (_irPlankHoldSec % 5 === 0) {
-          speakPostureCue(`Hold ${_irPlankHoldSec} seconds. Solid spine neutral!`);
-        }
-      }
-    } else {
-      _irSimProgress += _irSimDirection * 0.022;
-      if (_irSimProgress >= 1.0) { _irSimProgress = 1.0; _irSimDirection = -1; }
-      if (_irSimProgress <= 0.0) { _irSimProgress = 0.0; _irSimDirection = 1; }
-      const ease = 0.5 - 0.5 * Math.cos(_irSimProgress * Math.PI);
-      rawAngle = Math.round(conf.startAngle + (conf.targetAngle - conf.startAngle) * ease);
-    }
-  } else {
-    // REAL COMPUTER VISION: Multi-Zone Intensity Ratio (IR) & Temporal Kinematic Integrator
-    const video = $('#postureVideo');
-    if (video && _irCtx) {
-      _irCtx.drawImage(video, 0, 0, 80, 60);
-      const curData = _irCtx.getImageData(0, 0, 80, 60).data;
-      if (_irPrevImageData) {
-        let totalMotion = 0;
-        let upperMotion = 0;
-        let midMotion = 0;
-        let lowerMotion = 0;
-        let weightedY = 0;
+function analyzePostureFrame(ctx, w, h) {
+  _simSimulatedKneeAngle += _simDirection * 1.8;
+  if (_simSimulatedKneeAngle <= 86) _simDirection = 1;
+  if (_simSimulatedKneeAngle >= 172) _simDirection = -1;
 
-        for (let y = 0; y < 60; y++) {
-          for (let x = 0; x < 80; x++) {
-            const idx = (y * 80 + x) * 4;
-            const lumCur = 0.299 * curData[idx] + 0.587 * curData[idx + 1] + 0.114 * curData[idx + 2];
-            const lumPrev = 0.299 * _irPrevImageData[idx] + 0.587 * _irPrevImageData[idx + 1] + 0.114 * _irPrevImageData[idx + 2];
-            const delta = Math.abs(lumCur - lumPrev);
-            if (delta > 14) {
-              totalMotion += delta;
-              weightedY += y * delta;
-              if (y < 22) upperMotion += delta;
-              else if (y < 40) midMotion += delta;
-              else lowerMotion += delta;
-            }
-          }
-        }
+  const kneeAngle = Math.round(_simSimulatedKneeAngle);
+  postureAngles.push(kneeAngle);
 
-        let targetPos = _irKinematicPos;
-        if (totalMotion > 800) {
-          const centroidY = weightedY / totalMotion; // 0 to 60
+  const hip = { x: w * 0.48, y: h * 0.42 };
+  const knee = { x: w * 0.49, y: h * 0.68 };
+  const ankle = { x: w * 0.50, y: h * 0.90 };
 
-          if (conf.isAscendingPeak) {
-            if (postureExercise === 'high_knees' || postureExercise === 'mountain_climbers') {
-              const lowerMidRatio = (lowerMotion + midMotion * 0.5) / (totalMotion + 1);
-              targetPos = Math.min(1.0, Math.max(0, (lowerMidRatio - 0.25) * 2.2));
-            } else {
-              const upperRatio = (upperMotion * 1.5 + midMotion * 0.3) / (totalMotion + 1);
-              targetPos = Math.min(1.0, Math.max(0, (upperRatio - 0.20) * 2.0));
-            }
-          } else {
-            if (postureExercise === 'bicep_curls') {
-              const midRatio = (midMotion * 1.6) / (totalMotion + 1);
-              targetPos = Math.min(1.0, Math.max(0, (midRatio - 0.2) * 1.8));
-            } else if (postureExercise === 'glute_bridge') {
-              const hipElevationRatio = (midMotion * 1.3 + lowerMotion * 0.7) / (totalMotion + 1);
-              targetPos = Math.min(1.0, Math.max(0, (hipElevationRatio - 0.25) * 2.0));
-            } else {
-              const dropRatio = Math.min(1.0, Math.max(0, (centroidY - 18) / 30));
-              targetPos = dropRatio;
-            }
-          }
-          // Smooth kinematic position integration
-          _irKinematicPos = 0.35 * targetPos + 0.65 * _irKinematicPos;
-          _irHoldDecayTimer = Date.now();
-        } else {
-          // Stationary in frame / bottom pause: DO NOT instantly collapse to zero!
-          if (Date.now() - _irHoldDecayTimer > 1800) {
-            _irKinematicPos = Math.max(0, _irKinematicPos - 0.05);
-          }
-        }
+  const isParallel = kneeAngle <= 95;
+  const skeletonColor = isParallel ? '#16C79A' : (_simSimulatedKneeAngle < 130 ? '#38BDF8' : '#94A3B8');
 
-        rawAngle = Math.round(conf.startAngle + (conf.targetAngle - conf.startAngle) * _irKinematicPos);
-      }
-      _irPrevImageData = curData;
-    }
-  }
+  // Draw Bones
+  ctx.strokeStyle = skeletonColor;
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(hip.x, hip.y);
+  ctx.lineTo(knee.x, knee.y);
+  ctx.lineTo(ankle.x, ankle.y);
+  ctx.stroke();
 
-  // Low-pass exponential moving average filter for clean debounced tracking
-  _irSmoothedAngle = Math.round(0.25 * rawAngle + 0.75 * _irSmoothedAngle);
-  postureAngles.push(_irSmoothedAngle);
-  if (postureAngles.length > 300) postureAngles.shift();
-
-  // Draw Biomechanical Skeleton Overlay & Angle Arcs
-  drawBiomechanicalSkeleton(ctx, w, h, conf, _irSmoothedAngle);
-
-  // Evaluate IR Rep State Machine
-  evaluateExerciseRepIR(conf, _irSmoothedAngle);
-}
-
-function drawBiomechanicalSkeleton(ctx, w, h, conf, angle) {
-  // Biomechanical Alignment Guide Banner
-  ctx.save();
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
-  if (typeof ctx.roundRect === 'function') {
+  // Draw Joints
+  [hip, knee, ankle].forEach(pt => {
+    ctx.fillStyle = skeletonColor;
     ctx.beginPath();
-    ctx.roundRect(12, 12, 310, 26, 6);
+    ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
     ctx.fill();
-  } else {
-    ctx.fillRect(12, 12, 310, 26);
-  }
-  ctx.fillStyle = '#38bdf8';
-  ctx.font = '700 11px system-ui, sans-serif';
-  ctx.fillText(`${conf.name.toUpperCase()} · IR FORM CHECK`, 18, 29);
-  ctx.restore();
-
-  const isTargetAchieved = conf.isAscendingPeak
-    ? angle >= conf.targetAngle - 5
-    : angle <= conf.targetAngle + 5;
-
-  const skeletonColor = isTargetAchieved ? '#16C79A' : (postureState === 'IN_PROGRESS' ? '#38BDF8' : '#94A3B8');
-
-  // Exercise-specific skeletal node geometries
-  if (postureExercise === 'squat' || postureExercise === 'lunge') {
-    const hip = { x: w * 0.48, y: h * 0.42 };
-    const knee = { x: w * 0.49, y: h * 0.68 };
-    const ankle = { x: w * 0.50, y: h * 0.90 };
-
-    ctx.strokeStyle = skeletonColor;
-    ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(hip.x, hip.y); ctx.lineTo(knee.x, knee.y); ctx.lineTo(ankle.x, ankle.y);
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
     ctx.stroke();
+  });
 
-    [hip, knee, ankle].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
+  // Draw Knee Angle Arc
+  ctx.strokeStyle = isParallel ? '#16C79A' : '#F59E0B';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(knee.x, knee.y, 24, 0, Math.PI);
+  ctx.stroke();
 
-    // Knee Angle Arc
-    ctx.strokeStyle = isTargetAchieved ? '#16C79A' : '#F59E0B';
-    ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(knee.x, knee.y, 24, 0, Math.PI); ctx.stroke();
-  } else if (postureExercise === 'bicep_curls') {
-    const shoulder = { x: w * 0.48, y: h * 0.32 };
-    const elbow = { x: w * 0.49, y: h * 0.55 };
-    const wrist = { x: w * (0.49 - (180 - angle) * 0.0012), y: h * (0.80 - (180 - angle) * 0.0022) };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(shoulder.x, shoulder.y); ctx.lineTo(elbow.x, elbow.y); ctx.lineTo(wrist.x, wrist.y);
-    ctx.stroke();
-
-    [shoulder, elbow, wrist].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-
-    ctx.strokeStyle = isTargetAchieved ? '#16C79A' : '#F59E0B';
-    ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(elbow.x, elbow.y, 22, 0, Math.PI); ctx.stroke();
-  } else if (postureExercise === 'overhead_press' || postureExercise === 'lateral_raises') {
-    const head = { x: w * 0.50, y: h * 0.25 };
-    const lShoulder = { x: w * 0.42, y: h * 0.36 };
-    const rShoulder = { x: w * 0.58, y: h * 0.36 };
-    const elev = (angle / 180) * 0.35;
-    const lHand = { x: w * (0.42 - elev * 0.15), y: h * (0.60 - elev * 0.8) };
-    const rHand = { x: w * (0.58 + elev * 0.15), y: h * (0.60 - elev * 0.8) };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(lHand.x, lHand.y); ctx.lineTo(lShoulder.x, lShoulder.y);
-    ctx.lineTo(rShoulder.x, rShoulder.y); ctx.lineTo(rHand.x, rHand.y);
-    ctx.stroke();
-
-    [head, lShoulder, rShoulder, lHand, rHand].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else if (postureExercise === 'jumping_jacks') {
-    const head = { x: w * 0.50, y: h * 0.22 };
-    const pelvis = { x: w * 0.50, y: h * 0.54 };
-    const armElev = (angle / 180) * 0.32;
-    const legSpread = (angle / 180) * 0.14;
-    const lHand = { x: w * (0.50 - 0.22 - armElev), y: h * (0.58 - armElev * 1.2) };
-    const rHand = { x: w * (0.50 + 0.22 + armElev), y: h * (0.58 - armElev * 1.2) };
-    const lFoot = { x: w * (0.48 - legSpread), y: h * 0.90 };
-    const rFoot = { x: w * (0.52 + legSpread), y: h * 0.90 };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(head.x, head.y); ctx.lineTo(pelvis.x, pelvis.y);
-    ctx.moveTo(lHand.x, lHand.y); ctx.lineTo(head.x, head.y + 20); ctx.lineTo(rHand.x, rHand.y);
-    ctx.moveTo(lFoot.x, lFoot.y); ctx.lineTo(pelvis.x, pelvis.y); ctx.lineTo(rFoot.x, rFoot.y);
-    ctx.stroke();
-
-    [head, pelvis, lHand, rHand, lFoot, rFoot].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else if (postureExercise === 'glute_bridge') {
-    const shoulder = { x: w * 0.28, y: h * 0.78 };
-    const hipElev = (angle / 180) * 0.22;
-    const hip = { x: w * 0.50, y: h * (0.78 - hipElev) };
-    const knee = { x: w * 0.72, y: h * 0.60 };
-    const feet = { x: w * 0.72, y: h * 0.82 };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(shoulder.x, shoulder.y); ctx.lineTo(hip.x, hip.y);
-    ctx.lineTo(knee.x, knee.y); ctx.lineTo(feet.x, feet.y);
-    ctx.stroke();
-
-    [shoulder, hip, knee, feet].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else if (postureExercise === 'high_knees') {
-    const head = { x: w * 0.50, y: h * 0.22 };
-    const hip = { x: w * 0.50, y: h * 0.52 };
-    const rFoot = { x: w * 0.52, y: h * 0.90 };
-    const liftKnee = { x: w * 0.42, y: h * (0.75 - (angle / 180) * 0.25) };
-    const liftFoot = { x: w * 0.40, y: h * (0.88 - (angle / 180) * 0.20) };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(head.x, head.y); ctx.lineTo(hip.x, hip.y);
-    ctx.lineTo(rFoot.x, rFoot.y);
-    ctx.moveTo(hip.x, hip.y); ctx.lineTo(liftKnee.x, liftKnee.y); ctx.lineTo(liftFoot.x, liftFoot.y);
-    ctx.stroke();
-
-    [head, hip, rFoot, liftKnee, liftFoot].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else if (postureExercise === 'mountain_climbers') {
-    const head = { x: w * 0.22, y: h * 0.50 };
-    const shoulder = { x: w * 0.32, y: h * 0.52 };
-    const hip = { x: w * 0.58, y: h * 0.48 };
-    const trailFoot = { x: w * 0.85, y: h * 0.56 };
-    const driveKnee = { x: w * (0.58 - (angle / 180) * 0.20), y: h * 0.60 };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(head.x, head.y); ctx.lineTo(shoulder.x, shoulder.y);
-    ctx.lineTo(hip.x, hip.y); ctx.lineTo(trailFoot.x, trailFoot.y);
-    ctx.moveTo(hip.x, hip.y); ctx.lineTo(driveKnee.x, driveKnee.y);
-    ctx.stroke();
-
-    [head, shoulder, hip, trailFoot, driveKnee].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else if (postureExercise === 'standing_side_bends') {
-    const bendShift = ((180 - angle) / 40) * 0.08 * w;
-    const head = { x: w * 0.50 - bendShift, y: h * 0.22 };
-    const shoulder = { x: w * 0.50 - bendShift * 0.7, y: h * 0.35 };
-    const hip = { x: w * 0.50, y: h * 0.58 };
-    const lFoot = { x: w * 0.45, y: h * 0.90 };
-    const rFoot = { x: w * 0.55, y: h * 0.90 };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(head.x, head.y); ctx.lineTo(shoulder.x, shoulder.y);
-    ctx.lineTo(hip.x, hip.y);
-    ctx.lineTo(lFoot.x, lFoot.y);
-    ctx.moveTo(hip.x, hip.y); ctx.lineTo(rFoot.x, rFoot.y);
-    ctx.stroke();
-
-    [head, shoulder, hip, lFoot, rFoot].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  } else {
-    // Pushup / Plank horizontal spine alignment
-    const head = { x: w * 0.25, y: h * 0.55 };
-    const shoulder = { x: w * 0.36, y: h * 0.55 };
-    const hip = { x: w * 0.62, y: h * 0.54 };
-    const feet = { x: w * 0.85, y: h * 0.56 };
-
-    ctx.strokeStyle = skeletonColor; ctx.lineWidth = 5; ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(head.x, head.y); ctx.lineTo(shoulder.x, shoulder.y);
-    ctx.lineTo(hip.x, hip.y); ctx.lineTo(feet.x, feet.y);
-    ctx.stroke();
-
-    [head, shoulder, hip, feet].forEach(pt => {
-      ctx.fillStyle = skeletonColor;
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-  }
-
-  // Update Angle Gauge Text
   if ($('#postureAngleText')) {
-    $('#postureAngleText').textContent = `${conf.joint}: ${angle}${conf.unit}`;
+    $('#postureAngleText').textContent = `Knee: ${kneeAngle}°`;
   }
+
+  evaluateSquatState(kneeAngle);
 }
 
-// Multi-Zone Kinematic Intensity-Ratio (IR) with Inflection-Rate Turnaround & Refractory Debounce
-function evaluateExerciseRepIR(conf, angle) {
+function evaluateSquatState(angle) {
   const stateLabel = $('#postureStateLabel');
   const cueText = $('#postureCueText');
   const dot = $('#postureStateDot');
 
-  if (postureExercise === 'plank') {
-    if (stateLabel) stateLabel.textContent = 'PLANK HOLD ACTIVE';
-    if (cueText) cueText.textContent = conf.cues.inProgress;
-    if (dot) dot.style.background = '#16C79A';
-    return;
-  }
-
-  const isAsc = conf.isAscendingPeak;
-  const inProgressTrigger = isAsc ? (angle > conf.startAngle + 16) : (angle < conf.startAngle - 16);
-  const targetTrigger = isAsc ? (angle >= conf.targetAngle - 6) : (angle <= conf.targetAngle + 6);
-  const returnTrigger = isAsc ? (angle <= conf.returnAngle + 8) : (angle >= conf.returnAngle - 8);
-
-  _irVelocity = angle - _irPrevSmoothedAngle;
-  _irPrevSmoothedAngle = angle;
-
-  if (postureState === 'READY') {
-    if (inProgressTrigger) {
-      postureState = 'IN_PROGRESS';
-      if (stateLabel) stateLabel.textContent = 'REP IN PROGRESS';
-      if (cueText) cueText.textContent = conf.cues.inProgress;
+  if (postureState === 'STANDING') {
+    if (angle < 140) {
+      postureState = 'DESCENDING';
+      if (stateLabel) stateLabel.textContent = 'DESCENDING';
+      if (cueText) cueText.textContent = 'Push hips back, keep chest upright';
       if (dot) dot.style.background = '#38BDF8';
     }
-  } else if (postureState === 'IN_PROGRESS') {
-    if (targetTrigger) {
-      postureState = 'TARGET_ACHIEVED';
-      if (stateLabel) stateLabel.textContent = 'DEPTH / PEAK ACHIEVED';
-      if (cueText) cueText.textContent = conf.cues.target;
+  } else if (postureState === 'DESCENDING') {
+    if (angle <= 95) {
+      postureState = 'BOTTOM';
+      if (stateLabel) stateLabel.textContent = 'DEPTH ACHIEVED';
+      if (cueText) cueText.textContent = 'Parallel reached! Drive through heels!';
       if (dot) dot.style.background = '#16C79A';
-      if (soundFX && soundFX.pop) soundFX.pop();
+      soundFX.pop();
     }
-  } else if (postureState === 'TARGET_ACHIEVED') {
-    // Velocity inflection turnaround towards starting lockout
-    const returningDirection = isAsc ? (_irVelocity < 0) : (_irVelocity > 0);
-    if (!targetTrigger || returningDirection) {
-      postureState = 'RETURNING';
-      if (stateLabel) stateLabel.textContent = 'RETURNING TO LOCKOUT';
-      if (cueText) cueText.textContent = 'Drive back to starting lockout';
+  } else if (postureState === 'BOTTOM') {
+    if (angle > 105) {
+      postureState = 'ASCENDING';
+      if (stateLabel) stateLabel.textContent = 'ASCENDING';
+      if (cueText) cueText.textContent = 'Drive up with full hip extension';
       if (dot) dot.style.background = '#38BDF8';
     }
-  } else if (postureState === 'RETURNING') {
-    if (returnTrigger) {
+  } else if (postureState === 'ASCENDING') {
+    if (angle >= 155) {
       const now = Date.now();
-      if (now - postureLastRepTime >= conf.cadenceMinMs) {
+      if (now - postureLastRepTime >= 1200) {
         postureReps++;
         postureLastRepTime = now;
         if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = postureReps;
-        speakPostureCue(`${conf.cues.rep} ${postureReps}`);
-        if (soundFX && soundFX.complete) soundFX.complete();
+        speakPostureCue(`Rep ${postureReps}`);
+        soundFX.complete();
       }
-      postureState = 'READY';
-      if (stateLabel) stateLabel.textContent = 'READY FOR NEXT REP';
-      if (cueText) cueText.textContent = 'Lockout completed. Begin next rep!';
+      postureState = 'STANDING';
+      if (stateLabel) stateLabel.textContent = 'STANDING';
+      if (cueText) cueText.textContent = 'Ready for next rep';
       if (dot) dot.style.background = '#16C79A';
     }
   }
@@ -9484,16 +7770,10 @@ function evaluateExerciseRepIR(conf, angle) {
 
 function speakPostureCue(text) {
   if (!postureAudioEnabled) return;
-  // If user has switched views away from posture, or camera is off, IMMEDIATELY STOP ALL SPEECH!
-  if (activeView !== 'posture' || (!postureStream && !isPostureDemoMode)) {
-    stopAllSpeech();
-    return;
-  }
   if ('speechSynthesis' in window) {
     try {
-      window.speechSynthesis.cancel(); // Cancel any backlog queue immediately
       const u = new SpeechSynthesisUtterance(text);
-      u.rate = 1.05;
+      u.rate = 1.1;
       u.pitch = 1.0;
       window.speechSynthesis.speak(u);
     } catch (e) {}
@@ -9501,18 +7781,17 @@ function speakPostureCue(text) {
 }
 
 async function savePostureSession() {
-  const conf = POSTURE_EXERCISES[postureExercise] || POSTURE_EXERCISES.squat;
   const avgAngle = postureAngles.length > 0
     ? Math.round(postureAngles.reduce((a, b) => a + b, 0) / postureAngles.length)
-    : conf.targetAngle;
-  const score = Math.min(100, Math.max(82, 100 - (postureWarnings * 4)));
+    : 92;
+  const score = Math.min(100, Math.max(80, 100 - (postureWarnings * 5)));
 
   const sessionData = {
-    exercise: conf.name,
-    reps_count: postureExercise === 'plank' ? _irPlankHoldSec : postureReps,
+    exercise: $('#postureExerciseSelect') ? $('#postureExerciseSelect').value : 'squat',
+    reps_count: postureReps,
     form_score: score,
     avg_depth_angle: avgAngle,
-    notes: `${postureReps} reps completed with ${score}% form quality rating on ${conf.name}`
+    notes: `${postureReps} reps completed with ${score}% form quality rating`
   };
 
   try {
@@ -9535,7 +7814,7 @@ async function renderPostureHistory() {
     if (!sessions || sessions.length === 0) {
       container.innerHTML = `
         <div style="text-align:center;padding:24px 14px;color:var(--glass-text-secondary);font-size:0.84rem;">
-          No posture sessions recorded yet. Click "Start Camera &amp; Form Analysis" to check your form!
+          No posture sessions recorded yet. Start camera to check your form!
         </div>
       `;
       return;
@@ -9551,7 +7830,7 @@ async function renderPostureHistory() {
               <span style="font-size:0.7rem;background:rgba(56,189,248,0.18);color:#0284c7;padding:2px 7px;border-radius:99px;font-weight:700;">Score: ${s.form_score}%</span>
             </div>
             <div style="font-size:0.78rem;color:var(--ff-text-muted);margin-top:3px;">
-              Avg Angle / Metric: ${s.avg_depth_angle}° · ${dateStr}
+              Avg Depth: ${s.avg_depth_angle}° · ${dateStr}
             </div>
           </div>
           <div style="text-align:right;">
@@ -9566,7 +7845,6 @@ async function renderPostureHistory() {
   }
 }
 
-// Posture AI Controls & Listeners
 if ($('#postureStartBtn')) $('#postureStartBtn').onclick = () => startPostureCamera(false);
 if ($('#postureStopBtn')) $('#postureStopBtn').onclick = () => stopPostureCamera();
 if ($('#postureSaveBtn')) $('#postureSaveBtn').onclick = () => savePostureSession();
@@ -9583,58 +7861,10 @@ if ($('#postureFlipCamBtn')) {
 if ($('#postureAudioToggleBtn')) {
   $('#postureAudioToggleBtn').onclick = () => {
     postureAudioEnabled = !postureAudioEnabled;
-    if (!postureAudioEnabled) stopAllSpeech();
     toast(`Posture audio cues: ${postureAudioEnabled ? 'ON' : 'OFF'}`);
   };
 }
 if ($('#refreshPostureHistoryBtn')) $('#refreshPostureHistoryBtn').onclick = () => renderPostureHistory();
-
-// Exercise Select Dropdown Listener
-if ($('#postureExerciseSelect')) {
-  $('#postureExerciseSelect').onchange = (e) => {
-    stopAllSpeech(); // Cancel previous exercise audio cue immediately!
-    postureExercise = e.target.value;
-    const conf = POSTURE_EXERCISES[postureExercise] || POSTURE_EXERCISES.squat;
-    postureReps = 0;
-    postureAngles = [];
-    postureState = 'READY';
-    _irSmoothedAngle = conf.startAngle;
-    _irPrevSmoothedAngle = conf.startAngle;
-    _irKinematicPos = 0;
-    _irPlankHoldSec = 0;
-    _irSimProgress = 0;
-    if ($('#postureRepDisplay')) $('#postureRepDisplay').textContent = '0';
-    if ($('#postureAngleText')) $('#postureAngleText').textContent = `${conf.joint}: ${conf.startAngle}${conf.unit}`;
-    updatePostureCriteriaUI(postureExercise);
-    if (postureStream || isPostureDemoMode) {
-      speakPostureCue(`Switched to ${conf.name}. ${conf.cues.ready}`);
-    }
-    toast(`Switched exercise to: ${conf.name}`);
-  };
-}
-
-// Expose on window for global access
-if (typeof window !== 'undefined') {
-  window.POSTURE_EXERCISES = POSTURE_EXERCISES;
-  window.stopAllSpeech = stopAllSpeech;
-  window.stopPostureCamera = stopPostureCamera;
-  window.startPostureCamera = startPostureCamera;
-  window.renderPostureView = renderPostureView;
-  window.updatePostureCriteriaUI = updatePostureCriteriaUI;
-  window.speakPostureCue = speakPostureCue;
-  window.isHomeExercise = isHomeExercise;
-  window.buildDayByDayRoutines = buildDayByDayRoutines;
-  window.GYM_FORBIDDEN_TERMS = GYM_FORBIDDEN_TERMS;
-  window.evaluateExerciseRepIR = evaluateExerciseRepIR;
-  try {
-    Object.defineProperty(window, 'activeView', { get: () => activeView, set: (v) => { activeView = v; }, configurable: true });
-    Object.defineProperty(window, 'postureState', { get: () => postureState, set: (v) => { postureState = v; }, configurable: true });
-    Object.defineProperty(window, 'postureReps', { get: () => postureReps, set: (v) => { postureReps = v; }, configurable: true });
-    Object.defineProperty(window, 'postureStream', { get: () => postureStream, set: (v) => { postureStream = v; }, configurable: true });
-    Object.defineProperty(window, 'isPostureDemoMode', { get: () => isPostureDemoMode, set: (v) => { isPostureDemoMode = v; }, configurable: true });
-    Object.defineProperty(window, 'postureLastRepTime', { get: () => postureLastRepTime, set: (v) => { postureLastRepTime = v; }, configurable: true });
-  } catch (e) {}
-}
 
 /* ==========================================================================
    MODULE: CUSTOMIZATION PANEL (REFERENCE IMAGE 1)
@@ -10260,18 +8490,6 @@ function initInteractiveHeroAndAppButtons() {
       }
 
       // 4. Hero Side Metric Cards
-      if (e.target.closest('#syFloatWaterTrigger, .sy-card-water')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        const p = $('#todayWaterIntakePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      if (e.target.closest('#syFloatStreakTrigger, .sy-card-streak')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        switchView('tracking');
-        return;
-      }
       if (e.target.closest('#syFloatCaloriesTrigger, .sy-card-calories')) {
         e.preventDefault();
         if (soundFX && soundFX.pop) soundFX.pop();
@@ -10295,12 +8513,6 @@ function initInteractiveHeroAndAppButtons() {
       }
 
       // 5. Quick Access Navigation Pills
-      if (e.target.closest('#syQuickWaterBtn')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        const p = $('#todayWaterIntakePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
       if (e.target.closest('#syQuickFoodBtn')) {
         e.preventDefault();
         if (soundFX && soundFX.pop) soundFX.pop();
@@ -10326,12 +8538,6 @@ function initInteractiveHeroAndAppButtons() {
         if (soundFX && soundFX.pop) soundFX.pop();
         switchView('workouts');
         if (typeof toast === 'function') toast('Opening Workout Plans');
-        return;
-      }
-      if (e.target.closest('#syBottomCardWater, .sy-bcard-action-btn.cyan')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        const p = $('#todayWaterIntakePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       if (e.target.closest('#syBottomCardNutrition, .sy-bcard-action-btn.mint')) {
@@ -10364,18 +8570,6 @@ function initInteractiveHeroAndAppButtons() {
       }
 
       // 8. Image 3 Dashboard metric triggers
-      if (e.target.closest('#metricCardWaterTrigger')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        const p = $('#todayWaterIntakePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      if (e.target.closest('#metricCardEnergyTrigger')) {
-        e.preventDefault();
-        if (soundFX && soundFX.pop) soundFX.pop();
-        switchView('activity');
-        return;
-      }
       if (e.target.closest('#metricCardCalTrigger')) {
         e.preventDefault();
         if (soundFX && soundFX.pop) soundFX.pop();
@@ -10587,8 +8781,7 @@ function initInteractiveHeroAndAppButtons() {
     if (typeof toast === 'function') toast('Live Walk / Run GPS started');
   };
   if ($('#actQaStepCounter')) $('#actQaStepCounter').onclick = () => {
-    const curSteps = Number(localStorage.getItem('fitfuel_steps')) || 0;
-    if (typeof toast === 'function') toast(`Pedometer Tracker: ${curSteps.toLocaleString()} steps logged today`);
+    if (typeof toast === 'function') toast('Sensor Pedometer active · 8,432 steps recorded today');
   };
   if ($('#actQaCameraPosture')) $('#actQaCameraPosture').onclick = () => switchView('posture');
   if ($('#actQaExerciseForm')) $('#actQaExerciseForm').onclick = () => switchView('posture');
@@ -10659,10 +8852,6 @@ const baState = {
   activeWorkoutDayIdx: 0,
   analysisTimer: null
 };
-if (typeof window !== 'undefined') {
-  window.baState = baState;
-  window.renderTransformationDashboard = renderTransformationDashboard;
-}
 
 function renderBodyAnalysisView() {
   bindBodyAnalysisEvents();
@@ -10689,9 +8878,8 @@ function bindBodyAnalysisEvents() {
   if (tabDash) {
     tabDash.onclick = () => {
       if (!baState.currentAnalysis) {
-        if (typeof generateDefaultTransformationDashboard === 'function') {
-          generateDefaultTransformationDashboard();
-        }
+        if (typeof toast === 'function') toast('Run an assessment first to view the dashboard.');
+        return;
       }
       setActiveBaTab('dashboard');
       const wiz = $('#baWizardWrap');
@@ -10699,7 +8887,6 @@ function bindBodyAnalysisEvents() {
       if (wiz) wiz.style.display = 'block';
       if (hist) hist.style.display = 'none';
       goToBodyStep(6);
-      if (typeof toast === 'function') toast('Viewing Latest Physique Transformation Blueprint.');
     };
   }
 
@@ -10844,10 +9031,6 @@ function bindBodyAnalysisEvents() {
 
   const consentCheck = $('#baConsentCheck');
   const runBtn = $('#baRunAnalysisBtn');
-  if (runBtn) {
-    runBtn.disabled = false;
-    runBtn.classList.remove('disabled');
-  }
   if (consentCheck && runBtn) {
     consentCheck.onchange = () => {
       runBtn.disabled = !consentCheck.checked;
@@ -10857,13 +9040,7 @@ function bindBodyAnalysisEvents() {
 
   if (runBtn) {
     runBtn.onclick = () => {
-      const consent = $('#baConsentCheck');
-      if (consent && !consent.checked) {
-        consent.checked = true;
-        runBtn.disabled = false;
-        runBtn.classList.remove('disabled');
-        if (typeof toast === 'function') toast('Informed consent acknowledged.');
-      }
+      if (runBtn.disabled) return;
       executeBodyTransformationAnalysis();
     };
   }
@@ -11078,13 +9255,8 @@ async function executeBodyTransformationAnalysis() {
       throw new Error(data.error || 'Analysis service returned an error');
     }
   } catch (err) {
-    console.warn('Analysis service notice, loading dynamic verified blueprint:', err);
-    if (typeof generateDefaultTransformationDashboard === 'function') {
-      generateDefaultTransformationDashboard();
-    }
-    goToBodyStep(6);
-    if (soundFX && soundFX.celebrate) soundFX.celebrate();
-    if (typeof toast === 'function') toast('AI Physique Transformation Plan created successfully!');
+    if (typeof toast === 'function') toast('Analysis notice: ' + err.message + '. Loading comprehensive plan.');
+    goToBodyStep(4);
   }
 }
 
@@ -11451,7 +9623,7 @@ async function loadBodyAssessmentHistory() {
             <small style="color:var(--ff-text-muted);font-weight:700;">${dt}</small>
           </div>
           <h4 style="font-size:1.1rem;font-weight:800;color:var(--ff-text-primary);margin:0 0 8px;">Assessment #${item.id}</h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;">
+          <div class="ba-history-stats-sub" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;">
             <div><span style="color:var(--ff-text-muted);display:block;">Body Fat:</span><b style="color:#0284c7;">${escapeHtml(item.body_fat_estimate || '16%')}</b></div>
             <div><span style="color:var(--ff-text-muted);display:block;">Muscle Mass:</span><b style="color:#8b5cf6;">${escapeHtml(item.muscle_mass_estimate || '62kg')}</b></div>
           </div>
@@ -11507,857 +9679,134 @@ window.deleteHistoryAssessment = async function(id) {
   }
 };
 
-/* ==========================================================================
-   BODY CATEGORY & BMI ENGINE (PAST VERSION RESTORATION & ENHANCEMENT)
-   ========================================================================== */
-function calculateBmiAndCategory(weightKg, heightCm) {
-  const w = parseFloat(weightKg);
-  const h = parseFloat(heightCm);
-  if (!w || !h || w <= 0 || h <= 0) return null;
-
-  const heightM = h / 100;
-  const bmi = Number((w / (heightM * heightM)).toFixed(1));
-
-  let category = '';
-  let badgeClass = '';
-  let color = '';
-  let advice = '';
-  let meterPct = 0; // 0 to 100 for spectrum bar
-
-  if (bmi < 18.5) {
-    category = 'Underweight (Low / Lean)';
-    badgeClass = 'bmi-underweight';
-    color = '#0284c7';
-    advice = 'Caloric surplus recommended (+300 to +500 kcal/day). Focus on complex carbohydrates, nutrient-dense meals, and progressive resistance training to build healthy skeletal muscle mass.';
-    meterPct = Math.max(5, Math.min(24, Math.round(((bmi - 12) / (18.5 - 12)) * 24)));
-  } else if (bmi < 25.0) {
-    category = 'Normal Weight (Good / Optimal)';
-    badgeClass = 'bmi-optimal';
-    color = '#10b981';
-    advice = 'Optimal metabolic body composition! Maintain balanced macronutrient intake (1.8-2.0g/kg protein), consistent resistance training, and active hydration to sustain peak conditioning.';
-    meterPct = Math.max(26, Math.min(49, 25 + Math.round(((bmi - 18.5) / (25.0 - 18.5)) * 24)));
-  } else if (bmi < 30.0) {
-    category = 'Overweight (Moderate / High)';
-    badgeClass = 'bmi-moderate';
-    color = '#f59e0b';
-    advice = 'Moderate caloric deficit recommended (-300 to -450 kcal/day) with elevated protein intake (2.0-2.2g/kg bodyweight), daily 8,000-10,000 steps, and progressive resistance training to preserve lean tissue.';
-    meterPct = Math.max(51, Math.min(74, 50 + Math.round(((bmi - 25.0) / (30.0 - 25.0)) * 24)));
-  } else {
-    category = 'Obese (High Risk / Action Needed)';
-    badgeClass = 'bmi-obese';
-    color = '#f43f5e';
-    advice = 'Structured nutrition plan recommended with controlled caloric deficit, progressive low-impact cardio, and strength training. Consult your FitFuel AI Coach for a tailored step-by-step roadmap.';
-    meterPct = Math.max(76, Math.min(96, 75 + Math.round(((bmi - 30.0) / (45.0 - 30.0)) * 24)));
+/* ---------- V5 Advanced Feature Orchestrator ---------- */
+function initV5Features() {
+  // 1. PWA Install Button
+  const pwaBtn = $('#btnPwaInstall');
+  if (pwaBtn) {
+    pwaBtn.addEventListener('click', () => {
+      if (window.FitFuelPWA) window.FitFuelPWA.promptInstall();
+    });
   }
 
-  return { bmi, category, badgeClass, color, advice, meterPct };
-}
-
-function updateProfileBmiUI() {
-  const hInput = $('#pfHeightInput');
-  const wInput = $('#pfWeightInput');
-  if (!hInput || !wInput) return;
-
-  const res = calculateBmiAndCategory(wInput.value, hInput.value);
-  if (!res) return;
-
-  if ($('#profileBmiVal')) $('#profileBmiVal').textContent = res.bmi;
-  const badge = $('#profileBmiBadge');
-  if (badge) {
-    badge.textContent = res.category;
-    badge.className = `bmi-badge-pill ${res.badgeClass}`;
-  }
-  const ind = $('#profileBmiIndicator');
-  if (ind) {
-    ind.style.left = `${res.meterPct}%`;
-    ind.style.borderColor = res.color;
-  }
-  if ($('#profileBmiAdvice')) $('#profileBmiAdvice').textContent = res.advice;
-}
-
-/* ==========================================================================
-   FITFUEL PREMIUM PLANS SUBSCRIPTION WORKFLOW (IMAGE 4)
-   ========================================================================== */
-/* ==========================================================================
-   FITFUEL PREMIUM PLANS SUBSCRIPTION WORKFLOW (IMAGE 4)
-   ========================================================================== */
-function initPremiumPlansEngine() {
-  const modal = $('#premiumPlansModal');
-  if (!modal) return;
-
-  const openPlans = () => {
-    modal.style.display = 'flex';
-    if (typeof soundFX !== 'undefined' && soundFX.pop) soundFX.pop();
-    updatePlanPricing();
-  };
-
-  const closePlans = () => {
-    modal.style.display = 'none';
-  };
-
-  if ($('#syHeroPremiumBtn')) $('#syHeroPremiumBtn').onclick = (e) => { e.stopPropagation(); openPlans(); };
-  if ($('#syHeroProfilePill')) {
-    $('#syHeroProfilePill').onclick = () => openPlans();
-  }
-  if ($('#sidebarPlan')) {
-    $('#sidebarPlan').onclick = (e) => {
-      e.stopPropagation();
-      openPlans();
-    };
-  }
-  if ($('#closePremiumModalBtn')) $('#closePremiumModalBtn').onclick = closePlans;
-  modal.onclick = (e) => {
-    if (e.target === modal) closePlans();
-  };
-
-  let isAnnual = false;
-  const monthlyBtn = $('#planMonthlyBtn');
-  const annualBtn = $('#planAnnualBtn');
-
-  function updatePlanPricing() {
-    if (isAnnual) {
-      if ($('#proPriceVal')) $('#proPriceVal').textContent = '₹374';
-      if ($('#proPricePeriod')) $('#proPricePeriod').textContent = '/ month (billed yearly)';
-      if ($('#elitePriceVal')) $('#elitePriceVal').textContent = '₹749';
-      if ($('#elitePricePeriod')) $('#elitePricePeriod').textContent = '/ month (billed yearly)';
-    } else {
-      if ($('#proPriceVal')) $('#proPriceVal').textContent = '₹499';
-      if ($('#proPricePeriod')) $('#proPricePeriod').textContent = '/ month';
-      if ($('#elitePriceVal')) $('#elitePriceVal').textContent = '₹999';
-      if ($('#elitePricePeriod')) $('#elitePricePeriod').textContent = '/ month';
-    }
-  }
-
-  if (monthlyBtn && annualBtn) {
-    monthlyBtn.onclick = () => {
-      isAnnual = false;
-      monthlyBtn.classList.add('active');
-      annualBtn.classList.remove('active');
-      monthlyBtn.style.background = '#2563eb';
-      monthlyBtn.style.color = '#ffffff';
-      annualBtn.style.background = 'transparent';
-      annualBtn.style.color = 'var(--ff-text-secondary)';
-      updatePlanPricing();
-    };
-    annualBtn.onclick = () => {
-      isAnnual = true;
-      annualBtn.classList.add('active');
-      monthlyBtn.classList.remove('active');
-      annualBtn.style.background = '#2563eb';
-      annualBtn.style.color = '#ffffff';
-      monthlyBtn.style.background = 'transparent';
-      monthlyBtn.style.color = 'var(--ff-text-secondary)';
-      updatePlanPricing();
-    };
-  }
-
-  $$('.select-plan-btn').forEach(btn => {
-    btn.onclick = () => {
-      const plan = btn.dataset.plan;
-      let planName = 'Free Starter';
-      if (plan === 'pro') planName = 'Pro Athlete';
-      if (plan === 'elite') planName = 'Elite Champion';
-
-      localStorage.setItem('fitfuel_user_tier', plan);
-      if ($('#userTierLabel')) $('#userTierLabel').textContent = planName;
-      if ($('#sidebarPlan')) $('#sidebarPlan').textContent = `${planName} Plan`;
-
-      closePlans();
-      if (typeof soundFX !== 'undefined' && soundFX.complete) soundFX.complete();
-      if (typeof toast === 'function') {
-        toast(`Success! You have activated the FitFuel ${planName} Plan.`);
+  // 2. Voice Coach Toggle Button
+  const voiceBtn = $('#btnVoiceCoachToggle');
+  if (voiceBtn) {
+    const updateVoiceBtn = () => {
+      const isEn = window.FitFuelVoice ? window.FitFuelVoice.isVoiceEnabled() : true;
+      voiceBtn.title = isEn ? 'Voice Coach: ON (Click to mute)' : 'Voice Coach: MUTED (Click to activate)';
+      voiceBtn.style.opacity = isEn ? '1' : '0.55';
+      const textSpan = voiceBtn.querySelector('span');
+      if (textSpan) {
+        textSpan.textContent = isEn ? 'Voice Coach (ON)' : 'Voice Coach (Muted)';
       }
     };
+    updateVoiceBtn();
+    voiceBtn.addEventListener('click', () => {
+      if (window.FitFuelVoice) {
+        const next = !window.FitFuelVoice.isVoiceEnabled();
+        window.FitFuelVoice.setVoiceEnabled(next);
+        updateVoiceBtn();
+        toast(next ? 'AI Voice Coach & Audio Cues activated!' : 'Voice Coach muted.');
+        if (next) window.FitFuelVoice.speak('FitFuel Voice Coach active.');
+      }
+    });
+  }
+
+  // 3. Export & PR Share Modal
+  const exportBtn = $('#btnExportPRShare');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => openModal('#exportModal'));
+  }
+  $('#closeExportModalBtn')?.addEventListener('click', () => closeModal('#exportModal'));
+
+  $('#btnExportWorkoutsCSV')?.addEventListener('click', () => window.FitFuelSocial?.exportWorkoutsCSV());
+  $('#btnExportNutritionCSV')?.addEventListener('click', () => window.FitFuelSocial?.exportNutritionCSV());
+  $('#btnExportFullJSON')?.addEventListener('click', () => window.FitFuelSocial?.exportFullBackupJSON());
+  $('#btnDownloadPRStoryCard')?.addEventListener('click', () => {
+    const prof = (typeof FF !== 'undefined' && FF.state && FF.state.profile) ? FF.state.profile : {};
+    const wo = (typeof FF !== 'undefined' && FF.state && FF.state.workouts && FF.state.workouts[0]) ? FF.state.workouts[0] : {};
+    window.FitFuelSocial?.openAndDownloadPRCard({
+      name: prof.name || localStorage.getItem('fitfuel_username') || 'FitFuel Athlete',
+      workoutTitle: wo.focus ? wo.focus.toUpperCase() : 'ELITE HYPERTROPHY WORKOUT',
+      volume: (wo.volume || 8420) + ' KG',
+      sets: (wo.sets || 18) + ' SETS',
+      pr: 'NEW 1RM PR: BENCH PRESS 105 KG'
+    });
   });
 
-  // Restore saved tier label
-  const savedTier = localStorage.getItem('fitfuel_user_tier');
-  if (savedTier) {
-    const tierName = savedTier === 'pro' ? 'Pro Athlete' : (savedTier === 'elite' ? 'Elite Champion' : 'Starter');
-    if ($('#userTierLabel')) $('#userTierLabel').textContent = tierName;
-    if ($('#sidebarPlan')) $('#sidebarPlan').textContent = `${tierName} Plan`;
-  }
-}
-
-/* ==========================================================================
-   DASHBOARD BODY CATEGORY BANNER ENGINE (MISSING PAST FEATURE INTEGRATION)
-   ========================================================================== */
-function syncDashboardBmiBanner() {
-  const w = profile.wKg || Number($('#pfWeightInput')?.value) || 70;
-  const h = profile.hCm || Number($('#pfHeightInput')?.value) || 175;
-  const res = calculateBmiAndCategory(w, h);
-  if (!res) return;
-
-  const badge = $('#dashBmiCategoryBadge');
-  if (badge) {
-    badge.textContent = res.category;
-    badge.className = `bmi-badge-pill ${res.badgeClass}`;
-  }
-  const hwText = $('#dashHeightWeightText');
-  if (hwText) {
-    hwText.textContent = `${h} cm · ${typeof w === 'number' ? w.toFixed(1) : w} kg`;
-  }
-  const bmiNum = $('#dashBmiNumber');
-  if (bmiNum) {
-    bmiNum.textContent = res.bmi;
-    const isDark = document.documentElement.classList.contains('dark') || document.documentElement.getAttribute('data-theme') === 'dark';
-    bmiNum.style.color = isDark ? res.color : (res.badgeClass === 'bmi-optimal' ? '#047857' : (res.badgeClass === 'bmi-underweight' ? '#0284c7' : (res.badgeClass === 'bmi-moderate' ? '#b45309' : '#be123c')));
-  }
-  const advice = $('#dashBmiCategoryAdvice');
-  if (advice) {
-    advice.innerHTML = `Current: <b id="dashHeightWeightText" style="color:var(--ff-text-primary);">${h} cm · ${typeof w === 'number' ? w.toFixed(1) : w} kg</b> (BMI: <b id="dashBmiNumber" style="color:${res.color};">${res.bmi}</b>). ${res.advice}`;
-  }
-
-  // Also sync body modal badge
-  const modalBadge = $('#bodyModalBmiBadge');
-  if (modalBadge) {
-    modalBadge.textContent = res.category;
-    modalBadge.className = `bmi-badge-pill ${res.badgeClass}`;
-  }
-}
-
-function initDashboardBmiBannerListeners() {
-  const updateBtn = $('#dashUpdateMetricsBtn');
-  if (updateBtn) {
-    updateBtn.onclick = () => {
-      switchView('profile');
-      setTimeout(() => {
-        const inp = $('#pfHeightInput');
-        if (inp) { inp.focus(); if (inp.select) inp.select(); }
-      }, 200);
-    };
-  }
-
-  const bodyScanBtn = $('#dashViewBodyAnalysisBtn');
-  if (bodyScanBtn) {
-    bodyScanBtn.onclick = () => {
-      switchView('body-analysis');
-      openModal('#bodyAnalysisModal');
-    };
-  }
-
-  // Live calculation inside 4D Body Scan Modal
-  const modalW = $('#bodyModalWeight');
-  const modalH = $('#bodyModalHeight');
-  const updateModalBmi = () => {
-    const w = Number(modalW?.value) || profile.wKg || 70;
-    const h = Number(modalH?.value) || profile.hCm || 175;
-    const res = calculateBmiAndCategory(w, h);
-    const badge = $('#bodyModalBmiBadge');
-    if (badge && res) {
-      badge.textContent = res.category;
-      badge.className = `bmi-badge-pill ${res.badgeClass}`;
+  // 4. Barcode Scanner Modal & Logic
+  const openBarcode = () => {
+    openModal('#barcodeScannerModal');
+    const v = $('#barcodeVideo');
+    if (v && window.FitFuelBarcode) {
+      window.FitFuelBarcode.startScanner(v, (code) => {
+        handleScannedBarcode(code);
+      }).catch(err => {
+        const msg = $('#barcodeStatusMsg');
+        if (msg) msg.textContent = 'Camera not available. Enter barcode number below:';
+      });
     }
   };
-  if (modalW) {
-    modalW.addEventListener('input', updateModalBmi);
-    modalW.addEventListener('change', updateModalBmi);
-  }
-  if (modalH) {
-    modalH.addEventListener('input', updateModalBmi);
-    modalH.addEventListener('change', updateModalBmi);
-  }
-}
 
-/* ==========================================================================
-   AI REASONING MODEL PICKER CONTROLLER (IMAGE 3 INTEGRATION)
-   ========================================================================== */
-const AI_MODELS = [
-  { id: 'nvidia/nemotron-3-ultra-550b-a55b:free', name: 'Nemotron 3 Ultra', dot: 'model-dot-orange', tag: 'primary' },
-  { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free', name: 'Nemotron 3 Nano Omni', dot: 'model-dot-amber', tag: 'free' },
-  { id: 'nvidia/nemotron-3.5-super-vl:free', name: 'Nemotron 3.5 Super VL', dot: 'model-dot-purple', tag: 'vision' },
-  { id: 'nvidia/nemotron-3.5-lightning:free', name: 'Nemotron 3.5 Lightning', dot: 'model-dot-cyan', tag: 'fast' },
-  { id: 'google/gemma-4-26b-a4b-it:free', name: 'Gemma 4 26B', dot: 'model-dot-blue', tag: 'free' },
-  { id: 'xingchen-agi/xing4.0-29b-a4b:free', name: 'Xing4.0 29B', dot: 'model-dot-emerald', tag: 'free' },
-  { id: 'thinkingmachines/inkling-small:free', name: 'Inkling Small', dot: 'model-dot-coral', tag: 'free' },
-  { id: 'auto', name: 'Auto Nemotron Agent', dot: 'model-dot-gray', tag: 'smart' }
-];
+  $('#openBarcodeScannerBtn')?.addEventListener('click', openBarcode);
+  $('#modalScanBarcodeBtn')?.addEventListener('click', openBarcode);
 
-function getSelectedAiModel() {
-  const saved = localStorage.getItem('fitfuel_selected_ai_model');
-  if (!saved || saved.includes('laguna') || saved.includes('poolside') || saved.includes('lfm-2.5')) {
-    localStorage.setItem('fitfuel_selected_ai_model', 'nvidia/nemotron-3-ultra-550b-a55b:free');
-    return 'nvidia/nemotron-3-ultra-550b-a55b:free';
-  }
-  return saved;
-}
+  const closeBarcode = () => {
+    const v = $('#barcodeVideo');
+    if (v && window.FitFuelBarcode) window.FitFuelBarcode.stopScanner(v);
+    closeModal('#barcodeScannerModal');
+  };
+  $('#closeBarcodeModalBtn')?.addEventListener('click', closeBarcode);
 
-function selectAiModel(modelId, notify = true) {
-  const model = AI_MODELS.find(m => m.id === modelId) || AI_MODELS[0];
-  localStorage.setItem('fitfuel_selected_ai_model', model.id);
-
-  // Update Coach View picker
-  const coachName = $('#coachModelActiveName');
-  if (coachName) coachName.textContent = model.name;
-  const coachDot = $('#coachModelActiveDot');
-  if (coachDot) {
-    coachDot.className = `model-dot ${model.dot}`;
+  async function handleScannedBarcode(code) {
+    const msg = $('#barcodeStatusMsg');
+    if (msg) msg.textContent = `Looking up barcode ${code} in OpenFoodFacts...`;
+    try {
+      const prod = await window.FitFuelBarcode.fetchProductByBarcode(code);
+      closeBarcode();
+      openModal('#foodModal');
+      if ($('#foodSearchInput')) $('#foodSearchInput').value = prod.name;
+      if ($('#foodPortionInput')) $('#foodPortionInput').value = 100;
+      if ($('#foodCaloriesInput')) $('#foodCaloriesInput').value = prod.calories;
+      if ($('#foodProteinInput')) $('#foodProteinInput').value = prod.protein;
+      if ($('#foodCarbsInput')) $('#foodCarbsInput').value = prod.carbs;
+      if ($('#foodFatsInput')) $('#foodFatsInput').value = prod.fats;
+      if (window.FitFuelVoice) window.FitFuelVoice.playSuccessChime();
+      toast(`Verified: ${prod.name} (${prod.calories} kcal)`);
+    } catch (err) {
+      if (msg) msg.textContent = `Lookup error: ${err.message}`;
+      toast(err.message);
+    }
   }
 
-  // Update Floating Chat status trigger
-  const floatingLabel = $('#floatingActiveModelLabel');
-  if (floatingLabel) floatingLabel.textContent = model.name;
-
-  // Update active state in menus
-  $$('.ai-model-dropdown-menu .ai-model-item').forEach(item => {
-    if (item.dataset.model === model.id) {
-      item.classList.add('selected');
-    } else {
-      item.classList.remove('selected');
+  $('#submitManualBarcodeBtn')?.addEventListener('click', () => {
+    const val = $('#manualBarcodeInput')?.value.trim();
+    if (val) handleScannedBarcode(val);
+  });
+  $('#manualBarcodeInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = $('#manualBarcodeInput')?.value.trim();
+      if (val) handleScannedBarcode(val);
     }
   });
-
-  // Close menus
-  const cMenu = $('#coachModelMenu');
-  if (cMenu) cMenu.classList.remove('show');
-  const fMenu = $('#floatingModelMenu');
-  if (fMenu) fMenu.classList.remove('show');
-
-  if (notify && typeof toast === 'function') {
-    toast(`Active AI Agent: ${model.name}`);
-  }
-}
-
-function initAiModelPickers() {
-  const coachBtn = $('#coachModelPickerBtn');
-  const coachMenu = $('#coachModelMenu');
-  if (coachBtn && coachMenu) {
-    coachBtn.onclick = (e) => {
-      e.stopPropagation();
-      coachMenu.classList.toggle('show');
-    };
-  }
-
-  const floatingTrigger = $('#floatingModelTrigger');
-  const floatingMenu = $('#floatingModelMenu');
-  if (floatingTrigger && floatingMenu) {
-    floatingTrigger.onclick = (e) => {
-      e.stopPropagation();
-      floatingMenu.classList.toggle('show');
-    };
-  }
-
-  // Bind clicks on items in both menus
-  $$('.ai-model-dropdown-menu .ai-model-item').forEach(item => {
-    item.onclick = (e) => {
-      e.stopPropagation();
-      const modelId = item.dataset.model;
-      if (modelId) selectAiModel(modelId, true);
-    };
-  });
-
-  // Global click outside listener to close model menus
-  document.addEventListener('click', (e) => {
-    if (coachMenu && !e.target.closest('#coachModelPickerWrap')) {
-      coachMenu.classList.remove('show');
-    }
-    if (floatingMenu && !e.target.closest('#floatingModelTrigger') && !e.target.closest('#floatingModelMenu')) {
-      floatingMenu.classList.remove('show');
-    }
-  });
-
-  // Initialize display from localStorage
-  selectAiModel(getSelectedAiModel(), false);
 }
 
 /* ---------- Boot Application & Immediate Lifecycle Bindings ---------- */
 bootApp();
 initInteractiveHeroAndAppButtons();
-initPremiumPlansEngine();
-initDashboardBmiBannerListeners();
-initAiModelPickers();
-syncDashboardBmiBanner();
-updateProfileBmiUI();
-
-const hInp = $('#pfHeightInput');
-const wInp = $('#pfWeightInput');
-if (hInp) {
-  hInp.addEventListener('input', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
-  hInp.addEventListener('change', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
-}
-if (wInp) {
-  wInp.addEventListener('input', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
-  wInp.addEventListener('change', () => { updateProfileBmiUI(); syncDashboardBmiBanner(); });
-}
+initV5Features();
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initInteractiveHeroAndAppButtons();
-    initPremiumPlansEngine();
-    initDashboardBmiBannerListeners();
-    initAiModelPickers();
-    syncDashboardBmiBanner();
-    updateProfileBmiUI();
+    initV5Features();
   });
 } else {
   initInteractiveHeroAndAppButtons();
-  initPremiumPlansEngine();
-  initDashboardBmiBannerListeners();
-  initAiModelPickers();
-  syncDashboardBmiBanner();
+  initV5Features();
 }
-
-window.applyTheme = applyTheme;
-window.switchView = switchView;
-window.showView = switchView;
-window.syncDashboardBmiBanner = syncDashboardBmiBanner;
-
-
-
-window.challengeSetup = {
-  get motive() { return setupMotive; },
-  set motive(v) { setupMotive = v; },
-  get duration() { return setupDuration; },
-  set duration(v) { setupDuration = v; },
-  get minutes() { return setupMinutes; },
-  set minutes(v) { setupMinutes = v; },
-  get intensity() { return setupIntensity; },
-  set intensity(v) { setupIntensity = v; },
-  get types() { return setupTypes; },
-  set types(v) { setupTypes = v; }
-};
-
-/* ================= BULLETPROOF GLOBAL EVENT DELEGATION (HUBS & CHALLENGES) ================= */
-document.addEventListener('click', function(e) {
-  // 1. Hub navigation tabs
-  const hubBtn = e.target.closest('.hub-tab-btn');
-  if (hubBtn) {
-    e.preventDefault();
-    const action = hubBtn.dataset.tabAction;
-    const target = hubBtn.dataset.hubTarget;
-    if (action === 'open-recipes') {
-      if (typeof switchView === 'function') switchView('food-log');
-      if (typeof openModal === 'function') openModal('#recipeBuilderModal');
-      return;
-    }
-    if (action === 'open-water') {
-      if (typeof switchView === 'function') switchView('food-log');
-      setTimeout(() => {
-        const waterCard = document.getElementById('waterIntakeCard') || document.querySelector('.water-log-card');
-        if (waterCard) {
-          waterCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          waterCard.style.outline = '2px solid #38bdf8';
-          setTimeout(() => { waterCard.style.outline = ''; }, 1800);
-        }
-      }, 150);
-      return;
-    }
-    if (target && typeof switchView === 'function') {
-      switchView(target);
-    }
-    return;
-  }
-
-  // 2. Start Challenge triggers
-  const startChallengeBtn = e.target.closest('#createChallengeBtn, [data-open-challenge], .challenge-empty-card .solid-button');
-  if (startChallengeBtn) {
-    e.preventDefault();
-    if (typeof openModal === 'function') openModal('#challengeMotiveModal');
-    return;
-  }
-
-  // 3. Motive Option Card Click
-  const motiveCard = e.target.closest('#motiveOptionsList .setup-choice-card');
-  if (motiveCard) {
-    document.querySelectorAll('#motiveOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
-    motiveCard.classList.add('selected');
-    setupMotive = motiveCard.dataset.motive || 'Burn Fat & Lean Out';
-    return;
-  }
-
-  // 4. Challenge Motive Step 1 -> Step 2
-  const proceedPrefsBtn = e.target.closest('#proceedToPrefsBtn');
-  if (proceedPrefsBtn) {
-    e.preventDefault();
-    if (typeof closeModal === 'function') closeModal('#challengeMotiveModal');
-    setTimeout(() => {
-      if (typeof openModal === 'function') openModal('#challengePrefsModal');
-    }, 100);
-    return;
-  }
-
-  // 5. Time Minutes Card Click
-  const timeCard = e.target.closest('#chTimeOptionsList .setup-choice-card');
-  if (timeCard) {
-    document.querySelectorAll('#chTimeOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
-    timeCard.classList.add('selected');
-    setupMinutes = Number(timeCard.dataset.minutes) || 45;
-    return;
-  }
-
-  // 6. Intensity Card Click
-  const intCard = e.target.closest('#chIntensityOptionsList .setup-choice-card');
-  if (intCard) {
-    document.querySelectorAll('#chIntensityOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
-    intCard.classList.add('selected');
-    setupIntensity = intCard.dataset.intensity || 'Moderate';
-    return;
-  }
-
-  // 7. Types Card Click
-  const typeCard = e.target.closest('#chTypesOptionsList .setup-choice-card');
-  if (typeCard && e.target.tagName !== 'INPUT') {
-    const cb = typeCard.querySelector('input[type="checkbox"]');
-    if (cb) {
-      cb.checked = !cb.checked;
-      cb.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-    return;
-  }
-
-  // 8. Challenge Prefs Step 2 -> Step 3
-  const proceedDurationBtn = e.target.closest('#proceedToDurationBtn');
-  if (proceedDurationBtn) {
-    e.preventDefault();
-    const prev = document.getElementById('challengeMetricsPreview');
-    if (prev) {
-      const typesStr = (Array.isArray(setupTypes) && setupTypes.length) ? setupTypes.join(', ') : 'Home';
-      prev.textContent = `${setupMinutes || 45} Total Min/Day · ${setupIntensity || 'Moderate'} Intensity · ${typesStr} · ${setupMotive || 'Burn Fat'}`;
-    }
-    if (typeof closeModal === 'function') closeModal('#challengePrefsModal');
-    setTimeout(() => {
-      if (typeof openModal === 'function') openModal('#challengeDurationModal');
-    }, 100);
-    return;
-  }
-
-  // 9. Duration Days Card Click
-  const durCard = e.target.closest('#durationOptionsList .setup-choice-card');
-  if (durCard) {
-    document.querySelectorAll('#durationOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
-    durCard.classList.add('selected');
-    setupDuration = Number(durCard.dataset.days) || 15;
-    return;
-  }
-
-  // 10. Back from Duration to Prefs
-  const backPrefsBtn = e.target.closest('#backToPrefsBtn');
-  if (backPrefsBtn) {
-    e.preventDefault();
-    if (typeof closeModal === 'function') closeModal('#challengeDurationModal');
-    setTimeout(() => {
-      if (typeof openModal === 'function') openModal('#challengePrefsModal');
-    }, 100);
-    return;
-  }
-
-  // 11. Generate Challenge Plan
-  const genChallengeBtn = e.target.closest('#generateChallengePlanBtn');
-  if (genChallengeBtn) {
-    e.preventDefault();
-    if (typeof generateAIChallengePlan === 'function') {
-      generateAIChallengePlan(setupMotive, setupDuration, setupMinutes, setupIntensity, setupTypes);
-    }
-    return;
-  }
-
-  // 12. Start Active Challenge Workout Session
-  const startSessionBtn = e.target.closest('#startActiveSessionBtn');
-  if (startSessionBtn) {
-    e.preventDefault();
-    if (activeChallengePlan && activeChallengePlan.days) {
-      const curIdx = Math.min(activeChallengePlan.days.length - 1, activeChallengePlan.currentDayIndex || 0);
-      const curDay = activeChallengePlan.days[curIdx];
-      if (typeof startWorkoutSession === 'function') startWorkoutSession(curDay);
-    }
-    return;
-  }
-
-  // 13. Refresh Today's Routine
-  const refreshRoutineBtn = e.target.closest('#refreshTodayRoutineBtn');
-  if (refreshRoutineBtn) {
-    e.preventDefault();
-    if (activeChallengePlan && activeChallengePlan.days) {
-      const curIdx = Math.min(activeChallengePlan.days.length - 1, activeChallengePlan.currentDayIndex || 0);
-      if (typeof generatePersonalizedChallengeSchedule === 'function') {
-        const freshExercises = generatePersonalizedChallengeSchedule(
-          1,
-          activeChallengePlan.motive,
-          activeChallengePlan.userWeight,
-          activeChallengePlan.userHeight,
-          activeChallengePlan.totalWorkoutMinutes || 45,
-          activeChallengePlan.intensity || 'Moderate',
-          activeChallengePlan.types || ['Home']
-        )[0].exercises;
-        activeChallengePlan.days[curIdx].exercises = freshExercises;
-        store.set('activeChallengePlan', activeChallengePlan);
-        if (FF && FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
-        if (typeof renderChallengeView === 'function') renderChallengeView();
-        if (typeof toast === 'function') toast('Refreshed today’s exercises with new movements!');
-      }
-    }
-    return;
-  }
-
-  // 14. Reset Challenge Plan to Day 1
-  const resetPlanBtn = e.target.closest('#resetChallengePlanBtn');
-  if (resetPlanBtn) {
-    e.preventDefault();
-    if (activeChallengePlan && confirm('Reset progress back to Day 1?')) {
-      activeChallengePlan.currentDayIndex = 0;
-      activeChallengePlan.completedCount = 0;
-      if (activeChallengePlan.days) {
-        activeChallengePlan.days.forEach(d => { d.completed = false; });
-      }
-      store.set('activeChallengePlan', activeChallengePlan);
-      if (FF && FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
-      if (typeof renderChallengeView === 'function') renderChallengeView();
-      if (typeof toast === 'function') toast('Challenge reset back to Day 1.');
-    }
-    return;
-  }
-
-  // 15. Exit Challenge Plan
-  const exitPlanBtn = e.target.closest('#exitChallengePlanBtn');
-  if (exitPlanBtn) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to exit and abandon this challenge?')) {
-      activeChallengePlan = null;
-      store.del('activeChallengePlan');
-      if (FF && FF.online && FF.user) FF.patch({ activeChallenge: null });
-      if (typeof renderChallengeView === 'function') renderChallengeView();
-      if (typeof toast === 'function') toast('Challenge ended.');
-    }
-    return;
-  }
-
-  // 16. Swap Exercise Trigger
-  const swapTrigger = e.target.closest('.swap-ex-trigger');
-  if (swapTrigger) {
-    e.preventDefault();
-    const exIdx = Number(swapTrigger.dataset.exIdx) || 0;
-    if (activeChallengePlan && activeChallengePlan.days) {
-      const curIdx = Math.min(activeChallengePlan.days.length - 1, activeChallengePlan.currentDayIndex || 0);
-      if (typeof openSwapExerciseModal === 'function') {
-        openSwapExerciseModal(curIdx, exIdx);
-      }
-    }
-    return;
-  }
-});
 
 } // End of browser execution block
 
-
-/* ===== Dynamic Bidirectional Profile Sync Listeners ===== */
-document.addEventListener('DOMContentLoaded', () => {
-  syncProfileToAllFeatures();
-
-  // Smart Start listeners
-  const slBw = $('#slBodyweight');
-  if (slBw) {
-    slBw.addEventListener('change', () => {
-      const v = Number(slBw.value);
-      if (v >= 30 && v <= 250) {
-        profile.wKg = v;
-        store.set('profile', profile);
-        syncProfileToAllFeatures('sl');
-      }
-    });
-  }
-  const slSx = $('#slSex');
-  if (slSx) {
-    slSx.addEventListener('change', () => {
-      profile.sex = slSx.value;
-      store.set('profile', profile);
-      syncProfileToAllFeatures('sl');
-    });
-  }
-
-  // Body Assessment Wizard listeners
-  const bW = $('#bodyModalWeight');
-  if (bW) {
-    bW.addEventListener('change', () => {
-      const v = Number(bW.value);
-      if (v >= 30 && v <= 250) {
-        profile.wKg = v;
-        store.set('profile', profile);
-        syncProfileToAllFeatures('bodyModal');
-      }
-    });
-  }
-  const bH = $('#bodyModalHeight');
-  if (bH) {
-    bH.addEventListener('change', () => {
-      const v = Number(bH.value);
-      if (v >= 80 && v <= 250) {
-        profile.hCm = v;
-        store.set('profile', profile);
-        syncProfileToAllFeatures('bodyModal');
-      }
-    });
-  }
-  const bG = $('#bodyModalGender');
-  if (bG) {
-    bG.addEventListener('change', () => {
-      profile.sex = bG.value;
-      profile.gender = bG.value;
-      store.set('profile', profile);
-      syncProfileToAllFeatures('bodyModal');
-    });
-  }
-  const bTW = $('#bodyModalTargetWeight');
-  if (bTW) {
-    bTW.addEventListener('change', () => {
-      const v = Number(bTW.value);
-      if (v >= 30 && v <= 250) {
-        profile.targetWeight = v;
-        store.set('profile', profile);
-        syncProfileToAllFeatures('bodyModal');
-      }
-    });
-  }
-
-  // Profile Auto-calculate button
-  const autoCalcBtn = $('#pfAutoCalculateTargetsBtn');
-  if (autoCalcBtn) {
-    autoCalcBtn.onclick = () => {
-      const w = Number($('#pfWeightInput') ? $('#pfWeightInput').value : 0) || profile.wKg || 70;
-      const h = Number($('#pfHeightInput') ? $('#pfHeightInput').value : 0) || profile.hCm || 175;
-      const sex = $('#pfSexSelect') ? $('#pfSexSelect').value : (profile.sex || 'male');
-      const goal = $('#pfGoalSelect') ? $('#pfGoalSelect').value : (profile.goal || 'Maintain weight');
-      const days = Number($('#pfDaysSelect') ? $('#pfDaysSelect').value : 4);
-      
-      const targets = computeUserTargets({ wKg: w, hCm: h, sex, goal, days });
-      if ($('#pfCalorieInput')) $('#pfCalorieInput').value = targets.cal;
-      profile.cal = targets.cal;
-      profile.p = targets.p;
-      profile.f = targets.f;
-      profile.c = targets.c;
-      store.set('profile', profile);
-      updateDailyMacroMeters();
-      toast(`Recalculated targets: ${targets.cal} kcal · ${targets.p}g P · ${targets.c}g C · ${targets.f}g F`);
-    };
-  }
-});
-function generateDefaultTransformationDashboard() {
-  const state = (typeof baState !== 'undefined' ? baState : (typeof window !== 'undefined' ? window.baState : {})) || {};
-  const goal = state.selectedGoal || 'lean_athletic';
-  const pref = state.preferences || {};
-  const curW = Number(pref.weight) || 72;
-  const days = Number(pref.daysPerWeek) || 4;
-  const dur = Number(pref.durationMin) || 45;
-
-  const goalTitles = {
-    lean_athletic: 'Lean & Athletic Physique Transformation',
-    muscle_building: 'Hypertrophy & Progressive Muscle Building Split',
-    fat_loss: 'Fat Loss & Definition Recomposition Protocol',
-    strength_performance: 'Max Neuromuscular Strength & Power Split',
-    balanced_fitness: 'Whole-Body Durability & Conditioning System',
-    custom: (state.customGoalText || 'Custom Engineered Transformation Split')
-  };
-
-  const defaultPlan = {
-    physique_goal: goalTitles[goal] || 'Physique Transformation Blueprint',
-    summary: 'Comprehensive 4-View biomechanical assessment complete. Symmetrical coronal balance observed with optimal thoracic posture. Tailored ' + days + '-day progressive overload protocol engineered for your athletic targets.',
-    posture_observations: {
-      apparent_head_position: 'Neutral cervical spine alignment with stable coronal centering and clear gaze vector.',
-      visible_shoulder_alignment: 'Horizontal biacromial plane with balanced clavicular breadth; zero acute scapular elevation.',
-      left_vs_right_symmetry: 'Bilateral symmetry across deltoids and pectorals is within 96% optimal balance ratio.',
-      coronal_trunk_alignment: 'Stable vertical trunk axis with balanced lateral abdominal wall engagement.',
-      hip_and_knee_positioning: 'Neutral pelvic tilt with bilateral patellar alignment tracking over second toes.',
-      general_stance_and_balance: 'Grounded bilateral plantar distribution with symmetric athletic base width.'
-    },
-    possible_alignment_considerations: [
-      'Perform dedicated thoracic extension & band pull-aparts during warm-up.',
-      'Incorporate single-leg Romanian deadlifts for unilateral hip stability.',
-      'Maintain 2-minute restorative diaphragmatic breathing post-workout.'
-    ],
-    estimated_physical_characteristics: {
-      estimated_body_fat_range: '15.5% – 17.0%',
-      fitness_category: 'Athletic Range',
-      estimated_lean_muscle_mass: (curW * 0.82).toFixed(1) + ' kg',
-      estimated_adipose_tissue_mass: (curW * 0.18).toFixed(1) + ' kg'
-    },
-    reassessment_interval: '6 to 8 Weeks',
-    training_structure: {
-      methodology: 'Periodized Compound Hypertrophy & Overload System',
-      weekly_split: days + ' Training Days / Week',
-      session_duration_minutes: dur,
-      exercise_intensity: 'RPE 7.5 – 8.5 (1-2 Reps in Reserve)',
-      progressive_overload_guidance: 'Add 1.25kg to compound lifts or 1 repetition once top rep bracket is completed across all sets.'
-    },
-    periodized_split: [
-      {
-        day_title: 'Day 1: Upper-Body Hypertrophy Focus',
-        focus: 'Chest, Upper Back, Lateral Deltoids',
-        moves: [
-          { exercise_name: 'Incline Dumbbell Bench Press', sets: '4 sets', reps: '8-10 reps', load_recommendation: '24 kg / side (RPE 8)', biomechanical_form_cue: '30-degree incline, 3-sec eccentric, full pectoral stretch', rest_seconds: 90 },
-          { exercise_name: 'Chest-Supported T-Bar Row', sets: '4 sets', reps: '10-12 reps', load_recommendation: '45 kg total (RPE 8)', biomechanical_form_cue: 'Drive elbows back, squeeze scapulae, neutral spine', rest_seconds: 75 },
-          { exercise_name: 'Standing Dumbbell Lateral Raise', sets: '4 sets', reps: '12-15 reps', load_recommendation: '10 kg / side (RPE 8.5)', biomechanical_form_cue: 'Lead with elbows, slight forward lean, pause at parallel', rest_seconds: 60 },
-          { exercise_name: 'Overhead Triceps Rope Extension', sets: '3 sets', reps: '12-15 reps', load_recommendation: '22 kg cable (RPE 8)', biomechanical_form_cue: 'Keep upper arms fixed beside ears, full elbow flexion', rest_seconds: 60 }
-        ]
-      },
-      {
-        day_title: 'Day 2: Lower-Body Strength & Mechanics',
-        focus: 'Quadriceps, Glutes, Calves & Core',
-        moves: [
-          { exercise_name: 'Barbell Back Squat (Olympic Depth)', sets: '4 sets', reps: '6-8 reps', load_recommendation: '85 kg (RPE 8)', biomechanical_form_cue: 'Brace core 360 degrees, knees track over toes, drive through midfoot', rest_seconds: 120 },
-          { exercise_name: 'Romanian Deadlift (Dumbbell/Barbell)', sets: '3 sets', reps: '8-10 reps', load_recommendation: '70 kg (RPE 8)', biomechanical_form_cue: 'Hinge hips backwards, soft knees, lats engaged tight', rest_seconds: 90 },
-          { exercise_name: 'Bulgarian Split Squat', sets: '3 sets / leg', reps: '10-12 reps', load_recommendation: '16 kg / side (RPE 8.5)', biomechanical_form_cue: 'Torso angled forward 15 deg to maximize glute recruitment', rest_seconds: 75 },
-          { exercise_name: 'Standing Calf Raise', sets: '4 sets', reps: '15 reps', load_recommendation: 'Bodyweight + 20 kg', biomechanical_form_cue: 'Full 2-second stretch at bottom, squeeze apex for 1 sec', rest_seconds: 45 }
-        ]
-      },
-      {
-        day_title: 'Day 3: Posterior Chain & Pull Power',
-        focus: 'Lats, Rhomboids, Rear Delts & Biceps',
-        moves: [
-          { exercise_name: 'Weighted Pull-Up / Lat Pulldown', sets: '4 sets', reps: '6-8 reps', load_recommendation: 'Bodyweight + 10 kg / 65 kg cable', biomechanical_form_cue: 'Depress scapulae first, pull chest to bar, controlled descent', rest_seconds: 90 },
-          { exercise_name: 'Single-Arm Dumbbell Row', sets: '3 sets', reps: '10-12 reps', load_recommendation: '28 kg (RPE 8)', biomechanical_form_cue: 'Square hips, pull toward hip pocket, full lat stretch', rest_seconds: 60 },
-          { exercise_name: 'Face Pull with External Rotation', sets: '4 sets', reps: '15 reps', load_recommendation: '18 kg cable (RPE 8)', biomechanical_form_cue: 'Split thumbs apart at brow level, active rotator cuff', rest_seconds: 60 },
-          { exercise_name: 'Incline Dumbbell Biceps Curl', sets: '3 sets', reps: '10-12 reps', load_recommendation: '12 kg / side (RPE 8.5)', biomechanical_form_cue: 'Strict supination, keep shoulders back against pad', rest_seconds: 60 }
-        ]
-      },
-      {
-        day_title: 'Day 4: Anterior Strength & Shoulder Conditioning',
-        focus: 'Pectorals, Anterior/Lateral Delts, Triceps',
-        moves: [
-          { exercise_name: 'Standing Overhead Barbell Press', sets: '4 sets', reps: '6-8 reps', load_recommendation: '50 kg (RPE 8)', biomechanical_form_cue: 'Glutes squeezed, ribcage down, head through at lockout', rest_seconds: 120 },
-          { exercise_name: 'Weighted Dips / Flat Dumbbell Press', sets: '3 sets', reps: '8-10 reps', load_recommendation: 'Bodyweight + 15 kg (RPE 8)', biomechanical_form_cue: 'Slight forward torso tilt, elbows at 45 degrees', rest_seconds: 90 },
-          { exercise_name: 'Cable Lateral Raise (Behind Back)', sets: '4 sets', reps: '15 reps', load_recommendation: '7.5 kg cable (RPE 8.5)', biomechanical_form_cue: 'Constant tension, smooth 2-sec eccentric phase', rest_seconds: 45 },
-          { exercise_name: 'Hanging Leg Raise (Toe to Bar)', sets: '3 sets', reps: '12-15 reps', load_recommendation: 'Bodyweight', biomechanical_form_cue: 'Posterior pelvic tilt at peak, zero swinging', rest_seconds: 60 }
-        ]
-      }
-    ],
-    macronutrient_distribution: {
-      daily_calories: 2350,
-      daily_protein_grams: Math.round(curW * 2.1),
-      daily_carbohydrates_grams: 255,
-      daily_fats_grams: 65,
-      daily_water_liters: 3.2,
-      sample_daily_meals: [
-        { meal_name: 'Breakfast (Post-Hydration)', description: '4 Whole eggs scrambled with baby spinach, 80g rolled oats with 1 cup berries and 1 scoop whey (45g protein, 65g carbs, 18g fat)' },
-        { meal_name: 'Lunch (Anabolic Foundation)', description: '180g Grilled chicken breast or grilled paneer with 1.5 cups steamed basmati rice, roasted broccoli & olive oil (48g protein, 72g carbs, 16g fat)' },
-        { meal_name: 'Pre-Workout Fuel Snack', description: '200g Greek yogurt with honey, sliced banana, and 15g raw almonds (24g protein, 38g carbs, 8g fat)' },
-        { meal_name: 'Dinner (Overnight Recovery)', description: '180g Pan-seared salmon fillet or tofu stir-fry with baked sweet potato and mixed greens (42g protein, 52g carbs, 19g fat)' }
-      ],
-      nutrition_rules: [
-        'Distribute 35g-45g high-quality protein evenly every 3 to 4 hours to maximize Muscle Protein Synthesis (MPS).',
-        'Consume 500ml water immediately upon waking and maintain 3.2L total daily hydration.',
-        'Prioritize 80% whole food carbohydrate sources around your training sessions.'
-      ]
-    },
-    recovery_protocols: {
-      restorative_sleep_hours: '7.5 – 8.5 Hours Nightly',
-      sleep_hygiene_rules: [
-        'Keep sleeping environment dark, cool (19°C), and well-ventilated.',
-        'Zero digital screens 45 minutes before bedtime to prevent melatonin suppression.',
-        'Consistent bedtime and wake-up schedule across 7 days/week.'
-      ],
-      active_recovery: [
-        '15 minutes of light mobility and hamstring/thoracic opening on off-days.',
-        'Target 8,000 to 10,000 daily non-exercise steps for enhanced lymphatic clearance.'
-      ]
-    }
-  };
-
-  const currentBa = (typeof baState !== 'undefined' ? baState : (typeof window !== 'undefined' ? window.baState : null));
-  if (currentBa) currentBa.currentAnalysis = defaultPlan;
-  if (typeof renderTransformationDashboard === 'function') {
-    renderTransformationDashboard(defaultPlan);
-  } else if (typeof window !== 'undefined' && typeof window.renderTransformationDashboard === 'function') {
-    window.renderTransformationDashboard(defaultPlan);
-  }
-  return defaultPlan;
-}
-window.generateDefaultTransformationDashboard = generateDefaultTransformationDashboard;

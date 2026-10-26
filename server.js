@@ -73,6 +73,40 @@ const json = (res, code, obj) => {
   });
   res.end(JSON.stringify(obj));
 };
+
+/* ---------- rate limiter & ip helper ---------- */
+const rateLimits = new Map();
+const getClientIp = (req) => {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.socket?.remoteAddress || '127.0.0.1';
+};
+
+function checkRateLimit(ip, routeType, maxRequests, windowMs) {
+  const key = `${ip}:${routeType}`;
+  const now = Date.now();
+  let record = rateLimits.get(key);
+  if (!record || now - record.start > windowMs) {
+    record = { start: now, count: 1 };
+    rateLimits.set(key, record);
+    return { allowed: true, remaining: maxRequests - 1 };
+  }
+  record.count++;
+  if (record.count > maxRequests) {
+    const retryAfter = Math.ceil((record.start + windowMs - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  return { allowed: true, remaining: maxRequests - record.count };
+}
+
+// Clean up stale rate limit entries every 10 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of rateLimits.entries()) {
+    if (now - v.start > 1800000) rateLimits.delete(k);
+  }
+}, 600000).unref();
+
 const readBody = req => new Promise((resolve, reject) => {
   let b = '';
   req.on('data', c => { b += c; if (b.length > 8e6) req.destroy(); });
@@ -197,6 +231,11 @@ const routes = {
     }
   },
   'POST /api/auth/register': async (req, res) => {
+    const ip = getClientIp(req);
+    const limit = checkRateLimit(ip, 'register', 15, 15 * 60 * 1000);
+    if (!limit.allowed) {
+      return json(res, 429, { error: `Too many registration attempts. Please try again in ${limit.retryAfter}s.` });
+    }
     const { name, email, contact, password } = await readBody(req);
     if (!name || String(name).trim().length < 2) return json(res, 400, { error: 'Enter your full name' });
     if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email || '')) return json(res, 400, { error: 'Enter a valid email (must end with .com, .in, .org etc.)' });
@@ -218,6 +257,11 @@ const routes = {
     json(res, 200, { token, user: { id: userId, name: String(name).trim(), email: em, contact: String(contact || ''), created_at: Date.now(), last_login: Date.now(), is_admin: isAdmin } });
   },
   'POST /api/auth/login': async (req, res) => {
+    const ip = getClientIp(req);
+    const limit = checkRateLimit(ip, 'login', 15, 15 * 60 * 1000);
+    if (!limit.allowed) {
+      return json(res, 429, { error: `Too many login attempts. Please try again in ${limit.retryAfter}s.` });
+    }
     const { email, password } = await readBody(req);
     const em = String(email || '').toLowerCase().trim();
     const u = await db.get('SELECT * FROM users WHERE email=?', [em]);
@@ -678,6 +722,11 @@ Never use emojis. Return ONLY valid JSON with this exact structure:
   },
 
   'POST /api/ai/chat': async (req, res) => {
+    const ip = getClientIp(req);
+    const limit = checkRateLimit(ip, 'ai_chat', 30, 10 * 60 * 1000);
+    if (!limit.allowed) {
+      return json(res, 429, { error: `AI Coach rate limit reached. Please wait ${limit.retryAfter}s before sending more queries.` });
+    }
     const body = await readBody(req);
     const { prompt, systemPrompt, messages, geminiKey: userGeminiKey, openRouterKey: userOpenRouterKey, selectedModel, model } = body || {};
 
@@ -1914,7 +1963,7 @@ What specific fitness goal or question would you like to tackle today?`;
 }
 
 /* ---------- static files ---------- */
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.ico': 'image/x-icon', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.json': 'application/json' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.ico': 'image/x-icon', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.gif': 'image/gif' };
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p === '/') p = '/index.html';
