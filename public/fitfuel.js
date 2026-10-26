@@ -1779,6 +1779,15 @@ function renderDashboard() {
   if ($('#dashWorkoutFocus')) $('#dashWorkoutFocus').textContent = wo.focus.toUpperCase();
   if ($('#dashWorkoutDuration')) $('#dashWorkoutDuration').textContent = wo.duration;
 
+  // Dynamically sync exercise demonstration GIF for active workout
+  if ($('#dashWorkoutGif') && wo && wo.moves && wo.moves.length) {
+    const firstMove = wo.moves[0].name;
+    const exMatch = (typeof findExercise === 'function') ? findExercise(firstMove) : null;
+    if (exMatch && exMatch.gif) {
+      $('#dashWorkoutGif').src = exMatch.gif;
+    }
+  }
+
   /* ---------- Accurate Streak Calculation & 7-Day Weekly Bars ---------- */
   const curStreakInfo = evaluateStreakStatus();
   const streakCount = curStreakInfo.currentStreak || 0;
@@ -1961,6 +1970,39 @@ $('#dashRefreshWorkoutBtn').onclick = () => {
   renderDashboard();
   toast('Switched to next workout in plan');
 };
+
+// Toggle Live Workout Movement GIF vs Action Photo
+if ($('#dashWorkoutDemoToggleBtn')) {
+  $('#dashWorkoutDemoToggleBtn').onclick = (e) => {
+    e.stopPropagation();
+    const gif = $('#dashWorkoutGif');
+    const img = $('#dashWorkoutImg');
+    const txt = $('#dashWorkoutToggleText');
+    if (!gif || !img) return;
+    const isShowingGif = (gif.style.display !== 'none');
+    if (isShowingGif) {
+      gif.style.display = 'none';
+      img.style.display = 'block';
+      if (txt) txt.textContent = 'Live Movement Demo';
+      toast('Switched to action photo');
+    } else {
+      img.style.display = 'none';
+      gif.style.display = 'block';
+      if (txt) txt.textContent = 'Action Photo View';
+      soundFX.pop();
+      toast('Live exercise movement animation playing');
+    }
+  };
+}
+
+if ($('#dashWorkoutStartBtn')) {
+  $('#dashWorkoutStartBtn').onclick = (e) => {
+    e.stopPropagation();
+    soundFX.bellChime();
+    switchView('workouts');
+    toast('Opening workout routine!');
+  };
+}
 $('#resetWaterBtn').onclick = () => {
   water.ml = 0;
   water.date = today();

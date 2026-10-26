@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=6.9.0">
+  <link rel="stylesheet" href="styles.css?v=7.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -431,10 +431,19 @@
               </button>
             </div>
 
-            <!-- Center athlete visual stage: clean, high-res, no zoom on click, zero cards colliding over athlete -->
+            <!-- Center athlete visual stage: clean, high-res, holographic athlete with biometric HUD badges -->
             <div class="sy-hero-athlete-col">
-              <div class="sy-athlete-stage">
-                <img src="images/fitfuel-stronger-you-hero.jpg" alt="FitFuel Stronger You Athlete" class="sy-athlete-img" id="syAthleteHeroImg">
+              <div class="sy-athlete-stage" id="syAthleteStage">
+                <img src="images/fitfuel-athlete-hero-clean.jpg" alt="FitFuel Pro Athlete" class="sy-athlete-img" id="syAthleteHeroImg">
+                <!-- Cool Biometric HUD Badges -->
+                <div class="sy-athlete-hud-badge hud-top-right">
+                  <span class="hud-pulse-dot"></span>
+                  <span>AI Form &bull; 98.4%</span>
+                </div>
+                <div class="sy-athlete-hud-badge hud-bottom-left">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <span>Ready &bull; Peak State</span>
+                </div>
               </div>
             </div>
 
@@ -1424,8 +1433,16 @@
               </button>
             </div>
 
-            <div class="workout-feature" data-title="Daily Workout Session">
-              <img src="images/fitfuel-workout-seated.jpg" alt="FitFuel Stronger You Dumbbell Training" id="dashWorkoutImg" style="pointer-events:none;">
+            <div class="workout-feature" id="dashWorkoutFeature" data-title="Daily Workout Session">
+              <img src="images/fitfuel-workout-action.jpg" alt="FitFuel Workout Action" id="dashWorkoutImg" class="workout-feature-img" style="pointer-events:none;">
+              <img src="https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/1459-rR0LJzx.gif" alt="Live Exercise Movement Demo" id="dashWorkoutGif" class="workout-feature-gif" style="display:none;pointer-events:none;">
+              
+              <!-- Floating Interactive Demo Toggle -->
+              <button type="button" class="workout-demo-toggle-btn" id="dashWorkoutDemoToggleBtn" title="Toggle Live Exercise Movement GIF">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span id="dashWorkoutToggleText">Live Movement Demo</span>
+              </button>
+
               <div class="workout-overlay">
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1439,6 +1456,10 @@
                   </svg>
                   Gym + home
                 </span>
+                <button type="button" class="workout-start-pill-btn" id="dashWorkoutStartBtn" title="Launch Active Workout Session">
+                  <span>Start</span>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </button>
               </div>
             </div>
 
@@ -5905,7 +5926,7 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=6.9.0"></script>
+<script src="fitfuel.js?v=7.0.0"></script>
 <script src="modules/pwa-sync.js"></script>
 <script src="modules/voice-coach.js"></script>
 <script src="modules/social-card.js"></script>
