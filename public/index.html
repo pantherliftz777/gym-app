@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -34,7 +34,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=6.6.0">
+  <link rel="stylesheet" href="styles.css?v=6.7.0">
 </head>
 <body>
 <div class="app-shell">
@@ -256,8 +256,8 @@
             <span style="position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#16C79A;"></span>
           </button>
 
-          <!-- Sign in / Sign out -->
-          <button class="text-button" id="topAuthBtn">Sign in</button>
+
+
 
           <!-- Profile Pic Avatar -->
           <button class="top-avatar" id="topAvatar" aria-label="Open profile">JD</button>
@@ -316,7 +316,7 @@
               </button>
 
               <!-- PWA Install App (if ready) -->
-              <button type="button" class="dropdown-menu-item" id="btnPwaInstall" style="display:none;color:#38bdf8;" title="Install FitFuel App">
+              <button type="button" class="dropdown-menu-item" id="btnPwaInstall" style="display:none;" title="Install FitFuel App">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 <span>Install App</span>
               </button>
@@ -328,9 +328,17 @@
               </button>
 
               <!-- Dedicated Admin Portal Shortcut (Visible for Admins) -->
-              <button type="button" class="dropdown-menu-item admin-only-btn" id="topAdminBtn" style="display:none;color:#38bdf8;" title="Open Dedicated Admin Resolution Portal">
+              <button type="button" class="dropdown-menu-item admin-only-btn" id="topAdminBtn" style="display:none;" title="Open Dedicated Admin Resolution Portal">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
                 <span>Admin Portal</span>
+              </button>
+
+              <div class="dropdown-divider"></div>
+
+              <!-- Sign in / Sign out -->
+              <button type="button" class="dropdown-menu-item" id="topAuthBtn" title="Account Sign in or Sign out">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                <span id="topAuthBtnText">Sign in</span>
               </button>
             </div>
           </div>
@@ -5897,7 +5905,7 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=6.6.0"></script>
+<script src="fitfuel.js?v=6.7.0"></script>
 <script src="modules/pwa-sync.js"></script>
 <script src="modules/voice-coach.js"></script>
 <script src="modules/social-card.js"></script>

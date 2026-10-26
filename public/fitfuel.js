@@ -198,7 +198,7 @@ const soundFX = {
     const icon = $('#soundToggleIcon');
     const text = $('#soundToggleText');
     if (icon) icon.innerHTML = this.enabled ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
-    if (text) text.textContent = this.enabled ? 'Audio On' : 'Muted';
+    if (text) text.textContent = this.enabled ? 'Audio (ON)' : 'Audio (Muted)';
   },
   pop() {
     if (!this.enabled) return;
@@ -1466,6 +1466,15 @@ if (topbarMoreBtn && topbarMoreMenu) {
       topbarMoreMenu.style.display = 'none';
       topbarMoreBtn.setAttribute('aria-expanded', 'false');
     }
+  });
+  // Auto-close dropdown when clicking action items
+  topbarMoreMenu.querySelectorAll('.dropdown-menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      setTimeout(() => {
+        topbarMoreMenu.style.display = 'none';
+        topbarMoreBtn.setAttribute('aria-expanded', 'false');
+      }, 80);
+    });
   });
 }
 
@@ -3650,7 +3659,12 @@ function renderProfileView() {
 
   // Sync button text in topbar
   if ($('#topAuthBtn')) {
-    $('#topAuthBtn').textContent = session ? 'Sign out' : 'Sign in';
+    const authTxt = $('#topAuthBtnText');
+    if (authTxt) {
+      authTxt.textContent = session ? 'Sign out' : 'Sign in';
+    } else {
+      $('#topAuthBtn').textContent = session ? 'Sign out' : 'Sign in';
+    }
   }
 }
 
@@ -9608,8 +9622,11 @@ function initV5Features() {
     const updateVoiceBtn = () => {
       const isEn = window.FitFuelVoice ? window.FitFuelVoice.isVoiceEnabled() : true;
       voiceBtn.title = isEn ? 'Voice Coach: ON (Click to mute)' : 'Voice Coach: MUTED (Click to activate)';
-      voiceBtn.style.opacity = isEn ? '1' : '0.45';
-      voiceBtn.style.color = isEn ? '#38bdf8' : 'inherit';
+      voiceBtn.style.opacity = isEn ? '1' : '0.55';
+      const textSpan = voiceBtn.querySelector('span');
+      if (textSpan) {
+        textSpan.textContent = isEn ? 'Voice Coach (ON)' : 'Voice Coach (Muted)';
+      }
     };
     updateVoiceBtn();
     voiceBtn.addEventListener('click', () => {

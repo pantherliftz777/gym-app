@@ -1233,6 +1233,8 @@
 
 /* ================= TOPBAR REFINED SEQUENCED ALIGNMENT ================= */
 .topbar {
+  position: relative !important;
+  z-index: 99999 !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
@@ -2206,6 +2208,8 @@ html.dark .primary-nav .nav-link.selected, [data-theme="dark"] .primary-nav .nav
    TOPBAR & HEADER CONTROLS
    ========================================================================== */
 .topbar {
+  position: relative !important;
+  z-index: 99999 !important;
   background: var(--ff-glass-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
@@ -7099,6 +7103,8 @@ html.dark .sidebar, [data-theme="dark"] .sidebar {
 }
 
 .topbar {
+  position: relative !important;
+  z-index: 99999 !important;
   background: var(--glass-surface-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
@@ -9285,15 +9291,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     width: auto !important;
   }
 
-  /* Hide verbose & desktop-redundant buttons on mobile topbar */
-  #btnExportPRShare,
-  #btnVoiceCoachToggle,
-  #topAdminBtn,
-  #btnPwaInstall,
-  #topAuthBtn,
-  #topSettingsBtn {
-    display: none !important;
-  }
+  /* Topbar secondary buttons consolidated cleanly inside .topbar-dropdown-menu */
 
   .mobile-ai-coach-btn {
     display: inline-flex !important;
@@ -9317,9 +9315,7 @@ html.dark #dailyTipKeyTakeaway b, [data-theme="dark"] #dailyTipKeyTakeaway b {
     padding: 0 8px !important;
     font-size: 0.72rem !important;
   }
-  #soundToggleText {
-    display: none !important; /* show audio icon only */
-  }
+  /* Sound toggle text maintained within menu */
 
   .theme-select-wrap {
     height: 32px !important;
@@ -9833,140 +9829,223 @@ div.daily-motivation-panel,
 
 
 /* ==========================================================================
-   TOPBAR 3-DOTS ACTION MENU & FLOATING CONTROLS
+   TOPBAR 3-DOTS ACTION MENU & FLOATING CONTROLS (V6.7 OPAQUE & ELEVATED)
    ========================================================================== */
+.topbar-controls-row {
+  position: relative !important;
+  z-index: 100000 !important;
+}
+
+.topbar-right-actions {
+  position: relative !important;
+  z-index: 100001 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
 .topbar-more-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
+  position: relative !important;
+  z-index: 100002 !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
 .topbar-more-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  color: var(--ff-text-primary);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .topbar-more-btn:hover,
 .topbar-more-btn[aria-expanded="true"] {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
 }
 
 html.dark .topbar-more-btn,
 [data-theme="dark"] .topbar-more-btn {
-  background: rgba(30, 41, 59, 0.65);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 html.dark .topbar-more-btn:hover,
 [data-theme="dark"] .topbar-more-btn:hover,
 html.dark .topbar-more-btn[aria-expanded="true"],
 [data-theme="dark"] .topbar-more-btn[aria-expanded="true"] {
-  background: #38bdf8;
-  border-color: #38bdf8;
-  color: #0f172a;
-  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+  background: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35) !important;
 }
 
+/* Fully opaque floating dropdown menu to eliminate background element bleed-through */
 .topbar-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 250px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  padding: 8px;
-  z-index: 100000;
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  right: 0 !important;
+  width: 260px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18), 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+  padding: 8px !important;
+  z-index: 1000005 !important;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  animation: fadeInDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 4px !important;
+  animation: fadeInDown 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 html.dark .topbar-dropdown-menu,
 [data-theme="dark"] .topbar-dropdown-menu {
-  background: rgba(15, 23, 42, 0.94);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.4) !important;
 }
 
-.dropdown-header {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ff-text-muted);
-  padding: 6px 10px 4px;
+.topbar-dropdown-menu .dropdown-header {
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: #64748b !important;
+  padding: 6px 10px 4px !important;
 }
 
-.dropdown-item-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 10px;
-  border-radius: 10px;
+html.dark .topbar-dropdown-menu .dropdown-header,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-header {
+  color: #94a3b8 !important;
 }
 
-.dropdown-item-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ff-text-primary);
+.topbar-dropdown-menu .dropdown-divider {
+  height: 1px !important;
+  background: #e2e8f0 !important;
+  margin: 4px 0 !important;
 }
 
-.dropdown-menu-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--ff-text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
+html.dark .topbar-dropdown-menu .dropdown-divider,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-divider {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
-.dropdown-menu-item:hover {
-  background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
-  border-color: rgba(37, 99, 235, 0.15);
-  transform: translateX(2px);
+.topbar-dropdown-menu .dropdown-item-wrap {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 7px 12px !important;
+  border-radius: 10px !important;
+  background: #f8fafc !important;
+  border: 1px solid #f1f5f9 !important;
+  min-height: 40px !important;
 }
 
-html.dark .dropdown-menu-item:hover,
-[data-theme="dark"] .dropdown-menu-item:hover {
-  background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.2);
+html.dark .topbar-dropdown-menu .dropdown-item-wrap,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-item-wrap {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-.dropdown-menu-item svg {
-  flex-shrink: 0;
+.topbar-dropdown-menu .dropdown-item-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+html.dark .topbar-dropdown-menu .dropdown-item-label,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-item-label {
+  color: #f1f5f9 !important;
+}
+
+.topbar-dropdown-menu .theme-select-pill {
+  height: 28px !important;
+  padding: 0 8px !important;
+  font-size: 0.76rem !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  cursor: pointer !important;
+}
+
+html.dark .topbar-dropdown-menu .theme-select-pill,
+[data-theme="dark"] .topbar-dropdown-menu .theme-select-pill {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #f8fafc !important;
+}
+
+.topbar-dropdown-menu .dropdown-menu-item {
+  width: 100% !important;
+  min-height: 40px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  background: #f8fafc !important;
+  border: 1px solid #f1f5f9 !important;
+  color: #1e293b !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.topbar-dropdown-menu .dropdown-menu-item:hover {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+  transform: translateX(2px) !important;
+}
+
+html.dark .topbar-dropdown-menu .dropdown-menu-item,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-menu-item {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark .topbar-dropdown-menu .dropdown-menu-item:hover,
+[data-theme="dark"] .topbar-dropdown-menu .dropdown-menu-item:hover {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  color: #38bdf8 !important;
+  transform: translateX(2px) !important;
+}
+
+.topbar-dropdown-menu #soundToggleIcon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.topbar-dropdown-menu #soundToggleText {
+  display: inline-block !important;
+  color: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
 }
 
 /* ==========================================================================
