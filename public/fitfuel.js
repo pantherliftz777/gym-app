@@ -1,3 +1,4 @@
+window.showToast = typeof toast === "function" ? toast : console.log;
 let customWorkoutShowAll = false;
 
 function getFoodCategoryBadge(cat) {
@@ -5374,34 +5375,69 @@ let setupIntensity = 'Moderate';
 let setupTypes = ['Gym'];
 
 function initChallengeSetupListeners() {
+  // Global state mirror
+  window.challengeSetup = {
+    get motive() { return setupMotive; },
+    set motive(v) { setupMotive = v; },
+    get duration() { return setupDuration; },
+    set duration(v) { setupDuration = v; },
+    get minutes() { return setupMinutes; },
+    set minutes(v) { setupMinutes = v; },
+    get intensity() { return setupIntensity; },
+    set intensity(v) { setupIntensity = v; },
+    get types() { return setupTypes; },
+    set types(v) { setupTypes = v; }
+  };
+
   // Step 1: Motive Selection Cards
   $$('#motiveOptionsList .setup-choice-card').forEach(card => {
-    card.onclick = () => {
+    card.onclick = (e) => {
+      e.preventDefault();
       $$('#motiveOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       setupMotive = card.dataset.motive || 'Burn Fat & Lean Out';
     };
   });
 
-  // Step 1 -> Step 2 (Preferences)
+  // Step 1 -> Step 2 (Preferences) with Validation
   if ($('#proceedToPrefsBtn')) {
-    $('#proceedToPrefsBtn').onclick = () => {
+    $('#proceedToPrefsBtn').onclick = (e) => {
+      e.preventDefault();
+      if (!setupMotive) {
+        setupMotive = 'Burn Fat & Lean Out';
+      }
       closeModal('#challengeMotiveModal');
-      setTimeout(() => openModal('#challengePrefsModal'), 100);
+      setTimeout(() => openModal('#challengePrefsModal'), 80);
     };
   }
 
   // Step 2 -> Back to Step 1
   if ($('#backToMotiveBtn')) {
-    $('#backToMotiveBtn').onclick = () => {
+    $('#backToMotiveBtn').onclick = (e) => {
+      e.preventDefault();
       closeModal('#challengePrefsModal');
-      setTimeout(() => openModal('#challengeMotiveModal'), 100);
+      setTimeout(() => openModal('#challengeMotiveModal'), 80);
     };
   }
 
-  // Step 2: Types Checkboxes
+  // Step 2: Types Checkboxes (Home and Gym mutually exclusive environments)
   $$('#chTypesOptionsList input[type="checkbox"]').forEach(cb => {
     cb.onchange = () => {
+      if (cb.value === 'Home' && cb.checked) {
+        const gymCb = $('#chTypesOptionsList input[value="Gym"]');
+        if (gymCb) {
+          gymCb.checked = false;
+          const p = gymCb.closest('.setup-choice-card');
+          if (p) p.classList.remove('selected');
+        }
+      } else if (cb.value === 'Gym' && cb.checked) {
+        const homeCb = $('#chTypesOptionsList input[value="Home"]');
+        if (homeCb) {
+          homeCb.checked = false;
+          const p = homeCb.closest('.setup-choice-card');
+          if (p) p.classList.remove('selected');
+        }
+      }
       const parent = cb.closest('.setup-choice-card');
       if (parent) {
         if (cb.checked) parent.classList.add('selected');
@@ -5409,67 +5445,105 @@ function initChallengeSetupListeners() {
       }
       const checkedBoxes = Array.from($$('#chTypesOptionsList input[type="checkbox"]:checked'));
       setupTypes = checkedBoxes.map(b => b.value);
-      if (!setupTypes.length) setupTypes = ['Gym'];
+      if (!setupTypes.length) {
+        cb.checked = true;
+        if (parent) parent.classList.add('selected');
+        setupTypes = [cb.value];
+      }
     };
   });
 
-  // Step 2: Minutes Selection
+  // Step 2: Minutes Selection Cards/Buttons (20, 35, 45, 60 min)
   $$('#chTimeOptionsList .setup-choice-card').forEach(card => {
-    card.onclick = () => {
+    card.onclick = (e) => {
+      e.preventDefault();
       $$('#chTimeOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       setupMinutes = Number(card.dataset.minutes) || 45;
     };
   });
 
-  // Step 2: Intensity Selection
+  // Step 2: Intensity Selection Cards/Buttons (Mild, Moderate, Hard)
   $$('#chIntensityOptionsList .setup-choice-card').forEach(card => {
-    card.onclick = () => {
+    card.onclick = (e) => {
+      e.preventDefault();
       $$('#chIntensityOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       setupIntensity = card.dataset.intensity || 'Moderate';
     };
   });
 
-  // Step 2 -> Step 3 (Duration Modal)
+  // Step 2 -> Step 3 (Duration Modal) with Validation & Sync
   if ($('#proceedToDurationBtn')) {
-    $('#proceedToDurationBtn').onclick = () => {
-      closeModal('#challengePrefsModal');
-      if ($('#challengeMetricsPreview')) {
-        const typesStr = setupTypes.join(', ');
-        $('#challengeMetricsPreview').textContent = `${setupMinutes} Total Min/Day · ${setupIntensity} Intensity · ${typesStr} · ${setupMotive}`;
+    $('#proceedToDurationBtn').onclick = (e) => {
+      e.preventDefault();
+      const checkedBoxes = Array.from($$('#chTypesOptionsList input[type="checkbox"]:checked'));
+      if (!checkedBoxes.length) {
+        if (typeof toast === 'function') toast('Please select at least one workout type (e.g. Gym or Home)');
+        return;
       }
-      setTimeout(() => openModal('#challengeDurationModal'), 100);
+      setupTypes = checkedBoxes.map(b => b.value);
+      if (!setupMinutes) setupMinutes = 45;
+      if (!setupIntensity) setupIntensity = 'Moderate';
+
+      closeModal('#challengePrefsModal');
+      const prev = document.getElementById('challengeMetricsPreview');
+      if (prev) {
+        const typesStr = setupTypes.join(', ');
+        prev.textContent = `${setupMinutes} Min/Day · ${setupIntensity} Intensity · ${typesStr} · ${setupMotive}`;
+      }
+      setTimeout(() => openModal('#challengeDurationModal'), 80);
     };
   }
 
   // Step 3 -> Back to Step 2
   if ($('#backToPrefsBtn')) {
-    $('#backToPrefsBtn').onclick = () => {
+    $('#backToPrefsBtn').onclick = (e) => {
+      e.preventDefault();
       closeModal('#challengeDurationModal');
-      setTimeout(() => openModal('#challengePrefsModal'), 100);
+      setTimeout(() => openModal('#challengePrefsModal'), 80);
     };
   }
 
-  // Step 3: Days Selection Cards
+  if ($('#editPrefsFromDurationBtn')) {
+    $('#editPrefsFromDurationBtn').onclick = (e) => {
+      e.preventDefault();
+      closeModal('#challengeDurationModal');
+      setTimeout(() => openModal('#challengePrefsModal'), 80);
+    };
+  }
+
+  // Step 3: Days Selection Cards (10, 15, 25, 30 days)
   $$('#durationOptionsList .setup-choice-card').forEach(card => {
-    card.onclick = () => {
+    card.onclick = (e) => {
+      e.preventDefault();
       $$('#durationOptionsList .setup-choice-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       setupDuration = Number(card.dataset.days) || 15;
     };
   });
 
-  // Generate AI Plan
+  // Generate AI Plan with full parameter validation
   if ($('#generateChallengePlanBtn')) {
-    $('#generateChallengePlanBtn').onclick = () => {
+    $('#generateChallengePlanBtn').onclick = (e) => {
+      e.preventDefault();
+      if (!setupDuration || ![10, 15, 25, 30].includes(Number(setupDuration))) {
+        if (typeof toast === 'function') toast('Please select your challenge duration (10, 15, 25, or 30 days)');
+        return;
+      }
+      if (!setupTypes || !setupTypes.length) setupTypes = ['Gym'];
+      if (!setupMinutes) setupMinutes = 45;
+      if (!setupIntensity) setupIntensity = 'Moderate';
+      if (!setupMotive) setupMotive = 'Burn Fat & Lean Out';
+
       generateAIChallengePlan(setupMotive, setupDuration, setupMinutes, setupIntensity, setupTypes);
     };
   }
 
   // Start New Challenge button on challenge intro
   if ($('#createChallengeBtn')) {
-    $('#createChallengeBtn').onclick = () => {
+    $('#createChallengeBtn').onclick = (e) => {
+      e.preventDefault();
       openModal('#challengeMotiveModal');
     };
   }
@@ -5574,6 +5648,8 @@ function buildDayByDayRoutines(motive, durationDays, w, h, targetMinutes = 45, i
   return days;
 }
 
+window.generateAIChallengePlan = generateAIChallengePlan;
+window.generateAIChallengePlan = generateAIChallengePlan;
 async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45, intensity = 'Moderate', types = ['Gym']) {
   const btn = $('#generateChallengePlanBtn');
   const origText = btn ? btn.textContent : '';
@@ -5603,6 +5679,7 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
 
   // Safe storage: NEVER deleted unless user explicitly selects Exit Challenge or finishes
   activeChallengePlan = newChallenge;
+  window.activeChallengePlan = newChallenge;
   store.set('activeChallengePlan', activeChallengePlan);
   if (FF.online && FF.user) {
     FF.patch({ activeChallenge: activeChallengePlan });
@@ -5616,6 +5693,8 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
   renderTrackingView();
   updateLiveWaterEstimate();
   toast(`${durationDays}-Day Challenge Created! Your customized Day 1 is ready.`);
+  window.activeChallengePlan = activeChallengePlan;
+  window.generateAIChallengePlan = generateAIChallengePlan;
 }
 
 /* ================= WORKOUT SECTION CUSTOMIZATION & EXPLORER ================= */
