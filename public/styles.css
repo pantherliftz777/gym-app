@@ -2133,50 +2133,57 @@ body {
   border-right: 1px solid var(--ff-glass-border) !important;
   box-shadow: 4px 0 32px rgba(15, 23, 42, 0.04) !important;
   scrollbar-width: thin !important;
-  scrollbar-color: rgba(15, 23, 42, 0.35) transparent !important;
+  scrollbar-color: transparent transparent !important;
+  transition: scrollbar-color 0.25s ease !important;
+}
+
+.sidebar:hover {
+  scrollbar-color: rgba(15, 23, 42, 0.18) transparent !important;
 }
 
 html.dark .sidebar, [data-theme="dark"] .sidebar {
   box-shadow: 4px 0 32px rgba(0, 0, 0, 0.35) !important;
-  scrollbar-color: rgba(255, 255, 255, 0.35) transparent !important;
+  scrollbar-color: transparent transparent !important;
 }
 
-/* Custom Sleek Scrollbar / Slidebar for .sidebar */
+html.dark .sidebar:hover, [data-theme="dark"] .sidebar:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent !important;
+}
+
+/* Ultra-slim, subtle macOS-style scrollbar for .sidebar (eliminates big bulky bar) */
 .sidebar::-webkit-scrollbar {
-  width: 6px !important;
+  width: 3.5px !important;
 }
 
 .sidebar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02) !important;
-  border-radius: 999px !important;
-  margin: 6px 0 !important;
+  background: transparent !important;
+  margin: 8px 0 !important;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.25) !important;
+  background: transparent !important;
   border-radius: 999px !important;
-  transition: background 0.2s ease !important;
+  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.sidebar::-webkit-scrollbar-thumb:hover,
-.sidebar::-webkit-scrollbar-thumb:active {
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18) !important;
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb:hover,
+.sidebar:hover::-webkit-scrollbar-thumb:active {
   background: #2563eb !important;
 }
 
-html.dark .sidebar::-webkit-scrollbar-track,
-[data-theme="dark"] .sidebar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03) !important;
+html.dark .sidebar:hover::-webkit-scrollbar-thumb,
+[data-theme="dark"] .sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22) !important;
 }
 
-html.dark .sidebar::-webkit-scrollbar-thumb,
-[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.28) !important;
-}
-
-html.dark .sidebar::-webkit-scrollbar-thumb:hover,
-[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:hover,
-html.dark .sidebar::-webkit-scrollbar-thumb:active,
-[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:active {
+html.dark .sidebar:hover::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .sidebar:hover::-webkit-scrollbar-thumb:hover,
+html.dark .sidebar:hover::-webkit-scrollbar-thumb:active,
+[data-theme="dark"] .sidebar:hover::-webkit-scrollbar-thumb:active {
   background: #38bdf8 !important;
 }
 
