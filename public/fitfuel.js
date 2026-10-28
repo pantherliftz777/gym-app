@@ -3386,22 +3386,42 @@ function openExerciseDetailModal(exerciseName) {
   const visualContainer = $('#exModalVisualContainer');
   if (visualContainer) {
     if (ex.gif) {
+      visualContainer.style.background = '#ffffff';
+      visualContainer.style.border = '1px solid rgba(226, 232, 240, 0.9)';
+      visualContainer.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.16)';
       visualContainer.innerHTML = `
-        <div style="position:relative;width:100%;background:#0d1711;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:200px;">
+        <div class="ex-modal-gif-stage" style="position:relative;width:100%;height:320px;max-height:360px;background:#ffffff;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
           <img
+            id="exModalGifImg"
             src="${escapeHtml(ex.gif)}"
             alt="${escapeHtml(ex.name)} demonstration"
             class="gif-img"
-            onload="this.classList.add('loaded')"
-            style="width:100%;max-height:300px;object-fit:contain;display:block;border-radius:12px;"
+            style="width:100%;height:100%;max-height:320px;object-fit:contain;display:block;margin:0 auto;background:#ffffff;"
             loading="lazy"
-            onerror="this.parentElement.innerHTML='<div style=\'padding:20px;text-align:center;color:var(--glass-text-secondary);\'>' + ${JSON.stringify(getExerciseVisualSvg(ex.category, ex.name)).replace(/`/g,"'")} + '</div>'"
           >
-          ${ex.level ? `<span style="position:absolute;top:10px;left:10px;background:rgba(37,99,235,0.85);color:#38bdf8;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;">${escapeHtml(ex.level)}</span>` : ''}
-          ${ex.equipment ? `<span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:#e2e8f0;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px;">${escapeHtml(ex.equipment)}</span>` : ''}
+          <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:2;flex-wrap:wrap;">
+            ${ex.level ? `<span style="background:rgba(37,99,235,0.92);color:#ffffff;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">${escapeHtml(ex.level)}</span>` : ''}
+            <span style="background:rgba(15,23,42,0.85);color:#38bdf8;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:.5px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><span style="width:6px;height:6px;border-radius:50%;background:#38bdf8;display:inline-block;"></span>HD MOVEMENT</span>
+          </div>
+          ${ex.equipment ? `<span style="position:absolute;top:12px;right:12px;background:rgba(15,23,42,0.85);color:#f1f5f9;font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.25);z-index:2;">${escapeHtml(ex.equipment.toUpperCase())}</span>` : ''}
         </div>
       `;
+      const img = $('#exModalGifImg');
+      if (img) {
+        if (img.complete) {
+          img.classList.add('loaded');
+        } else {
+          img.onload = () => img.classList.add('loaded');
+        }
+        img.onerror = () => {
+          visualContainer.style.background = '#0b1329';
+          visualContainer.style.border = '';
+          visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
+        };
+      }
     } else {
+      visualContainer.style.background = '#0b1329';
+      visualContainer.style.border = '';
       visualContainer.innerHTML = getExerciseVisualSvg(ex.category, ex.name);
     }
   }
