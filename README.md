@@ -98,7 +98,7 @@ Whether you're tracking daily caloric macros, planning progressive overload weig
 <br/>
 
 ### 4D Body Composition & Muscle Analyzer
-![FitFuel Body Analysis Dark Mode](public/images/fitfuel_body_analysis_dark_fixed.png)
+![FitFuel Body Scan Dark Mode](public/images/fitfuel_body_analysis_dark_fixed.png)
 
 </div>
 

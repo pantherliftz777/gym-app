@@ -7,6 +7,18 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { createClient } = require('@libsql/client');
+const FF_ALGO = require('./public/algo.js');
+const betaFeatures = require('./beta-features.js');
+
+let betaInitPromise = null;
+function ensureBetaInit() {
+  if (!betaInitPromise) {
+    betaInitPromise = betaFeatures.init(db).catch(err => {
+      console.warn('[server.js] betaFeatures.init error:', err.message);
+    });
+  }
+  return betaInitPromise;
+}
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
@@ -123,11 +135,14 @@ async function getUser(req) {
   }
   if (!token) return null;
   const row = await db.get(
-    'SELECT u.id, u.name, u.email, u.contact, u.created_at, u.last_login, u.is_admin FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?',
+    'SELECT u.id, u.name, u.email, u.contact, u.created_at, u.last_login, u.is_admin, COALESCE(u.is_beta_tester, 0) as is_beta_tester FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?',
     [token]
   );
   if (row) {
-    row.is_admin = (row.email === 'admin@fitfuel.app') ? 1 : 0;
+    if (row.email === 'admin@fitfuel.app') {
+      row.is_admin = 1;
+      row.is_beta_tester = 1;
+    }
   }
   return row || null;
 }
@@ -339,12 +354,18 @@ const routes = {
   'GET /api/activity/sessions': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
+    if (!betaFeatures.isFeatureAccessible('gps-activity', u)) {
+      return json(res, 403, { error: 'Access Denied: GPS Activity Tracking is a restricted beta feature.', feature: 'gps-activity' });
+    }
     const rows = await db.all('SELECT * FROM activity_sessions WHERE user_id=? ORDER BY start_time DESC LIMIT 100', [u.id]);
     json(res, 200, { sessions: rows });
   },
   'POST /api/activity/session': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
+    if (!betaFeatures.isFeatureAccessible('gps-activity', u)) {
+      return json(res, 403, { error: 'Access Denied: GPS Activity Tracking is a restricted beta feature.', feature: 'gps-activity' });
+    }
     const body = await readBody(req);
     const { activity_type, start_time, end_time, duration_sec, distance_meters, avg_speed_kmh, avg_pace_min_km, calories, steps, route_data } = body;
     const info = await db.run(
@@ -371,12 +392,18 @@ const routes = {
   'GET /api/posture/sessions': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
+    if (!betaFeatures.isFeatureAccessible('posture', u)) {
+      return json(res, 403, { error: 'Access Denied: Posture AI Camera is a restricted beta feature.', feature: 'posture' });
+    }
     const rows = await db.all('SELECT * FROM posture_sessions WHERE user_id=? ORDER BY created DESC LIMIT 60', [u.id]);
     json(res, 200, { sessions: rows });
   },
   'POST /api/posture/session': async (req, res) => {
     const u = await getUser(req);
     if (!u) return json(res, 401, { error: 'Not logged in' });
+    if (!betaFeatures.isFeatureAccessible('posture', u)) {
+      return json(res, 403, { error: 'Access Denied: Posture AI Camera is a restricted beta feature.', feature: 'posture' });
+    }
     const body = await readBody(req);
     const { exercise, reps, score, feedback } = body;
     const info = await db.run(
@@ -395,8 +422,12 @@ const routes = {
 
   /* ---------- body analysis & transformation assessments ---------- */
   'GET /api/body-scan/assessments': async (req, res) => {
-    const u = (await getUser(req)) || { id: 0 };
-    const rows = await db.all('SELECT * FROM body_assessments WHERE user_id=? ORDER BY created DESC LIMIT 50', [u.id]);
+    const u = await getUser(req);
+    if (!betaFeatures.isFeatureAccessible('body-analysis', u)) {
+      return json(res, 403, { error: 'Access Denied: Body Analysis & Scan is a restricted beta feature.', feature: 'body-analysis' });
+    }
+    const uid = u ? u.id : 0;
+    const rows = await db.all('SELECT * FROM body_assessments WHERE user_id=? ORDER BY created DESC LIMIT 50', [uid]);
     json(res, 200, {
       assessments: rows.map(r => {
         let analysisObj = {};
@@ -416,7 +447,11 @@ const routes = {
     });
   },
   'POST /api/body-scan/assessment': async (req, res) => {
-    const u = (await getUser(req)) || { id: 0 };
+    const u = await getUser(req);
+    if (!betaFeatures.isFeatureAccessible('body-analysis', u)) {
+      return json(res, 403, { error: 'Access Denied: Body Analysis & Scan is a restricted beta feature.', feature: 'body-analysis' });
+    }
+    const uid = u ? u.id : 0;
     const body = await readBody(req);
     const goal = body.goal || 'lean_athletic';
     const preferences = body.preferences || {};
@@ -426,7 +461,7 @@ const routes = {
     const info = await db.run(
       'INSERT INTO body_assessments(user_id,goal,preferences,photos_meta,analysis_json,created) VALUES(?,?,?,?,?,?)',
       [
-        u.id,
+        uid,
         String(goal),
         JSON.stringify(preferences),
         JSON.stringify(photos_meta),
@@ -437,17 +472,39 @@ const routes = {
     json(res, 200, { ok: true, success: true, id: info.lastInsertRowid });
   },
   'DELETE /api/body-scan/assessment': async (req, res) => {
-    const u = (await getUser(req)) || { id: 0 };
+    const u = await getUser(req);
+    if (!betaFeatures.isFeatureAccessible('body-analysis', u)) {
+      return json(res, 403, { error: 'Access Denied: Body Analysis & Scan is a restricted beta feature.', feature: 'body-analysis' });
+    }
+    const uid = u ? u.id : 0;
     let id = req.url.includes('id=') ? new URL(req.url, 'http://localhost').searchParams.get('id') : null;
     if (!id) {
       const body = await readBody(req);
       id = body && body.id;
     }
     if (!id) return json(res, 400, { error: 'Missing assessment id' });
-    await db.run('DELETE FROM body_assessments WHERE id=? AND user_id=?', [id, u.id]);
+    await db.run('DELETE FROM body_assessments WHERE id=? AND user_id=?', [id, uid]);
     json(res, 200, { ok: true, success: true });
   },
   'POST /api/body-scan/analyze': async (req, res) => {
+    const u = await getUser(req);
+    if (!betaFeatures.isFeatureAccessible('body-analysis', u)) {
+      return json(res, 403, { error: 'Access Denied: Body Analysis & Scan is a restricted beta feature.', feature: 'body-analysis' });
+    }
+    const body = await readBody(req);
+    const { goal, preferences, images } = body || {};
+    try {
+      const result = await generateBodyTransformationAnalysis(goal, preferences, images);
+      json(res, 200, { ok: true, provider: result.provider || 'openrouter', model: result.model || 'nvidia/nemotron-3-ultra-550b-a55b:free', analysis: result });
+    } catch (err) {
+      json(res, 500, { ok: false, error: 'Analysis failed: ' + err.message });
+    }
+  },
+  'POST /api/analyze-body': async (req, res) => {
+    const u = await getUser(req);
+    if (!betaFeatures.isFeatureAccessible('body-analysis', u)) {
+      return json(res, 403, { error: 'Access Denied: Body Analysis & Scan is a restricted beta feature.', feature: 'body-analysis' });
+    }
     const body = await readBody(req);
     const { goal, preferences, images } = body || {};
     try {
@@ -571,15 +628,75 @@ const routes = {
     }
     json(res, 403, { error: 'Invalid admin secret' });
   },
-  'POST /api/ai-coach': async (req, res) => {
-    const body = await readBody(req);
-    const { prompt, systemPrompt, messages, selectedModel, model, image, images } = body || {};
-    const effectiveSystemPrompt = systemPrompt || 'You are FitFuel Dedicated AI Fitness Coach — an elite sports nutritionist and strength & conditioning coach. Provide direct, dynamic, customized advice tailored specifically to the user. Never use emojis anywhere in your output. Use clean markdown formatting.';
 
+  /* ---------- beta features management ---------- */
+  'GET /api/beta-features': async (req, res) => {
+    const u = await getUser(req);
+    const data = betaFeatures.getUserFeatures(u);
+    json(res, 200, { ok: true, ...data });
+  },
+  'GET /api/admin/feature-flags': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    json(res, 200, { ok: true, flags: betaFeatures.getAllFlags() });
+  },
+  'POST /api/admin/feature-flags': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const { key, access_level } = await readBody(req);
+    try {
+      const updated = await betaFeatures.updateFlag(key, access_level, u);
+      json(res, 200, { ok: true, flag: updated });
+    } catch (err) {
+      json(res, 400, { ok: false, error: err.message });
+    }
+  },
+  'GET /api/admin/beta-testers': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const testers = await db.all('SELECT id, name, email, contact, created_at, last_login, is_admin, COALESCE(is_beta_tester, 0) as is_beta_tester FROM users ORDER BY is_beta_tester DESC, id ASC');
+    json(res, 200, { ok: true, testers });
+  },
+  'POST /api/admin/beta-testers': async (req, res) => {
+    const u = await getUser(req);
+    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
+    const { user_id, is_beta_tester } = await readBody(req);
+    if (!user_id) return json(res, 400, { error: 'Missing user_id' });
+    const val = is_beta_tester ? 1 : 0;
+    await db.run('UPDATE users SET is_beta_tester=? WHERE id=?', [val, user_id]);
+    json(res, 200, { ok: true, user_id, is_beta_tester: val });
+  },
+  'POST /api/beta/feedback': async (req, res) => {
+    const u = await getUser(req);
+    const { feature_key, rating, feedback_type, comment, metadata } = await readBody(req);
+    if (!feature_key) return json(res, 400, { error: 'Missing feature_key' });
+    if (!comment || String(comment).trim().length < 3) return json(res, 400, { error: 'Please enter your feedback' });
+    
+    const userEmail = (u && u.email) || 'Anonymous Tester';
+    const userName = (u && u.name) || 'Beta Tester';
+    const textContent = `[BETA FEEDBACK: ${String(feature_key).toUpperCase()}] [Type: ${feedback_type || 'feedback'}] [Rating: ${rating || 'N/A'}]\n${comment}`;
+    await db.run(
+      'INSERT INTO complaints(user_id,name,email,type,text,files,created,seen) VALUES(?,?,?,?,?,?,?,0)',
+      [u ? u.id : null, userName, userEmail, 'beta_feedback', textContent, JSON.stringify(metadata || {}), Date.now()]
+    );
+    json(res, 200, { ok: true, message: 'Thank you for your beta feedback!' });
+  },
+
+  'POST /api/ai-coach': async (req, res) => {
+    const u = await getUser(req);
+    const body = await readBody(req);
+    const { prompt, systemPrompt, messages, selectedModel, model, image, images, is_voice_session, is_photo_scan } = body || {};
+    
+    if (is_voice_session && !betaFeatures.isFeatureAccessible('voice-coach', u)) {
+      return json(res, 403, { error: 'Access Denied: Voice Mode is a restricted beta feature.', feature: 'voice-coach' });
+    }
     const incomingImages = Array.isArray(images)
       ? images
       : (images && typeof images === 'object' ? Object.values(images) : []);
     const allImages = [image, ...incomingImages].filter(Boolean);
+    if ((is_photo_scan || allImages.length > 0) && !betaFeatures.isFeatureAccessible('food-scanner', u)) {
+      return json(res, 403, { error: 'Access Denied: Food Photo Scan is a restricted beta feature.', feature: 'food-scanner' });
+    }
 
     let chatMessages = [];
     if (Array.isArray(messages) && messages.length > 0) {
@@ -1463,7 +1580,15 @@ Never use emojis. Output ONLY valid JSON with this exact structure:
           macronutrient_distribution: { ...baseline.macronutrient_distribution, ...(parsed.macronutrient_distribution || parsed.nutritionGuidance || {}) },
           nutritionGuidance: { ...baseline.nutritionGuidance, ...(parsed.macronutrient_distribution || parsed.nutritionGuidance || {}) },
           recovery_protocols: { ...baseline.recovery_protocols, ...(parsed.recovery_protocols || parsed.recoveryAndSleepRecommendations || {}) },
-          recoveryAndSleepRecommendations: { ...baseline.recoveryAndSleepRecommendations, ...(parsed.recovery_protocols || parsed.recoveryAndSleepRecommendations || {}) }
+          recoveryAndSleepRecommendations: { ...baseline.recoveryAndSleepRecommendations, ...(parsed.recovery_protocols || parsed.recoveryAndSleepRecommendations || {}) },
+          anthropometrics: parsed.anthropometrics || parsed.circumferences || baseline.anthropometrics,
+          circumferences: parsed.circumferences || parsed.anthropometrics || baseline.circumferences,
+          cross_sections: parsed.cross_sections || parsed.crossSections || baseline.cross_sections,
+          crossSections: parsed.crossSections || parsed.cross_sections || baseline.crossSections,
+          clinical_risk: parsed.clinical_risk || parsed.clinicalRisk || baseline.clinical_risk,
+          clinicalRisk: parsed.clinicalRisk || parsed.clinical_risk || baseline.clinicalRisk,
+          navy_body_fat: parsed.navy_body_fat || baseline.navy_body_fat,
+          navyBodyFat: parsed.navyBodyFat || baseline.navyBodyFat
         };
         return merged;
       }
@@ -1489,15 +1614,22 @@ function generateDynamicBodyTransformationFallback(goal = 'lean_athletic', prefe
   const allergies = preferences.allergies || 'none';
   const limitations = preferences.limitations || 'none';
   const customGoalText = preferences.customGoalText || '';
+  const gender = preferences.gender || 'male';
 
-  const bmi = parseFloat((curW / Math.pow(hCm / 100, 2)).toFixed(1));
-  let estimatedBf = 16.5;
-  if (bmi > 25) estimatedBf += (bmi - 25) * 1.1;
-  if (bmi < 21) estimatedBf -= (21 - bmi) * 0.8;
-  estimatedBf = Math.max(9, Math.min(38, parseFloat(estimatedBf.toFixed(1))));
+  const anthro = FF_ALGO.evaluateAnthropometricPhysique({
+    heightCm: hCm,
+    weightKg: curW,
+    gender,
+    age,
+    goal,
+    experience: exp,
+    manualMeasurements: preferences.anthropometrics || preferences.measurements || null
+  });
 
-  const fatMass = parseFloat((curW * (estimatedBf / 100)).toFixed(1));
-  const leanMass = parseFloat((curW - fatMass).toFixed(1));
+  const estimatedBf = anthro.navyBf;
+  const fatMass = anthro.clinical.fatMassKg;
+  const leanMass = anthro.clinical.leanMassKg;
+  const bmi = anthro.clinical.bmi;
 
   const goalMap = {
     'lean_athletic': {
@@ -1690,6 +1822,31 @@ function generateDynamicBodyTransformationFallback(goal = 'lean_athletic', prefe
   const estimatedPhysical = {
     estimated_body_fat_range: `${estimatedBf}%`,
     estimatedBodyFatPercentage: `${estimatedBf}%`,
+    navy_body_fat_percentage: `${estimatedBf}%`,
+    navyBodyFatPercentage: `${estimatedBf}%`,
+    navy_body_fat: estimatedBf,
+    navyBodyFat: estimatedBf,
+    bmi: anthro.clinical.bmi,
+    bmi_category: anthro.clinical.bmiCategory,
+    bmiCategory: anthro.clinical.bmiCategory,
+    whr: anthro.clinical.whr,
+    whr_status: anthro.clinical.whrStatus,
+    whrStatus: anthro.clinical.whrStatus,
+    whr_risk_level: anthro.clinical.whrRiskLevel,
+    whrRiskLevel: anthro.clinical.whrRiskLevel,
+    whr_threshold: anthro.clinical.whrThreshold,
+    whrThreshold: anthro.clinical.whrThreshold,
+    whtr: anthro.clinical.whtr,
+    whtr_status: anthro.clinical.whtrStatus,
+    whtrStatus: anthro.clinical.whtrStatus,
+    whtr_risk_level: anthro.clinical.whtrRiskLevel,
+    whtrRiskLevel: anthro.clinical.whtrRiskLevel,
+    whtr_threshold: anthro.clinical.whtrThreshold,
+    whtrThreshold: anthro.clinical.whtrThreshold,
+    circumferences: anthro.circumferences,
+    anthropometrics: anthro.circumferences,
+    cross_sections: anthro.crossSections,
+    crossSections: anthro.crossSections,
     estimated_lean_muscle_mass: `${leanMass} kg`,
     estimatedLeanMuscleMass: `${leanMass} kg`,
     estimated_adipose_tissue_mass: `${fatMass} kg`,
@@ -1819,7 +1976,15 @@ function generateDynamicBodyTransformationFallback(goal = 'lean_athletic', prefe
     limitationsAndUncertainty: disclaimer,
     non_medical_boundaries_and_limitations: disclaimer,
     suggestedReassessmentInterval: '6 to 8 weeks (allows sufficient myofibrillar and metabolic adaptation to manifest visually)',
-    reassessment_interval: '6 to 8 weeks'
+    reassessment_interval: '6 to 8 weeks',
+    anthropometrics: anthro.circumferences,
+    circumferences: anthro.circumferences,
+    cross_sections: anthro.crossSections,
+    crossSections: anthro.crossSections,
+    clinical_risk: anthro.clinical,
+    clinicalRisk: anthro.clinical,
+    navy_body_fat: estimatedBf,
+    navyBodyFat: estimatedBf
   };
 }
 
@@ -1984,6 +2149,8 @@ function serveStatic(req, res) {
 
 async function requestHandler(req, res) {
   try {
+    await ensureBetaInit();
+
     if (req.method === 'OPTIONS') {
       res.writeHead(204, {
         'Access-Control-Allow-Origin': '*',

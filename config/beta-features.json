@@ -1,0 +1,68 @@
+[
+  {
+    "key": "posture",
+    "name": "Posture AI / Posture Camera",
+    "description": "Computer vision posture tracking, skeletal alignment, and real-time exercise rep counting via device camera.",
+    "access_level": "admin_only",
+    "views": [
+      "posture"
+    ],
+    "category": "Motion & Biomechanics",
+    "updated_at": 1793562395220,
+    "updated_by": "admin@fitfuel.app"
+  },
+  {
+    "key": "body-analysis",
+    "name": "Body Analysis / Body Scan",
+    "description": "4-View photographic body scan, ISO 8559-1 circumferences, Ramanujan elliptical tape model, and U.S. Navy Hodgdon-Beckett body composition.",
+    "access_level": "admin_only",
+    "views": [
+      "body-analysis"
+    ],
+    "category": "Body Composition",
+    "updated_at": 1793526524693,
+    "updated_by": "system"
+  },
+  {
+    "key": "food-scanner",
+    "name": "Food Photo Scan",
+    "description": "AI visual plate and food photo recognition for automated macronutrient auditing and meal logging.",
+    "access_level": "beta_testers",
+    "views": [],
+    "category": "Nutrition Vision",
+    "updated_at": 1793526524693,
+    "updated_by": "system"
+  },
+  {
+    "key": "voice-coach",
+    "name": "Voice Mode",
+    "description": "Live bidirectional interactive speech guidance, voice coaching, and audio rep prompts.",
+    "access_level": "admin_only",
+    "views": [],
+    "category": "Audio & Speech",
+    "updated_at": 1793526524693,
+    "updated_by": "system"
+  },
+  {
+    "key": "gps-activity",
+    "name": "GPS Activity Tracking",
+    "description": "Real-time outdoor GPS walk/run mapping, live split pace HUD, and elevation telemetry.",
+    "access_level": "beta_testers",
+    "views": [
+      "activity"
+    ],
+    "category": "Sensors & GPS",
+    "updated_at": 1793526524693,
+    "updated_by": "system"
+  },
+  {
+    "key": "barcode-scanner",
+    "name": "Barcode Scanner",
+    "description": "Instant camera barcode lookup for food products and grocery items via OpenFoodFacts.",
+    "access_level": "beta_testers",
+    "views": [],
+    "category": "Nutrition Data",
+    "updated_at": 1793526524693,
+    "updated_by": "system"
+  }
+]

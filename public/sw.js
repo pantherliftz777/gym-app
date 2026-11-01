@@ -1,5 +1,5 @@
 /* FitFuel Service Worker v1.0.0 — Offline Gym Mode */
-const CACHE_NAME = 'fitfuel-cache-v7.5.0';
+const CACHE_NAME = 'fitfuel-cache-v7.9.5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -13,11 +13,18 @@ const STATIC_ASSETS = [
   '/images/fitfuel-ai-logo.svg',
   '/images/fitfuel-bot-round.png',
   '/images/fitfuel-coach-avatar.png',
+  '/modules/exercise-equipment-engine.js',
+  '/modules/beta-manager.js',
   '/modules/pwa-sync.js',
   '/modules/voice-coach.js',
   '/modules/barcode-scanner.js',
   '/modules/social-card.js',
-  '/modules/mediapipe-posture.js'
+  '/modules/mediapipe-posture.js',
+  '/modules/hero-carousel.js',
+  '/assets/hero-carousel/hero-01.png',
+  '/assets/hero-carousel/hero-02.png',
+  '/assets/hero-carousel/hero-03.png',
+  '/assets/hero-carousel/hero-04.png'
 ];
 
 self.addEventListener('install', event => {

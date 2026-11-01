@@ -24,6 +24,11 @@
           document.documentElement.setAttribute('data-theme', 'light');
         }
       } catch (e) {}
+      try {
+        if (localStorage.getItem('ff_sidebar_collapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
     })();
   </script>
   <link rel="manifest" href="/manifest.json">
@@ -34,7 +39,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7.5.0">
+  <link rel="stylesheet" href="styles.css?v=7.9.0">
+  <link rel="preload" as="image" href="assets/hero-carousel/hero-01.png">
 </head>
 <body>
 <div class="app-shell">
@@ -49,130 +55,86 @@
       <span class="brand-title">Fit<span class="mint" style="color:#16C79A;">Fuel</span></span>
     </div>
 
+    <div class="sidebar-heading-row">
+      <h2 class="sidebar-main-heading">Dashboard</h2>
+    </div>
+
+    <div class="sidebar-toggle-row">
+      <button type="button" id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Toggle dashboard menu" aria-controls="sidebar" aria-expanded="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
     <nav class="primary-nav" aria-label="Main navigation">
       <!-- 1. OVERVIEW -->
-      <div class="sidebar-label">OVERVIEW</div>
-      <button class="nav-link selected" data-view="today">
+      <button class="nav-link selected" data-view="today" data-section="overview" title="Overview">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path>
         </svg>
-        <span>Today</span>
+        <span>Overview</span>
         <span class="nav-active-dot"></span>
       </button>
 
-      <!-- 2. AI & MOTION SUITE (Merged AI Coach, Posture AI, Activity & GPS, Body Analysis) -->
-      <div class="sidebar-label" style="margin-top:14px;">AI &amp; MOTION</div>
-      <button class="nav-link" data-view="ai-coach" id="sidebarAiCoachBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"></path>
-          <path d="M9 10h.01"></path><path d="M15 10h.01"></path>
-        </svg>
-        <span>AI Coach</span>
-        <span style="font-size:0.62rem;background:rgba(22,199,154,0.18);color:#16C79A;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(22,199,154,0.35);">LIVE</span>
-      </button>
-
-      <button class="nav-link" data-view="posture" id="sidebarPostureBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-          <circle cx="12" cy="13" r="4"></circle>
-        </svg>
-        <span>Posture AI</span>
-      </button>
-
-      <button class="nav-link" data-view="activity" id="sidebarActivityBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-        </svg>
-        <span>Activity &amp; GPS</span>
-      </button>
-
-      <button class="nav-link" data-view="body-analysis" id="sidebarBodyAnalysisBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="5" r="3"></circle>
-          <path d="M12 8v8"></path>
-          <path d="m8 12 4 1 4-1"></path>
-          <path d="m9 21 3-5 3 5"></path>
-        </svg>
-        <span>Body Analysis</span>
-        <span style="font-size:0.62rem;background:rgba(2,132,199,0.18);color:#0284c7;padding:2px 6px;border-radius:99px;margin-left:auto;font-weight:800;border:1px solid rgba(2,132,199,0.35);">AI SCAN</span>
-      </button>
-
-      <!-- 3. TRAINING & WORKOUTS (Merged Workouts, Exercise Library, Smart Start) -->
-      <div class="sidebar-label" style="margin-top:14px;">TRAINING</div>
-      <button class="nav-link" data-view="workouts">
+      <!-- 2. TRAINING -->
+      <button class="nav-link" data-view="exercise-library" data-section="training" title="Training">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
           <path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path>
           <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path>
           <path d="m9.6 14.4 4.8-4.8"></path>
         </svg>
-        <span>Workouts</span>
+        <span>Training</span>
       </button>
 
-      <button class="nav-link" data-view="exercise-library">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
-        </svg>
-        <span>Exercise library</span>
-      </button>
-
-      <button class="nav-link" data-view="starting-load">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>
-        </svg>
-        <span>Smart Start</span>
-      </button>
-
-      <!-- 4. NUTRITION & FUEL (Merged Food Log, My Foods) -->
-      <div class="sidebar-label" style="margin-top:14px;">NUTRITION</div>
-      <button class="nav-link" data-view="food-log">
+      <!-- 3. NUTRITION -->
+      <button class="nav-link" data-view="food-log" data-section="nutrition" title="Nutrition">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
         </svg>
-        <span>Food log</span>
+        <span>Nutrition</span>
       </button>
 
-      <button class="nav-link" data-view="my-foods">
+      <!-- 4. AI COACH -->
+      <button class="nav-link" data-view="ai-coach" data-section="ai-coach" id="sidebarAiCoachBtn" title="AI Coach">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 6.528V3a1 1 0 0 1 1-1h0"></path><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"></path>
+          <path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"></path>
+          <path d="M9 10h.01"></path><path d="M15 10h.01"></path>
         </svg>
-        <span>My foods</span>
+        <span>AI Coach</span>
+        <span class="sidebar-badge-live">LIVE</span>
       </button>
 
-      <!-- 5. OTHER & EXTRAS -->
-      <div class="sidebar-label" style="margin-top:14px;">OTHER</div>
-      <button class="nav-link" data-view="challenge">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
-        </svg>
-        <span>Challenge</span>
-      </button>
-
-      <button class="nav-link" data-view="tracking">
+      <!-- 5. PROGRESS -->
+      <button class="nav-link" data-view="tracking" data-section="progress" title="Progress">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>
         </svg>
-        <span>Tracking</span>
+        <span>Progress</span>
       </button>
 
-      <button class="nav-link" data-view="customization" id="sidebarCustomizationBtn">
+      <!-- 6. LABS (BETA) -->
+      <button class="nav-link" data-view="posture" data-section="labs" id="sidebarPostureBtn" title="Labs (Beta)">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
         </svg>
-        <span>Customization</span>
+        <span>Labs (Beta)</span>
       </button>
 
-      <button class="nav-link" data-view="profile">
+      <!-- 7. ACCOUNTS -->
+      <button class="nav-link" data-view="profile" data-section="accounts" title="Accounts">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle>
         </svg>
-        <span>Profile</span>
+        <span>Accounts</span>
       </button>
 
       <!-- Dedicated Admin Portal Navigation Link (Shown for Admins) -->
-      <button class="nav-link admin-only-link" data-view="admin" id="sidebarAdminNavBtn" style="display:none;color:#38bdf8;">
+      <button class="nav-link admin-only-link" data-view="admin" data-section="admin" id="sidebarAdminNavBtn" style="display:none;color:#38bdf8;" title="Admin">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
           <path d="m9 12 2 2 4-4"></path>
@@ -212,9 +174,11 @@
     <header class="topbar">
       <!-- ROW 1: Date/Clock/Temp -> Theme -> Audio -> Sign in/out -> Setting -> Profile Pic -->
       <div class="topbar-controls-row">
-        <button aria-label="Open navigation" class="mobile-menu icon-button" id="mobileMenuBtn">
+        <button type="button" aria-label="Toggle dashboard menu" aria-controls="sidebar" aria-expanded="false" class="mobile-menu icon-button" id="mobileMenuBtn">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
 
@@ -225,6 +189,7 @@
             </svg>
           </span>
           <span class="mobile-brand-text">Fit<span class="mint" style="color:#16C79A;">Fuel</span></span>
+          <span class="mobile-dashboard-heading">Dashboard</span>
         </div>
 
         <!-- Search Bar Pill (Reference Images 1 & 2) -->
@@ -361,300 +326,93 @@
       <!-- ================= VIEW 1: TODAY ================= -->
       <section class="view active" id="view-today">
         <!-- ================= A STRONGER YOU HERO BANNER (USER REFERENCE DESIGN) ================= -->
-        <div class="stronger-you-hero-card">
-          <!-- TOP BAR INSIDE HERO -->
-          <div class="sy-hero-topbar">
-            <!-- Brand / Logo -->
-            <div class="sy-hero-brand">
-              <span class="sy-brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path>
-                </svg>
-              </span>
-              <span class="sy-brand-title">Fit<span class="sy-brand-accent">Fuel</span></span>
-            </div>
-
-            <!-- Search Bar -->
-            <div class="sy-hero-search">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input type="text" id="syHeroSearchInput" placeholder="Search workouts, food, analysis..." autocomplete="off">
-            </div>
-
-            <!-- Right Controls: Notification & Profile -->
-            <div class="sy-hero-controls">
-              <button type="button" class="sy-hero-icon-btn" id="syHeroBellBtn" title="1 new notification">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                <span class="sy-notif-badge">1</span>
-              </button>
-
-              <div class="sy-hero-profile-pill" id="syHeroProfilePill" title="View profile & settings">
-                <div class="sy-profile-avatar" id="syAvatarDisplay">JD</div>
-                <div class="sy-profile-info">
-                  <span class="sy-profile-name" id="syProfileName">John Doe</span>
-                  <span class="sy-profile-tier">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5">
-                      <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"></path>
-                    </svg>
-                    Premium
-                  </span>
+        <!-- ================= HERO IMAGE CAROUSEL SECTION ================= -->
+        <div class="hero-carousel-container" id="heroCarouselContainer">
+          <div class="hero-carousel-wrapper" id="heroCarouselWrapper">
+            <div class="hero-carousel-viewport" id="heroCarouselViewport" tabindex="0" role="region" aria-roledescription="carousel" aria-label="FitFuel Feature Highlights">
+              <div class="hero-carousel-track" id="heroCarouselTrack">
+                <!-- Seamless Loop Clones Before: Slide 3 & 4 -->
+                <div class="hero-carousel-slide clone" data-index="2" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-03.png" alt="Daily workout, activity tracking and progress" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="hero-carousel-slide clone" data-index="3" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-04.png" alt="Muscle activation, exercise tracking and training" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
+                </div>
+
+                <!-- Real Slide 1: Wellness, meditation, sleep and daily activity -->
+                <div class="hero-carousel-slide" data-index="0" role="group" aria-roledescription="slide" aria-label="Slide 1 of 4: Wellness, meditation, sleep and daily activity">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-01.png" alt="Wellness, meditation, sleep and daily activity" class="hero-carousel-img" width="1200" height="675">
+                  </div>
+                </div>
+
+                <!-- Real Slide 2: Workout, body analysis and nutrition -->
+                <div class="hero-carousel-slide" data-index="1" role="group" aria-roledescription="slide" aria-label="Slide 2 of 4: Workout, body analysis and nutrition">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-02.png" alt="Workout, body analysis and nutrition" class="hero-carousel-img" width="1200" height="675">
+                  </div>
+                </div>
+
+                <!-- Real Slide 3: Daily workout, activity tracking and progress -->
+                <div class="hero-carousel-slide" data-index="2" role="group" aria-roledescription="slide" aria-label="Slide 3 of 4: Daily workout, activity tracking and progress">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-03.png" alt="Daily workout, activity tracking and progress" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
+                </div>
+
+                <!-- Real Slide 4: Muscle activation, exercise tracking and training -->
+                <div class="hero-carousel-slide" data-index="3" role="group" aria-roledescription="slide" aria-label="Slide 4 of 4: Muscle activation, exercise tracking and training">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-04.png" alt="Muscle activation, exercise tracking and training" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
+                </div>
+
+                <!-- Seamless Loop Clones After: Slide 1, 2, 3, 4 -->
+                <div class="hero-carousel-slide clone" data-index="0" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-01.png" alt="Wellness, meditation, sleep and daily activity" class="hero-carousel-img" width="1200" height="675">
+                  </div>
+                </div>
+                <div class="hero-carousel-slide clone" data-index="1" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-02.png" alt="Workout, body analysis and nutrition" class="hero-carousel-img" width="1200" height="675">
+                  </div>
+                </div>
+                <div class="hero-carousel-slide clone" data-index="2" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-03.png" alt="Daily workout, activity tracking and progress" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
+                </div>
+                <div class="hero-carousel-slide clone" data-index="3" aria-hidden="true">
+                  <div class="hero-carousel-card">
+                    <img src="assets/hero-carousel/hero-04.png" alt="Muscle activation, exercise tracking and training" class="hero-carousel-img" width="1200" height="675" loading="lazy">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Previous & Next Arrow Controls -->
+              <button type="button" class="hero-carousel-arrow prev" id="heroCarouselPrevBtn" aria-label="Previous slide" title="Previous slide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button type="button" class="hero-carousel-arrow next" id="heroCarouselNextBtn" aria-label="Next slide" title="Next slide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- MAIN HERO CONTENT: HEADLINE + ATHLETE VISUAL + SIDE METRIC CARDS (MATCHING IMAGE 3) -->
-          <div class="sy-hero-main-grid">
-            <!-- Left copy -->
-            <div class="sy-hero-copy">
-              <span class="sy-kicker">TRANSFORM <span class="sy-kicker-dash"></span></span>
-              <h1 class="sy-headline">
-                A Stronger <span class="sy-gradient-glow">You</span>
-              </h1>
-              <p class="sy-subheadline">
-                Track, analyze &amp; build your best version &mdash; Mind, Fitness &amp; Nutrition.
-              </p>
-              <button type="button" class="sy-cta-btn" id="syStartJourneyBtn">
-                <span>Start Your Journey</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
               </button>
             </div>
 
-            <!-- Center athlete visual stage: clean, high-res, holographic athlete with biometric HUD badges -->
-            <div class="sy-hero-athlete-col">
-              <div class="sy-athlete-stage" id="syAthleteStage">
-                <img src="images/fitfuel-athlete-hero-clean.jpg" alt="FitFuel Pro Athlete" class="sy-athlete-img" id="syAthleteHeroImg">
-                <!-- Cool Biometric HUD Badges -->
-                <div class="sy-athlete-hud-badge hud-top-right">
-                  <span class="hud-pulse-dot"></span>
-                  <span>AI Form &bull; 98.4%</span>
-                </div>
-                <div class="sy-athlete-hud-badge hud-bottom-left">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                  <span>Ready &bull; Peak State</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right side metric cards column: Calories, Workout, Protein stacked neatly ON THE SIDE -->
-            <div class="sy-hero-metrics-col">
-              <div class="sy-metrics-stack">
-                <!-- Side Card 1: Calories -->
-                <div class="sy-side-card sy-card-calories" id="syFloatCaloriesTrigger" role="button" tabindex="0" title="Click to open Calorie &amp; Nutrition tracker">
-                  <div class="sy-scard-left">
-                    <div class="sy-scard-icon-badge flame">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
-                      </svg>
-                    </div>
-                    <div class="sy-card-info">
-                      <span class="sy-card-label">Calories</span>
-                      <b class="sy-card-val"><span id="syHeroCalBurned">1,250</span> / <span id="syHeroCalTarget">2,200</span> <small>kcal</small></b>
-                    </div>
-                  </div>
-                  <div class="sy-scard-right">
-                    <div class="sy-card-ring-box">
-                      <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
-                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(37,99,235,0.12)" stroke-width="3.5"/>
-                        <path class="sy-circle-fill sy-cyan-stroke" stroke-dasharray="57, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round"/>
-                      </svg>
-                      <span class="sy-ring-pct" style="color:#0284c7;">57%</span>
-                    </div>
-                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">&bull;&bull;&bull;</button>
-                  </div>
-                </div>
-
-                <!-- Side Card 2: Workout -->
-                <div class="sy-side-card sy-card-workout" id="syFloatWorkoutTrigger" role="button" tabindex="0" title="Click to open Back &amp; Biceps workout">
-                  <div class="sy-scard-left">
-                    <div class="sy-scard-icon-badge workout">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/>
-                      </svg>
-                    </div>
-                    <div class="sy-card-info">
-                      <span class="sy-card-label">Workout</span>
-                      <b class="sy-card-val" id="syHeroWorkoutName">Back &amp; Biceps</b>
-                    </div>
-                  </div>
-                  <div class="sy-scard-right">
-                    <button type="button" class="sy-card-arrow-btn" aria-label="Open Workout">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">&bull;&bull;&bull;</button>
-                  </div>
-                </div>
-
-                <!-- Side Card 3: Protein -->
-                <div class="sy-side-card sy-card-protein" id="syFloatProteinTrigger" role="button" tabindex="0" title="Click to open Protein &amp; Food Log">
-                  <div class="sy-scard-left">
-                    <div class="sy-scard-icon-badge protein">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"/>
-                        <circle cx="6" cy="6" r="2.5"/>
-                        <circle cx="18" cy="6" r="2.5"/>
-                        <circle cx="12" cy="19" r="2.5"/>
-                        <line x1="8" y1="8" x2="10" y2="10"/>
-                        <line x1="16" y1="8" x2="14" y2="10"/>
-                        <line x1="12" y1="15" x2="12" y2="16.5"/>
-                      </svg>
-                    </div>
-                    <div class="sy-card-info">
-                      <span class="sy-card-label">Protein</span>
-                      <b class="sy-card-val"><span id="syHeroProteinEaten">120g</span> / <span id="syHeroProteinTarget">180g</span></b>
-                    </div>
-                  </div>
-                  <div class="sy-scard-right">
-                    <div class="sy-card-ring-box">
-                      <svg class="sy-circle-chart" viewBox="0 0 36 36" width="44" height="44">
-                        <path class="sy-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(16,185,129,0.12)" stroke-width="3.5"/>
-                        <path class="sy-circle-fill sy-mint-stroke" stroke-dasharray="67, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
-                      </svg>
-                      <span class="sy-ring-pct" style="color:#10b981;">67%</span>
-                    </div>
-                    <button type="button" class="sy-scard-menu-dots" aria-label="More options">&bull;&bull;&bull;</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- QUICK ACCESS NAVIGATION PILLS (MATCHING IMAGE 3) -->
-          <div class="sy-quick-nav-bar">
-            <button type="button" class="sy-quick-pill" id="syQuickFoodBtn">
-              <span class="sy-pill-icon blue">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 2v20M6 2v6a3 3 0 0 0 6 0V2"/>
-                </svg>
-              </span>
-              <span>Food Analysis</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-            <button type="button" class="sy-quick-pill" id="syQuickBodyBtn">
-              <span class="sy-pill-icon cyan">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="7" r="4"/>
-                  <path d="M6 21v-2a6 6 0 0 1 12 0v2"/>
-                </svg>
-              </span>
-              <span>Body Analysis</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-            <button type="button" class="sy-quick-pill" id="syQuickProgressBtn">
-              <span class="sy-pill-icon green">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                  <polyline points="17 6 23 6 23 12"/>
-                </svg>
-              </span>
-              <span>Progress Tracking</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
-
-          <!-- 3 BOTTOM GLASS FEATURE CARDS (MATCHING IMAGE 3) -->
-          <div class="sy-bottom-features-grid">
-            <!-- Card 1: Workout Plans (Purple theme) -->
-            <div class="sy-bottom-card sy-card-purple" id="syBottomCardWorkout" role="button" tabindex="0">
-              <div class="sy-bcard-top-row">
-                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">&bull;&bull;&bull;</button>
-              </div>
-              <div class="sy-bcard-center">
-                <div class="sy-bcard-big-badge purple">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/>
-                  </svg>
-                </div>
-                <h3 class="sy-bcard-title">Workout Plans</h3>
-                <p class="sy-bcard-sub">Fully customizable training plans</p>
-              </div>
-              <div class="sy-bcard-bottom-row">
-                <button type="button" class="sy-bcard-action-btn purple" aria-label="Go to Workout Plans">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
-                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
-                  <path d="M0 24 C 40 34, 80 10, 120 22 C 140 28, 150 20, 160 18" stroke="#a855f7" stroke-width="2.8" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Card 2: Calorie & Nutrition (Mint theme) -->
-            <div class="sy-bottom-card sy-card-mint" id="syBottomCardNutrition" role="button" tabindex="0">
-              <div class="sy-bcard-top-row">
-                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">&bull;&bull;&bull;</button>
-              </div>
-              <div class="sy-bcard-center">
-                <div class="sy-bcard-big-badge mint">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
-                    <path d="M10 2c1 .5 2 2 2 5"></path>
-                  </svg>
-                </div>
-                <h3 class="sy-bcard-title">Calorie &amp; Nutrition</h3>
-                <p class="sy-bcard-sub">Track calories, protein, carbs and fats with ease</p>
-              </div>
-              <div class="sy-bcard-bottom-row">
-                <button type="button" class="sy-bcard-action-btn mint" aria-label="Go to Calorie & Nutrition">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
-                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
-                  <path d="M0 26 C 40 22, 80 34, 120 18 C 140 12, 150 16, 160 22" stroke="#10b981" stroke-width="2.8" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Card 3: Progress Tracking (Blue theme) -->
-            <div class="sy-bottom-card sy-card-blue" id="syBottomCardProgress" role="button" tabindex="0">
-              <div class="sy-bcard-top-row">
-                <button type="button" class="sy-bcard-menu-dots" aria-label="Options">&bull;&bull;&bull;</button>
-              </div>
-              <div class="sy-bcard-center">
-                <div class="sy-bcard-big-badge blue">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                </div>
-                <h3 class="sy-bcard-title">Progress Tracking</h3>
-                <p class="sy-bcard-sub">Visualize your results with detailed analytics</p>
-              </div>
-              <div class="sy-bcard-bottom-row">
-                <button type="button" class="sy-bcard-action-btn blue" aria-label="Go to Progress Tracking">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
-                <svg class="sy-bcard-wave" viewBox="0 0 160 36" fill="none">
-                  <path d="M0 24 C 40 28, 80 12, 120 24 C 140 28, 150 16, 160 18" stroke="#0284c7" stroke-width="2.8" stroke-linecap="round"/>
-                </svg>
-              </div>
+            <!-- Pagination Dots -->
+            <div class="hero-carousel-pagination" id="heroCarouselPagination" role="tablist" aria-label="Slides pagination">
+              <button type="button" class="hero-carousel-dot active" data-slide-index="0" role="tab" aria-selected="true" aria-label="Slide 1: Wellness &amp; Activity"></button>
+              <button type="button" class="hero-carousel-dot" data-slide-index="1" role="tab" aria-selected="false" aria-label="Slide 2: Workout &amp; Nutrition"></button>
+              <button type="button" class="hero-carousel-dot" data-slide-index="2" role="tab" aria-selected="false" aria-label="Slide 3: Daily Tracking"></button>
+              <button type="button" class="hero-carousel-dot" data-slide-index="3" role="tab" aria-selected="false" aria-label="Slide 4: Muscle Activation"></button>
             </div>
           </div>
         </div>
@@ -1522,26 +1280,17 @@
 
       <!-- ================= VIEW: AI BODY ANALYSIS & TRANSFORMATION PLANNER ================= -->
       <section class="view" id="view-body-analysis">
-        <!-- Merged AI & Motion Suite Hub Subnav -->
-        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
-            <span>AI Coach</span>
-          </button>
+        <nav class="hub-subnav-bar" aria-label="Labs Navigation">
           <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             <span>Posture AI</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-            <span>Activity &amp; GPS</span>
-          </button>
           <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
-            <span>Body Analysis</span>
+            <span>Body Scan</span>
           </button>
         </nav>
-        <!-- HEADER / INTRO STRIP -->
+<!-- HEADER / INTRO STRIP -->
         <div class="ba-hero-header">
           <div class="ba-hero-text">
             <div class="ba-badge-row">
@@ -1551,7 +1300,7 @@
                 Private &amp; Encrypted &bull; Strict Consent
               </span>
             </div>
-            <h2 class="ba-hero-title">AI Body Analysis &amp; Physique Transformation Planner</h2>
+            <h2 class="ba-hero-title">AI Body Scan &amp; Physique Transformation Planner</h2>
             <p class="ba-hero-desc">
               4-View biomechanical photographic analysis, posture &amp; symmetry diagnostics, and custom workout/nutrition transformation engineering.
             </p>
@@ -1823,7 +1572,66 @@
                 </label>
               </div>
 
-              <!-- Nutrition Preferences -->
+                            <!-- Anthropometric Tape Measurements (ISO 8559-1 / CAESAR Standard) -->
+              <div class="ba-pref-card" style="grid-column: 1 / -1;" id="baTapeMeasureCard">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                  <h4 class="ba-pref-title" style="margin:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                    Anthropometric Circumferences (ISO 8559-1 / CAESAR)
+                  </h4>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:0.75rem;color:var(--ff-text-secondary);font-weight:600;">Units:</span>
+                    <button type="button" class="ba-unit-toggle active" id="baTapeUnitCm" data-unit="cm">cm</button>
+                    <button type="button" class="ba-unit-toggle" id="baTapeUnitIn" data-unit="in">in</button>
+                    <button type="button" class="ba-action-pill small" id="baAutoCalcTapeBtn" title="Auto-calibrate from height, weight &amp; gender" style="margin-left:6px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                      <span>Auto-Estimate</span>
+                    </button>
+                  </div>
+                </div>
+                <p style="font-size:0.78rem;color:var(--ff-text-secondary);margin:0 0 14px;">
+                  Slicing plane circumferences auto-estimated using ISO 8559-1 anatomical landmarks. You can enter or adjust your actual tape measurements below for clinical-grade precision (U.S. Navy Hodgdon-Beckett %BF, WHR &amp; WHtR).
+                </p>
+                <div class="ba-tape-inputs-grid">
+                  <label class="ba-field">
+                    <span>Neck Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeNeck" class="ba-form-input ba-tape-val" step="0.1" value="38.5">
+                    <small class="ba-field-hint">Thyroid cartilage (83% height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Chest Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeChest" class="ba-form-input ba-tape-val" step="0.1" value="100.5">
+                    <small class="ba-field-hint">Nipple line (72% height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Waist Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeWaist" class="ba-form-input ba-tape-val" step="0.1" value="81.5">
+                    <small class="ba-field-hint">Navel level (60% height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Hip Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeHips" class="ba-form-input ba-tape-val" step="0.1" value="97.5">
+                    <small class="ba-field-hint">Max gluteal line (52% height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Bicep Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeBicep" class="ba-form-input ba-tape-val" step="0.1" value="34.0">
+                    <small class="ba-field-hint">Mid-arm (68% arm height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Thigh Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeThigh" class="ba-form-input ba-tape-val" step="0.1" value="56.0">
+                    <small class="ba-field-hint">Mid-thigh (42% leg height)</small>
+                  </label>
+                  <label class="ba-field">
+                    <span>Calf Circumference (<span class="ba-tape-unit-lbl">cm</span>)</span>
+                    <input type="number" id="baTapeCalf" class="ba-form-input ba-tape-val" step="0.1" value="37.5">
+                    <small class="ba-field-hint">Max gastrocnemius (22% height)</small>
+                  </label>
+                </div>
+              </div>
+
+<!-- Nutrition Preferences -->
               <div class="ba-pref-card" style="grid-column: 1 / -1;">
                 <h4 class="ba-pref-title">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/></svg>
@@ -2177,7 +1985,117 @@
               </div>
             </div>
 
-            <!-- PHYSICAL ESTIMATES STRIP -->
+                        <!-- STANDARDIZED ANTHROPOMETRIC CIRCUMFERENCES (ISO 8559-1 / CAESAR) -->
+            <div class="ba-results-section" id="baCircumferencesSection">
+              <div class="ba-section-heading" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                  <h4>Anthropometric Circumferences (ISO 8559-1 / CAESAR)</h4>
+                </div>
+                <button type="button" class="ba-action-pill highlight" id="baEditCircumferencesBtn" title="Adjust tape measurements and recompute metrics">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  <span>Edit Tape Measurements</span>
+                </button>
+              </div>
+
+              <div class="ba-circumferences-grid">
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">83% Stature &bull; Cervicale</span>
+                  <span class="ba-circ-title">Neck</span>
+                  <b class="ba-circ-val" id="baCircNeck">38.5 cm</b>
+                  <span class="ba-circ-sub" id="baCircNeckIn">15.2 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">72% Stature &bull; Nipple Line</span>
+                  <span class="ba-circ-title">Chest</span>
+                  <b class="ba-circ-val" id="baCircChest">100.5 cm</b>
+                  <span class="ba-circ-sub" id="baCircChestIn">39.6 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">60% Stature &bull; Umbilicus</span>
+                  <span class="ba-circ-title">Waist</span>
+                  <b class="ba-circ-val highlight" id="baCircWaist">81.5 cm</b>
+                  <span class="ba-circ-sub" id="baCircWaistIn">32.1 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">52% Stature &bull; Gluteal Line</span>
+                  <span class="ba-circ-title">Hips</span>
+                  <b class="ba-circ-val highlight" id="baCircHips">97.5 cm</b>
+                  <span class="ba-circ-sub" id="baCircHipsIn">38.4 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">68% Arm &bull; Mid-Brachium</span>
+                  <span class="ba-circ-title">Bicep</span>
+                  <b class="ba-circ-val" id="baCircBicep">34.0 cm</b>
+                  <span class="ba-circ-sub" id="baCircBicepIn">13.4 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">42% Stature &bull; Mid-Thigh</span>
+                  <span class="ba-circ-title">Thigh</span>
+                  <b class="ba-circ-val" id="baCircThigh">56.0 cm</b>
+                  <span class="ba-circ-sub" id="baCircThighIn">22.0 in</span>
+                </div>
+                <div class="ba-circ-card">
+                  <span class="ba-circ-level">22% Stature &bull; Gastrocnemius</span>
+                  <span class="ba-circ-title">Calf</span>
+                  <b class="ba-circ-val" id="baCircCalf">37.5 cm</b>
+                  <span class="ba-circ-sub" id="baCircCalfIn">14.8 in</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CLINICAL HEALTH & ANTHROPOMETRIC RATIOS -->
+            <div class="ba-results-section" id="baClinicalRiskSection">
+              <div class="ba-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <h4>Clinical Health &amp; Anthropometric Ratios</h4>
+                <span class="ba-disclaimer-tag">WHO &bull; Hodgdon-Beckett &bull; Ashwell Standards</span>
+              </div>
+
+              <div class="ba-clinical-grid">
+                <!-- WHR Card -->
+                <div class="ba-clinical-card">
+                  <div class="ba-ccard-top">
+                    <span class="ba-ccard-kicker">Waist-to-Hip Ratio (WHR)</span>
+                    <span class="ba-risk-badge low" id="baEstWhrBadge">Low Clinical Risk</span>
+                  </div>
+                  <b class="ba-ccard-value" id="baEstWhr">0.84</b>
+                  <p class="ba-ccard-desc">WHO clinical cardiovascular threshold: <span id="baEstWhrThreshold">&lt; 0.90 (Men)</span>. Android visceral fat distribution indicator.</p>
+                </div>
+
+                <!-- WHtR Card -->
+                <div class="ba-clinical-card">
+                  <div class="ba-ccard-top">
+                    <span class="ba-ccard-kicker">Waist-to-Height Ratio (WHtR)</span>
+                    <span class="ba-risk-badge low" id="baEstWhtrBadge">Healthy Ratio</span>
+                  </div>
+                  <b class="ba-ccard-value" id="baEstWhtr">0.45</b>
+                  <p class="ba-ccard-desc">Standard guideline: Keep waist less than half your height (&le; 0.50). Valid across all heights and ethnicities.</p>
+                </div>
+
+                <!-- Navy Body Fat Card -->
+                <div class="ba-clinical-card">
+                  <div class="ba-ccard-top">
+                    <span class="ba-ccard-kicker">U.S. Navy Hodgdon-Beckett BF</span>
+                    <span class="ba-risk-badge cyan" id="baEstNavyBadge">Clinical Standard</span>
+                  </div>
+                  <b class="ba-ccard-value cyan" id="baEstNavyBf">13.2%</b>
+                  <p class="ba-ccard-desc">Circumference-based logarithmic model. Far superior to BMI as it isolates abdominal adipose from musculoskeletal volume.</p>
+                </div>
+
+                <!-- Lean Mass vs Adipose Card -->
+                <div class="ba-clinical-card">
+                  <div class="ba-ccard-top">
+                    <span class="ba-ccard-kicker">Lean Body Mass (LBM)</span>
+                    <span class="ba-risk-badge purple" id="baEstLbmBadge">Active Skeletal Mass</span>
+                  </div>
+                  <b class="ba-ccard-value purple" id="baEstLbm">64.2 kg</b>
+                  <p class="ba-ccard-desc">Estimated Fat Mass: <strong id="baEstFatMassDetail">9.8 kg</strong>. Drives basal metabolic rate (BMR) and daily caloric pricing.</p>
+                </div>
+              </div>
+            </div>
+
+<!-- PHYSICAL ESTIMATES STRIP -->
             <div class="ba-results-section">
               <div class="ba-section-heading">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
@@ -2364,7 +2282,115 @@
             <!-- Injected dynamically -->
           </div>
         </div>
-      </section>
+              <!-- INTERACTIVE TAPE MEASURE EDITOR MODAL -->
+        <div class="ba-modal-overlay" id="baTapeMeasureModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="baTapeModalTitle">
+          <div class="ba-modal-dialog">
+            <div class="ba-modal-head">
+              <div>
+                <h3 class="ba-modal-title" id="baTapeModalTitle">Anthropometric Tape Measure Editor</h3>
+                <p class="ba-modal-sub">Adjust circumference slicing planes. Changes immediately recompute Navy %BF, WHR, WHtR, and LBM.</p>
+              </div>
+              <button type="button" class="ba-modal-close" id="baTapeModalCloseBtn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="ba-modal-body">
+              <div class="ba-modal-unit-row">
+                <span style="font-size:0.8rem;font-weight:700;color:var(--ff-text-secondary);">Measurement Units:</span>
+                <div style="display:inline-flex;gap:4px;">
+                  <button type="button" class="ba-unit-toggle active" id="baModalUnitCm">cm</button>
+                  <button type="button" class="ba-unit-toggle" id="baModalUnitIn">in</button>
+                </div>
+              </div>
+
+              <!-- Live preview pill strip -->
+              <div class="ba-modal-live-strip">
+                <div class="ba-live-pill">
+                  <span>Navy %BF:</span>
+                  <strong id="baModalLiveBf">13.2%</strong>
+                </div>
+                <div class="ba-live-pill">
+                  <span>WHR:</span>
+                  <strong id="baModalLiveWhr">0.84</strong>
+                </div>
+                <div class="ba-live-pill">
+                  <span>WHtR:</span>
+                  <strong id="baModalLiveWhtr">0.45</strong>
+                </div>
+                <div class="ba-live-pill">
+                  <span>Lean Mass:</span>
+                  <strong id="baModalLiveLbm">64.2 kg</strong>
+                </div>
+              </div>
+
+              <!-- Sliders & Inputs Grid -->
+              <div class="ba-modal-fields-grid">
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalNeck">Neck Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalNeckDisplay">38.5 cm</span>
+                  </div>
+                  <input type="range" id="baModalNeck" class="ba-modal-range" min="25" max="60" step="0.5" value="38.5">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalChest">Chest Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalChestDisplay">100.5 cm</span>
+                  </div>
+                  <input type="range" id="baModalChest" class="ba-modal-range" min="70" max="160" step="0.5" value="100.5">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalWaist">Waist Circumference (Navel)</label>
+                    <span class="ba-mfield-val-display" id="baModalWaistDisplay">81.5 cm</span>
+                  </div>
+                  <input type="range" id="baModalWaist" class="ba-modal-range" min="50" max="150" step="0.5" value="81.5">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalHips">Hip Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalHipsDisplay">97.5 cm</span>
+                  </div>
+                  <input type="range" id="baModalHips" class="ba-modal-range" min="60" max="160" step="0.5" value="97.5">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalBicep">Bicep Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalBicepDisplay">34.0 cm</span>
+                  </div>
+                  <input type="range" id="baModalBicep" class="ba-modal-range" min="20" max="60" step="0.5" value="34.0">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalThigh">Thigh Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalThighDisplay">56.0 cm</span>
+                  </div>
+                  <input type="range" id="baModalThigh" class="ba-modal-range" min="35" max="95" step="0.5" value="56.0">
+                </div>
+
+                <div class="ba-modal-field">
+                  <div class="ba-mfield-header">
+                    <label for="baModalCalf">Calf Circumference</label>
+                    <span class="ba-mfield-val-display" id="baModalCalfDisplay">37.5 cm</span>
+                  </div>
+                  <input type="range" id="baModalCalf" class="ba-modal-range" min="25" max="60" step="0.5" value="37.5">
+                </div>
+              </div>
+            </div>
+            <div class="ba-modal-actions">
+              <button type="button" class="ba-secondary-btn" id="baTapeModalResetBtn">Reset to Estimates</button>
+              <button type="button" class="ba-primary-btn" id="baTapeModalApplyBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Apply Measurements</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+</section>
 
       <!-- ================= VIEW 2: FOOD LOG ================= -->
       <section class="view" id="view-food-log">
@@ -2470,145 +2496,29 @@
         </div>
       </section>
 
-      <!-- ================= VIEW 3: WORKOUTS ================= -->
-      <section class="view" id="view-workouts">
-        <!-- Merged Training & Workouts Hub Subnav -->
-        <nav class="hub-subnav-bar" aria-label="Training Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
-            <span>Workouts</span>
-          </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-            <span>Exercise Library</span>
-          </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            <span>Smart Start</span>
-          </button>
-        </nav>
-        <div class="view-intro">
-          <div>
-            <span class="section-kicker">TRAINING PLAN</span>
-            <h2>Move with purpose.</h2>
-            <p>A plan shaped around your goals, schedule and equipment.</p>
-          </div>
-          <button class="outline-button" id="switchWorkoutPlanBtn">Show another workout</button>
-        </div>
-
-        <div class="workout-plan-grid">
-          <article class="panel workout-card-full">
-            <div class="workout-card-hero">
-              <div style="position:relative;border-radius:14px;overflow:hidden;">
-                <img src="images/fitfuel-workout-seated.jpg" alt="FitFuel Stronger You Dumbbell Training" id="planWorkoutImg" style="width:100%;max-height:380px;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:14px;display:block;pointer-events:none;">
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-                <div>
-                  <span class="section-kicker" id="planFocusBadge">GLUTES &bull; BACK &bull; CORE</span>
-                  <h3 id="planWorkoutTitle" style="font-size:1.4rem;color:var(--glass-text-primary);margin:4px 0;">Full-body strength</h3>
-                  <p id="planBenefitText" style="color:var(--glass-text-secondary);font-size:.92rem;">Build strength with compound movements that train your posterior chain and core together.</p>
-                </div>
-                <button class="solid-button" id="markWorkoutDoneBtn">Mark completed</button>
-              </div>
-            </div>
-
-            <div class="exercise-step-list" id="planMoveList" style="margin-top:22px;">
-              <!-- Populated dynamically with movements -->
-            </div>
-          </article>
-        </div>
-
-        <!-- WORKOUT SECTION CUSTOMIZATION & MULTI-SELECTION TOOL -->
-        <article class="panel" style="margin-top:24px;padding:24px 26px;" id="customWorkoutExplorerPanel">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
-            <div>
-              <span class="section-kicker">WORKOUT CUSTOMIZATION &amp; MULTI-SELECT FINDER</span>
-              <h3 style="font-size:1.25rem;color:#2563eb;margin:3px 0 0;">Tailor Your Training Session</h3>
-              <p style="color:var(--glass-text-secondary);font-size:.88rem;margin:4px 0 0;">
-                Select your workout styles (Gym, Home, HIIT, Cardio, Stretching) and targeted body parts with customized sets, reps, and rest guidance.
-              </p>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <input type="text" id="customWorkoutSearchInput" placeholder=" Search exercises (e.g. Squat, Pushup, Incline)..." style="padding:9px 16px;border:1.5px solid #d4ded2;border-radius:24px;font-size:.88rem;min-width:240px;outline:none;" />
-            </div>
-          </div>
-
-          <!-- Workout Types Filter (Multi-select) -->
-          <div style="margin-bottom:14px;">
-            <div style="font-size:.76rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">
-              1. Workout Type (Select one or multiple)
-            </div>
-            <div class="filter-pills-row" id="workoutTypeFilterPills">
-              <button type="button" class="filter-pill active" data-type="all">All Types</button>
-              <button type="button" class="filter-pill" data-type="Gym">Gym Workout</button>
-              <button type="button" class="filter-pill" data-type="Home">Home Workout</button>
-              <button type="button" class="filter-pill" data-type="HIIT">High Intensity (HIIT)</button>
-              <button type="button" class="filter-pill" data-type="Cardio">Cardio</button>
-              <button type="button" class="filter-pill" data-type="Stretching">Stretching &amp; Mobility</button>
-            </div>
-          </div>
-
-          <!-- Body Parts Filter (Multi-select) -->
-          <div style="margin-bottom:16px;">
-            <div style="font-size:.76rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">
-              2. Target Body Part (Select one or multiple)
-            </div>
-            <div class="filter-pills-row" id="workoutBodyPartFilterPills">
-              <button type="button" class="filter-pill active" data-part="all">Full Body</button>
-              <button type="button" class="filter-pill" data-part="Chest">Chest (Upper / Mid / Lower)</button>
-              <button type="button" class="filter-pill" data-part="Back">Back (Lats / Upper / Lower)</button>
-              <button type="button" class="filter-pill" data-part="Shoulders">Shoulders (Front / Side / Rear)</button>
-              <button type="button" class="filter-pill" data-part="Arms">Arms (Biceps / Triceps)</button>
-              <button type="button" class="filter-pill" data-part="Legs">Legs (Quads / Hamstrings / Glutes)</button>
-              <button type="button" class="filter-pill" data-part="Core">Core &amp; Abs</button>
-            </div>
-          </div>
-
-          <!-- Sets & Reps Guidance Banner -->
-          <div style="background:#f8fafc;border: 1px solid #dbeafe;border-radius:12px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-size:20px;"></span>
-              <div style="font-size:.88rem;color:var(--glass-text-primary);">
-                <b>Scientific Sets &amp; Reps Prescription:</b>
-                <span id="prescriptionRecommendationText" style="color:var(--glass-text-secondary);margin-left:4px;">
-                  3&ndash;4 sets &times; 8&ndash;12 reps (Hypertrophy / Muscle Building) with 45&ndash;60s rest between sets.
-                </span>
-              </div>
-            </div>
-            <span style="font-size:.74rem;font-weight:700;background:#2563eb;color:#38bdf8;padding:3px 10px;border-radius:99px;">
-              Verified Protocol
-            </span>
-          </div>
-
-          <!-- Custom Filtered Exercises Output -->
-          <div id="customWorkoutResultsGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));gap:14px;">
-            <!-- Populated dynamically with customizable exercise cards -->
-          </div>
-        </article>
-      </section>
+      
 
       <!-- ================= Starting Load Calculator (1RM-free) ================= -->
       <section class="view" id="view-starting-load">
-        <!-- Merged Training & Workouts Hub Subnav -->
         <nav class="hub-subnav-bar" aria-label="Training Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
+          <button type="button" class="hub-subnav-btn" data-hubview="challenge" onclick="switchView('challenge')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            <span>Challenges</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
             <span>Workouts</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-            <span>Exercise Library</span>
-          </button>
           <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            <span>Smart Start</span>
+            <span>Starting Weight</span>
           </button>
         </nav>
-        <div class="view-intro" style="text-align:center;max-width:720px;margin:0 auto 20px;">
+<div class="view-intro" style="text-align:center;max-width:720px;margin:0 auto 20px;">
           <div>
-            <span class="section-kicker">SMART START &bull; AUTONOMOUS CALIBRATION</span>
-            <h2>Your Precision Starting Working Weight</h2>
-            <p>Scientific, 1RM-free baseline calibration based on your bodyweight, sex, and experience level.</p>
+            <span class="section-kicker">STARTING WEIGHT &bull; AUTONOMOUS CALIBRATION</span>
+            <h2>Starting Weight</h2>
+            <p>Your recommended starting weight for each lift, based on your body weight.</p>
           </div>
         </div>
         <div class="panel starting-load-card" style="max-width:720px;margin:0 auto 36px;padding:26px 30px;box-shadow:0 12px 36px rgba(15,23,42,0.06);border-radius:18px;">
@@ -2662,49 +2572,115 @@
 
       <!-- ================= VIEW 4: EXERCISE LIBRARY ================= -->
       <section class="view" id="view-exercise-library">
-        <!-- Merged Training & Workouts Hub Subnav -->
         <nav class="hub-subnav-bar" aria-label="Training Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="workouts" onclick="switchView('workouts')">
+          <button type="button" class="hub-subnav-btn" data-hubview="challenge" onclick="switchView('challenge')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            <span>Challenges</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
             <span>Workouts</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-            <span>Exercise Library</span>
-          </button>
           <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            <span>Smart Start</span>
+            <span>Starting Weight</span>
           </button>
         </nav>
-        <div class="view-intro">
+<div class="view-intro">
           <div>
-            <span class="section-kicker">MOVEMENT LIBRARY</span>
-            <h2>Find your next move.</h2>
-            <p>Explore gym and at-home exercises by muscle group.</p>
+            <span class="section-kicker">WORKOUTS &amp; EXERCISES</span>
+            <h2>Workouts</h2>
+            <p>Explore gym, home, HIIT, cardio, and mobility workouts by movement &amp; muscle group.</p>
           </div>
           <div class="search-wrap">
             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>
             </svg>
-            <input type="text" id="exerciseSearchInput" placeholder="Search exercises...">
+            <input type="text" id="exerciseSearchInput" placeholder="Search workouts &amp; exercises...">
           </div>
         </div>
 
-        <div class="muscle-tabs" id="muscleTabs">
-          <!-- Muscle tabs: Chest, Back, Shoulders, Arms, Core, Legs -->
+        
+        <!-- ================= 5-TIER WORKOUT FILTERS HIERARCHY ================= -->
+        <div class="workout-filter-hierarchy" id="workoutFilterHierarchy" style="display:flex;flex-direction:column;gap:14px;margin:18px 0 16px;">
+          
+          <!-- 1. WORKOUT LOCATION (SINGLE SELECT) -->
+          <div class="filter-tier-group" id="filterTierLocation">
+            <div class="workout-types-header" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>1. WORKOUT LOCATION</span>
+              <span style="font-size:0.72rem;font-weight:600;color:var(--glass-text-secondary);text-transform:none;letter-spacing:normal;">Where do you train?</span>
+            </div>
+            <div class="workout-types-chips" id="workoutLocationChips">
+              <button type="button" class="workout-type-chip active" data-location="all">All Locations</button>
+              <button type="button" class="workout-type-chip" data-location="gym">Gym</button>
+              <button type="button" class="workout-type-chip" data-location="home">Home</button>
+            </div>
+          </div>
+
+          <!-- 2. WORKOUT TYPE (MULTI-SELECT) -->
+          <div class="filter-tier-group" id="filterTierType">
+            <div class="workout-types-header" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>2. WORKOUT TYPE (SELECT ONE OR MULTIPLE)</span>
+              <span style="font-size:0.72rem;font-weight:600;color:var(--glass-text-secondary);text-transform:none;letter-spacing:normal;">Modality</span>
+            </div>
+            <div class="workout-types-chips" id="workoutTypeChips">
+              <button type="button" class="workout-type-chip active" data-type="all">All Types</button>
+              <button type="button" class="workout-type-chip" data-type="strength">Strength Training</button>
+              <button type="button" class="workout-type-chip" data-type="hiit">High Intensity (HIIT)</button>
+              <button type="button" class="workout-type-chip" data-type="cardio">Cardio</button>
+              <button type="button" class="workout-type-chip" data-type="stretching">Stretching &amp; Mobility</button>
+            </div>
+          </div>
+
+          <!-- 3. EQUIPMENT AVAILABILITY (LOCATION-AWARE CONDITIONAL FILTER) -->
+          <div class="filter-tier-group" id="filterTierEquipment" style="transition:all 0.3s ease;">
+            <div class="workout-types-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+              <span id="equipmentSectionTitle">3. EQUIPMENT AVAILABILITY</span>
+              <div id="equipmentQuickActions" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <!-- Populated dynamically: [No Equipment] / [Select All] for Home; [Full Gym Access] / [Customize] for Gym -->
+              </div>
+            </div>
+            <div class="workout-types-chips" id="workoutEquipmentChips">
+              <!-- Populated dynamically based on Location -->
+            </div>
+          </div>
+
+          <!-- 4. TARGET MUSCLE GROUP -->
+          <div class="filter-tier-group" id="filterTierMuscle">
+            <div class="workout-types-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span>4. TARGET MUSCLE GROUP</span>
+              <span style="font-size:0.72rem;font-weight:600;color:var(--glass-text-secondary);text-transform:none;letter-spacing:normal;">Primary focus</span>
+            </div>
+            <div class="muscle-tabs" id="muscleTabs" style="display:flex;flex-wrap:wrap;gap:8px;">
+              <!-- Populated dynamically: Chest, Back, Shoulders, Arms, Legs, Core, Full Body -->
+            </div>
+          </div>
+
+          <!-- 5. SUB-MUSCLE GROUP -->
+          <div class="filter-tier-group" id="filterTierSubMuscle">
+            <div class="workout-types-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span>5. SUB-MUSCLE GROUP</span>
+              <span style="font-size:0.72rem;font-weight:600;color:var(--glass-text-secondary);text-transform:none;letter-spacing:normal;">Specific anatomy</span>
+            </div>
+            <div class="muscle-tags" id="muscleSubTags" style="display:flex;flex-wrap:wrap;gap:8px;">
+              <!-- Sub-tags populated dynamically -->
+            </div>
+          </div>
+
         </div>
 
-        <div class="muscle-tags" id="muscleSubTags">
-          <!-- Sub-tags -->
-        </div>
-
-        <div class="library-heading" style="margin:20px 0 12px;display:flex;justify-content:space-between;">
+        <div class="library-heading" style="margin:20px 0 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
           <div>
             <span class="section-kicker" id="libFilterHeader">LEGS &bull; QUADS / HAMSTRINGS / GLUTES</span>
-            <h3 style="font-size:1.15rem;color:var(--glass-text-primary);">Exercises for you</h3>
+            <h3 style="font-size:1.15rem;color:var(--glass-text-primary);margin:0;">Exercises for you</h3>
           </div>
-          <span class="result-count" id="libResultCount">Filtered results</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button type="button" id="resetWorkoutFiltersBtn" class="outline-button small" style="padding:5px 12px;font-size:0.75rem;border-radius:99px;" title="Reset all filters to default">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+              Reset Filters
+            </button>
+            <span class="result-count" id="libResultCount">Filtered results</span>
+          </div>
         </div>
 
         <div class="exercise-cards" id="exerciseCardsContainer">
@@ -2746,7 +2722,17 @@
 
       <!-- ================= VIEW 6: PROFILE ================= -->
       <section class="view" id="view-profile">
-        <div class="view-intro">
+        <nav class="hub-subnav-bar" aria-label="Account Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="profile" onclick="switchView('profile')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 17H5"/><path d="M19 7h-9"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+            <span>Profile</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="customization" onclick="switchView('customization')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+<div class="view-intro">
           <div>
             <span class="section-kicker">YOUR BASELINE</span>
             <h2>Personalize your plan.</h2>
@@ -2885,7 +2871,21 @@
 
       <!-- ================= VIEW 7: CHALLENGE ================= -->
       <section class="view" id="view-challenge">
-        <div class="view-intro">
+        <nav class="hub-subnav-bar" aria-label="Training Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="challenge" onclick="switchView('challenge')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            <span>Challenges</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="exercise-library" onclick="switchView('exercise-library')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+            <span>Workouts</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="starting-load" onclick="switchView('starting-load')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>Starting Weight</span>
+          </button>
+        </nav>
+<div class="view-intro">
           <div>
             <span class="section-kicker">YOUR SPACE &bull; TARGETED ROADMAP</span>
             <h2>Challenge Engine</h2>
@@ -2906,7 +2906,17 @@
 
       <!-- ================= VIEW 8: TRACKING ================= -->
       <section class="view" id="view-tracking">
-        <div class="view-intro">
+        <nav class="hub-subnav-bar" aria-label="Progress Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="tracking" onclick="switchView('tracking')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <span>Tracking</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+        </nav>
+<div class="view-intro">
           <div>
             <span class="section-kicker">YOUR SPACE &bull; COMPREHENSIVE ANALYTICS</span>
             <h2>Activity &amp; Habit Tracking</h2>
@@ -2984,6 +2994,9 @@
           <button type="button" class="outline-button small" id="adminTabUsers" style="border-radius:999px;padding:7px 18px;font-weight:700;">
             Registered Users Database
           </button>
+          <button type="button" class="outline-button small" id="adminTabBetaFeatures" style="border-radius:999px;padding:7px 18px;font-weight:700;">
+            🧪 Beta Features &amp; Flags
+          </button>
         </div>
 
         <!-- SECTION 1: COMPLAINTS & ISSUE RESOLUTION -->
@@ -3013,56 +3026,97 @@
             <!-- Rendered by renderAdminUsers() -->
           </div>
         </div>
+
+        <!-- SECTION 3: BETA FEATURES & ACCESS CONTROL FLAGS -->
+        <div id="adminBetaFeaturesViewPane" style="display:none;">
+          <div class="panel" style="padding:18px 22px;margin-bottom:18px;background:linear-gradient(135deg, rgba(14,165,233,0.08) 0%, rgba(99,102,241,0.08) 100%);border:1px solid rgba(14,165,233,0.25);border-radius:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div>
+                <span class="section-kicker" style="color:#0284c7;font-size:0.76rem;margin-bottom:4px;">CENTRALIZED FEATURE ACCESS CONTROL</span>
+                <h3 style="margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--ff-text-primary);">Beta Features &amp; Live Deployment Flags</h3>
+                <p style="margin:0;font-size:0.86rem;color:var(--ff-text-secondary);max-width:700px;">
+                  Configure access levels for each experimental module independently. Safe defaults ensure unapproved features remain locked for production users until approved.
+                </p>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span class="beta-status-summary-pill" id="betaFlagSummaryPill" style="padding:6px 14px;border-radius:99px;background:#0284c7;color:#fff;font-weight:700;font-size:0.82rem;">6 Features Configured</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Flags Grid -->
+          <div style="margin-bottom:28px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+              <h4 style="font-size:1rem;font-weight:700;color:var(--ff-text-primary);margin:0;display:flex;align-items:center;gap:8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                Active Feature Flags &amp; Access Controls
+              </h4>
+              <button type="button" class="outline-button small" id="adminRefreshBetaFlagsBtn" style="font-size:0.82rem;padding:5px 12px;">
+                Refresh Flags
+              </button>
+            </div>
+            <div id="adminBetaFeaturesCardsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:14px;">
+              <!-- Rendered dynamically by FitFuelBeta.renderAdminFlags() -->
+            </div>
+          </div>
+
+          <!-- Beta Testers Management Section -->
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+              <div>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--ff-text-primary);margin:0 0 4px;display:flex;align-items:center;gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  Beta Testers Roster &amp; User Enrollment
+                </h4>
+                <p style="margin:0;font-size:0.82rem;color:var(--ff-text-secondary);">Manage which registered members receive access to features marked as "Beta Testers".</p>
+              </div>
+              <input type="text" id="adminBetaTesterSearchInput" class="form-input" placeholder="Filter by email or name..." style="max-width:280px;padding:6px 12px;font-size:0.84rem;border-radius:8px;" />
+            </div>
+            <div id="adminBetaTestersList" style="display:flex;flex-direction:column;gap:10px;">
+              <!-- Rendered dynamically by FitFuelBeta.renderAdminTesters() -->
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ================= VIEW: DEDICATED AI FITNESS COACH (REFERENCE IMAGE 2) ================= -->
       <section class="view" id="view-ai-coach">
-        <!-- Merged AI & Motion Suite Hub Subnav -->
-        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
+        <nav class="hub-subnav-bar" aria-label="AI Coach Navigation">
           <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
             <span>AI Coach</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span>Posture AI</span>
-          </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-            <span>Activity &amp; GPS</span>
-          </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
-            <span>Body Analysis</span>
-          </button>
         </nav>
-        <div class="ai-coach-page-layout">
+<div class="ai-coach-page-layout">
           <!-- LEFT: COACH HEADER, SUBTABS, CHAT STREAM & INPUT -->
-          <div>
-            <div class="panel ai-coach-header-card">
-              <img src="images/fitfuel-coach-avatar.png" alt="FitFuel Coach" class="ai-coach-avatar-lg">
-              <div class="ai-coach-header-info">
-                <h2>
-                  FitFuel AI Coach
-                  <span class="ai-badge-pill">Live Reasoning &bull; Multi-Model</span>
-                </h2>
-                <p style="margin:4px 0 0;font-size:0.84rem;color:var(--ff-text-secondary);">
-                  Hypertrophy, biomechanics, diet optimization &amp; recovery strategist
-                </p>
+          <div class="ai-coach-main-col">
+            <!-- FIXED TOP SECTION -->
+            <div class="ai-coach-top-section">
+              <div class="panel ai-coach-header-card">
+                <img src="images/fitfuel-coach-avatar.png" alt="FitFuel Coach" class="ai-coach-avatar-lg">
+                <div class="ai-coach-header-info">
+                  <h2>
+                    FitFuel AI Coach
+                    <span class="ai-badge-pill">Live Reasoning &bull; Multi-Model</span>
+                  </h2>
+                  <p style="margin:4px 0 0;font-size:0.84rem;color:var(--ff-text-secondary);">
+                    Hypertrophy, biomechanics, diet optimization &amp; recovery strategist
+                  </p>
+                </div>
+              </div>
+
+              <!-- Subtabs Filter (Image 2) -->
+              <div class="ai-coach-subtabs" id="coachSubTabs">
+                <button type="button" class="ai-subtab-btn active" data-cfilter="all">All Guidance</button>
+                <button type="button" class="ai-subtab-btn" data-cfilter="workouts">Workouts &amp; Splits</button>
+                <button type="button" class="ai-subtab-btn" data-cfilter="nutrition">Nutrition &amp; Macros</button>
+                <button type="button" class="ai-subtab-btn" data-cfilter="recovery">Recovery &amp; Sleep</button>
+                <button type="button" class="ai-subtab-btn" data-cfilter="form-check">Form Cues</button>
               </div>
             </div>
 
-            <!-- Subtabs Filter (Image 2) -->
-            <div class="ai-coach-subtabs" id="coachSubTabs">
-              <button type="button" class="ai-subtab-btn active" data-cfilter="all">All Guidance</button>
-              <button type="button" class="ai-subtab-btn" data-cfilter="workouts">Workouts &amp; Splits</button>
-              <button type="button" class="ai-subtab-btn" data-cfilter="nutrition">Nutrition &amp; Macros</button>
-              <button type="button" class="ai-subtab-btn" data-cfilter="recovery">Recovery &amp; Sleep</button>
-              <button type="button" class="ai-subtab-btn" data-cfilter="form-check">Form Cues</button>
-            </div>
-
-            <!-- Chat Stream -->
-            <div class="panel ai-coach-chat-stream" id="coachChatStream">
+            <!-- Scrollable Conversation Area -->
+            <div class="panel ai-coach-chat-stream" id="coachChatStream" role="log" aria-label="AI Coach conversation" aria-live="polite" tabindex="0">
               <!-- Bot Welcome Message -->
               <div class="ai-msg bot" style="background:var(--glass-surface-subtle);border:1px solid var(--glass-border-subtle);border-radius:18px;padding:14px 18px;box-shadow:0 4px 16px rgba(47,73,117,0.05);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
@@ -3095,48 +3149,57 @@
               </div>
             </div>
 
-            <!-- In-Chat Attached Image Preview Pill -->
-            <div class="coach-selected-image-bar" id="coachSelectedImagePreviewBar" style="display:none;margin-top:12px;">
-              <img id="coachSelectedImageThumb" class="coach-attached-thumb" src="" alt="Photo preview">
-              <div style="flex:1;">
-                <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Photo Attached for AI Analysis</b>
-                <span style="font-size:0.74rem;color:var(--ff-text-secondary);">Coach will visually analyze meals, exercise form, or physique</span>
+            <!-- Scroll To Latest Floating Pill Button -->
+            <button type="button" class="coach-scroll-bottom-btn" id="coachScrollBottomBtn" style="display:none;" aria-label="Scroll to latest response">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <span>Scroll to latest</span>
+            </button>
+
+            <!-- FIXED BOTTOM MESSAGE COMPOSER -->
+            <div class="ai-coach-composer-area">
+              <!-- In-Chat Attached Image Preview Pill -->
+              <div class="coach-selected-image-bar" id="coachSelectedImagePreviewBar" style="display:none;margin-top:4px;">
+                <img id="coachSelectedImageThumb" class="coach-attached-thumb" src="" alt="Photo preview">
+                <div style="flex:1;">
+                  <b style="font-size:0.82rem;color:var(--ff-text-primary);display:block;">Photo Attached for AI Analysis</b>
+                  <span style="font-size:0.74rem;color:var(--ff-text-secondary);">Coach will visually analyze meals, exercise form, or physique</span>
+                </div>
+                <button type="button" class="ai-chat-icon-btn" id="coachClearImageBtn" title="Remove photo" style="width:28px;height:28px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
               </div>
-              <button type="button" class="ai-chat-icon-btn" id="coachClearImageBtn" title="Remove photo" style="width:28px;height:28px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            </div>
 
-            <!-- Quick Command Shortcuts (/goal, /boost) -->
-            <div class="coach-quick-commands-bar" style="display:flex;align-items:center;gap:8px;margin-top:12px;margin-bottom:2px;flex-wrap:wrap;">
-              <span style="font-size:0.72rem;font-weight:800;color:var(--ff-text-muted);text-transform:uppercase;letter-spacing:0.04em;">Commands:</span>
-              <button type="button" class="coach-cmd-chip-btn" id="coachCmdGoalBtn" title="Launch 4D Body Composition &amp; Goal Studio">
-                <span class="cmd-tag">/goal</span>
-                <span>4D Body &amp; Goal Studio</span>
-              </button>
-              <button type="button" class="coach-cmd-chip-btn" id="coachCmdBoostBtn" title="Pre-Workout Adrenaline &amp; Form Checker">
-                <span class="cmd-tag">/boost</span>
-                <span>Pre-Workout Form Booster</span>
-              </button>
-            </div>
+              <!-- Quick Command Shortcuts (/goal, /boost) -->
+              <div class="coach-quick-commands-bar" style="display:flex;align-items:center;gap:8px;margin-top:6px;margin-bottom:2px;flex-wrap:wrap;">
+                <span style="font-size:0.72rem;font-weight:800;color:var(--ff-text-muted);text-transform:uppercase;letter-spacing:0.04em;">Commands:</span>
+                <button type="button" class="coach-cmd-chip-btn" id="coachCmdGoalBtn" title="Launch 4D Body Composition &amp; Goal Studio">
+                  <span class="cmd-tag">/goal</span>
+                  <span>4D Body &amp; Goal Studio</span>
+                </button>
+                <button type="button" class="coach-cmd-chip-btn" id="coachCmdBoostBtn" title="Pre-Workout Adrenaline &amp; Form Checker">
+                  <span class="cmd-tag">/boost</span>
+                  <span>Pre-Workout Form Booster</span>
+                </button>
+              </div>
 
-            <!-- Input Bar -->
-            <div class="ai-chat-input-bar" style="margin-top:8px;">
-              <button type="button" class="ai-chat-icon-btn" id="coachChatCameraBtn" title="Click Photo with Camera"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button><button type="button" class="ai-chat-icon-btn" id="coachChatUploadBtn" title="Upload Photo from Device"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg></button><input type="file" id="coachChatFileInput" accept="image/*" style="display:none;"><button type="button" class="ai-chat-icon-btn" id="coachChatAttachBtn" title="Upload meal photo or form video">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-              </button>
-              <input type="text" id="coachChatInput" class="ai-chat-input-field" placeholder="Ask coach about form, macros, workouts, or recovery..." autocomplete="off">
-              <button type="button" class="ai-chat-icon-btn" id="coachChatMicBtn" title="Speak to coach (Voice Input)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-              </button>
-              <button type="button" class="ai-chat-send-btn" id="coachChatSendBtn" title="Send message">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
+              <!-- Input Bar -->
+              <div class="ai-chat-input-bar" style="margin-top:6px;">
+                <button type="button" class="ai-chat-icon-btn" id="coachChatCameraBtn" title="Click Photo with Camera"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button><button type="button" class="ai-chat-icon-btn" id="coachChatUploadBtn" title="Upload Photo from Device"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg></button><input type="file" id="coachChatFileInput" accept="image/*" style="display:none;"><button type="button" class="ai-chat-icon-btn" id="coachChatAttachBtn" title="Upload meal photo or form video">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </button>
+                <input type="text" id="coachChatInput" class="ai-chat-input-field" placeholder="Ask coach about form, macros, workouts, or recovery..." autocomplete="off">
+                <button type="button" class="ai-chat-icon-btn" id="coachChatMicBtn" title="Speak to coach (Voice Input)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                </button>
+                <button type="button" class="ai-chat-send-btn" id="coachChatSendBtn" title="Send message">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- RIGHT: COACH VISUAL CARD, QUICK ACTIONS, SUGGESTED PROMPTS -->
-          <div>
+          <div class="ai-coach-sidebar-col">
             <!-- Center Coach Visual & Voice Trigger (Image 2) -->
             <div class="ai-coach-visual-card">
               <img src="images/fitfuel-coach-hero.png" alt="FitFuel Coach Hero" class="ai-coach-hero-img">
@@ -3227,26 +3290,17 @@
 
       <!-- ================= VIEW: ACTIVITY & MOVEMENT (IMAGE 5) ================= -->
       <section class="view" id="view-activity">
-        <!-- Merged AI & Motion Suite Hub Subnav -->
-        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
-            <span>AI Coach</span>
-          </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span>Posture AI</span>
+        <nav class="hub-subnav-bar" aria-label="Progress Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="tracking" onclick="switchView('tracking')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <span>Tracking</span>
           </button>
           <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
             <span>Activity &amp; GPS</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
-            <span>Body Analysis</span>
-          </button>
         </nav>
-        <!-- Hero Banner with Athlete Visual (Image 5) -->
+<!-- Hero Banner with Athlete Visual (Image 5) -->
         <div class="panel" style="position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(239,246,255,0.85), rgba(219,234,254,0.7));border:1.5px solid #bfdbfe;border-radius:22px;padding:26px 30px;margin-bottom:22px;">
           <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
             <div style="max-width:540px;">
@@ -3590,26 +3644,17 @@
 
       <!-- ================= VIEW: AI CAMERA POSTURE & FORM CHECKER (SECTIONS 16 & 17) ================= -->
       <section class="view" id="view-posture">
-        <!-- Merged AI & Motion Suite Hub Subnav -->
-        <nav class="hub-subnav-bar" aria-label="AI Suite Navigation">
-          <button type="button" class="hub-subnav-btn" data-hubview="ai-coach" onclick="switchView('ai-coach')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.37 2.08 6.25 5 7.42V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.58c2.92-1.17 5-4.05 5-7.42a8 8 0 0 0-8-8z"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>
-            <span>AI Coach</span>
-          </button>
+        <nav class="hub-subnav-bar" aria-label="Labs Navigation">
           <button type="button" class="hub-subnav-btn" data-hubview="posture" onclick="switchView('posture')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             <span>Posture AI</span>
           </button>
-          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-            <span>Activity &amp; GPS</span>
-          </button>
           <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 8v8"/><path d="m8 12 4 1 4-1"/><path d="m9 21 3-5 3 5"/></svg>
-            <span>Body Analysis</span>
+            <span>Body Scan</span>
           </button>
         </nav>
-        <div class="view-intro">
+<div class="view-intro">
           <div>
             <span class="section-kicker">COMPUTER VISION &amp; BIOMECHANICS</span>
             <h2>Camera AI Posture &amp; Form Checker</h2>
@@ -3743,7 +3788,17 @@
 
       <!-- ================= VIEW: CUSTOMIZATION PANEL (REFERENCE IMAGE 1) ================= -->
       <section class="view" id="view-customization">
-        <div class="view-intro">
+        <nav class="hub-subnav-bar" aria-label="Account Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="profile" onclick="switchView('profile')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 17H5"/><path d="M19 7h-9"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+            <span>Profile</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="customization" onclick="switchView('customization')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+<div class="view-intro">
           <div>
             <span class="section-kicker">PERSONALIZATION &amp; DESIGN SYSTEM</span>
             <h2>Customization &amp; Workspace Settings</h2>
@@ -3900,12 +3955,15 @@
     </svg>
     <span>Nutrition</span>
   </button>
-  <button type="button" class="mobile-nav-btn" data-view="exercise-library" id="mobNavExercises" aria-label="Exercise Library">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
-    </svg>
-    <span>Exercises</span>
-  </button>
+  <button type="button" class="mobile-nav-btn" data-view="exercise-library" id="mobNavExercises" aria-label="Workouts">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path>
+        <path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path>
+        <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path>
+        <path d="m9.6 14.4 4.8-4.8"></path>
+      </svg>
+      <span>Workouts</span>
+    </button>
   <button type="button" class="mobile-nav-btn" id="mobNavMore" aria-label="More Features & Menu">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle>
@@ -4638,7 +4696,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>
         </span>
         <div>
-          <b style="font-size:.86rem;color:var(--ff-text-primary);display:block;">AI Body Analysis &amp; Scan</b>
+          <b style="font-size:.86rem;color:var(--ff-text-primary);display:block;">AI Body Scan</b>
           <span style="font-size:.76rem;color:var(--ff-text-secondary);">4-view photo analysis &amp; transformation</span>
         </div>
       </button>
@@ -5997,6 +6055,82 @@
   </div>
 </div>
 
+
+<!-- BETA FEEDBACK & BUG REPORT MODAL -->
+<div class="modal-backdrop" id="betaFeedbackModal">
+  <div class="modal-card" style="max-width:540px;padding:24px;border-radius:24px;">
+    <div class="modal-head">
+      <div>
+        <span class="section-kicker" style="color:#0284c7;">🧪 BETA TESTER PROGRAM</span>
+        <h2 id="betaFeedbackModalTitle">Beta Feature Feedback</h2>
+        <p style="margin:2px 0 0;font-size:0.84rem;color:var(--glass-text-secondary);">Submit bug reports, usability notes, and feedback to the engineering team.</p>
+      </div>
+      <button class="close-btn" id="closeBetaFeedbackModalBtn" type="button">&times;</button>
+    </div>
+
+    <form id="betaFeedbackForm" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" id="betaFeedbackFeatureKey" value="posture">
+
+      <div>
+        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
+          Feature under test:
+        </label>
+        <div id="betaFeedbackFeatureName" style="padding:10px 14px;border-radius:10px;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.2);font-weight:700;color:#0284c7;font-size:0.9rem;">
+          Posture AI / Posture Camera
+        </div>
+      </div>
+
+      <div>
+        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
+          Feedback Type:
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="betaFeedbackTypeGroup">
+          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
+            <input type="radio" name="betaFeedbackType" value="bug" checked> 🐞 Bug / Error
+          </label>
+          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
+            <input type="radio" name="betaFeedbackType" value="ux"> 💡 UX / Usability
+          </label>
+          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
+            <input type="radio" name="betaFeedbackType" value="praise"> ⭐ Positive Feedback
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
+          Experience Rating:
+        </label>
+        <div style="display:flex;gap:8px;">
+          <select id="betaFeedbackRating" class="form-input" style="padding:8px 12px;border-radius:8px;font-size:0.88rem;max-width:200px;">
+            <option value="5">⭐⭐⭐⭐⭐ (5/5 Great)</option>
+            <option value="4" selected>⭐⭐⭐⭐ (4/5 Good)</option>
+            <option value="3">⭐⭐⭐ (3/5 Average)</option>
+            <option value="2">⭐⭐ (2/5 Subpar)</option>
+            <option value="1">⭐ (1/5 Broken)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
+          Comments / Observations:
+        </label>
+        <textarea id="betaFeedbackComment" rows="4" class="form-input" placeholder="Describe any bug you hit, unexpected behavior, or usability suggestions..." style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;font-size:0.88rem;resize:vertical;" required></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+        <button type="button" class="outline-button" id="cancelBetaFeedbackBtn" style="padding:9px 18px;">
+          Cancel
+        </button>
+        <button type="submit" class="solid-button" id="submitBetaFeedbackBtn" style="background:#0284c7;padding:9px 20px;font-weight:700;">
+          Submit Feedback
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-notice" id="toastNotice" title="Click to dismiss">
   <span id="toastMsg">Action completed</span>
@@ -6007,11 +6141,14 @@
 <script src="motion.min.js"></script>
 <script src="api.js?v=4.2.0"></script>
 <script src="algo.js?v=4.2.0"></script>
-<script src="fitfuel.js?v=7.5.0"></script>
+<script src="modules/exercise-equipment-engine.js?v=7.9.0"></script>
+<script src="modules/beta-manager.js?v=7.9.0"></script>
+<script src="fitfuel.js?v=7.9.0"></script>
 <script src="modules/pwa-sync.js"></script>
 <script src="modules/voice-coach.js"></script>
 <script src="modules/social-card.js"></script>
 <script src="modules/barcode-scanner.js"></script>
 <script src="modules/mediapipe-posture.js"></script>
+  <script src="modules/hero-carousel.js?v=7.8.0"></script>
 </body>
 </html>

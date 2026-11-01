@@ -1,11 +1,10 @@
 const fs = require('fs');
 const html = fs.readFileSync('public/index.html', 'utf8');
+const lines = html.split('\n');
 
-const regex = /<section\b[^>]*class="[^"]*\bview\b[^"]*"[^>]*id="([^"]+)"[^>]*>/gi;
-let match;
-const views = [];
-while ((match = regex.exec(html)) !== null) {
-  views.push({ id: match[1], index: match.index });
-}
-
-console.log('Found views:', views);
+const viewMatches = [];
+lines.forEach((l, idx) => {
+  const m = l.match(/<section[^>]+id="(view-[^"]+)"/);
+  if (m) viewMatches.push({ line: idx + 1, view: m[1] });
+});
+console.log(viewMatches);

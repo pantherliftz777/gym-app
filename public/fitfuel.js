@@ -174,6 +174,17 @@ let activeChallengePlan = session ? store.get('activeChallengePlan', null) : nul
 let activeView = 'today';
 let selectedExerciseCategory = 'Legs';
 let selectedSubMuscle = 'All Legs';
+
+const MUSCLE_GROUPS = {
+  Chest: ['All Chest', 'Upper chest', 'Mid chest', 'Lower chest'],
+  Back: ['All Back', 'Lats', 'Upper back & Traps', 'Lower back'],
+  Shoulders: ['All Shoulders', 'Front delts', 'Side delts', 'Rear delts'],
+  Arms: ['All Arms', 'Biceps', 'Triceps', 'Forearms'],
+  Legs: ['All Legs', 'Quads', 'Hamstrings', 'Glutes', 'Calves'],
+  Core: ['All Core', 'Upper abs', 'Lower abs', 'Obliques'],
+  'Full Body': ['All Full Body', 'Compound Strength', 'Conditioning']
+};
+window.MUSCLE_GROUPS = MUSCLE_GROUPS;
 let chatHistory = [];
 
 /* ================= WEB AUDIO SOUND EFFECTS SYSTEM ================= */
@@ -729,6 +740,19 @@ let WORKOUT_PLANS = [
     benefit: 'Build strength with compound movements that train your posterior chain and core together.'
   },
   {
+    name: 'Cardio & Stamina Blast',
+    focus: 'Cardiovascular · Fat Burn · Agility',
+    duration: '32 min',
+    moves: [
+      { name: 'Jumping Jacks', sets: '3 sets × 60s', tip: 'Stay light on feet, maintain smooth breathing rhythm' },
+      { name: 'Burpee', sets: '3 sets × 12 reps', tip: 'Drop chest to floor, explode up with arms overhead' },
+      { name: 'Mountain Climber', sets: '3 sets × 45s', tip: 'Drive knees rapidly toward chest, keep hips flat' },
+      { name: 'Jump Rope', sets: '3 sets × 2 min', tip: 'Turn rope with wrists, stay bouncy and relax shoulders' },
+      { name: 'Air Bike', sets: '3 sets × 15 reps each', tip: 'Rotate torso, bring opposite elbow to knee under control' }
+    ],
+    benefit: 'Spikes heart rate, maximizes caloric expenditure, and elevates VO2 max endurance.'
+  },
+  {
     name: 'Lower body + core',
     focus: 'Quads · Glutes · Abs',
     duration: '38 min',
@@ -751,6 +775,18 @@ let WORKOUT_PLANS = [
       { name: 'Plank shoulder tap', sets: '3 sets × 16 taps', tip: 'Keep hips completely still while tapping opposite shoulder' }
     ],
     benefit: 'Push, pull and stabilize through a practical upper-body strength circuit.'
+  },
+  {
+    name: 'HIIT Tabata Metcon',
+    focus: 'Explosive Power · Plyometrics · Core',
+    duration: '28 min',
+    moves: [
+      { name: 'Bodyweight Drop Jump Squat', sets: '4 sets × 30s max effort', tip: 'Explode vertically from parallel, land softly on mid-foot' },
+      { name: 'Skater Hops', sets: '4 sets × 45s', tip: 'Leap laterally from foot to foot with athletic deceleration' },
+      { name: 'High Knee Against Wall', sets: '4 sets × 40s', tip: 'Drive knees to hip height with aggressive arm cadence' },
+      { name: 'Jack Burpee', sets: '4 sets × 10 reps', tip: 'Combine jumping jack with chest-to-ground burpee' }
+    ],
+    benefit: 'High-intensity interval training designed for rapid fat burning and athletic conditioning.'
   }
 ];
 
@@ -1300,30 +1336,49 @@ window.exercisesLoadedPromise = (async function loadExercisesJson() {
       // Map JSON category/muscle to library category
       let category = 'Full Body';
       const m = (ex.muscle || ex.category || '').toLowerCase();
-      if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+      const catOrig = (ex.category || '').toLowerCase();
+      const nLower = (ex.name || '').toLowerCase();
+      const eqLower = (ex.equipment || '').toLowerCase();
+
+      if (m.includes('cardio') || m.includes('cardiovascular') || catOrig.includes('cardio') ||
+          eqLower.includes('treadmill') || eqLower.includes('elliptical') || eqLower.includes('bike') || eqLower.includes('rower') ||
+          nLower.includes('jump') || nLower.includes('burpee') || (nLower.includes('run') && !nLower.includes('crunch')) ||
+          nLower.includes('skip') || nLower.includes('cycle') || nLower.includes('bike') || nLower.includes('rowing') ||
+          nLower.includes('climber') || nLower.includes('treadmill') || nLower.includes('elliptical') ||
+          nLower.includes('hop') || nLower.includes('skater') || nLower.includes('jack') || nLower.includes('cardio') ||
+          nLower.includes('sprint') || nLower.includes('jog') || nLower.includes('aerobic') ||
+          nLower.includes('stair') || nLower.includes('interval') || nLower.includes('swing') || nLower.includes('rope')) {
+        category = 'Cardio';
+      } else if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
       else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
       else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
       else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm') || m.includes('arm')) category = 'Arms';
       else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf') || m.includes('leg')) category = 'Legs';
       else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+      else category = 'Full Body';
+
+      const isCardio = (category === 'Cardio');
       EXERCISES_LIBRARY.push({
         name: ex.name,
         category: category,
-        sub: ex.muscle || ex.category || category,
+        sub: isCardio ? (ex.muscle || 'Cardiovascular endurance') : (ex.muscle || ex.category || category),
         type: (ex.equipment || 'body weight').toUpperCase(),
         gif: ex.gif || '',
         instructions_en: ex.instructions_en || '',
-        muscle: ex.muscle || '',
+        muscle: ex.muscle || (isCardio ? 'cardiovascular system' : ''),
         equipment: ex.equipment || 'body weight',
         level: ex.level || 'beginner',
-        rxSetsReps: '3 sets × 10-12 reps · 60s rest',
-        rxTempo: 'Tempo: 2-0-1',
-        rxWhy: ex.instructions_en ? ex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
-        benefit: ex.instructions_en ? ex.instructions_en.substring(0, 100) + '...' : 'Builds strength and muscle mass.',
+        rxSetsReps: isCardio ? '3 sets × 45–60s intervals · 30s rest' : '3 sets × 10-12 reps · 60s rest',
+        rxTempo: isCardio ? 'Cadence: High Cadence Intervals' : 'Tempo: 2-0-1',
+        rxWhy: ex.instructions_en ? ex.instructions_en.substring(0, 120) + '...' : (isCardio ? 'Spikes heart rate, accelerates caloric expenditure, and develops cardiovascular endurance.' : 'Progressive overload for strength and hypertrophy.'),
+        benefit: ex.instructions_en ? ex.instructions_en.substring(0, 100) + '...' : (isCardio ? 'Elevates stamina, VO2 max, and cardiovascular conditioning.' : 'Builds strength and muscle mass.'),
         steps: ex.instructions_en || 'Perform with controlled movement and full range of motion.'
       });
       existingNames.add(ex.name.toLowerCase().trim());
     }
+    window.EXERCISES_LIBRARY = EXERCISES_LIBRARY;
+    window.EXERCISES_JSON_MAP = EXERCISES_JSON_MAP;
+    window.exercisesJsonLoaded = true;
     // Re-render exercise library if it's currently open
     if (document.querySelector('#exerciseCardsContainer')) renderExerciseLibrary();
     // Re-render workouts if open
@@ -1426,10 +1481,53 @@ document.addEventListener('click', e => {
 });
 
 /* ---------- Navigation & Views Switching ---------- */
+const SECTION_VIEW_MAP = {
+  'overview': ['today'],
+  'training': ['exercise-library', 'challenge', 'starting-load', 'workouts'],
+  'nutrition': ['food-log', 'my-foods'],
+  'ai-coach': ['ai-coach'],
+  'progress': ['tracking', 'activity'],
+  'labs': ['posture', 'body-analysis'],
+  'accounts': ['profile', 'customization'],
+  'admin': ['admin']
+};
+
 function switchView(viewName) {
+  if (viewName === 'workouts') {
+    viewName = 'exercise-library';
+  }
   activeView = viewName;
+
+  // Beta access guard: prevent broken or empty views for locked beta features
+  if (window.FitFuelBeta && ['posture', 'body-analysis', 'activity'].includes(viewName)) {
+    if (!window.FitFuelBeta.isFeatureEnabled(viewName)) {
+      $$('.primary-nav .nav-link').forEach(btn => {
+        const sec = btn.dataset.section;
+        const isTarget = btn.dataset.view === viewName || (sec && SECTION_VIEW_MAP[sec] && SECTION_VIEW_MAP[sec].includes(viewName));
+        btn.classList.toggle('selected', isTarget);
+      });
+      $$('.page-content .view').forEach(v => v.classList.remove('active'));
+      const targetView = $('#view-' + viewName);
+      if (targetView) {
+        if (!window._viewOriginalMarkup) window._viewOriginalMarkup = {};
+        if (!window._viewOriginalMarkup[viewName]) {
+          window._viewOriginalMarkup[viewName] = targetView.innerHTML;
+        }
+        targetView.classList.add('active');
+        targetView.innerHTML = window.FitFuelBeta.renderLockedState(viewName);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    } else {
+      const targetView = $('#view-' + viewName);
+      if (targetView && window._viewOriginalMarkup && window._viewOriginalMarkup[viewName]) {
+        targetView.innerHTML = window._viewOriginalMarkup[viewName];
+      }
+    }
+  }
   $$('.primary-nav .nav-link').forEach(btn => {
-    const isTarget = btn.dataset.view === viewName;
+    const sec = btn.dataset.section;
+    const isTarget = btn.dataset.view === viewName || (sec && SECTION_VIEW_MAP[sec] && SECTION_VIEW_MAP[sec].includes(viewName));
     btn.classList.toggle('selected', isTarget);
     let dot = btn.querySelector('.nav-active-dot');
     if (isTarget && !dot) {
@@ -1468,6 +1566,10 @@ function switchView(viewName) {
   // Close mobile drawer if open
   $('#sidebar')?.classList.remove('mobile-open');
   $('#mobileSidebarBackdrop')?.classList.remove('active');
+  if (window.innerWidth <= 768) {
+    $('#sidebarToggle')?.setAttribute('aria-expanded', 'false');
+    $('#mobileMenuBtn')?.setAttribute('aria-expanded', 'false');
+  }
 
   // Sync mobile bottom navigation active state
   $$('.mobile-nav-btn[data-view]').forEach(btn => {
@@ -1480,7 +1582,14 @@ function switchView(viewName) {
   });
 
   // Re-render view specifics
-  if (viewName === 'today') { renderDashboard(); renderDailyTip(); if (typeof initInteractiveHeroAndAppButtons === 'function') initInteractiveHeroAndAppButtons(); }
+  if (viewName === 'today') {
+    renderDashboard();
+    renderDailyTip();
+    if (typeof initFitFuelHeroCarousel === 'function') initFitFuelHeroCarousel();
+    if (window.fitfuelHeroCarousel) window.fitfuelHeroCarousel.startAutoplay();
+  } else {
+    if (window.fitfuelHeroCarousel) window.fitfuelHeroCarousel.stopAutoplay();
+  }
   if (viewName === 'body-analysis') { if (typeof renderBodyAnalysisView === 'function') renderBodyAnalysisView(); }
   if (viewName === 'food-log') renderFoodLog();
   if (viewName === 'workouts') renderWorkouts();
@@ -1497,6 +1606,10 @@ function switchView(viewName) {
   else if (typeof stopPostureCamera === 'function') stopPostureCamera();
   if (viewName === 'customization') renderCustomizationView();
 }
+window.switchView = switchView;
+window.renderWorkouts = renderWorkouts;
+window.renderExerciseLibrary = renderExerciseLibrary;
+window.WORKOUT_PLANS = WORKOUT_PLANS;
 
 // Attach Nav Links
 $$('.primary-nav .nav-link').forEach(btn => {
@@ -1530,20 +1643,93 @@ if (topbarMoreBtn && topbarMoreMenu) {
   });
 }
 
-// Mobile menu and drawer toggles
-if ($('#mobileMenuBtn')) {
-  $('#mobileMenuBtn').onclick = () => {
-    const isOpen = $('#sidebar').classList.toggle('mobile-open');
-    $('#mobileSidebarBackdrop')?.classList.toggle('active', isOpen);
+// ==========================================================================
+// UNIFIED SIDEBAR & HAMBURGER CONTROLLER (DESKTOP RAIL & MOBILE DRAWER)
+// ==========================================================================
+function toggleSidebarMenu(forceState) {
+  const sidebar = $('#sidebar');
+  const backdrop = $('#mobileSidebarBackdrop');
+  const toggleBtn = $('#sidebarToggle');
+  const mobBtn = $('#mobileMenuBtn');
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    if (!sidebar) return;
+    const shouldOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', shouldOpen);
+    backdrop?.classList.toggle('active', shouldOpen);
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(shouldOpen));
+    if (mobBtn) mobBtn.setAttribute('aria-expanded', String(shouldOpen));
+  } else {
+    const html = document.documentElement;
+    const willCollapse = forceState !== undefined ? forceState : !html.classList.contains('sidebar-collapsed');
+    html.classList.toggle('sidebar-collapsed', willCollapse);
+    const isExpanded = !willCollapse;
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+    if (mobBtn) mobBtn.setAttribute('aria-expanded', String(isExpanded));
+    try {
+      localStorage.setItem('ff_sidebar_collapsed', String(willCollapse));
+    } catch (e) {}
+    // Animate smoothly (200-250ms) then re-fit charts & canvases
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 240);
+  }
+}
+window.toggleSidebarMenu = toggleSidebarMenu;
+
+const sidebarToggleBtn = $('#sidebarToggle');
+if (sidebarToggleBtn) {
+  sidebarToggleBtn.onclick = (e) => {
+    e.preventDefault();
+    toggleSidebarMenu();
+  };
+  sidebarToggleBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleSidebarMenu();
+    }
+  });
+}
+
+const mobileMenuBtn = $('#mobileMenuBtn');
+if (mobileMenuBtn) {
+  mobileMenuBtn.onclick = (e) => {
+    e.preventDefault();
+    toggleSidebarMenu();
   };
 }
 
 if ($('#mobileSidebarBackdrop')) {
   $('#mobileSidebarBackdrop').onclick = () => {
-    $('#sidebar')?.classList.remove('mobile-open');
-    $('#mobileSidebarBackdrop')?.classList.remove('active');
+    toggleSidebarMenu(false);
   };
 }
+
+// Global keyboard accessibility: Escape closes mobile drawer
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const sidebar = $('#sidebar');
+    if (sidebar && sidebar.classList.contains('mobile-open')) {
+      toggleSidebarMenu(false);
+    }
+  }
+});
+
+// Sync initial aria-expanded on load
+(function syncAriaState() {
+  const isMobile = window.innerWidth <= 768;
+  const toggleBtn = $('#sidebarToggle');
+  const mobBtn = $('#mobileMenuBtn');
+  if (!isMobile) {
+    const isCollapsed = document.documentElement.classList.contains('sidebar-collapsed');
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+    if (mobBtn) mobBtn.setAttribute('aria-expanded', String(!isCollapsed));
+  } else {
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+    if (mobBtn) mobBtn.setAttribute('aria-expanded', 'false');
+  }
+})();
 
 // Sidebar smooth drag-to-slide & scroll interaction
 const sidebarEl = $('#sidebar');
@@ -3194,21 +3380,35 @@ function findExerciseInfo(name) {
     const jex = EXERCISES_JSON_MAP[n];
     let category = 'Full Body';
     const m = (jex.muscle || jex.category || '').toLowerCase();
-    if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
+    const catOrig = (jex.category || '').toLowerCase();
+    const nLower = (jex.name || '').toLowerCase();
+
+    if (m.includes('cardio') || m.includes('cardiovascular') || catOrig.includes('cardio') ||
+        nLower.includes('cardio') || nLower.includes('burpee') || nLower.includes('jump rope') ||
+        nLower.includes('jumping jack') || nLower.includes('mountain climber') || nLower.includes('treadmill') ||
+        nLower.includes('elliptical') || nLower.includes('stationary bike') || nLower.includes('air bike') ||
+        nLower.includes('rowing machine') || nLower.includes('stair climber') || nLower.includes('skipping') ||
+        nLower.includes('high knee') || nLower.includes('skater') || nLower.includes('shuttle run') ||
+        nLower.includes('run (equipment)') || nLower.includes('cycle cross trainer')) {
+      category = 'Cardio';
+    } else if (m.includes('chest') || m.includes('pectoral')) category = 'Chest';
     else if (m.includes('back') || m.includes('lat') || m.includes('trap')) category = 'Back';
     else if (m.includes('shoulder') || m.includes('delt')) category = 'Shoulders';
     else if (m.includes('bicep') || m.includes('tricep') || m.includes('forearm')) category = 'Arms';
     else if (m.includes('quad') || m.includes('hamstring') || m.includes('glute') || m.includes('calf')) category = 'Legs';
     else if (m.includes('abs') || m.includes('oblique') || m.includes('core') || m.includes('waist')) category = 'Core';
+
+    const isCardio = (category === 'Cardio');
     return {
-      name: jex.name, category, sub: jex.muscle || category,
+      name: jex.name, category, sub: isCardio ? (jex.muscle || 'Cardiovascular endurance') : (jex.muscle || category),
       gif: jex.gif || '', instructions_en: jex.instructions_en || '',
       type: (jex.equipment || 'body weight').toUpperCase(),
-      muscle: jex.muscle || '', equipment: jex.equipment || '',
+      muscle: jex.muscle || (isCardio ? 'cardiovascular system' : ''), equipment: jex.equipment || '',
       level: jex.level || 'beginner',
-      rxSetsReps: '3 sets × 10-12 reps · 60s rest', rxTempo: 'Tempo: 2-0-1',
-      rxWhy: jex.instructions_en ? jex.instructions_en.substring(0, 120) + '...' : 'Progressive overload for strength and hypertrophy.',
-      benefit: jex.instructions_en ? jex.instructions_en.substring(0, 100) + '...' : '',
+      rxSetsReps: isCardio ? '3 sets × 45–60s intervals · 30s rest' : '3 sets × 10-12 reps · 60s rest',
+      rxTempo: isCardio ? 'Cadence: High Cadence Intervals' : 'Tempo: 2-0-1',
+      rxWhy: jex.instructions_en ? jex.instructions_en.substring(0, 120) + '...' : (isCardio ? 'Spikes heart rate, accelerates caloric expenditure, and develops cardiovascular endurance.' : 'Progressive overload for strength and hypertrophy.'),
+      benefit: jex.instructions_en ? jex.instructions_en.substring(0, 100) + '...' : (isCardio ? 'Elevates stamina, VO2 max, and cardiovascular conditioning.' : ''),
       steps: jex.instructions_en || 'Perform with controlled movement and full range of motion.'
     };
   }
@@ -3457,6 +3657,21 @@ function openExerciseDetailModal(exerciseName) {
     };
   }
 
+  // Wire Start Set Timer Button
+  if ($('#exModalStartSetBtn')) {
+    $('#exModalStartSetBtn').onclick = () => {
+      closeModal('#exerciseDetailModal');
+      startCustomExerciseTimer(ex.name, ex.rxSetsReps || '3 sets × 10–12 reps', '60');
+    };
+  }
+
+  // Wire Add to Workout Button
+  if ($('#exModalAddToWorkoutBtn')) {
+    $('#exModalAddToWorkoutBtn').onclick = () => {
+      addExerciseToDailyRoutine(ex.name, ex.rxSetsReps || '3 sets × 10–12 reps');
+    };
+  }
+
   // Wire Mark Completed Button
   if ($('#exModalLogDoneBtn')) {
     $('#exModalLogDoneBtn').onclick = () => {
@@ -3474,6 +3689,7 @@ function openExerciseDetailModal(exerciseName) {
 
 /* ---------- Workouts View Rendering ---------- */
 function renderWorkouts() {
+  renderExerciseLibrary();
   const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
   const isCustomAi = plan && plan.workout && (wo.name === plan.workout.name);
   if ($('#planWorkoutTitle')) {
@@ -3490,30 +3706,36 @@ function renderWorkouts() {
   if (list) {
     list.innerHTML = wo.moves.map((m, i) => {
       const ex = findExerciseInfo(m.name);
+      const safeName = m.name.replace(/'/g, "\\'");
       return `
-        <div class="workout-move-item" onclick="openExerciseDetailModal('${m.name.replace(/'/g, "\\'")}')" title="Hover for details · Click for full visual diagram & AI guide">
+        <div class="workout-move-item" onclick="openExerciseDetailModal('${safeName}')" title="Hover for details · Click for full visual diagram & AI guide">
           <span class="move-index-badge">${i + 1}</span>
           ${ex && ex.gif ? `<div class="move-gif-thumb"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(m.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.move-gif-thumb').style.display='none'"></div>` : ''}
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <b class="move-name-title">${m.name}</b>
-                <span class="move-sub-badge">${ex.sub || 'COMPOUND'}</span>
+                <b class="move-name-title">${escapeHtml(m.name)}</b>
+                <span class="move-sub-badge">${escapeHtml(ex ? (ex.sub || ex.category) : 'COMPOUND')}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <span class="move-sets-text">${m.sets}</span>
-                <span class="move-hover-cta">View Visual</span>
+                <span class="move-sets-text">${escapeHtml(m.sets)}</span>
+                <button type="button" class="solid-button small" style="padding:4px 10px;font-size:.74rem;background:#2563eb;" onclick="event.stopPropagation(); startCustomExerciseTimer('${safeName}', '${escapeHtml(m.sets)}', '60');" title="Start timer for this exercise">
+                  Start Set
+                </button>
+                <button type="button" class="outline-button small" style="padding:4px 8px;font-size:.74rem;color:#ef4444;border-color:rgba(239,68,68,0.3);" onclick="event.stopPropagation(); removeExerciseFromPlan(${i});" title="Remove from today's routine">
+                  &times;
+                </button>
               </div>
             </div>
-            <p class="move-tip-text">${m.tip}</p>
+            <p class="move-tip-text">${escapeHtml(m.tip)}</p>
             
             <!-- Hover details strip (visible on hover) -->
             <div class="move-hover-details">
               <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;">
-                <span class="move-detail-target"><b>Target:</b> ${ex.sub || ex.category}</span>
-                <span class="move-detail-tempo"><b>Tempo:</b> ${ex.rxTempo || '2-1-1'}</span>
+                <span class="move-detail-target"><b>Target:</b> ${escapeHtml(ex ? (ex.sub || ex.category) : 'Compound')}</span>
+                <span class="move-detail-tempo"><b>Tempo:</b> ${escapeHtml(ex ? (ex.rxTempo || '2-1-1') : '2-1-1')}</span>
               </div>
-              <p class="move-detail-why">${ex.rxWhy || ex.benefit}</p>
+              <p class="move-detail-why">${escapeHtml(ex ? (ex.rxWhy || ex.benefit) : 'Progressive overload.')}</p>
             </div>
           </div>
         </div>
@@ -3522,6 +3744,46 @@ function renderWorkouts() {
   }
   renderCustomWorkoutExplorer();
 }
+
+window.startTodayWorkoutSession = function() {
+  soundFX.pop();
+  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+  if (!wo || !wo.moves || !wo.moves.length) {
+    toast('No exercises in current routine');
+    return;
+  }
+  const sessionData = {
+    dayNumber: 'Today',
+    title: wo.name,
+    focus: wo.focus || 'Targeted Workout',
+    exercises: wo.moves.map(m => {
+      const ex = findExerciseInfo(m.name);
+      return {
+        name: m.name,
+        subMuscle: (ex && (ex.sub || ex.category)) || 'Targeted',
+        category: (ex && ex.category) || 'Workout',
+        sets: parseInt(m.sets) || 3,
+        reps: m.sets || '3 sets × 10–12 reps',
+        durationSec: 45,
+        restSec: 60,
+        tip: m.tip || (ex && (ex.rxWhy || ex.benefit)) || 'Maintain strict form and full range of motion.'
+      };
+    })
+  };
+  startWorkoutSession(sessionData);
+};
+
+window.removeExerciseFromPlan = function(idx) {
+  soundFX.pop();
+  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+  if (wo && Array.isArray(wo.moves) && wo.moves.length > 1) {
+    const removed = wo.moves.splice(idx, 1);
+    renderWorkouts();
+    toast(`Removed "${removed[0].name}" from routine`);
+  } else {
+    toast('Workout routine must keep at least 1 move');
+  }
+};
 
 /* ---------- Starting Load Calculator (1RM-free, from claude-gym-coach) ---------- */
 const SL_LIFTS = [
@@ -3582,38 +3844,319 @@ document.addEventListener('click', e => {
   renderStartingLoad();
 });
 
-$('#switchWorkoutPlanBtn').onclick = () => {
-  activeWorkoutIdx++;
-  renderWorkouts();
-  renderDashboard();
-  toast('Switched workout routine');
-};
+if ($('#switchWorkoutPlanBtn')) {
+  $('#switchWorkoutPlanBtn').onclick = () => {
+    activeWorkoutIdx++;
+    renderWorkouts();
+    renderDashboard();
+    toast('Switched workout routine');
+  };
+}
 
-$('#markWorkoutDoneBtn').onclick = () => {
-  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
-  workoutsDone.push({ name: wo.name, date: today(), at: Date.now() });
-  store.set('workoutsDone', workoutsDone);
-  recordDailyActivity('workout');
-  soundFX.victoryCelebration();
-  renderDashboard();
-  toast(`Great job! Completed ${wo.name}`);
-};
+if ($('#markWorkoutDoneBtn')) {
+  $('#markWorkoutDoneBtn').onclick = () => {
+    const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+    workoutsDone.push({ name: wo.name, date: today(), at: Date.now() });
+    store.set('workoutsDone', workoutsDone);
+    recordDailyActivity('workout');
+    soundFX.victoryCelebration();
+    renderDashboard();
+    toast(`Great job! Completed ${wo.name}`);
+  };
+}
 
 /* ---------- Exercise Library View Rendering ---------- */
-const MUSCLE_GROUPS = {
-  Chest: ['All Chest', 'Upper chest', 'Mid chest', 'Lower chest'],
-  Back: ['All Back', 'Lats', 'Upper back & Traps', 'Lower back'],
-  Shoulders: ['All Shoulders', 'Front delts', 'Side delts', 'Rear delts'],
-  Arms: ['All Arms', 'Biceps', 'Triceps', 'Forearms'],
-  Legs: ['All Legs', 'Quads', 'Hamstrings', 'Glutes', 'Calves'],
-  Core: ['All Core', 'Upper abs', 'Lower abs', 'Obliques']
+// MUSCLE_GROUPS initialized at top level
+
+let filterLocation = 'all'; // 'all' | 'gym' | 'home'
+let filterWorkoutTypes = new Set(['all']); // Set of 'all', 'strength', 'hiit', 'cardio', 'stretching'
+let filterHomeEquipment = new Set([
+  'Bodyweight', 'Dumbbells', 'Resistance Bands', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Skipping Rope', 'Exercise Mat', 'Chair'
+]);
+let filterGymEquipment = new Set([
+  'Bodyweight', 'Dumbbells', 'Barbells', 'Weight Machines', 'Cable Machines', 'Smith Machine', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Treadmill', 'Stationary Bike', 'Elliptical'
+]);
+
+function getActiveEquipmentSet() {
+  if (filterLocation === 'home') return filterHomeEquipment;
+  if (filterLocation === 'gym') return filterGymEquipment;
+  // 'all': union of both
+  return new Set([...filterHomeEquipment, ...filterGymEquipment]);
+}
+
+function initWorkoutFilters() {
+  initWorkoutLocationChips();
+  initWorkoutTypeChips();
+  initEquipmentChips();
+  initResetButton();
+}
+
+function initWorkoutLocationChips() {
+  const container = $('#workoutLocationChips');
+  if (!container || container.dataset.initialized) return;
+  container.dataset.initialized = 'true';
+
+  container.querySelectorAll('.workout-type-chip').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const loc = btn.dataset.location;
+      if (filterLocation === loc) return;
+      
+      const prevLoc = filterLocation;
+      filterLocation = loc;
+
+      // Smart equipment transition:
+      // When switching to Home from Gym, ensure gym-only equipment is removed
+      if (loc === 'home' && prevLoc === 'gym') {
+        const homeList = (window.FitFuelExerciseEngine && window.FitFuelExerciseEngine.HOME_EQUIPMENT) || [
+          'Bodyweight', 'Dumbbells', 'Resistance Bands', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Skipping Rope', 'Exercise Mat', 'Chair'
+        ];
+        filterHomeEquipment = new Set(Array.from(filterGymEquipment).filter(eq => homeList.includes(eq)));
+        if (filterHomeEquipment.size === 0) filterHomeEquipment.add('Bodyweight');
+      } else if (loc === 'gym' && prevLoc === 'home') {
+        // Switching to Gym: default to full gym equipment
+        const gymList = (window.FitFuelExerciseEngine && window.FitFuelExerciseEngine.GYM_EQUIPMENT) || [
+          'Bodyweight', 'Dumbbells', 'Barbells', 'Weight Machines', 'Cable Machines', 'Smith Machine', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Treadmill', 'Stationary Bike', 'Elliptical'
+        ];
+        filterGymEquipment = new Set(gymList);
+      }
+
+      container.querySelectorAll('.workout-type-chip').forEach(b => {
+        b.classList.toggle('active', b.dataset.location === filterLocation);
+      });
+
+      renderEquipmentChips();
+      if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+      renderExerciseLibrary();
+    };
+  });
+}
+
+function initWorkoutTypeChips() {
+  const container = $('#workoutTypeChips');
+  if (!container || container.dataset.initialized) return;
+  container.dataset.initialized = 'true';
+
+  container.querySelectorAll('.workout-type-chip').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const type = btn.dataset.type;
+      if (type === 'all') {
+        filterWorkoutTypes.clear();
+        filterWorkoutTypes.add('all');
+      } else {
+        filterWorkoutTypes.delete('all');
+        if (filterWorkoutTypes.has(type)) {
+          filterWorkoutTypes.delete(type);
+        } else {
+          filterWorkoutTypes.add(type);
+        }
+        if (filterWorkoutTypes.size === 0) {
+          filterWorkoutTypes.add('all');
+        }
+      }
+      container.querySelectorAll('.workout-type-chip').forEach(b => {
+        b.classList.toggle('active', filterWorkoutTypes.has(b.dataset.type));
+      });
+      if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+      renderExerciseLibrary();
+    };
+  });
+}
+
+function initEquipmentChips() {
+  renderEquipmentChips();
+}
+
+function renderEquipmentChips() {
+  const container = $('#workoutEquipmentChips');
+  const title = $('#equipmentSectionTitle');
+  const quickActions = $('#equipmentQuickActions');
+  if (!container) return;
+
+  const engine = window.FitFuelExerciseEngine;
+  const homeList = (engine && engine.HOME_EQUIPMENT) || [
+    'Bodyweight', 'Dumbbells', 'Resistance Bands', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Skipping Rope', 'Exercise Mat', 'Chair'
+  ];
+  const gymList = (engine && engine.GYM_EQUIPMENT) || [
+    'Bodyweight', 'Dumbbells', 'Barbells', 'Weight Machines', 'Cable Machines', 'Smith Machine', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Treadmill', 'Stationary Bike', 'Elliptical'
+  ];
+
+  let displayList = [];
+  let activeSet = null;
+
+  if (filterLocation === 'home') {
+    if (title) title.textContent = '3. AVAILABLE HOME EQUIPMENT';
+    displayList = homeList;
+    activeSet = filterHomeEquipment;
+    if (quickActions) {
+      quickActions.innerHTML = `
+        <button type="button" class="quick-action-pill" onclick="quickSelectNoEquipment()">[No Equipment (Bodyweight)]</button>
+        <button type="button" class="quick-action-pill" onclick="quickSelectAllHomeEquipment()">[Select All Available]</button>
+      `;
+    }
+  } else if (filterLocation === 'gym') {
+    if (title) title.textContent = '3. AVAILABLE GYM EQUIPMENT';
+    displayList = gymList;
+    activeSet = filterGymEquipment;
+    if (quickActions) {
+      quickActions.innerHTML = `
+        <button type="button" class="quick-action-pill" onclick="quickSelectFullGym()">[Full Gym Access]</button>
+        <button type="button" class="quick-action-pill" onclick="quickSelectDumbbellsOnly()">[Dumbbells Only]</button>
+      `;
+    }
+  } else {
+    // All Locations
+    if (title) title.textContent = '3. EQUIPMENT AVAILABILITY (ALL LOCATIONS)';
+    displayList = (engine && engine.ALL_EQUIPMENT) || Array.from(new Set([...homeList, ...gymList]));
+    activeSet = getActiveEquipmentSet();
+    if (quickActions) {
+      quickActions.innerHTML = `
+        <button type="button" class="quick-action-pill" onclick="quickSelectAllEquipment()">[Full Access (All Gear)]</button>
+      `;
+    }
+  }
+
+  container.innerHTML = displayList.map(eq => {
+    const isActive = activeSet.has(eq);
+    return `<button type="button" class="workout-type-chip ${isActive ? 'active' : ''}" data-eq="${escapeHtml(eq)}" onclick="toggleEquipmentItem('${escapeHtml(eq)}')">${escapeHtml(eq)}</button>`;
+  }).join('');
+}
+
+window.toggleEquipmentItem = function(eq) {
+  let targetSet = null;
+  if (filterLocation === 'home') targetSet = filterHomeEquipment;
+  else if (filterLocation === 'gym') targetSet = filterGymEquipment;
+  else {
+    // In All Locations, toggle in both
+    if (filterHomeEquipment.has(eq)) filterHomeEquipment.delete(eq);
+    else filterHomeEquipment.add(eq);
+    if (filterGymEquipment.has(eq)) filterGymEquipment.delete(eq);
+    else filterGymEquipment.add(eq);
+    renderEquipmentChips();
+    renderExerciseLibrary();
+    return;
+  }
+
+  if (targetSet.has(eq)) {
+    targetSet.delete(eq);
+  } else {
+    targetSet.add(eq);
+  }
+  // Ensure at least Bodyweight remains if empty
+  if (targetSet.size === 0) {
+    targetSet.add('Bodyweight');
+  }
+
+  renderEquipmentChips();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  renderExerciseLibrary();
+};
+
+window.quickSelectNoEquipment = function() {
+  filterHomeEquipment.clear();
+  filterHomeEquipment.add('Bodyweight');
+  renderEquipmentChips();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  renderExerciseLibrary();
+  toast('Equipment set to: Bodyweight Only (No Gear)');
+};
+
+window.quickSelectAllHomeEquipment = function() {
+  const engine = window.FitFuelExerciseEngine;
+  const list = (engine && engine.HOME_EQUIPMENT) || [
+    'Bodyweight', 'Dumbbells', 'Resistance Bands', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Skipping Rope', 'Exercise Mat', 'Chair'
+  ];
+  filterHomeEquipment = new Set(list);
+  renderEquipmentChips();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  renderExerciseLibrary();
+  toast('All Home Equipment Selected');
+};
+
+window.quickSelectFullGym = function() {
+  const engine = window.FitFuelExerciseEngine;
+  const list = (engine && engine.GYM_EQUIPMENT) || [
+    'Bodyweight', 'Dumbbells', 'Barbells', 'Weight Machines', 'Cable Machines', 'Smith Machine', 'Bench', 'Pull-up Bar', 'Kettlebells', 'Treadmill', 'Stationary Bike', 'Elliptical'
+  ];
+  filterGymEquipment = new Set(list);
+  renderEquipmentChips();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  renderExerciseLibrary();
+  toast('Full Gym Access Activated');
+};
+
+window.quickSelectDumbbellsOnly = function() {
+  filterGymEquipment.clear();
+  filterGymEquipment.add('Bodyweight');
+  filterGymEquipment.add('Dumbbells');
+  renderEquipmentChips();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  renderExerciseLibrary();
+  toast('Gym Equipment set to: Dumbbells & Bodyweight');
+};
+
+window.quickSelectAllEquipment = function() {
+  const engine = window.FitFuelExerciseEngine;
+  if (engine) {
+    filterHomeEquipment = new Set(engine.HOME_EQUIPMENT);
+    filterGymEquipment = new Set(engine.GYM_EQUIPMENT);
+  }
+  renderEquipmentChips();
+  renderExerciseLibrary();
+  toast('Full Equipment Access Enabled');
+};
+
+function initResetButton() {
+  const btn = $('#resetWorkoutFiltersBtn');
+  if (btn && !btn.dataset.initialized) {
+    btn.dataset.initialized = 'true';
+    btn.onclick = () => resetWorkoutFilters();
+  }
+}
+
+window.resetWorkoutFilters = function() {
+  filterLocation = 'all';
+  filterWorkoutTypes = new Set(['all']);
+  
+  const engine = window.FitFuelExerciseEngine;
+  if (engine) {
+    filterHomeEquipment = new Set(engine.HOME_EQUIPMENT);
+    filterGymEquipment = new Set(engine.GYM_EQUIPMENT);
+  }
+  
+  selectedExerciseCategory = 'Legs';
+  selectedSubMuscle = 'All Legs';
+
+  const locContainer = $('#workoutLocationChips');
+  if (locContainer) {
+    locContainer.querySelectorAll('.workout-type-chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.location === 'all');
+    });
+  }
+
+  const typeContainer = $('#workoutTypeChips');
+  if (typeContainer) {
+    typeContainer.querySelectorAll('.workout-type-chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.type === 'all');
+    });
+  }
+
+  if ($('#exerciseSearchInput')) $('#exerciseSearchInput').value = '';
+
+  renderEquipmentChips();
+  renderExerciseLibrary();
+  if (typeof soundFX !== 'undefined' && soundFX && soundFX.pop) soundFX.pop();
+  toast('Filters reset to defaults');
 };
 
 function renderExerciseLibrary() {
+  initWorkoutFilters();
+
   const tabs = $('#muscleTabs');
   if (tabs) {
     tabs.innerHTML = Object.keys(MUSCLE_GROUPS).map(cat => `
-      <button type="button" class="${cat === selectedExerciseCategory ? 'active' : ''}" onclick="selectExerciseCategory('${cat}')">${cat}</button>
+      <button type="button" class="workout-type-chip ${cat === selectedExerciseCategory ? 'active' : ''}" onclick="selectExerciseCategory('${cat}')">${cat}</button>
     `).join('');
   }
 
@@ -3621,23 +4164,39 @@ function renderExerciseLibrary() {
   if (subTags) {
     const list = MUSCLE_GROUPS[selectedExerciseCategory] || [];
     subTags.innerHTML = list.map(sub => `
-      <button type="button" class="chosen ${sub === selectedSubMuscle ? 'active' : ''}" onclick="selectSubMuscle('${sub}')">${sub}</button>
+      <button type="button" class="workout-type-chip ${sub === selectedSubMuscle ? 'active' : ''}" onclick="selectSubMuscle('${sub}')">${sub}</button>
     `).join('');
   }
 
   const q = ($('#exerciseSearchInput') ? $('#exerciseSearchInput').value.toLowerCase().trim() : '');
+  const activeEq = getActiveEquipmentSet();
+  const engine = window.FitFuelExerciseEngine;
+
   const filtered = EXERCISES_LIBRARY.filter(e => {
-    if (q) return e.name.toLowerCase().includes(q) || (e.sub && e.sub.toLowerCase().includes(q));
-    if (e.category !== selectedExerciseCategory) return false;
-    if (selectedSubMuscle && !selectedSubMuscle.startsWith('All ')) {
-      return (e.sub || '').toLowerCase().includes(selectedSubMuscle.toLowerCase());
+    if (engine) {
+      return engine.matchesFilter(e, {
+        query: q,
+        location: filterLocation,
+        workoutTypes: filterWorkoutTypes,
+        selectedEquipment: activeEq,
+        muscleGroup: selectedExerciseCategory,
+        subMuscle: selectedSubMuscle
+      });
     }
-    return true;
+
+    // Fallback if engine script is still loading
+    if (q) {
+      return (e.name && e.name.toLowerCase().includes(q)) || 
+             (e.sub && e.sub.toLowerCase().includes(q)) ||
+             (e.category && e.category.toLowerCase().includes(q));
+    }
+    return e.category === selectedExerciseCategory;
   });
 
   if ($('#libFilterHeader')) {
     const currentSubText = selectedSubMuscle ? selectedSubMuscle.toUpperCase() : selectedExerciseCategory.toUpperCase();
-    $('#libFilterHeader').textContent = `${selectedExerciseCategory.toUpperCase()} · ${currentSubText}`;
+    const locText = filterLocation === 'all' ? 'ALL LOCATIONS' : filterLocation.toUpperCase();
+    $('#libFilterHeader').textContent = `${locText} · ${selectedExerciseCategory.toUpperCase()} · ${currentSubText}`;
   }
   if ($('#libResultCount')) {
     $('#libResultCount').textContent = q ? `${filtered.length} matching moves` : `${filtered.length} exercises targeting ${selectedSubMuscle || selectedExerciseCategory}`;
@@ -3645,40 +4204,94 @@ function renderExerciseLibrary() {
 
   const cardsContainer = $('#exerciseCardsContainer');
   if (cardsContainer) {
-    cardsContainer.innerHTML = filtered.map(ex => `
-      <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
-        ${ex.gif ? `<div class="ex-card-gif-wrap"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.ex-card-gif-wrap').style.display='none'"></div>` : ''}
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-            <span class="exercise-type">${ex.type}</span>
-            <span class="exercise-sub-tag">${ex.sub}</span>
+    if (filtered.length === 0) {
+      // SMART EMPTY STATE WITH ALTERNATIVES
+      cardsContainer.innerHTML = `
+        <div class="empty-state-card" style="grid-column: 1 / -1; padding: 40px 24px; text-align: center; background: var(--glass-surface); border: 1px dashed var(--glass-border); border-radius: 24px; margin: 16px 0;">
+          <div style="font-size: 2.5rem; margin-bottom: 10px;">🏋️‍♂️</div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--glass-text-primary); margin-bottom: 8px;">No exercises match your current equipment filter</h3>
+          <p style="font-size: 0.92rem; color: var(--glass-text-secondary); max-width: 540px; margin: 0 auto 20px; line-height: 1.5;">
+            You have selected <b>${filterLocation.toUpperCase()}</b> training targeting <b>${escapeHtml(selectedExerciseCategory)} (${escapeHtml(selectedSubMuscle)})</b>, but your active equipment set does not have the gear required for these exercises.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;">
+            <button type="button" class="solid-button" onclick="resetWorkoutFilters()" style="background:#2563eb;font-weight:700;font-size:0.85rem;padding:9px 18px;">
+              Reset All Filters
+            </button>
+            <button type="button" class="outline-button" onclick="quickSelectAllHomeEquipment()" style="font-weight:700;font-size:0.85rem;padding:9px 18px;">
+              Select All Home Gear
+            </button>
+            <button type="button" class="outline-button" onclick="quickSelectNoEquipment()" style="font-weight:700;font-size:0.85rem;padding:9px 18px;">
+              Show Bodyweight Moves Only
+            </button>
           </div>
-          <h4 class="exercise-card-heading" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
-            ${ex.name}
-          </h4>
-          
-          <!-- Scientific Prescription Box -->
-          <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
-            <div class="rx-header">
-              <span class="rx-sets-reps">${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
-              <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
+          <div style="text-align: left; max-width: 600px; margin: 0 auto; background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.18); border-radius: 14px; padding: 14px 18px;">
+            <div style="font-size: 0.8rem; font-weight: 800; color: #2563eb; text-transform: uppercase; margin-bottom: 6px;">💡 Smart Alternatives &amp; Recommendations</div>
+            <ul style="font-size: 0.84rem; color: var(--glass-text-secondary); margin: 0; padding-left: 20px; line-height: 1.6;">
+              <li>Try switching to <b>Full Body</b> or <b>Chest</b> to see genuine bodyweight push movements.</li>
+              <li>Toggle <b>Bench</b> or <b>Dumbbells</b> in the equipment row above to unlock weighted exercises.</li>
+              <li>Use the <b>Search bar</b> to find specific exercises by name across all categories.</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    } else {
+      cardsContainer.innerHTML = filtered.map(ex => {
+        const meta = (engine && engine.resolveExerciseMetadata(ex)) || { canonicalEquipment: [ex.type || 'Bodyweight'], workoutTypes: ['strength'], alternatives: [] };
+        return `
+        <article class="panel exercise-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+          ${ex.gif ? `<div class="ex-card-gif-wrap"><img src="${escapeHtml(ex.gif)}" alt="${escapeHtml(ex.name)}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.ex-card-gif-wrap').style.display='none'"></div>` : ''}
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:6px;flex-wrap:wrap;">
+              <span class="exercise-type" style="display:inline-flex;align-items:center;gap:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+                ${meta.canonicalEquipment.join(' + ')}
+              </span>
+              <span class="exercise-sub-tag">${ex.sub || ex.muscle || ''}</span>
             </div>
-            <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit}</p>
+            <h4 class="exercise-card-heading" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click to view visual illustration and full execution guide">
+              ${ex.name}
+            </h4>
+            
+            <!-- Scientific Prescription Box -->
+            <div class="exercise-prescription-box" style="cursor:pointer;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')" title="Click for visual breakdown">
+              <div class="rx-header">
+                <span class="rx-sets-reps">${ex.rxSetsReps || '3 sets × 8-10 reps · 90s rest'}</span>
+                <span class="rx-tempo">${ex.rxTempo || 'Tempo: 2-0-1'}</span>
+              </div>
+              <p class="rx-why"><b>Why this works:</b> ${ex.rxWhy || ex.benefit || 'Optimizes motor unit recruitment and progressive overload.'}</p>
+            </div>
+
+            ${meta.alternatives && meta.alternatives.length > 0 ? `
+              <div style="margin-top:8px;font-size:0.75rem;padding:6px 10px;background:rgba(22,199,154,0.08);border:1px solid rgba(22,199,154,0.25);border-radius:8px;color:#16C79A;">
+                <b>Alt gear options:</b> ${meta.alternatives.slice(0, 2).join(', ')}
+              </div>
+            ` : ''}
+
+            <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:var(--glass-text-secondary);"> ${ex.steps || ex.instructions_en || 'Execute with strict control throughout full range of motion.'}</p>
           </div>
 
-          <p class="exercise-benefit" style="margin-top:8px;font-size:.84rem;color:var(--glass-text-secondary);"> ${ex.steps}</p>
-        </div>
-
-        <div style="margin-top:14px;display:flex;gap:8px;">
-          <button type="button" class="outline-button small ex-btn-visual" style="flex:1;font-size:.8rem;padding:7px;" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
-            Visual Guide
-          </button>
-          <button type="button" class="solid-button small ex-btn-ai" style="flex:1;font-size:.8rem;padding:7px;" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
-            AI Coach
-          </button>
-        </div>
-      </article>
-    `).join('');
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="solid-button small" style="flex:1;background:#2563eb;justify-content:center;font-size:.78rem;padding:7px 6px;" onclick="startCustomExerciseTimer('${ex.name.replace(/'/g, "\\'")}', '${escapeHtml(ex.rxSetsReps || '3 sets × 10-12 reps')}', '60')">
+                Start Set
+              </button>
+              <button type="button" class="outline-button small" style="flex:1;justify-content:center;font-size:.78rem;padding:7px 6px;" onclick="addExerciseToDailyRoutine('${ex.name.replace(/'/g, "\\'")}', '${escapeHtml(ex.rxSetsReps || '3 sets × 10-12 reps')}')">
+                + Add to Workout
+              </button>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="outline-button small ex-btn-visual" style="flex:1;font-size:.75rem;padding:6px;color:var(--glass-text-secondary);" onclick="openExerciseDetailModal('${ex.name.replace(/'/g, "\\'")}')">
+                Visual Guide
+              </button>
+              <button type="button" class="outline-button small ex-btn-ai" style="flex:1;font-size:.75rem;padding:6px;color:var(--glass-text-secondary);" onclick="askAiAboutExercise('${ex.name.replace(/'/g, "\\'")}', '${(ex.sub || '').replace(/'/g, "\\'")}')">
+                AI Coach
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+      }).join('');
+    }
   }
 }
 
@@ -4377,25 +4990,43 @@ window.deleteUserAccount = async function(id) {
 function initAdminPortalListeners() {
   const tabComp = $('#adminTabComplaints');
   const tabUsers = $('#adminTabUsers');
+  const tabBeta = $('#adminTabBetaFeatures');
   const compPane = $('#adminComplaintsViewPane');
   const usersPane = $('#adminUsersViewPane');
+  const betaPane = $('#adminBetaFeaturesViewPane');
 
   if (tabComp && tabUsers && compPane && usersPane) {
     tabComp.onclick = () => {
       tabComp.className = 'solid-button small';
       tabUsers.className = 'outline-button small';
+      if (tabBeta) tabBeta.className = 'outline-button small';
       compPane.style.display = 'block';
       usersPane.style.display = 'none';
+      if (betaPane) betaPane.style.display = 'none';
       renderFilteredComplaints();
     };
 
     tabUsers.onclick = () => {
       tabUsers.className = 'solid-button small';
       tabComp.className = 'outline-button small';
+      if (tabBeta) tabBeta.className = 'outline-button small';
       compPane.style.display = 'none';
       usersPane.style.display = 'block';
+      if (betaPane) betaPane.style.display = 'none';
       loadAndRenderAdminUsers();
     };
+
+    if (tabBeta && betaPane) {
+      tabBeta.onclick = () => {
+        tabBeta.className = 'solid-button small';
+        tabComp.className = 'outline-button small';
+        tabUsers.className = 'outline-button small';
+        compPane.style.display = 'none';
+        usersPane.style.display = 'none';
+        betaPane.style.display = 'block';
+        if (window.FitFuelBeta) window.FitFuelBeta.loadAdminDashboard();
+      };
+    }
   }
 
   // Filter pills
@@ -5123,8 +5754,22 @@ function renderChatMessages() {
       }
     }).join('');
 
+        const threshold = 140;
+    const isNearBottom = (coachStream.scrollHeight - coachStream.scrollTop - coachStream.clientHeight) <= threshold;
+    const prevScrollTop = coachStream.scrollTop;
+
     coachStream.innerHTML = welcomeHtml + chatItemsHtml;
-    coachStream.scrollTop = coachStream.scrollHeight;
+
+    if (window._forceScrollToBottom || isNearBottom || chatHistory.length <= 1) {
+      coachStream.scrollTop = coachStream.scrollHeight;
+      window._forceScrollToBottom = false;
+    } else {
+      coachStream.scrollTop = prevScrollTop;
+    }
+
+    if (typeof updateCoachScrollBottomBtn === 'function') {
+      updateCoachScrollBottomBtn();
+    }
     if (typeof initCoachListeners === 'function') initCoachListeners();
   }
 }
@@ -5254,7 +5899,14 @@ I have opened your **4D Body Composition & Goal Planner** modal:
         Analyzing metrics and formulating dynamic response...
       </div>`;
     container.appendChild(typingDiv);
-    container.scrollTop = container.scrollHeight;
+    if (container.id === 'coachChatStream') {
+      const isNear = (container.scrollHeight - container.scrollTop - container.clientHeight) <= 180;
+      if (isNear || window._forceScrollToBottom) {
+        container.scrollTop = container.scrollHeight;
+      }
+    } else {
+      container.scrollTop = container.scrollHeight;
+    }
   });
 
   try {
@@ -5967,6 +6619,9 @@ async function generateAIChallengePlan(motive, durationDays, targetMinutes = 45,
 let customWorkoutFilterTypes = ['all'];
 let customWorkoutFilterParts = ['all'];
 let customWorkoutSearchQuery = '';
+let customWorkoutViewMode = 'all'; // 'all' (default: shows all matching exercises) or 'curated' (4 moves)
+let customWorkoutCuratedOffset = 0;
+let customWorkoutSelectedExercises = new Set();
 
 function renderCustomWorkoutExplorer() {
   const grid = $('#customWorkoutResultsGrid');
@@ -5990,7 +6645,12 @@ function renderCustomWorkoutExplorer() {
     list = list.filter(ex => {
       const cat = (ex.category || '').toLowerCase();
       const sub = (ex.sub || '').toLowerCase();
-      return customWorkoutFilterParts.some(p => cat.includes(p.toLowerCase()) || sub.includes(p.toLowerCase()));
+      const muscle = (ex.muscle || '').toLowerCase();
+      return customWorkoutFilterParts.some(p => {
+        const pLower = p.toLowerCase();
+        if (pLower === 'cardio') return cat.includes('cardio') || sub.includes('cardio') || muscle.includes('cardio') || muscle.includes('cardiovascular');
+        return cat.includes(pLower) || sub.includes(pLower);
+      });
     });
   }
 
@@ -6000,11 +6660,12 @@ function renderCustomWorkoutExplorer() {
       const typeStr = (ex.type || '').toLowerCase();
       const name = (ex.name || '').toLowerCase();
       const cat = (ex.category || '').toLowerCase();
+      const muscle = (ex.muscle || '').toLowerCase();
       return customWorkoutFilterTypes.some(t => {
         if (t === 'Home') return typeStr.includes('home') || typeStr.includes('dumbbell') || typeStr.includes('bodyweight') || !typeStr.includes('barbell');
         if (t === 'Gym') return typeStr.includes('gym') || typeStr.includes('barbell') || typeStr.includes('cable') || typeStr.includes('machine');
-        if (t === 'HIIT') return name.includes('jump') || name.includes('burpee') || name.includes('swing') || name.includes('mountain') || name.includes('lunge') || typeStr.includes('bodyweight');
-        if (t === 'Cardio') return name.includes('jump') || name.includes('cardio') || name.includes('run') || name.includes('burpee') || name.includes('skip');
+        if (t === 'HIIT') return name.includes('jump') || name.includes('burpee') || name.includes('swing') || name.includes('mountain') || name.includes('lunge') || name.includes('hop') || name.includes('jack') || typeStr.includes('bodyweight');
+        if (t === 'Cardio') return cat.includes('cardio') || muscle.includes('cardio') || muscle.includes('cardiovascular') || name.includes('jump') || name.includes('cardio') || (name.includes('run') && !name.includes('crunch')) || name.includes('burpee') || name.includes('skip') || name.includes('cycle') || name.includes('bike') || name.includes('rowing') || name.includes('climber') || name.includes('treadmill') || name.includes('elliptical') || name.includes('hop') || name.includes('skater');
         if (t === 'Stretching') return name.includes('stretch') || name.includes('mobility') || name.includes('cat-cow') || name.includes('hip') || cat.includes('core');
         return true;
       });
@@ -6019,64 +6680,258 @@ function renderCustomWorkoutExplorer() {
     return;
   }
 
-  // Curated light view: show only 4 high-priority exercises by default
-  const defaultLimit = 4;
-  const displayList = customWorkoutShowAll ? list.slice(0, 16) : list.slice(0, defaultLimit);
+  // Curated view vs All exercises view
+  let displayList = list;
+  if (customWorkoutViewMode === 'curated') {
+    const start = customWorkoutCuratedOffset % Math.max(1, list.length);
+    displayList = [];
+    for (let i = 0; i < Math.min(4, list.length); i++) {
+      displayList.push(list[(start + i) % list.length]);
+    }
+  }
+
+  // Toolbar HTML
+  const isAll = customWorkoutViewMode === 'all';
+  const selectedCount = customWorkoutSelectedExercises.size;
+  const currentCategoryForLib = customWorkoutFilterTypes.includes('Cardio') ? 'Cardio' : (customWorkoutFilterParts[0] !== 'all' ? customWorkoutFilterParts[0] : 'Cardio');
+
+  const toolbarHtml = `
+    <div class="custom-workout-toggle-bar" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-radius:14px;padding:14px 18px;margin-bottom:14px;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.88rem;color:var(--glass-text-secondary);font-weight:600;">
+          Showing <b style="color:#2563eb;font-size:1rem;">${displayList.length}</b> of <b>${list.length}</b> exercises
+          ${customWorkoutFilterTypes[0] !== 'all' ? `· <span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-size:.75rem;font-weight:700;">${customWorkoutFilterTypes.join(', ')}</span>` : ''}
+        </span>
+        <div style="display:flex;gap:6px;background:rgba(226,232,240,0.6);padding:3px;border-radius:99px;">
+          <button type="button" class="filter-pill ${isAll ? 'active' : ''}" style="padding:4px 12px;font-size:.76rem;margin:0;" onclick="setCustomWorkoutViewMode('all')">
+            All Exercises (${list.length})
+          </button>
+          <button type="button" class="filter-pill ${!isAll ? 'active' : ''}" style="padding:4px 12px;font-size:.76rem;margin:0;" onclick="setCustomWorkoutViewMode('curated')">
+            Curated 4-Move Session
+          </button>
+        </div>
+        ${!isAll && list.length > 4 ? `
+          <button type="button" class="outline-button small" style="font-size:.75rem;padding:4px 10px;" onclick="shuffleCuratedWorkoutMoves()">
+            🔀 Shuffle Next 4
+          </button>
+        ` : ''}
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="outline-button small" style="font-size:.78rem;padding:6px 12px;" onclick="toggleSelectAllFilteredExercises()">
+          ${displayList.length > 0 && displayList.every(e => customWorkoutSelectedExercises.has(e.name)) ? 'Deselect All' : `Select All (${displayList.length})`}
+        </button>
+        <button type="button" class="outline-button small" style="font-size:.78rem;padding:6px 12px;border-color:#2563eb;color:#2563eb;" onclick="openCategoryInExerciseLibrary('${currentCategoryForLib}')" title="Explore and search all movements in the Exercise Library">
+          📖 Open in Exercise Library &rarr;
+        </button>
+      </div>
+    </div>
+
+    ${selectedCount > 0 ? `
+      <div style="grid-column:1/-1;background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);border:1.5px solid #93c5fd;border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 4px 14px rgba(37,99,235,0.08);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.1rem;">🎯</span>
+          <span style="font-weight:700;color:#1e3a8a;font-size:.9rem;">
+            <b>${selectedCount}</b> ${selectedCount === 1 ? 'exercise' : 'exercises'} selected
+          </span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="solid-button small" style="background:#2563eb;font-size:.82rem;padding:7px 14px;" onclick="startCustomMultiExerciseSession()">
+            🚀 Start Guided Session (${selectedCount})
+          </button>
+          <button type="button" class="outline-button small" style="background:#ffffff;font-size:.82rem;padding:7px 14px;border-color:#2563eb;color:#2563eb;" onclick="addSelectedExercisesToRoutine()">
+            ➕ Add to Today's Routine
+          </button>
+          <button type="button" class="outline-button small" style="background:#ffffff;font-size:.82rem;padding:7px 14px;" onclick="replaceTodayRoutineWithSelected()">
+            📋 Replace Routine
+          </button>
+          <button type="button" class="text-button small" style="font-size:.78rem;color:#64748b;" onclick="clearSelectedExercises()">
+            Clear
+          </button>
+        </div>
+      </div>
+    ` : ''}
+  `;
 
   const cardsHtml = displayList.map(ex => {
     const rxSets = ex.rxSetsReps || '3 sets × 10–12 reps';
-    const rxRest = '60s rest';
+    const rxRest = (ex.category === 'Cardio') ? '30s rest' : '60s rest';
     const cleanName = escapeHtml(ex.name);
     const safeName = cleanName.replace(/'/g, "\\'");
+    const isSelected = customWorkoutSelectedExercises.has(ex.name);
+    const hasGif = Boolean(ex.gif);
+
     return `
-      <div class="exercise-custom-card" style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(32,59,41,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s ease, border-color .15s ease;">
+      <div class="exercise-custom-card ${isSelected ? 'selected' : ''}" style="background:var(--glass-surface-subtle); border:1.5px solid ${isSelected ? '#2563eb' : 'var(--glass-border)'};border-radius:14px;padding:16px;box-shadow:${isSelected ? '0 4px 16px rgba(37,99,235,0.12)' : '0 2px 8px rgba(32,59,41,0.03)'};display:flex;flex-direction:column;justify-content:space-between;transition:all .18s ease;position:relative;">
         <div>
+          ${hasGif ? `
+            <div class="ex-card-gif-wrap" style="height:140px;border-radius:10px;overflow:hidden;margin-bottom:12px;background:#0f172a;position:relative;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')">
+              <img src="${escapeHtml(ex.gif)}" alt="${cleanName}" class="gif-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onload="this.classList.add('loaded')" onerror="this.closest('.ex-card-gif-wrap').style.display='none'">
+              <span style="position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,0.65);color:#ffffff;font-size:.7rem;padding:2px 6px;border-radius:4px;font-weight:600;">Visual</span>
+            </div>
+          ` : ''}
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <span class="custom-ex-sub-badge" style="font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
-              ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
-            </span>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;">
+              <input type="checkbox" style="accent-color:#2563eb;width:16px;height:16px;cursor:pointer;" ${isSelected ? 'checked' : ''} onchange="toggleSelectExercise('${safeName}')">
+              <span class="custom-ex-sub-badge" style="font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:uppercase;">
+                ${escapeHtml(ex.category || 'Movement')} · ${escapeHtml(ex.sub || 'General')}
+              </span>
+            </label>
             <span style="font-size:.74rem;color:var(--glass-text-secondary);font-weight:600;">${escapeHtml(ex.type || 'Gym / Home')}</span>
           </div>
-          <b style="color:#2563eb;font-size:1.05rem;display:block;line-height:1.3;margin-bottom:6px;">${cleanName}</b>
-          <p style="color:var(--glass-text-secondary);font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the eccentric movement.')}</p>
+          <b style="color:#2563eb;font-size:1.02rem;display:block;line-height:1.3;margin-bottom:6px;cursor:pointer;" onclick="openExerciseDetailModal('${safeName}')" title="Click to view full instructions & visual diagram">${cleanName}</b>
+          <p style="color:var(--glass-text-secondary);font-size:.82rem;line-height:1.45;margin:0 0 10px;">${escapeHtml(ex.rxWhy || ex.steps || 'Maintain proper form, brace your core, and control the cadence.')}</p>
           <div style="background:var(--glass-surface-subtle); border:1px solid var(--glass-border);border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:.78rem;font-weight:700;color:var(--glass-text-primary);">${escapeHtml(rxSets)}</span>
             <span style="font-size:.75rem;color:var(--glass-text-secondary);font-weight:600;">Rest: ${escapeHtml(rxRest)}</span>
           </div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:auto;">
-          <button type="button" class="solid-button small" style="flex:1;background:#2563eb;justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
-            Start Set
-          </button>
-          <button type="button" class="outline-button small" style="justify-content:center;font-size:.8rem;padding:7px 10px;" onclick="addExerciseToDailyRoutine('${safeName}', '${escapeHtml(rxSets)}')">
-            + Add
-          </button>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:auto;">
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="solid-button small" style="flex:1;background:#2563eb;justify-content:center;font-size:.8rem;padding:7px 8px;" onclick="startCustomExerciseTimer('${safeName}', '${escapeHtml(rxSets)}', '${escapeHtml(rxRest)}')">
+              Start Set
+            </button>
+            <button type="button" class="outline-button small" style="flex:1;justify-content:center;font-size:.8rem;padding:7px 8px;" onclick="addExerciseToDailyRoutine('${safeName}', '${escapeHtml(rxSets)}')">
+              + Add to Routine
+            </button>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="outline-button small" style="flex:1;font-size:.75rem;padding:5px 6px;color:var(--glass-text-secondary);" onclick="openExerciseDetailModal('${safeName}')">
+              Visual Guide
+            </button>
+            <button type="button" class="outline-button small" style="flex:1;font-size:.75rem;padding:5px 6px;color:var(--glass-text-secondary);" onclick="askAiAboutExercise('${safeName}', '${(ex.sub || ex.category || '').replace(/'/g, "\\'")}')">
+              AI Coach
+            </button>
+          </div>
         </div>
       </div>
     `;
   }).join('');
 
-  const toggleBarHtml = list.length > defaultLimit ? `
-    <div class="custom-workout-toggle-bar" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-radius:12px;padding:12px 18px;margin-top:6px;flex-wrap:wrap;gap:10px;">
-      <span style="font-size:.85rem;color:var(--glass-text-secondary);font-weight:600;">
-        Showing <b>${displayList.length}</b> of <b>${list.length}</b> targeted exercises (${customWorkoutShowAll ? 'Expanded Catalog' : 'Curated Session View - 4 Moves'})
-      </span>
-      <button type="button" class="solid-button small" id="toggleCustomWorkoutExpandBtn" style="background:#2563eb;padding:7px 16px;font-size:.82rem;">
-        ${customWorkoutShowAll ? 'Show Curated (4)' : `Browse All ${list.length} Exercises`}
-      </button>
-    </div>
-  ` : '';
-
-  grid.innerHTML = cardsHtml + toggleBarHtml;
-
-  const toggleBtn = $('#toggleCustomWorkoutExpandBtn');
-  if (toggleBtn) {
-    toggleBtn.onclick = () => {
-      customWorkoutShowAll = !customWorkoutShowAll;
-      renderCustomWorkoutExplorer();
-    };
-  }
+  grid.innerHTML = toolbarHtml + cardsHtml;
 }
+
+window.setCustomWorkoutViewMode = function(mode) {
+  customWorkoutViewMode = mode;
+  renderCustomWorkoutExplorer();
+};
+
+window.shuffleCuratedWorkoutMoves = function() {
+  customWorkoutCuratedOffset += 4;
+  renderCustomWorkoutExplorer();
+  toast('Shuffled to next curated exercises');
+};
+
+window.toggleSelectExercise = function(name) {
+  if (customWorkoutSelectedExercises.has(name)) {
+    customWorkoutSelectedExercises.delete(name);
+  } else {
+    customWorkoutSelectedExercises.add(name);
+  }
+  renderCustomWorkoutExplorer();
+};
+
+window.toggleSelectAllFilteredExercises = function() {
+  const cards = document.querySelectorAll('#customWorkoutResultsGrid .exercise-custom-card b');
+  const renderedNames = Array.from(cards).map(b => b.textContent.trim());
+  const allSelected = renderedNames.length > 0 && renderedNames.every(n => customWorkoutSelectedExercises.has(n));
+  if (allSelected) {
+    renderedNames.forEach(n => customWorkoutSelectedExercises.delete(n));
+  } else {
+    renderedNames.forEach(n => customWorkoutSelectedExercises.add(n));
+  }
+  renderCustomWorkoutExplorer();
+};
+
+window.clearSelectedExercises = function() {
+  customWorkoutSelectedExercises.clear();
+  renderCustomWorkoutExplorer();
+};
+
+window.startCustomMultiExerciseSession = function() {
+  const names = Array.from(customWorkoutSelectedExercises);
+  if (!names.length) {
+    toast('Please select at least 1 exercise');
+    return;
+  }
+  const sessionData = {
+    dayNumber: 'Custom',
+    title: (customWorkoutFilterTypes[0] !== 'all' ? customWorkoutFilterTypes.join(' & ') : 'Custom') + ' Session',
+    focus: 'Selected Circuit (' + names.length + ' Exercises)',
+    exercises: names.map(name => {
+      const ex = findExerciseInfo(name);
+      return {
+        name: name,
+        subMuscle: (ex && (ex.sub || ex.category)) || 'Targeted',
+        category: (ex && ex.category) || 'Custom',
+        sets: 3,
+        reps: (ex && ex.rxSetsReps) || '3 sets × 10–12 reps',
+        durationSec: 45,
+        restSec: 50,
+        tip: (ex && (ex.rxWhy || ex.benefit || ex.steps)) || 'Brace core, maintain full range of motion with controlled cadence.'
+      };
+    })
+  };
+  startWorkoutSession(sessionData);
+};
+
+window.addSelectedExercisesToRoutine = function() {
+  const names = Array.from(customWorkoutSelectedExercises);
+  if (!names.length) {
+    toast('No exercises selected');
+    return;
+  }
+  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+  if (wo && Array.isArray(wo.moves)) {
+    names.forEach(name => {
+      const ex = findExerciseInfo(name);
+      wo.moves.push({
+        name: name,
+        sets: (ex && ex.rxSetsReps) || '3 sets × 10–12 reps',
+        tip: (ex && (ex.rxWhy || ex.benefit || ex.steps)) || 'Controlled cadence and strict posture.'
+      });
+    });
+    renderWorkouts();
+  }
+  toast(`Added ${names.length} exercises to today's workout routine!`);
+  customWorkoutSelectedExercises.clear();
+  renderCustomWorkoutExplorer();
+  $('#planMoveList')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.replaceTodayRoutineWithSelected = function() {
+  const names = Array.from(customWorkoutSelectedExercises);
+  if (!names.length) {
+    toast('No exercises selected');
+    return;
+  }
+  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+  if (wo) {
+    wo.name = 'Custom ' + (customWorkoutFilterTypes[0] !== 'all' ? customWorkoutFilterTypes.join(' & ') : 'Targeted') + ' Routine';
+    wo.focus = customWorkoutFilterParts[0] !== 'all' ? customWorkoutFilterParts.join(' · ') : 'Custom Selection';
+    wo.moves = names.map(name => {
+      const ex = findExerciseInfo(name);
+      return {
+        name: name,
+        sets: (ex && ex.rxSetsReps) || '3 sets × 10–12 reps',
+        tip: (ex && (ex.rxWhy || ex.benefit || ex.steps)) || 'Controlled cadence and strict posture.'
+      };
+    });
+    renderWorkouts();
+  }
+  toast(`Replaced today's routine with ${names.length} selected exercises!`);
+  customWorkoutSelectedExercises.clear();
+  renderCustomWorkoutExplorer();
+  $('#planMoveList')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.openCategoryInExerciseLibrary = function(category) {
+  selectedExerciseCategory = category || 'Cardio';
+  selectedSubMuscle = 'All ' + selectedExerciseCategory;
+  switchView('exercise-library');
+  renderExerciseLibrary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 function startCustomExerciseTimer(name, sets, rest) {
   soundFX.pop();
@@ -6100,6 +6955,16 @@ function startCustomExerciseTimer(name, sets, rest) {
 
 function addExerciseToDailyRoutine(name, sets) {
   soundFX.pop();
+  const wo = WORKOUT_PLANS[activeWorkoutIdx % WORKOUT_PLANS.length];
+  if (wo && Array.isArray(wo.moves)) {
+    const ex = findExerciseInfo(name);
+    wo.moves.push({
+      name: name,
+      sets: sets || (ex && ex.rxSetsReps) || '3 sets × 10–12 reps',
+      tip: (ex && (ex.rxWhy || ex.steps || ex.benefit)) || 'Maintain controlled cadence and strict posture.'
+    });
+    renderWorkouts();
+  }
   if (activeChallengePlan && activeChallengePlan.days) {
     const curIdx = activeChallengePlan.currentDayIndex || 0;
     const curDay = activeChallengePlan.days[curIdx];
@@ -6117,11 +6982,9 @@ function addExerciseToDailyRoutine(name, sets) {
       store.set('activeChallengePlan', activeChallengePlan);
       if (FF.online && FF.user) FF.patch({ activeChallenge: activeChallengePlan });
       renderChallengeView();
-      toast(`Added "${name}" to today's Challenge routine!`);
-      return;
     }
   }
-  toast(`Added "${name}" (${sets}) to workout!`);
+  toast(`Added "${name}" to your active workout session!`);
 }
 
 function initWorkoutCustomizationListeners() {
@@ -6976,6 +7839,7 @@ function clearCoachAttachedImage() {
 }
 
 function sendCoachChatMessage(customPrompt) {
+  window._forceScrollToBottom = true;
   const inp = $('#coachChatInput');
   let text = customPrompt || (inp ? inp.value.trim() : '');
   const image = coachAttachedImageData;
@@ -7050,7 +7914,38 @@ if ($('#coachCmdBoostBtn')) {
   $('#coachCmdBoostBtn').onclick = () => handleUserAiQuery('/boost');
 }
 
+function updateCoachScrollBottomBtn() {
+  const s = $('#coachChatStream');
+  const btn = $('#coachScrollBottomBtn');
+  if (!s || !btn) return;
+  const distFromBottom = s.scrollHeight - s.scrollTop - s.clientHeight;
+  if (distFromBottom > 140) {
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+window.updateCoachScrollBottomBtn = updateCoachScrollBottomBtn;
+
 function initCoachListeners() {
+  const stream = $('#coachChatStream');
+  if (stream && !stream._hasScrollListener) {
+    stream._hasScrollListener = true;
+    stream.addEventListener('scroll', () => {
+      updateCoachScrollBottomBtn();
+    }, { passive: true });
+  }
+
+  const scrollBtn = $('#coachScrollBottomBtn');
+  if (scrollBtn && !scrollBtn._hasClickListener) {
+    scrollBtn._hasClickListener = true;
+    scrollBtn.onclick = () => {
+      if (stream) {
+        stream.scrollTo({ top: stream.scrollHeight, behavior: 'smooth' });
+        setTimeout(() => updateCoachScrollBottomBtn(), 350);
+      }
+    };
+  }
   if ($('#coachPlanAddToWorkoutBtn')) {
     $('#coachPlanAddToWorkoutBtn').onclick = () => {
       const recPlan = {
@@ -8947,7 +9842,7 @@ function initInteractiveHeroAndAppButtons() {
         e.preventDefault();
         if (soundFX && soundFX.pop) soundFX.pop();
         switchView('body-analysis');
-        if (typeof toast === 'function') toast('Opening AI Body Analysis & Transformation Planner');
+        if (typeof toast === 'function') toast('Opening AI Body Scan & Transformation Planner');
         return;
       }
 
@@ -9330,8 +10225,19 @@ const baState = {
     limitations: 'None',
     dietary: 'balanced',
     allergies: 'None',
-    waterTarget: 'auto'
+    waterTarget: 'auto',
+    anthropometrics: {
+      neck: 38.5,
+      chest: 100.5,
+      waist: 81.5,
+      hips: 97.5,
+      bicep: 34.0,
+      thigh: 56.0,
+      calf: 37.5
+    }
   },
+  tapeUnit: 'cm',
+  modalTapeUnit: 'cm',
   photos: {
     front: null,
     back: null,
@@ -9430,6 +10336,80 @@ function bindBodyAnalysisEvents() {
   // Step 2: Preferences Form
   const step2Back = $('#baStep2BackBtn');
   if (step2Back) step2Back.onclick = () => goToBodyStep(1);
+
+  
+  // Anthropometric tape units and auto-calculate
+  const tapeUnitCmBtn = $('#baTapeUnitCm');
+  const tapeUnitInBtn = $('#baTapeUnitIn');
+  if (tapeUnitCmBtn) tapeUnitCmBtn.onclick = () => setTapeUnit('cm');
+  if (tapeUnitInBtn) tapeUnitInBtn.onclick = () => setTapeUnit('in');
+
+  const autoTapeBtn = $('#baAutoCalcTapeBtn');
+  if (autoTapeBtn) autoTapeBtn.onclick = () => {
+    autoEstimateTapeMeasurements();
+    if (typeof toast === 'function') toast('Recalibrated anthropometrics from biometrics.');
+  };
+
+  const prefHeightEl = $('#baPrefHeight');
+  const prefWeightEl = $('#baPrefWeight');
+  const prefGenderEl = $('#baPrefGender');
+  if (prefHeightEl) prefHeightEl.onchange = () => autoEstimateTapeMeasurements();
+  if (prefWeightEl) prefWeightEl.onchange = () => autoEstimateTapeMeasurements();
+  if (prefGenderEl) prefGenderEl.onchange = () => autoEstimateTapeMeasurements();
+
+  // Step 6 & Modal interactive tape triggers
+  const editCircBtn = $('#baEditCircumferencesBtn');
+  if (editCircBtn) editCircBtn.onclick = () => openTapeMeasureModal();
+
+  const modalCloseBtn = $('#baTapeModalCloseBtn');
+  if (modalCloseBtn) modalCloseBtn.onclick = () => closeTapeMeasureModal();
+
+  const modalOverlay = $('#baTapeMeasureModal');
+  if (modalOverlay) {
+    modalOverlay.onclick = (e) => {
+      if (e.target === modalOverlay) closeTapeMeasureModal();
+    };
+  }
+
+  const modalUnitCmBtn = $('#baModalUnitCm');
+  const modalUnitInBtn = $('#baModalUnitIn');
+  if (modalUnitCmBtn) modalUnitCmBtn.onclick = () => setModalTapeUnit('cm');
+  if (modalUnitInBtn) modalUnitInBtn.onclick = () => setModalTapeUnit('in');
+
+  ['Neck', 'Chest', 'Waist', 'Hips', 'Bicep', 'Thigh', 'Calf'].forEach(f => {
+    const slider = $(`#baModal${f}`);
+    if (slider) {
+      slider.oninput = () => updateModalLiveMetrics();
+    }
+  });
+
+  const modalResetBtn = $('#baTapeModalResetBtn');
+  if (modalResetBtn) {
+    modalResetBtn.onclick = () => {
+      const h = (baState.preferences && baState.preferences.height) || 180;
+      const w = (baState.preferences && baState.preferences.weight) || 74;
+      const gender = (baState.preferences && baState.preferences.gender) || 'male';
+      const goal = baState.selectedGoal || 'lean_athletic';
+      const exp = (baState.preferences && baState.preferences.experience) || 'intermediate';
+      let reg = { neck: 38.5, chest: 100.5, waist: 81.5, hips: 97.5, bicep: 34.0, thigh: 56.0, calf: 37.5 };
+      if (window.FF_ALGO && typeof window.FF_ALGO.estimateAnthropometrics === 'function') {
+        reg = window.FF_ALGO.estimateAnthropometrics({ heightCm: h, weightKg: w, gender, goal, experience: exp });
+      }
+      if (baState.preferences) {
+        baState.preferences.anthropometrics = { ...reg };
+      }
+      if (baState.currentAnalysis) {
+        baState.currentAnalysis.anthropometrics = { ...reg };
+        baState.currentAnalysis.circumferences = { ...reg };
+      }
+      autoEstimateTapeMeasurements();
+      openTapeMeasureModal();
+      if (typeof toast === 'function') toast('Reset to standard ISO estimations.');
+    };
+  }
+
+  const modalApplyBtn = $('#baTapeModalApplyBtn');
+  if (modalApplyBtn) modalApplyBtn.onclick = () => applyModalTapeMeasurements();
 
   const step2Next = $('#baStep2NextBtn');
   if (step2Next) {
@@ -9629,6 +10609,23 @@ function goToBodyStep(step) {
 }
 
 function collectBaPreferences() {
+  const isInch = baState.tapeUnit === 'in';
+  const toCm = (val, def) => {
+    const n = parseFloat(val);
+    if (isNaN(n) || n <= 0) return def;
+    return isInch ? Math.round(n * 2.54 * 10) / 10 : Math.round(n * 10) / 10;
+  };
+
+  const anthro = {
+    neck: toCm($('#baTapeNeck') ? $('#baTapeNeck').value : 38.5, 38.5),
+    chest: toCm($('#baTapeChest') ? $('#baTapeChest').value : 100.5, 100.5),
+    waist: toCm($('#baTapeWaist') ? $('#baTapeWaist').value : 81.5, 81.5),
+    hips: toCm($('#baTapeHips') ? $('#baTapeHips').value : 97.5, 97.5),
+    bicep: toCm($('#baTapeBicep') ? $('#baTapeBicep').value : 34.0, 34.0),
+    thigh: toCm($('#baTapeThigh') ? $('#baTapeThigh').value : 56.0, 56.0),
+    calf: toCm($('#baTapeCalf') ? $('#baTapeCalf').value : 37.5, 37.5)
+  };
+
   baState.preferences = {
     age: parseInt($('#baPrefAge') ? $('#baPrefAge').value : 26, 10) || 26,
     gender: $('#baPrefGender') ? $('#baPrefGender').value : 'male',
@@ -9643,7 +10640,8 @@ function collectBaPreferences() {
     limitations: $('#baPrefLimitations') ? $('#baPrefLimitations').value : 'None',
     dietary: $('#baPrefDietary') ? $('#baPrefDietary').value : 'balanced',
     allergies: $('#baPrefAllergies') ? $('#baPrefAllergies').value : 'None',
-    waterTarget: $('#baPrefWaterTarget') ? $('#baPrefWaterTarget').value : 'auto'
+    waterTarget: $('#baPrefWaterTarget') ? $('#baPrefWaterTarget').value : 'auto',
+    anthropometrics: anthro
   };
 }
 
@@ -9750,8 +10748,319 @@ async function executeBodyTransformationAnalysis() {
   }
 }
 
+
+function setTapeUnit(unit) {
+  if (baState.tapeUnit === unit) return;
+  const prevUnit = baState.tapeUnit;
+  baState.tapeUnit = unit;
+
+  const btnCm = $('#baTapeUnitCm');
+  const btnIn = $('#baTapeUnitIn');
+  if (btnCm) btnCm.classList.toggle('active', unit === 'cm');
+  if (btnIn) btnIn.classList.toggle('active', unit === 'in');
+
+  $$('.ba-tape-unit-lbl').forEach(el => el.textContent = unit);
+
+  const keys = ['Neck', 'Chest', 'Waist', 'Hips', 'Bicep', 'Thigh', 'Calf'];
+  keys.forEach(k => {
+    const input = $(`#baTape${k}`);
+    if (input && input.value) {
+      const v = parseFloat(input.value);
+      if (!isNaN(v)) {
+        if (unit === 'in' && prevUnit === 'cm') {
+          input.value = (Math.round((v / 2.54) * 10) / 10);
+        } else if (unit === 'cm' && prevUnit === 'in') {
+          input.value = (Math.round((v * 2.54) * 10) / 10);
+        }
+      }
+    }
+  });
+}
+
+function autoEstimateTapeMeasurements() {
+  const h = parseInt($('#baPrefHeight') ? $('#baPrefHeight').value : 180, 10) || 180;
+  const w = parseFloat($('#baPrefWeight') ? $('#baPrefWeight').value : 74) || 74;
+  const gender = $('#baPrefGender') ? $('#baPrefGender').value : 'male';
+  const goal = baState.selectedGoal || 'lean_athletic';
+  const exp = $('#baPrefExperience') ? $('#baPrefExperience').value : 'intermediate';
+
+  let reg = { neck: 38.5, chest: 100.5, waist: 81.5, hips: 97.5, bicep: 34.0, thigh: 56.0, calf: 37.5 };
+  if (window.FF_ALGO && typeof window.FF_ALGO.estimateAnthropometrics === 'function') {
+    reg = window.FF_ALGO.estimateAnthropometrics({ heightCm: h, weightKg: w, gender, goal, experience: exp });
+  }
+
+  const isInch = baState.tapeUnit === 'in';
+  const fmt = (cmVal) => isInch ? (Math.round((cmVal / 2.54) * 10) / 10) : cmVal;
+
+  if ($('#baTapeNeck')) $('#baTapeNeck').value = fmt(reg.neck);
+  if ($('#baTapeChest')) $('#baTapeChest').value = fmt(reg.chest);
+  if ($('#baTapeWaist')) $('#baTapeWaist').value = fmt(reg.waist);
+  if ($('#baTapeHips')) $('#baTapeHips').value = fmt(reg.hips);
+  if ($('#baTapeBicep')) $('#baTapeBicep').value = fmt(reg.bicep);
+  if ($('#baTapeThigh')) $('#baTapeThigh').value = fmt(reg.thigh);
+  if ($('#baTapeCalf')) $('#baTapeCalf').value = fmt(reg.calf);
+
+  if (baState.preferences) {
+    baState.preferences.anthropometrics = { ...reg };
+  }
+}
+
+function openTapeMeasureModal() {
+  const modal = $('#baTapeMeasureModal');
+  if (!modal) return;
+
+  const anthro = (baState.currentAnalysis && (baState.currentAnalysis.anthropometrics || baState.currentAnalysis.circumferences))
+    || (baState.preferences && baState.preferences.anthropometrics)
+    || { neck: 38.5, chest: 100.5, waist: 81.5, hips: 97.5, bicep: 34.0, thigh: 56.0, calf: 37.5 };
+
+  const unit = baState.tapeUnit || 'cm';
+  baState.modalTapeUnit = unit;
+  setModalTapeUnit(unit);
+
+  const isInch = unit === 'in';
+  const fields = ['Neck', 'Chest', 'Waist', 'Hips', 'Bicep', 'Thigh', 'Calf'];
+  fields.forEach(f => {
+    const key = f.toLowerCase();
+    const cmVal = Number(anthro[key]) || 50;
+    const val = isInch ? Math.round((cmVal / 2.54) * 10) / 10 : cmVal;
+    const slider = $(`#baModal${f}`);
+    if (slider) {
+      slider.value = val;
+    }
+  });
+
+  updateModalLiveMetrics();
+  modal.style.display = 'flex';
+}
+
+function closeTapeMeasureModal() {
+  const modal = $('#baTapeMeasureModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function setModalTapeUnit(unit) {
+  const prevUnit = baState.modalTapeUnit || 'cm';
+  baState.modalTapeUnit = unit;
+
+  const btnCm = $('#baModalUnitCm');
+  const btnIn = $('#baModalUnitIn');
+  if (btnCm) btnCm.classList.toggle('active', unit === 'cm');
+  if (btnIn) btnIn.classList.toggle('active', unit === 'in');
+
+  const fields = ['Neck', 'Chest', 'Waist', 'Hips', 'Bicep', 'Thigh', 'Calf'];
+  const ranges = {
+    Neck: unit === 'in' ? { min: 10, max: 24, step: 0.2 } : { min: 25, max: 60, step: 0.5 },
+    Chest: unit === 'in' ? { min: 28, max: 65, step: 0.2 } : { min: 70, max: 165, step: 0.5 },
+    Waist: unit === 'in' ? { min: 20, max: 60, step: 0.2 } : { min: 50, max: 155, step: 0.5 },
+    Hips: unit === 'in' ? { min: 24, max: 65, step: 0.2 } : { min: 60, max: 165, step: 0.5 },
+    Bicep: unit === 'in' ? { min: 8, max: 24, step: 0.1 } : { min: 20, max: 60, step: 0.5 },
+    Thigh: unit === 'in' ? { min: 14, max: 38, step: 0.2 } : { min: 35, max: 95, step: 0.5 },
+    Calf: unit === 'in' ? { min: 10, max: 24, step: 0.2 } : { min: 25, max: 60, step: 0.5 }
+  };
+
+  fields.forEach(f => {
+    const slider = $(`#baModal${f}`);
+    if (slider) {
+      const cur = parseFloat(slider.value) || 0;
+      let converted = cur;
+      if (unit !== prevUnit) {
+        if (unit === 'in' && prevUnit === 'cm') {
+          converted = Math.round((cur / 2.54) * 10) / 10;
+        } else if (unit === 'cm' && prevUnit === 'in') {
+          converted = Math.round((cur * 2.54) * 10) / 10;
+        }
+      }
+      slider.min = ranges[f].min;
+      slider.max = ranges[f].max;
+      slider.step = ranges[f].step;
+      if (unit !== prevUnit) {
+        slider.value = converted;
+      }
+    }
+  });
+
+  updateModalLiveMetrics();
+}
+
+function updateModalLiveMetrics() {
+  const isInch = baState.modalTapeUnit === 'in';
+  const getCm = (id) => {
+    const el = $(`#baModal${id}`);
+    const v = el ? parseFloat(el.value) : 0;
+    return isInch ? (v * 2.54) : v;
+  };
+
+  const neck = getCm('Neck');
+  const chest = getCm('Chest');
+  const waist = getCm('Waist');
+  const hips = getCm('Hips');
+  const bicep = getCm('Bicep');
+  const thigh = getCm('Thigh');
+  const calf = getCm('Calf');
+
+  const unit = baState.modalTapeUnit || 'cm';
+  ['Neck', 'Chest', 'Waist', 'Hips', 'Bicep', 'Thigh', 'Calf'].forEach(f => {
+    const slider = $(`#baModal${f}`);
+    const disp = $(`#baModal${f}Display`);
+    if (slider && disp) {
+      disp.textContent = `${slider.value} ${unit}`;
+    }
+  });
+
+  const h = (baState.preferences && baState.preferences.height) || 180;
+  const w = (baState.preferences && baState.preferences.weight) || 74;
+  const gender = (baState.preferences && baState.preferences.gender) || 'male';
+
+  if (window.FF_ALGO && typeof window.FF_ALGO.calculateNavyBodyFat === 'function') {
+    const navyBf = window.FF_ALGO.calculateNavyBodyFat({ gender, heightCm: h, waistCm: waist, neckCm: neck, hipsCm: hips });
+    const clinical = window.FF_ALGO.calculateClinicalRatios({ heightCm: h, weightKg: w, waistCm: waist, hipsCm: hips, gender, bodyFatPct: navyBf });
+
+    if ($('#baModalLiveBf')) $('#baModalLiveBf').textContent = `${navyBf}%`;
+    if ($('#baModalLiveWhr')) $('#baModalLiveWhr').textContent = Number(clinical.whr).toFixed(2);
+    if ($('#baModalLiveWhtr')) $('#baModalLiveWhtr').textContent = Number(clinical.whtr).toFixed(2);
+    if ($('#baModalLiveLbm')) $('#baModalLiveLbm').textContent = `${clinical.leanMassKg} kg`;
+  }
+}
+
+function applyModalTapeMeasurements() {
+  const isInch = baState.modalTapeUnit === 'in';
+  const getCm = (id) => {
+    const el = $(`#baModal${id}`);
+    const v = el ? parseFloat(el.value) : 0;
+    return Math.round((isInch ? (v * 2.54) : v) * 10) / 10;
+  };
+
+  const updated = {
+    neck: getCm('Neck'),
+    chest: getCm('Chest'),
+    waist: getCm('Waist'),
+    hips: getCm('Hips'),
+    bicep: getCm('Bicep'),
+    thigh: getCm('Thigh'),
+    calf: getCm('Calf')
+  };
+
+  baState.preferences = baState.preferences || {};
+  baState.preferences.anthropometrics = { ...updated };
+
+  // Sync to step 2 inputs if present
+  const isTapeIn = baState.tapeUnit === 'in';
+  const fmt = (v) => isTapeIn ? Math.round((v / 2.54) * 10) / 10 : v;
+  if ($('#baTapeNeck')) $('#baTapeNeck').value = fmt(updated.neck);
+  if ($('#baTapeChest')) $('#baTapeChest').value = fmt(updated.chest);
+  if ($('#baTapeWaist')) $('#baTapeWaist').value = fmt(updated.waist);
+  if ($('#baTapeHips')) $('#baTapeHips').value = fmt(updated.hips);
+  if ($('#baTapeBicep')) $('#baTapeBicep').value = fmt(updated.bicep);
+  if ($('#baTapeThigh')) $('#baTapeThigh').value = fmt(updated.thigh);
+  if ($('#baTapeCalf')) $('#baTapeCalf').value = fmt(updated.calf);
+
+  // Recalculate analysis metrics
+  if (baState.currentAnalysis && window.FF_ALGO && typeof window.FF_ALGO.evaluateAnthropometricPhysique === 'function') {
+    const h = baState.preferences.height || 180;
+    const w = baState.preferences.weight || 74;
+    const gender = baState.preferences.gender || 'male';
+    const age = baState.preferences.age || 26;
+    const goal = baState.selectedGoal || 'lean_athletic';
+    const exp = baState.preferences.experience || 'intermediate';
+
+    const evaluated = window.FF_ALGO.evaluateAnthropometricPhysique({
+      heightCm: h,
+      weightKg: w,
+      gender,
+      age,
+      goal,
+      experience: exp,
+      manualMeasurements: updated
+    });
+
+    baState.currentAnalysis.anthropometrics = evaluated.circumferences;
+    baState.currentAnalysis.circumferences = evaluated.circumferences;
+    baState.currentAnalysis.clinical_risk = evaluated.clinical;
+    baState.currentAnalysis.clinicalRisk = evaluated.clinical;
+    baState.currentAnalysis.navy_body_fat = evaluated.navyBf;
+    baState.currentAnalysis.navyBodyFat = evaluated.navyBf;
+
+    if (baState.currentAnalysis.estimated_physical_characteristics) {
+      baState.currentAnalysis.estimated_physical_characteristics.estimated_body_fat_range = `${evaluated.navyBf}%`;
+      baState.currentAnalysis.estimated_physical_characteristics.estimated_lean_muscle_mass = `${evaluated.clinical.leanMassKg} kg`;
+      baState.currentAnalysis.estimated_physical_characteristics.estimated_adipose_tissue_mass = `${evaluated.clinical.fatMassKg} kg`;
+      baState.currentAnalysis.estimated_physical_characteristics.circumferences = evaluated.circumferences;
+    }
+
+    renderTransformationDashboard(baState.currentAnalysis);
+  }
+
+  closeTapeMeasureModal();
+  if (typeof toast === 'function') toast('Anthropometric measurements updated and metrics recalculated!');
+}
+
 function renderTransformationDashboard(analysis) {
   if (!analysis) return;
+
+  // 0. Anthropometrics & ISO Circumferences
+  const anthro = analysis.anthropometrics || analysis.circumferences || (analysis.estimated_physical_characteristics && analysis.estimated_physical_characteristics.circumferences) || {
+    neck: 38.5, chest: 100.5, waist: 81.5, hips: 97.5, bicep: 34.0, thigh: 56.0, calf: 37.5
+  };
+
+  const toInStr = (cm) => `${(Math.round((Number(cm) / 2.54) * 10) / 10).toFixed(1)} in`;
+
+  if ($('#baCircNeck')) $('#baCircNeck').textContent = `${anthro.neck} cm`;
+  if ($('#baCircNeckIn')) $('#baCircNeckIn').textContent = `${toInStr(anthro.neck)} · 83% stature`;
+
+  if ($('#baCircChest')) $('#baCircChest').textContent = `${anthro.chest} cm`;
+  if ($('#baCircChestIn')) $('#baCircChestIn').textContent = `${toInStr(anthro.chest)} · 72% stature`;
+
+  if ($('#baCircWaist')) $('#baCircWaist').textContent = `${anthro.waist} cm`;
+  if ($('#baCircWaistIn')) $('#baCircWaistIn').textContent = `${toInStr(anthro.waist)} · 60% stature`;
+
+  if ($('#baCircHips')) $('#baCircHips').textContent = `${anthro.hips} cm`;
+  if ($('#baCircHipsIn')) $('#baCircHipsIn').textContent = `${toInStr(anthro.hips)} · 52% stature`;
+
+  if ($('#baCircBicep')) $('#baCircBicep').textContent = `${anthro.bicep} cm`;
+  if ($('#baCircBicepIn')) $('#baCircBicepIn').textContent = `${toInStr(anthro.bicep)} · 68% arm`;
+
+  if ($('#baCircThigh')) $('#baCircThigh').textContent = `${anthro.thigh} cm`;
+  if ($('#baCircThighIn')) $('#baCircThighIn').textContent = `${toInStr(anthro.thigh)} · 42% stature`;
+
+  if ($('#baCircCalf')) $('#baCircCalf').textContent = `${anthro.calf} cm`;
+  if ($('#baCircCalfIn')) $('#baCircCalfIn').textContent = `${toInStr(anthro.calf)} · 22% stature`;
+
+  // 0b. Clinical Risk Indicators & Ratios
+  const clin = analysis.clinical_risk || analysis.clinicalRisk || {};
+  const estPhys = analysis.estimated_physical_characteristics || analysis.estimatedPhysicalCharacteristics || {};
+  const userGender = (baState.preferences && baState.preferences.gender) || 'male';
+
+  const whrNum = Number(clin.whr != null ? clin.whr : (estPhys.whr != null ? estPhys.whr : (Math.round((anthro.waist / Math.max(10, anthro.hips)) * 100) / 100)));
+  const whrVal = isNaN(whrNum) ? 0.84 : whrNum;
+  if ($('#baEstWhr')) $('#baEstWhr').textContent = whrVal.toFixed(2);
+  const whrStatus = clin.whrStatus || estPhys.whr_status || (whrVal < (userGender === 'female' ? 0.85 : 0.90) ? 'Low Clinical Risk' : 'Moderate Risk');
+  const whrRisk = clin.whrRiskLevel || (whrVal < (userGender === 'female' ? 0.85 : 0.90) ? 'low' : (whrVal < 1.0 ? 'moderate' : 'elevated'));
+  if ($('#baEstWhrBadge')) {
+    $('#baEstWhrBadge').textContent = whrStatus;
+    $('#baEstWhrBadge').className = `ba-risk-badge ${whrRisk}`;
+  }
+  if ($('#baEstWhrThreshold')) $('#baEstWhrThreshold').textContent = userGender === 'female' ? '< 0.85 (Women)' : '< 0.90 (Men)';
+
+  const userH = (baState.preferences && baState.preferences.height) || 180;
+  const whtrNum = Number(clin.whtr != null ? clin.whtr : (estPhys.whtr != null ? estPhys.whtr : (Math.round((anthro.waist / Math.max(50, userH)) * 100) / 100)));
+  const whtrVal = isNaN(whtrNum) ? 0.45 : whtrNum;
+  if ($('#baEstWhtr')) $('#baEstWhtr').textContent = whtrVal.toFixed(2);
+  const whtrStatus = clin.whtrStatus || estPhys.whtr_status || (whtrVal <= 0.50 ? 'Healthy Ratio' : 'Moderate Risk');
+  const whtrRisk = clin.whtrRiskLevel || (whtrVal <= 0.40 ? 'slim' : (whtrVal <= 0.50 ? 'healthy' : (whtrVal <= 0.60 ? 'moderate' : 'elevated')));
+  if ($('#baEstWhtrBadge')) {
+    $('#baEstWhtrBadge').textContent = whtrStatus;
+    $('#baEstWhtrBadge').className = `ba-risk-badge ${whtrRisk}`;
+  }
+
+  const rawNavyBf = analysis.navy_body_fat || analysis.navyBodyFat || estPhys.navy_body_fat || estPhys.estimated_body_fat_range || '13.2%';
+  const navyBfDisplay = typeof rawNavyBf === 'number' ? `${rawNavyBf.toFixed(1)}%` : String(rawNavyBf);
+  if ($('#baEstNavyBf')) $('#baEstNavyBf').textContent = navyBfDisplay;
+
+  const lbmVal = clin.leanMassKg || (estPhys.estimated_lean_muscle_mass ? parseFloat(estPhys.estimated_lean_muscle_mass) : 62.0);
+  const fatVal = clin.fatMassKg || (estPhys.estimated_adipose_tissue_mass ? parseFloat(estPhys.estimated_adipose_tissue_mass) : 12.0);
+  if ($('#baEstLbm')) $('#baEstLbm').textContent = `${lbmVal} kg`;
+  if ($('#baEstFatMassDetail')) $('#baEstFatMassDetail').textContent = `${fatVal} kg`;
+
 
   // 1. Report strip
   if ($('#baReportDateTag')) $('#baReportDateTag').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });

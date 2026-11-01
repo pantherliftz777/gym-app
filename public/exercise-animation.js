@@ -29,7 +29,7 @@
 
   function animationHtml(slug, exerciseName) {
     if (!slug) {
-      return '<div class="exercise-anim-fallback"><div style="font-size:2rem;margin-bottom:8px;">&#128736;</div><div>No human-body animation available for<br><b>'+escapeHtml(exerciseName||'Exercise')+'</b></div><div style="font-size:.7rem;margin-top:6px;opacity:.7;">Enable "Smart Start" view for technique guidance.</div></div>';
+      return '<div class="exercise-anim-fallback"><div style="font-size:2rem;margin-bottom:8px;">&#128736;</div><div>No human-body animation available for<br><b>'+escapeHtml(exerciseName||'Exercise')+'</b></div><div style="font-size:.7rem;margin-top:6px;opacity:.7;">Enable "Starting Weight" view for technique guidance.</div></div>';
     }
     const base = 'exercise-animations/' + slug;
     return '<div class="exercise-anim-wrap" id="exAnimWrap"><div class="exercise-anim-stage" id="exAnimStage"><img src="'+base+'/frame-1.svg" class="ex-anim-frame" alt="Frame 1"><img src="'+base+'/frame-2.svg" class="ex-anim-frame" alt="Frame 2"><img src="'+base+'/frame-3.svg" class="ex-anim-frame" alt="Frame 3"></div><div class="exercise-anim-controls"><button type="button" class="exercise-anim-btn" id="exAnimPlay" title="Play/Pause animation">&#9658;</button></div><div class="exercise-anim-label">HUMAN-BODY FORM GUIDE &#183; '+escapeHtml(exerciseName||'Exercise')+'</div></div>';
