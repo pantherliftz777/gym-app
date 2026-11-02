@@ -234,6 +234,74 @@ async function runE2ETests() {
     assert(mealPrepActive, 'view-meal-prep activates with macro protein slider and recipe grocery cards');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '13_meal_prep_view.png') });
 
+    // 8. Phase 7: Admin Filter, Revoke Access, and Quick Demo Toggle
+    console.log('\n--- Test Phase 7: Admin Filters, Revoke Access & Demo Mode Toggle ---');
+    await page.evaluate(() => {
+      window.isBetaDemoAdminMode = true;
+      try { localStorage.setItem('fitfuel_beta_demo_admin', 'true'); } catch (e) {}
+      if (typeof window.switchView === 'function') {
+        window.switchView('admin');
+        const adminTab = document.getElementById('adminTabBetaTesters');
+        if (adminTab) adminTab.click();
+      }
+    });
+    await delay(1200);
+
+    // Test feature filter dropdown
+    await page.select('#betaTesterFeatureFilterSelect', 'formCorrectionAi');
+    await delay(1000);
+    const filteredCount = await page.$$eval('#adminBetaApplicantsCardsGrid .admin-applicant-card', cards => cards.length);
+    assert(filteredCount >= 1, `Feature filter correctly isolates applicants for formCorrectionAi (found: ${filteredCount})`);
+
+    // Test Revoke Access button on our test applicant
+    const revoked = await page.evaluate((email) => {
+      const cards = Array.from(document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card'));
+      const target = cards.find(c => c.textContent.includes(email));
+      if (target) {
+        const revokeBtn = target.querySelector('button[data-beta-action="revoke"]');
+        if (revokeBtn) {
+          revokeBtn.click();
+          return true;
+        }
+      }
+      return false;
+    }, testUserEmail);
+    assert(revoked, `Clicked Revoke Access button for ${testUserEmail}`);
+    await delay(2000);
+
+    // Verify card now shows declined/rejected badge
+    const postRevokeStatus = await page.evaluate((email) => {
+      const cards = Array.from(document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card'));
+      const target = cards.find(c => c.textContent.includes(email));
+      return target ? target.textContent : '';
+    }, testUserEmail);
+    assert(postRevokeStatus.includes('Declined'), 'Applicant row updates to Declined state upon Revoke Access');
+
+    // Test Demo Mode Toggle (Admin -> Tester -> Admin)
+    await page.evaluate(() => {
+      const toggle = document.getElementById('adminBetaDemoToggleBtn');
+      if (toggle) toggle.click();
+    });
+    await delay(1200);
+    const returnedToToday = await page.$eval('.page-content .view.active', el => el.id);
+    assert(returnedToToday === 'view-today', 'Clicking "Switch to Tester View" navigates directly to Today dashboard');
+
+    // User dashboard card should reflect rejected / cohort full state with re-apply option
+    const cardStateAfterRevoke = await page.$eval('#closedBetaCard_formCorrectionAi', el => el.textContent);
+    assert(
+      cardStateAfterRevoke.includes('Cohort Full') || cardStateAfterRevoke.includes('Re-apply'),
+      'User card reflects cohort full / re-apply status after access revocation'
+    );
+
+    // Test 1-click shortcut from user dashboard back to Admin Approvals
+    await page.evaluate(() => {
+      const shortcut = document.getElementById('closedBetaAdminShortcutBtn');
+      if (shortcut) shortcut.click();
+    });
+    await delay(1200);
+    const switchedBackToAdmin = await page.$eval('.page-content .view.active', el => el.id);
+    assert(switchedBackToAdmin === 'view-admin', 'Clicking "🛡️ Admin Approvals" on Closed Beta Hub returns to Admin Portal');
+
   } catch (err) {
     console.error('Unhandled E2E Test Error:', err);
     failCount++;

@@ -4757,7 +4757,8 @@ function updateAdminNavVisibility() {
 }
 
 async function renderAdminView() {
-  if ((!session || !session.is_admin) && !isBetaDemoAdminMode) {
+  const isDemoAdmin = isBetaDemoAdminMode || (typeof window !== 'undefined' && window.isBetaDemoAdminMode) || (typeof localStorage !== 'undefined' && localStorage.getItem('fitfuel_beta_demo_admin') === 'true');
+  if ((!session || !session.is_admin) && !isDemoAdmin) {
     toast('Admin access required');
     switchView('today');
     return;
@@ -5166,8 +5167,12 @@ function getBetaUserId() {
 
 function isBetaAdmin() {
   try {
+    if (localStorage.getItem('fitfuel_beta_demo_admin') === 'false') return false;
     if (localStorage.getItem('fitfuel_beta_demo_admin') === 'true') return true;
   } catch (e) {}
+  if (typeof window !== 'undefined' && typeof window.isBetaDemoAdminMode === 'boolean') {
+    return window.isBetaDemoAdminMode;
+  }
   if (isBetaDemoAdminMode) return true;
   if (session && (session.is_admin === 1 || session.email === 'admin@fitfuel.app')) return true;
   if (FF && FF.user && (FF.user.is_admin === 1 || FF.user.email === 'admin@fitfuel.app')) return true;
@@ -5781,8 +5786,14 @@ function initBetaEarlyAccessListeners() {
 
   if ($('#adminBetaDemoToggleBtn')) {
     $('#adminBetaDemoToggleBtn').onclick = () => {
-      isBetaDemoAdminMode = !isBetaDemoAdminMode;
-      if (!isBetaDemoAdminMode) {
+      const current = (typeof window !== 'undefined' && typeof window.isBetaDemoAdminMode === 'boolean') ? window.isBetaDemoAdminMode : isBetaDemoAdminMode;
+      const newMode = !current;
+      isBetaDemoAdminMode = newMode;
+      window.isBetaDemoAdminMode = newMode;
+      try {
+        localStorage.setItem('fitfuel_beta_demo_admin', newMode ? 'true' : 'false');
+      } catch (e) {}
+      if (!newMode) {
         toast('Switched to Tester View. Viewing app as regular member.');
         switchView('today');
       } else {
@@ -5795,6 +5806,13 @@ function initBetaEarlyAccessListeners() {
     };
   }
 }
+window.setBetaDemoAdminMode = function(val) {
+  isBetaDemoAdminMode = !!val;
+  window.isBetaDemoAdminMode = !!val;
+  try {
+    localStorage.setItem('fitfuel_beta_demo_admin', val ? 'true' : 'false');
+  } catch (e) {}
+};
 initBetaEarlyAccessListeners();
 
 /* ---------- Complaint / Feedback Form Submission ---------- */
