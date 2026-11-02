@@ -174,12 +174,18 @@ async function runE2ETests() {
 
     // 6. Verification of Unlocked Feature & Floating Feedback Button
     console.log('\n--- Test Phase 5: VIP Beta Tester Unlock & In-App Feedback Button ---');
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
+      if (typeof window.setBetaDemoAdminMode === 'function') {
+        window.setBetaDemoAdminMode(false);
+      }
       if (typeof window.switchView === 'function') {
         window.switchView('today');
       }
+      if (typeof window.renderClosedBetaDashboard === 'function') {
+        await window.renderClosedBetaDashboard();
+      }
     });
-    await delay(1000);
+    await delay(1200);
 
     const cardStateAfterApproval = await page.$eval('#closedBetaCard_formCorrectionAi', el => el.textContent);
     assert(
