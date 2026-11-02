@@ -1,6 +1,15 @@
 {
   "outputDirectory": "public",
+  "cleanUrls": true,
   "rewrites": [
+    {
+      "source": "/features",
+      "destination": "/features.html"
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "/index.html"
+    },
     {
       "source": "/api/:path*",
       "destination": "/server.js?path=:path*"
