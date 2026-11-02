@@ -11597,14 +11597,39 @@ bootApp();
 initInteractiveHeroAndAppButtons();
 initV5Features();
 
+function handleAppActionRoutes() {
+  try {
+    const p = window.location.pathname;
+    const hash = window.location.hash;
+    const searchParams = new URLSearchParams(window.location.search);
+    const route = searchParams.get('route') || p;
+
+    if (route.includes('/workout') || hash.includes('workout')) {
+      if (typeof switchView === 'function') switchView('workouts');
+    } else if (route.includes('/classes') || hash.includes('classes')) {
+      if (typeof switchView === 'function') switchView('workouts');
+    } else if (route.includes('/pass') || hash.includes('pass')) {
+      if (typeof switchView === 'function') switchView('profile');
+    } else if (route.includes('/nutrition') || hash.includes('nutrition')) {
+      if (typeof switchView === 'function') switchView('food-log');
+    } else if (route.includes('/form-checker') || hash.includes('form-checker')) {
+      if (typeof switchView === 'function') switchView('posture');
+    } else if (route.includes('/messages') || hash.includes('messages')) {
+      if (typeof switchView === 'function') switchView('ai-coach');
+    }
+  } catch (e) {}
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initInteractiveHeroAndAppButtons();
     initV5Features();
+    handleAppActionRoutes();
   });
 } else {
   initInteractiveHeroAndAppButtons();
   initV5Features();
+  handleAppActionRoutes();
 }
 
 } // End of browser execution block

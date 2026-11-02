@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#121214">
+  <title>FitFuel — Honest UI Capability & Feature Status Engine</title>
+  <meta name="description" content="FitFuel Feature Status Engine: Real-time operational capabilities, public beta access, and interactive live sandboxes for upcoming hardware and AI releases.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/features.css">
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <div class="brand-wrap">
+        <a href="/" class="brand-wrap" aria-label="FitFuel Home">
+          <div class="brand-logo" aria-hidden="true">F</div>
+          <span class="brand-text">
+            FitFuel <span class="brand-badge">STATUS ENGINE</span>
+          </span>
+        </a>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme mode">
+          ⚡ High-Energy Theme
+        </button>
+        <a href="/" class="nav-link-btn" aria-label="Return to FitFuel App">
+          Open App →
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" aria-labelledby="hero-main-title">
+    <div class="container">
+      <div class="hero-pill" role="status">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>Transparent Architecture • Zero Vaporware</span>
+      </div>
+      <h1 class="hero-title" id="hero-main-title">
+        Honest UI Capability &amp; Feature Status Engine
+      </h1>
+      <p class="hero-desc">
+        Every capability is transparently bound to its operational reality. What is live is operational in production; what is upcoming can be explored directly in our interactive live sandbox simulators.
+      </p>
+
+      <!-- Status Metric Summary -->
+      <div class="metrics-strip">
+        <div class="metric-box">
+          <div class="metric-num emerald">4</div>
+          <div class="metric-label">Live in Production</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-num amber">2</div>
+          <div class="metric-label">Public Beta</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-num sky">4</div>
+          <div class="metric-label">Live Sandboxes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Filter Tabs -->
+  <section class="container" aria-label="Feature categories">
+    <div class="tabs-nav-wrap">
+      <div class="tabs-list" id="tabsList" role="tablist">
+        <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="all">
+          <span>All Capabilities</span>
+          <span class="tab-count">10</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="workouts-ai">
+          <span>Workouts &amp; AI</span>
+          <span class="tab-count">4</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="nutrition">
+          <span>Nutrition</span>
+          <span class="tab-count">2</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="gym-turnstile">
+          <span>Gym &amp; Turnstile</span>
+          <span class="tab-count">3</span>
+        </button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="wearables">
+          <span>Wearables</span>
+          <span class="tab-count">1</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Showcase Grid -->
+  <main class="container" role="main">
+    <div class="features-grid" id="featuresGrid" aria-live="polite">
+      <!-- Feature cards injected by public/features.js -->
+    </div>
+
+    <!-- Roadmap Section -->
+    <section class="roadmap-section" aria-labelledby="roadmap-title">
+      <div class="section-head">
+        <div class="section-tag">Engineering Roadmap</div>
+        <h2 class="section-title" id="roadmap-title">
+          Release Milestones &amp; Deployment Pipeline
+        </h2>
+        <p class="section-desc">
+          Strict production verification gates. We ship code to gym floor turnstiles and app stores only when telemetry passes clinical and safety standards.
+        </p>
+      </div>
+
+      <div class="roadmap-grid">
+        <!-- Phase 1 -->
+        <div class="roadmap-card phase-1">
+          <div class="phase-tag">
+            <span class="phase-name">Phase 1</span>
+            <span class="phase-status-pill">Shipped</span>
+          </div>
+          <h3 class="phase-title">Core Tracking &amp; Turnstiles</h3>
+          <p class="phase-desc">
+            Offline-first workout logging, progressive overload calculations, TOTP QR turnstile entry, and class booking.
+          </p>
+          <ul class="phase-items">
+            <li><span style="color:#34d399;">✓</span> Offline Turso SQLite &amp; Cloud Sync</li>
+            <li><span style="color:#34d399;">✓</span> Dynamic Cryptographic QR Passcode</li>
+            <li><span style="color:#34d399;">✓</span> Mifflin-St Jeor TDEE Engine</li>
+          </ul>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="roadmap-card phase-2">
+          <div class="phase-tag">
+            <span class="phase-name">Phase 2</span>
+            <span class="phase-status-pill">Public Beta</span>
+          </div>
+          <h3 class="phase-title">AI Biomechanics &amp; Coach Chat</h3>
+          <p class="phase-desc">
+            Local device pose estimation camera tracking and direct coach messaging channels for video form analysis.
+          </p>
+          <ul class="phase-items">
+            <li><span style="color:#fbbf24;">●</span> Squat &amp; Deadlift Depth Verification</li>
+            <li><span style="color:#fbbf24;">●</span> Encrypted Trainer 1-on-1 Messages</li>
+            <li><span style="color:#fbbf24;">⚡</span> Bench press bar path angle tuning</li>
+          </ul>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="roadmap-card phase-3">
+          <div class="phase-tag">
+            <span class="phase-name">Phase 3</span>
+            <span class="phase-status-pill">Q2-Q3 2026</span>
+          </div>
+          <h3 class="phase-title">Wearables &amp; Spatial IoT</h3>
+          <p class="phase-desc">
+            Apple Watch BLE cardio sync, optical turnstile crowd telemetry, 3D NeRF avatar mesh, and AI grocery generation.
+          </p>
+          <ul class="phase-items">
+            <li><span style="color:#38bdf8;">⏳</span> Apple HealthKit &amp; Whoop API Review</li>
+            <li><span style="color:#38bdf8;">⏳</span> Optical turnstile sensor deployment</li>
+            <li><span style="color:#38bdf8;">⏳</span> WebGPU 3D body composition mesh</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Interactive Feature Modal & Sandbox -->
+  <div class="modal-overlay" id="featureModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div>
+          <div class="modal-header-meta" id="modalMetaPills"></div>
+          <h2 class="modal-title" id="modalTitle">Feature Title</h2>
+          <p class="modal-tagline" id="modalTagline">Feature Tagline</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Honest Explanation -->
+        <div class="info-section">
+          <div class="info-heading">Operational Reality &amp; Capability</div>
+          <p class="info-text" id="modalExplanationText">Full operational details...</p>
+          <div class="engineering-notice-box" id="modalEngineeringNotice" style="display:none;"></div>
+        </div>
+
+        <!-- Interactive Sandbox Slot -->
+        <div id="modalSandboxContainer">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Modal Footer (Launch CTA or Early-Access Waitlist) -->
+      <div class="modal-footer" id="modalFooterContainer">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation (Persistent <768px with 48px touch targets) -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <a href="/" class="bottom-nav-item">
+      <span class="bottom-nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="/#workouts" class="bottom-nav-item">
+      <span class="bottom-nav-icon">🏋️</span>
+      <span>Workouts</span>
+    </a>
+    <a href="/#classes" class="bottom-nav-item">
+      <span class="bottom-nav-icon">📅</span>
+      <span>Book Class</span>
+    </a>
+    <a href="/#pass" class="bottom-nav-item">
+      <span class="bottom-nav-icon">📱</span>
+      <span>QR Pass</span>
+    </a>
+    <a href="/features" class="bottom-nav-item active">
+      <span class="bottom-nav-icon">⚡</span>
+      <span>More</span>
+    </a>
+  </nav>
+
+  <script src="/shared/featureStatus.js"></script>
+  <script src="/features.js"></script>
+</body>
+</html>

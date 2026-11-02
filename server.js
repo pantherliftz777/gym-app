@@ -232,6 +232,101 @@ async function loadState(userId) {
 
 /* ---------- routes ---------- */
 const routes = {
+  'GET /api/features': async (req, res) => {
+    const { GYM_FEATURES } = require('./shared/featureStatus.js');
+    return json(res, 200, { ok: true, features: GYM_FEATURES });
+  },
+  'POST /api/features/waitlist': async (req, res) => {
+    try {
+      try {
+        await db.exec(`
+          CREATE TABLE IF NOT EXISTS feature_waitlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            feature_id TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE UNIQUE INDEX IF NOT EXISTS idx_feature_waitlist_unique 
+          ON feature_waitlist(email, feature_id);
+        `);
+      } catch (tableErr) {}
+
+      const body = await readBody(req);
+      const { email, featureId } = body || {};
+
+      if (typeof email !== 'string') {
+        return json(res, 400, { ok: false, error: 'Valid email is required.' });
+      }
+
+      const cleanEmail = email.trim().toLowerCase();
+      if (!cleanEmail || cleanEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+        return json(res, 400, { ok: false, error: 'Valid email is required.' });
+      }
+
+      const { GYM_FEATURES } = require('./shared/featureStatus.js');
+      const feat = GYM_FEATURES[featureId];
+      if (!feat) {
+        return json(res, 400, { ok: false, error: 'Unknown feature: ' + featureId });
+      }
+
+      // Rule #1 & #2: Waitlists are strictly for upcoming (coming-soon) features
+      if (feat.status !== 'coming-soon') {
+        return json(res, 400, {
+          ok: false,
+          error: `${feat.name} is ${feat.status === 'available' ? 'already live in production' : 'currently in public beta'}. You can launch it directly in the app!`
+        });
+      }
+
+      // Check if user is already on waitlist for this feature
+      let existing = null;
+      try {
+        existing = await db.get(
+          'SELECT id, created_at FROM feature_waitlist WHERE email = ? AND feature_id = ?',
+          [cleanEmail, featureId]
+        );
+      } catch (e) {}
+
+      if (existing) {
+        let existingPos = 1;
+        try {
+          const posRes = await db.get(
+            'SELECT COUNT(*) as pos FROM feature_waitlist WHERE feature_id = ? AND id <= ?',
+            [featureId, existing.id]
+          );
+          if (posRes && posRes.pos) existingPos = posRes.pos;
+        } catch (e) {}
+
+        return json(res, 200, {
+          ok: true,
+          alreadyRegistered: true,
+          message: `You're already registered at #${existingPos} on the priority early-access waitlist for ${feat.name}! We'll notify you as soon as testing opens.`,
+          queuePosition: existingPos
+        });
+      }
+
+      // Insert new waitlist registration
+      try {
+        await db.run('INSERT INTO feature_waitlist (email, feature_id) VALUES (?, ?)', [cleanEmail, featureId]);
+      } catch (insertErr) {
+        // Safe fallback in case DB fails
+      }
+
+      let count = 1;
+      try {
+        const countRes = await db.get('SELECT COUNT(*) as count FROM feature_waitlist WHERE feature_id = ?', [featureId]);
+        if (countRes && countRes.count) count = countRes.count;
+      } catch (e) {}
+
+      return json(res, 200, {
+        ok: true,
+        alreadyRegistered: false,
+        message: `You're #${count} on the priority early-access waitlist for ${feat.name}! We'll notify you as soon as testing opens.`,
+        queuePosition: count
+      });
+    } catch (err) {
+      return json(res, 500, { ok: false, error: 'Internal server error: ' + err.message });
+    }
+  },
   'GET /api/health': async (req, res) => {
     try {
       const dbCheck = await db.get('SELECT 1 as alive');
@@ -2132,6 +2227,8 @@ const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p === '/') p = '/index.html';
+  if (p === '/features' || p === '/features/') p = '/features.html';
+  if (p.startsWith('/app/')) p = '/index.html';
   let file = path.normalize(path.join(ROOT, 'public', p));
   if (!fs.existsSync(file)) file = path.normalize(path.join(ROOT, p));
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
