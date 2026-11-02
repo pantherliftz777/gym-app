@@ -259,6 +259,14 @@ const FF = {
     const q = demo ? '?demo=1' : '';
     return await this.req('POST', '/api/admin/beta-testers/action' + q, { id, action });
   },
+  async betaFeedback(featureId, feedbackType, comment, rating = 5) {
+    return await this.req('POST', '/api/beta/feedback', {
+      feature_key: featureId,
+      feedback_type: feedbackType,
+      comment: comment,
+      rating: rating
+    });
+  },
 
   safeJsonParse: safeJsonParse,
 

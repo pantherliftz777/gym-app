@@ -5143,20 +5143,31 @@ let currentBetaStatusFilter = 'all';
 let currentBetaFeatureFilter = 'all';
 
 function getBetaUserId() {
-  const localEmail = localStorage.getItem('fitfuel_user_email');
-  if (localEmail) return localEmail;
+  try {
+    const localEmail = localStorage.getItem('fitfuel_user_email');
+    if (localEmail) return localEmail;
+  } catch (e) {}
   if (session && session.email) return session.email;
   if (FF && FF.user && FF.user.email) return FF.user.email;
-  let uid = localStorage.getItem('ff_beta_user_id');
-  if (!uid) {
-    uid = 'athlete_' + Math.random().toString(36).substring(2, 9) + '@fitfuel.test';
-    localStorage.setItem('ff_beta_user_id', uid);
+  try {
+    let uid = localStorage.getItem('ff_beta_user_id');
+    if (!uid) {
+      uid = 'athlete_' + Math.random().toString(36).substring(2, 9) + '@fitfuel.test';
+      localStorage.setItem('ff_beta_user_id', uid);
+    }
+    return uid;
+  } catch (e) {
+    if (!window._memBetaUid) {
+      window._memBetaUid = 'athlete_' + Math.random().toString(36).substring(2, 9) + '@fitfuel.test';
+    }
+    return window._memBetaUid;
   }
-  return uid;
 }
 
 function isBetaAdmin() {
-  if (localStorage.getItem('fitfuel_beta_demo_admin') === 'true') return true;
+  try {
+    if (localStorage.getItem('fitfuel_beta_demo_admin') === 'true') return true;
+  } catch (e) {}
   if (isBetaDemoAdminMode) return true;
   if (session && (session.is_admin === 1 || session.email === 'admin@fitfuel.app')) return true;
   if (FF && FF.user && (FF.user.is_admin === 1 || FF.user.email === 'admin@fitfuel.app')) return true;
@@ -5255,8 +5266,8 @@ async function renderClosedBetaDashboard() {
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
               <span style="font-size:1.8rem;">${feat.icon}</span>
-              <span style="font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:99px;background:#f59e0b;color:#09090b;display:inline-flex;align-items:center;gap:4px;">
-                ⏳ Request Under Review
+              <span class="beta-amber-pulse" style="font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:99px;background:#f59e0b;color:#09090b;display:inline-flex;align-items:center;gap:4px;">
+                ⏳ Request Under Review (Admin approval required)
               </span>
             </div>
             <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
@@ -5302,7 +5313,7 @@ async function renderClosedBetaDashboard() {
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
             <span style="font-size:1.8rem;">${feat.icon}</span>
-            <span style="font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">🔒 Closed Beta (20 Slots)</span>
+            <span style="font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">🔒 Closed Beta (Limited Slots)</span>
           </div>
           <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
           <p style="font-size:0.82rem;color:var(--glass-text-secondary);margin:0 0 14px;line-height:1.45;">${feat.tagline}</p>
@@ -5631,34 +5642,51 @@ function initBetaEarlyAccessListeners() {
         return;
       }
 
-      applySubmitBtn.disabled = true;
-      applySubmitBtn.textContent = 'Submitting...';
+      // 1. Instant Optimistic UI: Close modal immediately
+      closeApplyModal();
 
+      // 2. Instantly update card in UI to pending state with pulsing badge
+      const targetCard = $(`#closedBetaCard_${featId}`);
+      if (targetCard) {
+        targetCard.style.borderColor = 'rgba(245,158,11,0.35)';
+        targetCard.style.background = 'rgba(245,158,11,0.05)';
+        const cardHeaderBadge = targetCard.querySelector('div:first-child > div:first-child');
+        if (cardHeaderBadge) {
+          const featObj = TOP_BETA_CARDS.find(c => c.id === featId);
+          cardHeaderBadge.innerHTML = `
+            <span style="font-size:1.8rem;">${featObj?.icon || '⚡'}</span>
+            <span class="beta-amber-pulse" style="font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:99px;background:#f59e0b;color:#09090b;display:inline-flex;align-items:center;gap:4px;">
+              ⏳ Request Under Review (Admin approval required)
+            </span>
+          `;
+        }
+        const actionArea = targetCard.querySelector('div:last-child');
+        if (actionArea) {
+          actionArea.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+              <span style="font-size:0.75rem;color:var(--glass-text-secondary);">Device: <strong style="color:var(--glass-text-primary);">${escapeHtml(device)}</strong></span>
+              <span style="font-size:0.75rem;color:#f59e0b;font-weight:700;">Under Review</span>
+            </div>
+          `;
+        }
+      }
+
+      // 3. Instant Toast Notification
+      toast('Application submitted! Under engineering review.');
+
+      // 4. Background network submission with sync
       try {
         const userId = getBetaUserId();
         const res = await FF.betaApply(featId, device, reason, userId);
         if (res && res.ok) {
-          toast('Application submitted! Under engineering review.');
-          closeApplyModal();
-          renderClosedBetaDashboard();
+          await renderClosedBetaDashboard();
         } else {
-          if (alertBox) {
-            alertBox.style.display = 'block';
-            alertBox.style.background = '#fee2e2';
-            alertBox.style.color = '#991b1b';
-            alertBox.textContent = res?.error || 'Failed to submit application.';
-          }
+          toast('Submission note: ' + (res?.error || 'Under review'));
+          await renderClosedBetaDashboard();
         }
       } catch (err) {
-        if (alertBox) {
-          alertBox.style.display = 'block';
-          alertBox.style.background = '#fee2e2';
-          alertBox.style.color = '#991b1b';
-          alertBox.textContent = err.message;
-        }
-      } finally {
-        applySubmitBtn.disabled = false;
-        applySubmitBtn.textContent = 'Submit Application 🚀';
+        toast('Network warning: ' + err.message);
+        await renderClosedBetaDashboard();
       }
     };
   }
@@ -5699,16 +5727,17 @@ function initBetaEarlyAccessListeners() {
       feedbackSubmitBtn.textContent = 'Submitting...';
 
       try {
-        await FF.req('POST', '/api/complaint', {
-          subject: `Beta Feedback: ${featId} (${type})`,
-          category: 'beta_feedback',
-          message: desc
-        });
-        toast('Thank you! Your feedback has been sent directly to the engineering team.');
-        closeFeedbackModal();
-        if ($('#betaFeedbackDescInput')) $('#betaFeedbackDescInput').value = '';
+        const res = await FF.betaFeedback(featId, type, desc);
+        if (res && res.ok) {
+          toast('Thank you! Your feedback has been sent directly to the engineering team.');
+          closeFeedbackModal();
+          if ($('#betaFeedbackDescInput')) $('#betaFeedbackDescInput').value = '';
+        } else {
+          toast('Notice: ' + (res?.error || 'Feedback logged.'));
+          closeFeedbackModal();
+        }
       } catch (e) {
-        toast('Thank you! Your feedback has been logged.');
+        toast('Feedback submitted: ' + e.message);
         closeFeedbackModal();
       } finally {
         feedbackSubmitBtn.disabled = false;

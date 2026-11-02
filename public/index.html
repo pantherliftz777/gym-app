@@ -1257,10 +1257,13 @@
                 Request VIP early access to test our bleeding-edge AI posture tracking, BLE heart rate broadcast, and macro synthesis modules before public release.
               </p>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <span id="closedBetaGlobalStatusBadge" style="padding:4px 10px;border-radius:99px;background:rgba(56,189,248,0.15);color:#38bdf8;font-size:0.75rem;font-weight:800;border:1px solid rgba(56,189,248,0.3);">
                 20 Slots / Cohort
               </span>
+              <button type="button" class="solid-button small" id="closedBetaAdminShortcutBtn" onclick="if(typeof switchView==='function'){window.isBetaDemoAdminMode=true;switchView('admin');setTimeout(()=>$('#adminTabBetaTesters')?.click(),100);}" style="background:#2563eb;color:#fff;font-weight:800;font-size:0.75rem;padding:5px 12px;border-radius:8px;">
+                🛡️ Admin Approvals
+              </button>
             </div>
           </div>
 
@@ -3902,7 +3905,7 @@
         </div>
 
         <!-- Floating Report Beta Bug / Feedback Button for Form Checker -->
-        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+        <div class="floating-beta-feedback-wrap" style="position:fixed;bottom:24px;right:24px;z-index:99;">
           <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_formCorrectionAi" data-feature-id="formCorrectionAi" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
             🐞 Report Beta Bug / Feedback
           </button>
@@ -4124,7 +4127,7 @@
         </div>
 
         <!-- Floating Report Beta Bug / Feedback Button -->
-        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+        <div class="floating-beta-feedback-wrap" style="position:fixed;bottom:24px;right:24px;z-index:99;">
           <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_wearableSync" data-feature-id="wearableSync" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
             🐞 Report Beta Bug / Feedback
           </button>
@@ -4170,7 +4173,7 @@
         </div>
 
         <!-- Floating Report Beta Bug / Feedback Button -->
-        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+        <div class="floating-beta-feedback-wrap" style="position:fixed;bottom:24px;right:24px;z-index:99;">
           <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_mealPlanAi" data-feature-id="mealPlanAi" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
             🐞 Report Beta Bug / Feedback
           </button>
@@ -6394,81 +6397,6 @@
   </div>
 </div>
 
-
-<!-- BETA FEEDBACK & BUG REPORT MODAL -->
-<div class="modal-backdrop" id="betaFeedbackModal">
-  <div class="modal-card" style="max-width:540px;padding:24px;border-radius:24px;">
-    <div class="modal-head">
-      <div>
-        <span class="section-kicker" style="color:#0284c7;">🧪 BETA TESTER PROGRAM</span>
-        <h2 id="betaFeedbackModalTitle">Beta Feature Feedback</h2>
-        <p style="margin:2px 0 0;font-size:0.84rem;color:var(--glass-text-secondary);">Submit bug reports, usability notes, and feedback to the engineering team.</p>
-      </div>
-      <button class="close-btn" id="closeBetaFeedbackModalBtn" type="button">&times;</button>
-    </div>
-
-    <form id="betaFeedbackForm" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
-      <input type="hidden" id="betaFeedbackFeatureKey" value="posture">
-
-      <div>
-        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
-          Feature under test:
-        </label>
-        <div id="betaFeedbackFeatureName" style="padding:10px 14px;border-radius:10px;background:rgba(2,132,199,0.08);border:1px solid rgba(2,132,199,0.2);font-weight:700;color:#0284c7;font-size:0.9rem;">
-          Posture AI / Posture Camera
-        </div>
-      </div>
-
-      <div>
-        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
-          Feedback Type:
-        </label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="betaFeedbackTypeGroup">
-          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
-            <input type="radio" name="betaFeedbackType" value="bug" checked> 🐞 Bug / Error
-          </label>
-          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
-            <input type="radio" name="betaFeedbackType" value="ux"> 💡 UX / Usability
-          </label>
-          <label style="cursor:pointer;padding:6px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.82rem;display:inline-flex;align-items:center;gap:6px;">
-            <input type="radio" name="betaFeedbackType" value="praise"> ⭐ Positive Feedback
-          </label>
-        </div>
-      </div>
-
-      <div>
-        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
-          Experience Rating:
-        </label>
-        <div style="display:flex;gap:8px;">
-          <select id="betaFeedbackRating" class="form-input" style="padding:8px 12px;border-radius:8px;font-size:0.88rem;max-width:200px;">
-            <option value="5">⭐⭐⭐⭐⭐ (5/5 Great)</option>
-            <option value="4" selected>⭐⭐⭐⭐ (4/5 Good)</option>
-            <option value="3">⭐⭐⭐ (3/5 Average)</option>
-            <option value="2">⭐⭐ (2/5 Subpar)</option>
-            <option value="1">⭐ (1/5 Broken)</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label style="font-size:0.82rem;font-weight:700;color:var(--glass-text-primary);display:block;margin-bottom:6px;">
-          Comments / Observations:
-        </label>
-        <textarea id="betaFeedbackComment" rows="4" class="form-input" placeholder="Describe any bug you hit, unexpected behavior, or usability suggestions..." style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;font-size:0.88rem;resize:vertical;" required></textarea>
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
-        <button type="button" class="outline-button" id="cancelBetaFeedbackBtn" style="padding:9px 18px;">
-          Cancel
-        </button>
-        <button type="submit" class="solid-button" id="submitBetaFeedbackBtn" style="background:#0284c7;padding:9px 20px;font-weight:700;">
-          Submit Feedback
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <!-- TOAST -->
 <div class="toast-notice" id="toastNotice" title="Click to dismiss">

@@ -17,6 +17,7 @@
     "@types/react": "^19.3.0",
     "puppeteer": "^25.16.0",
     "puppeteer-core": "^25.16.0",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "wrangler": "^4.156.1"
   }
 }

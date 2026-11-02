@@ -307,8 +307,8 @@ const routes = {
       }
 
       const row = await db.get(
-        'SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE (userId = ? OR userId = ?) AND featureId = ?',
-        [userId, user ? user.email : userId, featureId]
+        'SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE (userId = ? OR userId = ? OR userId = ?) AND featureId = ?',
+        [userId, user ? user.email : userId, user ? String(user.id) : userId, featureId]
       );
 
       if (!row) {
@@ -355,6 +355,11 @@ const routes = {
         return json(res, 400, { ok: false, error: 'featureId is required.' });
       }
       featureId = featureId.trim();
+
+      const validBetaFeatures = ['formCorrectionAi', 'wearableSync', 'mealPlanAi'];
+      if (!validBetaFeatures.includes(featureId)) {
+        return json(res, 400, { ok: false, error: 'Invalid beta feature ID: ' + featureId });
+      }
 
       if (!device || typeof device !== 'string' || device.trim().length < 2) {
         return json(res, 400, { ok: false, error: 'Valid testing device is required (e.g. iPhone 15 Pro, Apple Watch Ultra).' });
@@ -468,7 +473,8 @@ const routes = {
           pendingCount,
           rejectedCount,
           maxSlots,
-          remainingSlots
+          remainingSlots,
+          remainingSlotsFormatted: `${remainingSlots} / ${maxSlots}`
         },
         applicants,
         testers
@@ -949,9 +955,13 @@ const routes = {
   /* ---------- complaints / suggestions ---------- */
   'POST /api/complaint': async (req, res) => {
     const u = await getUser(req);
-    const { name, email, type, text, files } = await readBody(req);
+    const body = await readBody(req);
+    const { email, files } = body || {};
+    const name = body?.name || (u && (u.name || u.email)) || 'Beta Tester';
+    const text = body?.text || body?.message || body?.comment || body?.subject || '';
+    const type = body?.type || body?.category || 'complaint';
     if (!name || String(name).trim().length < 2) return json(res, 400, { error: 'Please enter your name' });
-    if (!text || String(text).trim().length < 5) return json(res, 400, { error: 'Please describe your problem / suggestion' });
+    if (!text || String(text).trim().length < 3) return json(res, 400, { error: 'Please describe your problem / suggestion' });
     const userEmail = (email && String(email).trim()) || (u && u.email) || '';
     const safeFiles = (Array.isArray(files) ? files : []).slice(0, 3).map(f => ({
       name: String(f.name || 'file').slice(0, 80),
@@ -960,9 +970,9 @@ const routes = {
     }));
     await db.run(
       'INSERT INTO complaints(user_id,name,email,type,text,files,created,seen) VALUES(?,?,?,?,?,?,?,0)',
-      [u ? u.id : null, String(name).trim(), userEmail, String(type || 'complaint'), String(text).trim(), JSON.stringify(safeFiles), Date.now()]
+      [u ? u.id : null, String(name).trim(), userEmail, String(type), String(text).trim(), JSON.stringify(safeFiles), Date.now()]
     );
-    json(res, 200, { ok: true });
+    json(res, 200, { ok: true, message: 'Complaint/feedback received successfully' });
   },
   'GET /api/complaints': async (req, res) => {
     const u = await getUser(req);
