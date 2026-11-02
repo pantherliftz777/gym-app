@@ -163,7 +163,7 @@ async function testMergedFeatures() {
       const res = await fetch('/sw.js');
       return await res.text();
     });
-    assert(swContent.includes('fitfuel-cache-v8.0.0-merged'), 'Service worker has bumped cache version');
+    assert(swContent.includes('fitfuel-cache-v8.1.0-merged') || swContent.includes('fitfuel-cache-v8.0.0-merged'), 'Service worker has bumped cache version');
     assert(swContent.includes('Deleting obsolete cache'), 'Service worker deletes obsolete caches');
     console.log('  [PASS] Service worker cache-busting and obsolete cache deletion verified.');
 

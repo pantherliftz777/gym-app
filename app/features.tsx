@@ -12,20 +12,20 @@ export const FeaturesPage: React.FC = () => {
 
   const featuresList = Object.values(GYM_FEATURES);
 
-  // Tab filter mapping
+  // Dynamic category filter covering all merged production and beta features
   const filteredFeatures = featuresList.filter((f) => {
     if (activeTab === 'all') return true;
     if (activeTab === 'workouts-ai') {
-      return f.id === 'workoutTracking' || f.id === 'formCorrectionAi' || f.id === 'bodyScan3D' || f.id === 'trainerChat';
+      return f.category === 'workout' || f.category === 'community';
     }
     if (activeTab === 'nutrition') {
-      return f.id === 'macroCalculator' || f.id === 'mealPlanAi';
+      return f.category === 'nutrition';
     }
     if (activeTab === 'gym-turnstile') {
-      return f.id === 'classBooking' || f.id === 'qrEntry' || f.id === 'gymCrowdMeter';
+      return f.category === 'membership';
     }
     if (activeTab === 'wearables') {
-      return f.id === 'wearableSync';
+      return f.category === 'hardware';
     }
     return true;
   });
@@ -64,9 +64,21 @@ export const FeaturesPage: React.FC = () => {
   const getFeatureIcon = (id: string) => {
     switch (id) {
       case 'workoutTracking': return '🏋️‍♂️';
-      case 'classBooking': return '📅';
-      case 'qrEntry': return '📱';
+      case 'exerciseLibrary': return '📖';
+      case 'startingLoad': return '🔢';
+      case 'gymChallenges': return '🏆';
+      case 'foodLogging': return '🍽️';
       case 'macroCalculator': return '🥗';
+      case 'customFoods': return '🍎';
+      case 'aiCoach': return '🤖';
+      case 'progressTracking': return '📈';
+      case 'bodyAnalysis': return '📐';
+      case 'gpsActivity': return '🗺️';
+      case 'memberPlans': return '💳';
+      case 'attendanceTracking': return '📅';
+      case 'qrEntry': return '📱';
+      case 'classBooking': return '🗓️';
+      case 'adminPortal': return '🛡️';
       case 'formCorrectionAi': return '👁️';
       case 'trainerChat': return '💬';
       case 'wearableSync': return '⌚';
@@ -131,15 +143,21 @@ export const FeaturesPage: React.FC = () => {
         {/* Status Metrics Strip */}
         <div className="grid grid-cols-3 gap-3 max-w-xl mx-auto pt-4 text-center">
           <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800">
-            <div className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">4</div>
+            <div className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
+              {featuresList.filter(f => f.status === 'available').length}
+            </div>
             <div className="text-[11px] sm:text-xs text-zinc-400 font-medium">Live in Production</div>
           </div>
           <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800">
-            <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono">2</div>
+            <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
+              {featuresList.filter(f => f.status === 'beta').length}
+            </div>
             <div className="text-[11px] sm:text-xs text-zinc-400 font-medium">Public Beta</div>
           </div>
           <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800">
-            <div className="text-xl sm:text-2xl font-black text-sky-400 font-mono">4</div>
+            <div className="text-xl sm:text-2xl font-black text-sky-400 font-mono">
+              {featuresList.filter(f => f.status === 'coming-soon').length}
+            </div>
             <div className="text-[11px] sm:text-xs text-zinc-400 font-medium">Live Sandboxes</div>
           </div>
         </div>
@@ -149,11 +167,11 @@ export const FeaturesPage: React.FC = () => {
       <section className="px-4 sm:px-6 max-w-7xl mx-auto w-full pt-4">
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-zinc-800/80">
           {[
-            { id: 'all', label: 'All Capabilities', count: 10 },
-            { id: 'workouts-ai', label: 'Workouts & AI', count: 4 },
-            { id: 'nutrition', label: 'Nutrition', count: 2 },
-            { id: 'gym-turnstile', label: 'Gym & Turnstile', count: 3 },
-            { id: 'wearables', label: 'Wearables', count: 1 },
+            { id: 'all' as FilterTab, label: 'All Capabilities', count: featuresList.length },
+            { id: 'workouts-ai' as FilterTab, label: 'Workouts & AI', count: featuresList.filter(f => f.category === 'workout' || f.category === 'community').length },
+            { id: 'nutrition' as FilterTab, label: 'Nutrition', count: featuresList.filter(f => f.category === 'nutrition').length },
+            { id: 'gym-turnstile' as FilterTab, label: 'Gym & Turnstile', count: featuresList.filter(f => f.category === 'membership').length },
+            { id: 'wearables' as FilterTab, label: 'Wearables', count: featuresList.filter(f => f.category === 'hardware').length },
           ].map((tab) => (
             <button
               key={tab.id}

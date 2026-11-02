@@ -1,5 +1,5 @@
-/* FitFuel Service Worker v8.0.0 — Offline Gym Mode with Cache-Busting & Immediate Invalidation */
-const CACHE_NAME = 'fitfuel-cache-v8.0.0-merged';
+/* FitFuel Service Worker v8.1.0 — Offline Gym Mode with Cache-Busting & Immediate Invalidation */
+const CACHE_NAME = 'fitfuel-cache-v8.1.0-merged';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

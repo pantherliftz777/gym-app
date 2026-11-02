@@ -66,6 +66,15 @@
   // Register Service Worker with instant cache-invalidation
   function initPWA() {
     if ('serviceWorker' in navigator) {
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          console.log('[FitFuel PWA] Service Worker controller changed, auto-reloading to apply latest updates...');
+          window.location.reload();
+        }
+      });
+
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           console.log('[FitFuel PWA] Service Worker registered:', reg.scope);

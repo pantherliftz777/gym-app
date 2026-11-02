@@ -101,6 +101,12 @@ class BetaFeatureManager {
         });
       }
     });
+
+    // Production pre-existing features must strictly remain all_users
+    ['body-analysis', 'gps-activity'].forEach(k => {
+      const f = this.memoryFlags.get(k);
+      if (f) f.access_level = 'all_users';
+    });
   }
 
   _saveToFile() {
@@ -147,10 +153,15 @@ class BetaFeatureManager {
             [key, feat.name, feat.description, feat.access_level, feat.updated_at || Date.now(), feat.updated_by || 'system']
           );
         } else {
-          // Keep database state as authoritative
+          // Keep database state as authoritative UNLESS it's a pre-existing production feature
+          const isProduction = ['body-analysis', 'gps-activity'].includes(key);
+          const accessLevel = isProduction ? 'all_users' : existing.access_level;
+          if (isProduction && existing.access_level !== 'all_users') {
+            await this.db.run('UPDATE feature_flags SET access_level = ?, updated_at = ? WHERE key = ?', ['all_users', Date.now(), key]);
+          }
           this.memoryFlags.set(key, {
             ...feat,
-            access_level: existing.access_level,
+            access_level: accessLevel,
             updated_at: existing.updated_at,
             updated_by: existing.updated_by
           });
@@ -205,6 +216,9 @@ class BetaFeatureManager {
    *   - 'all_users': true for everyone (including guests / regular users)
    */
   isFeatureAccessible(key, user = null) {
+    // Pre-existing production gym features are ALWAYS open to all users
+    if (['body-analysis', 'gps-activity'].includes(key)) return true;
+
     const feat = this.memoryFlags.get(key);
     if (!feat) return false;
 
@@ -238,16 +252,18 @@ class BetaFeatureManager {
 
     const result = {};
     for (const [key, feat] of this.memoryFlags.entries()) {
-      const enabled = this.isFeatureAccessible(key, user);
+      const isProduction = ['body-analysis', 'gps-activity'].includes(key);
+      const enabled = isProduction || this.isFeatureAccessible(key, user);
+      const accessLevel = isProduction ? 'all_users' : feat.access_level;
       result[key] = {
         key: feat.key,
         name: feat.name,
         description: feat.description,
-        access_level: feat.access_level,
+        access_level: accessLevel,
         category: feat.category,
         views: feat.views || [],
         enabled: enabled,
-        is_beta: feat.access_level !== 'all_users'
+        is_beta: accessLevel !== 'all_users'
       };
     }
 

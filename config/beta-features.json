@@ -15,7 +15,7 @@
     "key": "body-analysis",
     "name": "Body Analysis / Body Scan",
     "description": "4-View photographic body scan, ISO 8559-1 circumferences, Ramanujan elliptical tape model, and U.S. Navy Hodgdon-Beckett body composition.",
-    "access_level": "admin_only",
+    "access_level": "all_users",
     "views": [
       "body-analysis"
     ],
@@ -47,7 +47,7 @@
     "key": "gps-activity",
     "name": "GPS Activity Tracking",
     "description": "Real-time outdoor GPS walk/run mapping, live split pace HUD, and elevation telemetry.",
-    "access_level": "beta_testers",
+    "access_level": "all_users",
     "views": [
       "activity"
     ],

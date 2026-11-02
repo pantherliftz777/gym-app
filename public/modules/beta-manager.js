@@ -135,13 +135,13 @@
       document.querySelectorAll('.hub-subnav-btn[data-hubview]').forEach(btn => {
         const view = btn.dataset.hubview;
         if (['posture', 'body-analysis', 'activity'].includes(view)) {
-          const enabled = this.isFeatureEnabled(view);
-          btn.style.display = enabled ? 'inline-flex' : 'none';
+          // Pre-existing features and closed-beta views remain navigable so users can see active or preview cards
+          btn.style.display = 'inline-flex';
 
           // Ensure beta indicator
-          if (enabled && !btn.querySelector('.beta-pill-subnav')) {
+          if (!btn.querySelector('.beta-pill-subnav')) {
             const featKey = VIEW_FEATURE_MAP[view];
-            if (features[featKey]?.is_beta) {
+            if (features[featKey]?.is_beta || view === 'posture') {
               const pill = document.createElement('span');
               pill.className = 'beta-pill-subnav';
               pill.style.cssText = 'font-size:0.6rem;background:#0284c7;color:#fff;padding:1px 5px;border-radius:99px;margin-left:5px;font-weight:800;';
@@ -174,16 +174,14 @@
       if (coachVoiceMic) coachVoiceMic.style.display = voiceOk ? 'inline-flex' : 'none';
 
       // 6. Dashboard Action / Hero triggers
-      const postureOk = this.isFeatureEnabled('posture');
       ['featCardPosture', 'actHeroCheckPostureBtn', 'actQaCameraPosture', 'actQaExerciseForm', 'actOpenPostureCheckerBtn'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.style.display = postureOk ? '' : 'none';
+        if (el) el.style.display = '';
       });
 
-      const gpsOk = this.isFeatureEnabled('gps-activity');
       ['actHeroTrackGpsBtn', 'actCardRunGps'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.style.display = gpsOk ? '' : 'none';
+        if (el) el.style.display = '';
       });
 
       // 7. Inject / update Beta Tester Banners on accessible beta views
