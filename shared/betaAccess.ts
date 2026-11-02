@@ -20,6 +20,9 @@ export interface BetaStats {
   approvedTesters: number;
   remainingSlots: number;
   maxSlots: number;
+  remainingSlotsFormatted?: string;
+  pendingCount?: number;
+  rejectedCount?: number;
 }
 
 export interface BetaStatusResponse {
