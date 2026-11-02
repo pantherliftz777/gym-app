@@ -21,7 +21,7 @@ const DEFAULT_FEATURES = [
     key: 'body-analysis',
     name: 'Body Analysis / Body Scan',
     description: '4-View photographic body scan, ISO 8559-1 circumferences, Ramanujan elliptical tape model, and U.S. Navy Hodgdon-Beckett body composition.',
-    access_level: 'admin_only', // Safe default: experimental feature disabled for regular users
+    access_level: 'all_users', // Available production feature: open to all members
     views: ['body-analysis'],
     category: 'Body Composition'
   },
@@ -45,7 +45,7 @@ const DEFAULT_FEATURES = [
     key: 'gps-activity',
     name: 'GPS Activity Tracking',
     description: 'Real-time outdoor GPS walk/run mapping, live split pace HUD, and elevation telemetry.',
-    access_level: 'beta_testers', // Safe default: accessible only to authorized beta testers and admins
+    access_level: 'all_users', // Available production feature: open to all members
     views: ['activity'],
     category: 'Sensors & GPS'
   },

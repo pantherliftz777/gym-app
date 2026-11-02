@@ -84,6 +84,10 @@
 
     isFeatureEnabled(viewOrKey) {
       const key = VIEW_FEATURE_MAP[viewOrKey] || viewOrKey;
+      // Pre-existing production features must always remain open and accessible to all members
+      if (['body-analysis', 'activity', 'gps-activity'].includes(key)) {
+        return true;
+      }
       if (!this.state.features[key]) {
         // Safe default: if unknown or not loaded yet, assume false for experimental features
         return false;

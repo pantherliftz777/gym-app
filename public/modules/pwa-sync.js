@@ -63,12 +63,29 @@
     }
   }
 
-  // Register Service Worker
+  // Register Service Worker with instant cache-invalidation
   function initPWA() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           console.log('[FitFuel PWA] Service Worker registered:', reg.scope);
+          try {
+            reg.update();
+            if (reg.waiting) {
+              reg.waiting.postMessage({ action: 'skipWaiting' });
+            }
+            reg.addEventListener('updatefound', () => {
+              const worker = reg.installing;
+              if (worker) {
+                worker.addEventListener('statechange', () => {
+                  if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('[FitFuel PWA] New update installed, activating immediately...');
+                    worker.postMessage({ action: 'skipWaiting' });
+                  }
+                });
+              }
+            });
+          } catch (e) {}
         }).catch(err => {
           console.warn('[FitFuel PWA] Service Worker registration failed:', err);
         });

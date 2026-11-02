@@ -39,7 +39,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7.9.0">
+  <link rel="stylesheet" href="styles.css?v=8.0.0">
   <link rel="preload" as="image" href="assets/hero-carousel/hero-01.png">
 </head>
 <body>
@@ -2441,6 +2441,11 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
             <span>My Foods</span>
           </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="meal-prep" onclick="switchView('meal-prep')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>AI Meal Prep</span>
+            <span style="font-size:0.62rem;background:rgba(16,185,129,0.2);color:#34d399;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
+          </button>
         </nav>
         <div class="view-intro">
           <div>
@@ -2737,6 +2742,11 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
             <span>My Foods</span>
           </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="meal-prep" onclick="switchView('meal-prep')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>AI Meal Prep</span>
+            <span style="font-size:0.62rem;background:rgba(16,185,129,0.2);color:#34d399;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
+          </button>
         </nav>
         <div class="view-intro">
           <div>
@@ -2904,6 +2914,63 @@
             </div>
           </aside>
         </div>
+
+        <!-- GYM MEMBERSHIP, ATTENDANCE, QR PASS & TRAINER BOOKING (MERGED PRE-EXISTING FEATURES) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;margin-top:20px;">
+          <!-- Card 1: Membership Plan -->
+          <div class="panel" style="padding:20px;border-radius:14px;border:1px solid var(--glass-border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span class="section-kicker" style="color:#10b981;font-size:0.75rem;">MEMBERSHIP PLAN</span>
+              <span style="font-size:0.72rem;background:rgba(16,185,129,0.15);color:#10b981;padding:2px 8px;border-radius:99px;font-weight:800;border:1px solid rgba(16,185,129,0.3);">ACTIVE</span>
+            </div>
+            <h3 style="margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--glass-text-primary);">Personal Plan</h3>
+            <p style="margin:0 0 12px;font-size:0.84rem;color:var(--glass-text-secondary);">Unlimited facility access, equipment logs, and AI nutritional baseline planning.</p>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="solid-button small" id="upgradePlanBtn" style="background:#10b981;color:#09090b;font-weight:800;padding:6px 14px;border-radius:8px;font-size:0.8rem;">
+                Upgrade to Pro ⚡
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: Attendance Tracking & Streaks -->
+          <div class="panel" style="padding:20px;border-radius:14px;border:1px solid var(--glass-border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span class="section-kicker" style="color:#38bdf8;font-size:0.75rem;">ATTENDANCE &amp; CHECK-INS</span>
+              <span style="font-size:0.72rem;background:rgba(56,189,248,0.15);color:#38bdf8;padding:2px 8px;border-radius:99px;font-weight:800;">18 SESSIONS</span>
+            </div>
+            <h3 style="margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--glass-text-primary);">Consistency Streak</h3>
+            <p style="margin:0 0 12px;font-size:0.84rem;color:var(--glass-text-secondary);">4 of 5 weekly training goal check-ins logged via contactless turnstiles.</p>
+            <div style="font-size:0.8rem;color:#38bdf8;font-weight:700;">
+              Turnstile Status: Verified Member
+            </div>
+          </div>
+
+          <!-- Card 3: Contactless QR Turnstile Entry -->
+          <div class="panel" style="padding:20px;border-radius:14px;border:1px solid var(--glass-border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span class="section-kicker" style="color:#a855f7;font-size:0.75rem;">FACILITY ENTRY</span>
+              <span style="font-size:0.72rem;background:rgba(168,85,247,0.15);color:#c084fc;padding:2px 8px;border-radius:99px;font-weight:800;">FAST-PASS</span>
+            </div>
+            <h3 style="margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--glass-text-primary);">QR Turnstile Pass</h3>
+            <p style="margin:0 0 12px;font-size:0.84rem;color:var(--glass-text-secondary);">Dynamic time-stamped barcode for instant touchless entry at front desk turnstiles.</p>
+            <button type="button" class="solid-button small" id="viewTurnstileQrPassBtn" style="background:#a855f7;color:#ffffff;font-weight:800;padding:6px 14px;border-radius:8px;font-size:0.8rem;">
+              📱 Show Digital Gym Pass
+            </button>
+          </div>
+
+          <!-- Card 4: Personal Trainer Booking -->
+          <div class="panel" style="padding:20px;border-radius:14px;border:1px solid var(--glass-border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span class="section-kicker" style="color:#f59e0b;font-size:0.75rem;">COACHING &amp; TRAINERS</span>
+              <span style="font-size:0.72rem;background:rgba(245,158,11,0.15);color:#fbbf24;padding:2px 8px;border-radius:99px;font-weight:800;">1-ON-1</span>
+            </div>
+            <h3 style="margin:0 0 6px;font-size:1.15rem;font-weight:800;color:var(--glass-text-primary);">Trainer Session Booking</h3>
+            <p style="margin:0 0 12px;font-size:0.84rem;color:var(--glass-text-secondary);">Assigned Trainer: Marcus Vance (CSCS). Next session: Thursday 10:00 AM.</p>
+            <button type="button" class="outline-button small" id="bookTrainerSessionBtn" style="padding:6px 14px;border-radius:8px;font-size:0.8rem;">
+              📅 Schedule / Book Session
+            </button>
+          </div>
+        </div>
       </section>
 
       <!-- ================= VIEW 7: CHALLENGE ================= -->
@@ -2951,6 +3018,11 @@
           <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
             <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="wearables" onclick="switchView('wearables')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="4"/><path d="M9 4V2"/><path d="M15 4V2"/><path d="M9 20v2"/><path d="M15 20v2"/></svg>
+            <span>Wearables</span>
+            <span style="font-size:0.62rem;background:rgba(248,113,113,0.2);color:#f87171;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
           </button>
         </nav>
 <div class="view-intro">
@@ -3417,6 +3489,11 @@
           <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
             <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="wearables" onclick="switchView('wearables')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="4"/><path d="M9 4V2"/><path d="M15 4V2"/><path d="M9 20v2"/><path d="M15 20v2"/></svg>
+            <span>Wearables</span>
+            <span style="font-size:0.62rem;background:rgba(248,113,113,0.2);color:#f87171;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
           </button>
         </nav>
 <!-- Hero Banner with Athlete Visual (Image 5) -->
@@ -4073,6 +4150,22 @@
 
       <!-- ================= VIEW: WEARABLE & BLE SYNC (CLOSED BETA UNLOCKED VIEW) ================= -->
       <section class="view" id="view-wearables">
+        <!-- Merged Progress & Telemetry Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Progress Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="tracking" onclick="switchView('tracking')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <span>Tracking</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="wearables" onclick="switchView('wearables')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="4"/><path d="M9 4V2"/><path d="M15 4V2"/><path d="M9 20v2"/><path d="M15 20v2"/></svg>
+            <span>Wearables</span>
+            <span style="font-size:0.62rem;background:rgba(248,113,113,0.2);color:#f87171;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker" style="color:#f87171;">CLOSED BETA &bull; SENSORS &amp; TELEMETRY</span>
@@ -4136,6 +4229,22 @@
 
       <!-- ================= VIEW: AI MEAL PREP & MACROS (CLOSED BETA UNLOCKED VIEW) ================= -->
       <section class="view" id="view-meal-prep">
+        <!-- Merged Nutrition & Fuel Hub Subnav -->
+        <nav class="hub-subnav-bar" aria-label="Nutrition Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="food-log" onclick="switchView('food-log')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            <span>Food Log</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="my-foods" onclick="switchView('my-foods')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
+            <span>My Foods</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="meal-prep" onclick="switchView('meal-prep')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>AI Meal Prep</span>
+            <span style="font-size:0.62rem;background:rgba(16,185,129,0.2);color:#34d399;padding:1px 5px;border-radius:99px;font-weight:800;margin-left:4px;">BETA</span>
+          </button>
+        </nav>
         <div class="view-intro">
           <div>
             <span class="section-kicker" style="color:#10b981;">CLOSED BETA &bull; MACRO ENGINE</span>
@@ -6404,18 +6513,20 @@
   <span style="font-size:1.15rem;margin-left:8px;opacity:0.8;line-height:1;" aria-label="Dismiss">&times;</span>
 </div>
 
-<script src="data.js?v=4.2.0"></script>
-<script src="motion.min.js"></script>
-<script src="api.js?v=4.2.0"></script>
-<script src="algo.js?v=4.2.0"></script>
-<script src="modules/exercise-equipment-engine.js?v=7.9.0"></script>
-<script src="modules/beta-manager.js?v=7.9.0"></script>
-<script src="fitfuel.js?v=7.9.0"></script>
-<script src="modules/pwa-sync.js"></script>
-<script src="modules/voice-coach.js"></script>
-<script src="modules/social-card.js"></script>
-<script src="modules/barcode-scanner.js"></script>
-<script src="modules/mediapipe-posture.js"></script>
-  <script src="modules/hero-carousel.js?v=7.8.0"></script>
+<script src="data.js?v=8.0.0"></script>
+<script src="motion.min.js?v=8.0.0"></script>
+<script src="api.js?v=8.0.0"></script>
+<script src="algo.js?v=8.0.0"></script>
+<script src="shared/featureStatus.js?v=8.0.0"></script>
+<script src="shared/betaAccess.js?v=8.0.0"></script>
+<script src="modules/exercise-equipment-engine.js?v=8.0.0"></script>
+<script src="modules/beta-manager.js?v=8.0.0"></script>
+<script src="fitfuel.js?v=8.0.0"></script>
+<script src="modules/pwa-sync.js?v=8.0.0"></script>
+<script src="modules/voice-coach.js?v=8.0.0"></script>
+<script src="modules/social-card.js?v=8.0.0"></script>
+<script src="modules/barcode-scanner.js?v=8.0.0"></script>
+<script src="modules/mediapipe-posture.js?v=8.0.0"></script>
+<script src="modules/hero-carousel.js?v=8.0.0"></script>
 </body>
 </html>

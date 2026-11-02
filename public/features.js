@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  // Feature definition fallback if not loaded from window.GYM_FEATURES
-  const FEATURES = window.GYM_FEATURES || {
+  // Feature definition fallback if not loaded from window.GYM_SHOWCASE_FEATURES or window.GYM_FEATURES
+  const FEATURES = window.GYM_SHOWCASE_FEATURES || window.GYM_FEATURES || {
     workoutTracking: {
       id: "workoutTracking",
       name: "Live Workout Tracker",

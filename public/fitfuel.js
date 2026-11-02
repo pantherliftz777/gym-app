@@ -1493,6 +1493,185 @@ const SECTION_VIEW_MAP = {
   'admin': ['admin']
 };
 
+function renderBetaGatedPreview(viewName) {
+  const featMap = {
+    'posture': {
+      id: 'formCorrectionAi',
+      icon: '👁️',
+      name: 'AI Camera Form Checker',
+      category: 'CLOSED BETA • MOTION & BIOMECHANICS • COHORT (20 SLOTS)',
+      tagline: 'Computer vision feedback on Squats, Deadlifts & Bench',
+      hub: 'labs',
+      hubSubnav: `
+        <nav class="hub-subnav-bar" aria-label="Labs Navigation">
+          <button type="button" class="hub-subnav-btn active" data-hubview="posture" onclick="switchView('posture')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>📷 AI Form Checker (Beta)</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="body-analysis" onclick="switchView('body-analysis')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>🧬 3D Body Analysis</span>
+          </button>
+        </nav>
+      `,
+      description: 'Tracks 17 anatomical joint landmarks in real-time at 30fps locally on your device via WebAssembly. Evaluates hip crease depth below the patella, barbell drift velocity, and lumbar extension integrity without streaming any video data to external servers.',
+      interactivePreview: `
+        <div style="background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:12px;padding:18px;margin:16px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:0.8rem;color:#38bdf8;font-weight:700;">Local MediaPipe Pose Telemetry (Simulated Preview)</span>
+            <span style="font-size:0.75rem;color:#10b981;font-weight:800;">30 FPS • On-Device NPU</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;">
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Squat Hip Depth</div>
+              <strong style="font-size:1.4rem;color:#38bdf8;font-family:monospace;">89°</strong>
+              <span style="font-size:0.75rem;color:#10b981;margin-left:6px;font-weight:700;">Parallel Depth Met ✓</span>
+            </div>
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Bar Path Deviation</div>
+              <strong style="font-size:1.4rem;color:#10b981;font-family:monospace;">±1.2 cm</strong>
+              <span style="font-size:0.75rem;color:#38bdf8;margin-left:6px;font-weight:700;">Vertical Plane Optimal</span>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'wearables': {
+      id: 'wearableSync',
+      icon: '⌚',
+      name: 'Apple Watch & Whoop BLE Sync',
+      category: 'CLOSED BETA • SENSORS & TELEMETRY • COHORT (20 SLOTS)',
+      tagline: 'Real-time heart rate zone broadcast on gym cardio screens',
+      hub: 'progress',
+      hubSubnav: `
+        <nav class="hub-subnav-bar" aria-label="Progress Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="tracking" onclick="switchView('tracking')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <span>Tracking</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="activity" onclick="switchView('activity')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Activity &amp; GPS</span>
+          </button>
+          <button type="button" class="hub-subnav-btn active" data-hubview="wearables" onclick="switchView('wearables')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="4"/><path d="M9 4V2"/><path d="M15 4V2"/><path d="M9 20v2"/><path d="M15 20v2"/></svg>
+            <span>Wearables (Beta)</span>
+          </button>
+        </nav>
+      `,
+      description: 'Connects Apple Watch Ultra 2, Whoop 4.0, Garmin, and Polar chest straps directly via Bluetooth Low Energy (BLE 5.3) GATT heart rate profile to stream live heart rate, HRV recovery telemetry, and anaerobic threshold zones.',
+      interactivePreview: `
+        <div style="background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:12px;padding:18px;margin:16px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:0.8rem;color:#f87171;font-weight:700;">Live Sensor Stream (Simulated Preview)</span>
+            <span style="font-size:0.75rem;color:#38bdf8;font-weight:800;">BLE 5.3 • 100ms Latency</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;">
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Real-Time Heart Rate</div>
+              <strong style="font-size:1.4rem;color:#f87171;font-family:monospace;">152 BPM</strong>
+              <span style="font-size:0.75rem;color:#fbbf24;margin-left:6px;font-weight:700;">Zone 4 Threshold</span>
+            </div>
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Cardio HRV Recovery</div>
+              <strong style="font-size:1.4rem;color:#38bdf8;font-family:monospace;">68 ms</strong>
+              <span style="font-size:0.75rem;color:#10b981;margin-left:6px;font-weight:700;">Optimal Parasympathetic</span>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'meal-prep': {
+      id: 'mealPlanAi',
+      icon: '🍲',
+      name: 'AI Grocery & Meal Prep Generator',
+      category: 'CLOSED BETA • MACRO SYNTHESIS • COHORT (20 SLOTS)',
+      tagline: 'Instant high-protein grocery lists matched to your macros',
+      hub: 'nutrition',
+      hubSubnav: `
+        <nav class="hub-subnav-bar" aria-label="Nutrition Navigation">
+          <button type="button" class="hub-subnav-btn" data-hubview="food-log" onclick="switchView('food-log')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            <span>Food Log</span>
+          </button>
+          <button type="button" class="hub-subnav-btn" data-hubview="my-foods" onclick="switchView('my-foods')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>
+            <span>My Foods</span>
+          </button>
+          <button type="button" class="hub-subnav-btn active" data-hubview="meal-prep" onclick="switchView('meal-prep')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>AI Meal Prep (Beta)</span>
+          </button>
+        </nav>
+      `,
+      description: 'Generates weekly meal prep recipes matching exact macronutrient gram targets with 1-click Instacart grocery export. Features automated macro gram-matching, custom dietary constraint options, and instant grocery cart generation.',
+      interactivePreview: `
+        <div style="background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:12px;padding:18px;margin:16px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:0.8rem;color:#10b981;font-weight:700;">High-Protein Recipe Engine (Simulated Preview)</span>
+            <span style="font-size:0.75rem;color:#38bdf8;font-weight:800;">1-Click Instacart Sync</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;">
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Daily Protein Target</div>
+              <strong style="font-size:1.4rem;color:#10b981;font-family:monospace;">165g / Day</strong>
+              <span style="font-size:0.75rem;color:var(--glass-text-secondary);margin-left:6px;">Hypertrophy Split</span>
+            </div>
+            <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;">
+              <div style="font-size:0.75rem;color:var(--glass-text-secondary);">Featured Recipe Match</div>
+              <strong style="font-size:1rem;color:var(--glass-text-primary);">Citrus Grilled Salmon</strong>
+              <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-top:2px;">48g Protein • 520 kcal</div>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  };
+
+  const feat = featMap[viewName];
+  if (!feat) return '';
+
+  return `
+    ${feat.hubSubnav}
+    <div class="panel" style="padding:28px 24px;border-radius:18px;border:1px solid rgba(56,189,248,0.3);background:linear-gradient(135deg, rgba(30,58,138,0.09) 0%, rgba(16,185,129,0.06) 100%);box-shadow:0 10px 30px rgba(0,0,0,0.1);max-width:850px;margin:16px auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <span class="section-kicker" style="color:#38bdf8;font-size:0.76rem;letter-spacing:0.06em;">${feat.category}</span>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+            <span style="font-size:2rem;">${feat.icon}</span>
+            <h2 style="font-size:1.45rem;font-weight:900;margin:0;color:var(--glass-text-primary);">${feat.name}</h2>
+          </div>
+        </div>
+        <span style="padding:5px 12px;border-radius:99px;background:rgba(245,158,11,0.15);color:#fbbf24;font-size:0.78rem;font-weight:800;border:1px solid rgba(245,158,11,0.35);">
+          🔒 Closed Beta Preview
+        </span>
+      </div>
+
+      <p style="font-size:0.95rem;color:var(--glass-text-secondary);line-height:1.6;margin:0 0 14px;">
+        ${feat.description}
+      </p>
+
+      ${feat.interactivePreview}
+
+      <div style="padding:14px 18px;border-radius:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.4rem;">🛡️</span>
+        <div style="font-size:0.86rem;color:var(--glass-text-secondary);line-height:1.45;">
+          <strong style="color:var(--glass-text-primary);">Admin Approval Required:</strong> To maintain high-touch feedback with our engineering team, closed beta cohorts are strictly limited to 20 athletes. Applications are reviewed daily by gym administrators.
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;">
+        <button type="button" class="outline-button" onclick="switchView('today')" style="padding:10px 20px;border-radius:10px;font-weight:600;">
+          ← Back to Today
+        </button>
+        <button type="button" class="solid-button open-beta-apply-btn" data-feature-id="${feat.id}" data-feature-name="${feat.name}" onclick="openBetaApplyModal('${feat.id}', '${feat.name}')" style="background:#10b981;color:#09090b;font-weight:800;padding:10px 24px;border-radius:10px;box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+          Apply for Beta Access 🚀
+        </button>
+      </div>
+    </div>
+  `;
+}
+
 function switchView(viewName) {
   if (!viewName || !$('#view-' + viewName)) {
     console.warn('[switchView] Target view does not exist:', viewName);
@@ -1514,9 +1693,9 @@ function switchView(viewName) {
   };
   const isUnlockedInClosedBeta = (viewToBetaFeat[viewName] && window.unlockedBetaFeatures && window.unlockedBetaFeatures[viewToBetaFeat[viewName]]) || (typeof isBetaAdmin === 'function' && isBetaAdmin());
 
-  // Beta access guard: prevent broken or empty views for locked beta features
-  if (window.FitFuelBeta && ['posture', 'body-analysis', 'activity'].includes(viewName)) {
-    if (!window.FitFuelBeta.isFeatureEnabled(viewName) && !isUnlockedInClosedBeta) {
+  // Beta access guard: ONLY applies to closed beta gated features (posture, wearables, meal-prep). Pre-existing features remain open!
+  if (['posture', 'wearables', 'meal-prep'].includes(viewName)) {
+    if (!isUnlockedInClosedBeta) {
       $$('.primary-nav .nav-link').forEach(btn => {
         const sec = btn.dataset.section;
         const isTarget = btn.dataset.view === viewName || (sec && SECTION_VIEW_MAP[sec] && SECTION_VIEW_MAP[sec].includes(viewName));
@@ -1530,7 +1709,7 @@ function switchView(viewName) {
           window._viewOriginalMarkup[viewName] = targetView.innerHTML;
         }
         targetView.classList.add('active');
-        targetView.innerHTML = window.FitFuelBeta.renderLockedState(viewName);
+        targetView.innerHTML = renderBetaGatedPreview(viewName);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       return;
@@ -10827,6 +11006,30 @@ function initInteractiveHeroAndAppButtons() {
       qoGoals.onclick = () => {
         closeModal('#quickOptionsModal');
         openModal('#settingsModal');
+      };
+    }
+
+    // Wire Merged Gym Membership & Turnstile Pass Controls
+    const qrPassBtn = $('#viewTurnstileQrPassBtn');
+    if (qrPassBtn) {
+      qrPassBtn.onclick = () => {
+        if (soundFX && soundFX.pop) soundFX.pop();
+        const code = 'FF-TURNSTILE-' + Math.floor(100000 + Math.random() * 900000);
+        toast(`📱 Digital Gym Pass Active: [${code}]. Turnstile check-in verified!`);
+      };
+    }
+    const upPlanBtn = $('#upgradePlanBtn');
+    if (upPlanBtn) {
+      upPlanBtn.onclick = () => {
+        if (soundFX && soundFX.complete) soundFX.complete();
+        toast('🏆 Upgraded to Pro Tier! All gym facilities, classes, and analytics unlocked.');
+      };
+    }
+    const bookTrnBtn = $('#bookTrainerSessionBtn');
+    if (bookTrnBtn) {
+      bookTrnBtn.onclick = () => {
+        if (soundFX && soundFX.pop) soundFX.pop();
+        toast('📅 Scheduled session with Coach Marcus Vance: Thursday at 10:00 AM confirmed!');
       };
     }
   }

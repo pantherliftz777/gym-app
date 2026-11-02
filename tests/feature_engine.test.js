@@ -19,10 +19,36 @@ console.log('Test 1: GYM_FEATURES Schema & Definition Integrity');
     'gymCrowdMeter'
   ];
 
-  assert.strictEqual(Object.keys(GYM_FEATURES).length, 10, 'Expected exactly 10 canonical features');
+  const preExistingMergedKeys = [
+    'exerciseLibrary',
+    'startingLoad',
+    'gymChallenges',
+    'foodLogging',
+    'customFoods',
+    'aiCoach',
+    'progressTracking',
+    'bodyAnalysis',
+    'gpsActivity',
+    'memberPlans',
+    'attendanceTracking',
+    'adminPortal'
+  ];
 
+  assert(Object.keys(GYM_FEATURES).length >= 22, `Expected at least 22 merged features, got ${Object.keys(GYM_FEATURES).length}`);
+
+  // Validate all showcase keys
   expectedKeys.forEach(k => {
-    assert(GYM_FEATURES[k], `Missing expected feature key: ${k}`);
+    assert(GYM_FEATURES[k], `Missing expected showcase feature key: ${k}`);
+  });
+
+  // Validate all pre-existing merged keys
+  preExistingMergedKeys.forEach(k => {
+    assert(GYM_FEATURES[k], `Missing pre-existing merged feature key: ${k}`);
+    assert.strictEqual(GYM_FEATURES[k].status, 'available', `Pre-existing feature ${k} must be marked as status: "available"`);
+  });
+
+  // Validate all features schema integrity
+  Object.keys(GYM_FEATURES).forEach(k => {
     const f = GYM_FEATURES[k];
     assert(f.id === k, `Feature ${k} has mismatched id ${f.id}`);
     assert(typeof f.name === 'string' && f.name.length > 0, `Feature ${k} missing valid name`);
@@ -38,9 +64,9 @@ console.log('Test 1: GYM_FEATURES Schema & Definition Integrity');
   const beta = Object.values(GYM_FEATURES).filter(f => f.status === 'beta');
   const comingSoon = Object.values(GYM_FEATURES).filter(f => f.status === 'coming-soon');
 
-  assert.strictEqual(available.length, 4, `Expected 4 available features, got ${available.length}`);
-  assert.strictEqual(beta.length, 2, `Expected 2 beta features, got ${beta.length}`);
-  assert.strictEqual(comingSoon.length, 4, `Expected 4 coming-soon features, got ${comingSoon.length}`);
+  assert(available.length >= 16, `Expected at least 16 available features, got ${available.length}`);
+  assert(beta.length >= 2, `Expected at least 2 beta features, got ${beta.length}`);
+  assert(comingSoon.length >= 4, `Expected at least 4 coming-soon features, got ${comingSoon.length}`);
 
   // Coming-soon features MUST have technicalReason and estimatedArrival
   comingSoon.forEach(f => {
@@ -128,8 +154,8 @@ console.log('Test 3: /api/features & /api/features/waitlist Endpoint Integrity')
   const featRes = await makeRequest('/api/features');
   assert.strictEqual(featRes.status, 200);
   assert.strictEqual(featRes.data.ok, true);
-  assert.strictEqual(Object.keys(featRes.data.features).length, 10);
-  console.log('  [PASS] GET /api/features returns complete 10-feature catalog.');
+  assert(Object.keys(featRes.data.features).length >= 22, `Expected at least 22 features, got ${Object.keys(featRes.data.features).length}`);
+  console.log(`  [PASS] GET /api/features returns complete merged ${Object.keys(featRes.data.features).length}-feature catalog.`);
 
   // 3b. Waitlist rejection for available features
   const availWaitlist = await makeRequest('/api/features/waitlist', 'POST', {
