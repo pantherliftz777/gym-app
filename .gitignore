@@ -18,3 +18,4 @@ __pycache__/
 *.log
 brain_verify/
 scripts/screenshots/
+vendor_repos/

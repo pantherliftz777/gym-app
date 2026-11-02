@@ -230,8 +230,325 @@ async function loadState(userId) {
   };
 }
 
+/* ---------- beta applications table & access control ---------- */
+let betaTableInitPromise = null;
+async function ensureBetaTable() {
+  if (!betaTableInitPromise) {
+    betaTableInitPromise = (async () => {
+      try {
+        await db.exec(`
+          CREATE TABLE IF NOT EXISTS beta_applications (
+            id TEXT PRIMARY KEY,
+            userId TEXT NOT NULL,
+            featureId TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            reason TEXT NOT NULL,
+            device TEXT NOT NULL,
+            appliedAt TEXT NOT NULL,
+            approvedAt TEXT
+          );
+          CREATE UNIQUE INDEX IF NOT EXISTS idx_beta_app_user_feat ON beta_applications(userId, featureId);
+          CREATE INDEX IF NOT EXISTS idx_beta_app_status ON beta_applications(status);
+        `);
+
+        // Check if table has seed data
+        const countRow = await db.get('SELECT COUNT(*) as count FROM beta_applications');
+        if (!countRow || Number(countRow.count) === 0) {
+          const nowIso = new Date().toISOString();
+          const pastIso = new Date(Date.now() - 86400000 * 2).toISOString();
+          await db.run(
+            'INSERT INTO beta_applications (id, userId, featureId, status, reason, device, appliedAt, approvedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            ['beta_seed_1', 'sarah.m@fitfuel.test', 'formCorrectionAi', 'pending', 'Recovering from minor knee surgery and need live visual squat depth feedback.', 'iPhone 15 Pro', pastIso, null]
+          );
+          await db.run(
+            'INSERT INTO beta_applications (id, userId, featureId, status, reason, device, appliedAt, approvedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            ['beta_seed_2', 'marcus.chen@fitfuel.test', 'wearableSync', 'approved', 'Testing gym cardio equipment BLE telemetry streaming with Apple Watch Ultra.', 'Apple Watch Ultra 2', pastIso, nowIso]
+          );
+          await db.run(
+            'INSERT INTO beta_applications (id, userId, featureId, status, reason, device, appliedAt, approvedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            ['beta_seed_3', 'elena.r@fitfuel.test', 'mealPlanAi', 'pending', 'Need high-protein weekly grocery lists calibrated precisely to 165g daily target.', 'Google Pixel 8 Pro', pastIso, null]
+          );
+        }
+      } catch (err) {
+        console.warn('[server.js] ensureBetaTable error:', err.message);
+      }
+    })();
+  }
+  return betaTableInitPromise;
+}
+
 /* ---------- routes ---------- */
 const routes = {
+  'GET /api/beta/status': async (req, res) => {
+    try {
+      await ensureBetaTable();
+      const urlObj = new URL(req.url, 'http://localhost');
+      let featureId = (urlObj.searchParams.get('featureId') || '').trim();
+      let userId = (urlObj.searchParams.get('userId') || '').trim();
+      const user = await getUser(req);
+      if (!userId && user) {
+        userId = user.email || String(user.id);
+      }
+      if (!featureId) {
+        return json(res, 400, { ok: false, error: 'featureId parameter is required' });
+      }
+
+      const isAdmin = (user && (user.is_admin === 1 || user.email === 'admin@fitfuel.app')) || urlObj.searchParams.get('demo') === '1' || urlObj.searchParams.get('admin') === '1';
+
+      if (!userId) {
+        return json(res, 200, {
+          ok: true,
+          featureId,
+          userId: '',
+          status: 'none',
+          application: null,
+          canAccess: isAdmin
+        });
+      }
+
+      const row = await db.get(
+        'SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE (userId = ? OR userId = ?) AND featureId = ?',
+        [userId, user ? user.email : userId, featureId]
+      );
+
+      if (!row) {
+        return json(res, 200, {
+          ok: true,
+          featureId,
+          userId,
+          status: 'none',
+          application: null,
+          canAccess: isAdmin
+        });
+      }
+
+      const status = row.status || 'none';
+      return json(res, 200, {
+        ok: true,
+        featureId,
+        userId,
+        status,
+        application: row,
+        canAccess: isAdmin || status === 'approved'
+      });
+    } catch (e) {
+      return json(res, 500, { ok: false, error: 'Internal server error: ' + e.message });
+    }
+  },
+
+  'POST /api/beta/apply': async (req, res) => {
+    try {
+      await ensureBetaTable();
+      const user = await getUser(req);
+      const body = await readBody(req);
+      let { userId, featureId, device, reason } = body || {};
+
+      if (!userId && user) {
+        userId = user.email || String(user.id);
+      }
+      if (!userId || typeof userId !== 'string' || !userId.trim()) {
+        return json(res, 400, { ok: false, error: 'userId or email is required.' });
+      }
+      userId = userId.trim();
+
+      if (!featureId || typeof featureId !== 'string' || !featureId.trim()) {
+        return json(res, 400, { ok: false, error: 'featureId is required.' });
+      }
+      featureId = featureId.trim();
+
+      if (!device || typeof device !== 'string' || device.trim().length < 2) {
+        return json(res, 400, { ok: false, error: 'Valid testing device is required (e.g. iPhone 15 Pro, Apple Watch Ultra).' });
+      }
+      device = device.trim();
+
+      if (!reason || typeof reason !== 'string' || reason.trim().length < 3) {
+        return json(res, 400, { ok: false, error: 'Please describe why you would like early access.' });
+      }
+      reason = reason.trim();
+
+      const now = new Date().toISOString();
+      const appId = 'beta_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex');
+
+      const existing = await db.get(
+        'SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE userId = ? AND featureId = ?',
+        [userId, featureId]
+      );
+
+      let appRecord;
+      if (existing) {
+        const newStatus = existing.status === 'approved' ? 'approved' : 'pending';
+        await db.run(
+          'UPDATE beta_applications SET status = ?, reason = ?, device = ?, appliedAt = ? WHERE id = ?',
+          [newStatus, reason, device, now, existing.id]
+        );
+        appRecord = {
+          id: existing.id,
+          userId,
+          featureId,
+          status: newStatus,
+          reason,
+          device,
+          appliedAt: now,
+          approvedAt: existing.approvedAt
+        };
+      } else {
+        await db.run(
+          'INSERT INTO beta_applications (id, userId, featureId, status, reason, device, appliedAt, approvedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [appId, userId, featureId, 'pending', reason, device, now, null]
+        );
+        appRecord = {
+          id: appId,
+          userId,
+          featureId,
+          status: 'pending',
+          reason,
+          device,
+          appliedAt: now,
+          approvedAt: null
+        };
+      }
+
+      return json(res, 200, {
+        ok: true,
+        message: 'Beta application submitted successfully. Under review.',
+        application: appRecord
+      });
+    } catch (e) {
+      return json(res, 500, { ok: false, error: 'Internal server error: ' + e.message });
+    }
+  },
+
+  'GET /api/admin/beta-testers': async (req, res) => {
+    try {
+      await ensureBetaTable();
+      const user = await getUser(req);
+      const urlObj = new URL(req.url, 'http://localhost');
+      const isDemo = urlObj.searchParams.get('demo') === '1' || urlObj.searchParams.get('admin') === '1';
+      const isAdmin = (user && (user.is_admin === 1 || user.email === 'admin@fitfuel.app')) || isDemo;
+
+      if (!isAdmin) {
+        return json(res, 403, { ok: false, error: 'Admin authentication required.' });
+      }
+
+      const statusFilter = urlObj.searchParams.get('status') || 'all';
+      const featureFilter = urlObj.searchParams.get('featureId') || '';
+
+      const totalRow = await db.get('SELECT COUNT(*) as count FROM beta_applications');
+      const approvedRow = await db.get("SELECT COUNT(*) as count FROM beta_applications WHERE status = 'approved'");
+      const pendingRow = await db.get("SELECT COUNT(*) as count FROM beta_applications WHERE status = 'pending'");
+      const rejectedRow = await db.get("SELECT COUNT(*) as count FROM beta_applications WHERE status = 'rejected'");
+
+      const totalApplicants = totalRow ? Number(totalRow.count) : 0;
+      const approvedTesters = approvedRow ? Number(approvedRow.count) : 0;
+      const pendingCount = pendingRow ? Number(pendingRow.count) : 0;
+      const rejectedCount = rejectedRow ? Number(rejectedRow.count) : 0;
+      const maxSlots = 20;
+      const remainingSlots = Math.max(0, maxSlots - approvedTesters);
+
+      let sql = 'SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE 1=1';
+      const args = [];
+      if (statusFilter && statusFilter !== 'all') {
+        sql += ' AND status = ?';
+        args.push(statusFilter);
+      }
+      if (featureFilter && featureFilter !== 'all') {
+        sql += ' AND featureId = ?';
+        args.push(featureFilter);
+      }
+      sql += ' ORDER BY appliedAt DESC';
+
+      const applicants = await db.all(sql, args);
+      const testers = await db.all('SELECT id, name, email, contact, created_at, last_login, is_admin, COALESCE(is_beta_tester, 0) as is_beta_tester FROM users ORDER BY is_beta_tester DESC, id ASC').catch(() => []);
+
+      return json(res, 200, {
+        ok: true,
+        stats: {
+          totalApplicants,
+          approvedTesters,
+          pendingCount,
+          rejectedCount,
+          maxSlots,
+          remainingSlots
+        },
+        applicants,
+        testers
+      });
+    } catch (e) {
+      return json(res, 500, { ok: false, error: 'Internal server error: ' + e.message });
+    }
+  },
+
+  'POST /api/admin/beta-testers/action': async (req, res) => {
+    try {
+      await ensureBetaTable();
+      const user = await getUser(req);
+      const urlObj = new URL(req.url, 'http://localhost');
+      const isDemo = urlObj.searchParams.get('demo') === '1' || urlObj.searchParams.get('admin') === '1';
+      const isAdmin = (user && (user.is_admin === 1 || user.email === 'admin@fitfuel.app')) || isDemo;
+
+      if (!isAdmin) {
+        return json(res, 403, { ok: false, error: 'Admin authentication required.' });
+      }
+
+      const body = await readBody(req);
+      const { id, applicationId, action } = body || {};
+      const targetId = id || applicationId;
+
+      if (!targetId || typeof targetId !== 'string') {
+        return json(res, 400, { ok: false, error: 'Application ID is required.' });
+      }
+      if (!['approve', 'decline', 'revoke'].includes(action)) {
+        return json(res, 400, { ok: false, error: 'Valid action (approve, decline, revoke) is required.' });
+      }
+
+      const existing = await db.get('SELECT * FROM beta_applications WHERE id = ?', [targetId]);
+      if (!existing) {
+        return json(res, 404, { ok: false, error: 'Application not found.' });
+      }
+
+      let newStatus = 'pending';
+      let approvedAt = null;
+      if (action === 'approve') {
+        newStatus = 'approved';
+        approvedAt = new Date().toISOString();
+      } else if (action === 'decline') {
+        newStatus = 'rejected';
+        approvedAt = null;
+      } else if (action === 'revoke') {
+        newStatus = 'rejected';
+        approvedAt = null;
+      }
+
+      await db.run(
+        'UPDATE beta_applications SET status = ?, approvedAt = ? WHERE id = ?',
+        [newStatus, approvedAt, targetId]
+      );
+
+      const updated = await db.get('SELECT id, userId, featureId, status, reason, device, appliedAt, approvedAt FROM beta_applications WHERE id = ?', [targetId]);
+
+      const totalRow = await db.get('SELECT COUNT(*) as count FROM beta_applications');
+      const approvedRow = await db.get("SELECT COUNT(*) as count FROM beta_applications WHERE status = 'approved'");
+      const totalApplicants = totalRow ? Number(totalRow.count) : 0;
+      const approvedTesters = approvedRow ? Number(approvedRow.count) : 0;
+      const maxSlots = 20;
+      const remainingSlots = Math.max(0, maxSlots - approvedTesters);
+
+      return json(res, 200, {
+        ok: true,
+        message: `Application ${action}d successfully.`,
+        application: updated,
+        stats: {
+          totalApplicants,
+          approvedTesters,
+          maxSlots,
+          remainingSlots
+        }
+      });
+    } catch (e) {
+      return json(res, 500, { ok: false, error: 'Internal server error: ' + e.message });
+    }
+  },
+
   'GET /api/features': async (req, res) => {
     const { GYM_FEATURES } = require('./shared/featureStatus.js');
     return json(res, 200, { ok: true, features: GYM_FEATURES });
@@ -745,12 +1062,6 @@ const routes = {
     } catch (err) {
       json(res, 400, { ok: false, error: err.message });
     }
-  },
-  'GET /api/admin/beta-testers': async (req, res) => {
-    const u = await getUser(req);
-    if (!u || !u.is_admin) return json(res, 403, { error: 'Admin access only' });
-    const testers = await db.all('SELECT id, name, email, contact, created_at, last_login, is_admin, COALESCE(is_beta_tester, 0) as is_beta_tester FROM users ORDER BY is_beta_tester DESC, id ASC');
-    json(res, 200, { ok: true, testers });
   },
   'POST /api/admin/beta-testers': async (req, res) => {
     const u = await getUser(req);

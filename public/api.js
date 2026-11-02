@@ -238,7 +238,29 @@ const FF = {
   async adminStats() { return await this.req('GET', '/api/admin/stats'); },
   async adminDeleteUser(id) { await this.req('DELETE', '/api/admin/user', { id }); },
 
-    safeJsonParse: safeJsonParse,
+  /* Closed Beta Early Access & Admin Approval */
+  async betaStatus(featureId, userId) {
+    const q = new URLSearchParams();
+    if (featureId) q.set('featureId', featureId);
+    if (userId) q.set('userId', userId);
+    return await this.req('GET', '/api/beta/status?' + q.toString());
+  },
+  async betaApply(featureId, device, reason, userId) {
+    return await this.req('POST', '/api/beta/apply', { featureId, device, reason, userId });
+  },
+  async adminBetaTesters(status = 'all', featureId = '', demo = false) {
+    const q = new URLSearchParams();
+    if (status) q.set('status', status);
+    if (featureId) q.set('featureId', featureId);
+    if (demo) q.set('demo', '1');
+    return await this.req('GET', '/api/admin/beta-testers?' + q.toString());
+  },
+  async adminBetaAction(id, action, demo = false) {
+    const q = demo ? '?demo=1' : '';
+    return await this.req('POST', '/api/admin/beta-testers/action' + q, { id, action });
+  },
+
+  safeJsonParse: safeJsonParse,
 
   /* Live AI Engine with Multi-Provider Cascade (Google Gemini & OpenRouter) */
   getGeminiKey() {

@@ -134,7 +134,7 @@
       </button>
 
       <!-- 8. FEATURE STATUS ENGINE -->
-      <a href="/features" class="nav-link" id="sidebarFeaturesBtn" title="Honest Feature Status Engine" style="text-decoration:none;">
+      <a href="/features" class="nav-link" id="sidebarFeaturesBtn" data-view="features" title="Honest Feature Status Engine" style="text-decoration:none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
         </svg>
@@ -1243,6 +1243,31 @@
             </div>
           </article>
         </div>
+
+        <!-- ================= CLOSED BETA EARLY ACCESS & VIP TESTER HUB ================= -->
+        <article class="panel" id="closedBetaHubPanel" style="margin-top:18px;border-radius:16px;padding:22px;border:1px solid rgba(56,189,248,0.25);background:linear-gradient(135deg, rgba(30,58,138,0.08) 0%, rgba(16,185,129,0.06) 100%);box-shadow:0 6px 20px rgba(0,0,0,0.05);">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.2rem;">🔒</span>
+                <span class="section-kicker" style="color:#38bdf8;margin:0;font-size:0.76rem;letter-spacing:0.06em;">EXPERIMENTAL LABS &bull; CLOSED BETA COHORT (20 SLOTS)</span>
+              </div>
+              <h3 style="margin:4px 0 2px;font-size:1.2rem;font-weight:800;color:var(--glass-text-primary);">Closed Beta Early Access &amp; Admin Approvals</h3>
+              <p style="margin:0;font-size:0.86rem;color:var(--glass-text-secondary);max-width:700px;">
+                Request VIP early access to test our bleeding-edge AI posture tracking, BLE heart rate broadcast, and macro synthesis modules before public release.
+              </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="closedBetaGlobalStatusBadge" style="padding:4px 10px;border-radius:99px;background:rgba(56,189,248,0.15);color:#38bdf8;font-size:0.75rem;font-weight:800;border:1px solid rgba(56,189,248,0.3);">
+                20 Slots / Cohort
+              </span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;" id="closedBetaCardsGrid">
+            <!-- Rendered dynamically by renderClosedBetaDashboard() -->
+          </div>
+        </article>
 
         <!-- DAILY TIP & HABIT SCIENCE SECTION -->
         <article class="panel daily-tip-panel" id="dailyTipPanel" style="margin-top:16px;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(32,59,41,0.04);">
@@ -2996,7 +3021,7 @@
         </div>
 
         <!-- Admin Navigation Sub-Tabs -->
-        <div style="display:flex;gap:10px;margin-bottom:18px;border-bottom:1px solid #cbd5e1;padding-bottom:10px;" id="adminSubTabs">
+        <div style="display:flex;gap:10px;margin-bottom:18px;border-bottom:1px solid #cbd5e1;padding-bottom:10px;flex-wrap:wrap;" id="adminSubTabs">
           <button type="button" class="solid-button small" id="adminTabComplaints" style="border-radius:999px;padding:7px 18px;font-weight:700;">
             User Complaints &amp; Issues
           </button>
@@ -3005,6 +3030,9 @@
           </button>
           <button type="button" class="outline-button small" id="adminTabBetaFeatures" style="border-radius:999px;padding:7px 18px;font-weight:700;">
             🧪 Beta Features &amp; Flags
+          </button>
+          <button type="button" class="outline-button small" id="adminTabBetaTesters" style="border-radius:999px;padding:7px 18px;font-weight:700;border-color:#10b981;color:#10b981;">
+            🛡️ Beta Testers &amp; Approvals
           </button>
         </div>
 
@@ -3084,6 +3112,85 @@
             <div id="adminBetaTestersList" style="display:flex;flex-direction:column;gap:10px;">
               <!-- Rendered dynamically by FitFuelBeta.renderAdminTesters() -->
             </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: CLOSED BETA TESTERS & ADMIN APPROVAL DASHBOARD -->
+        <div id="adminBetaTestersViewPane" style="display:none;">
+          <!-- Demo Mode Quick-Switch Banner -->
+          <div class="panel" style="padding:16px 20px;margin-bottom:18px;background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(56,189,248,0.12) 100%);border:1px solid rgba(16,185,129,0.3);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:#10b981;color:#09090b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;">
+                🛡️
+              </div>
+              <div>
+                <strong style="color:var(--glass-text-primary);font-size:1.05rem;display:block;">Closed Beta Early Access &amp; Admin Approval Control</strong>
+                <p style="margin:2px 0 0;font-size:0.84rem;color:var(--glass-text-secondary);">Manage 20-slot cohorts, inspect applicant devices and notes, and approve VIP early access.</p>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="solid-button small" id="adminBetaDemoToggleBtn" style="background:#2563eb;color:#fff;font-weight:800;padding:8px 16px;border-radius:8px;">
+                👤 Switch to Tester View
+              </button>
+              <button type="button" class="outline-button small" id="adminBetaRefreshBtn" style="padding:8px 14px;border-radius:8px;">
+                🔄 Refresh Applicants
+              </button>
+            </div>
+          </div>
+
+          <!-- Overview Stats Badges -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:20px;">
+            <div class="panel" style="padding:16px 20px;border-left:4px solid #38bdf8;">
+              <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">TOTAL APPLICANTS</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <strong id="admBetaTotalApplicants" style="font-size:1.8rem;font-weight:800;color:#0284c7;">0</strong>
+                <small style="color:var(--glass-text-secondary);font-weight:600;">Candidates</small>
+              </div>
+            </div>
+            <div class="panel" style="padding:16px 20px;border-left:4px solid #10b981;">
+              <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">APPROVED TESTERS</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <strong id="admBetaApprovedTesters" style="font-size:1.8rem;font-weight:800;color:#10b981;">0</strong>
+                <small style="color:var(--glass-text-secondary);font-weight:600;">VIP Active</small>
+              </div>
+            </div>
+            <div class="panel" style="padding:16px 20px;border-left:4px solid #f59e0b;">
+              <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">REMAINING BETA SLOTS</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <strong id="admBetaRemainingSlots" style="font-size:1.8rem;font-weight:800;color:#f59e0b;">20 / 20</strong>
+                <small style="color:var(--glass-text-secondary);font-weight:600;">Slots Available</small>
+              </div>
+            </div>
+            <div class="panel" style="padding:16px 20px;border-left:4px solid #a855f7;">
+              <span class="section-kicker" style="margin:0 0 4px;font-size:0.75rem;">UNDER REVIEW</span>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <strong id="admBetaPendingCount" style="font-size:1.8rem;font-weight:800;color:#a855f7;">0</strong>
+                <small style="color:var(--glass-text-secondary);font-weight:600;">Needs Action</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters Row -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="betaTesterStatusFilterBtns">
+              <button type="button" class="filter-pill active" data-bfilter="all">All Applicants</button>
+              <button type="button" class="filter-pill" data-bfilter="pending">Pending</button>
+              <button type="button" class="filter-pill" data-bfilter="approved">Approved</button>
+              <button type="button" class="filter-pill" data-bfilter="rejected">Rejected</button>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <select id="betaTesterFeatureFilterSelect" class="form-input" style="padding:6px 12px;font-size:0.84rem;border-radius:8px;background:var(--glass-surface);border:1px solid var(--glass-border);color:var(--glass-text-primary);">
+                <option value="all">All Features</option>
+                <option value="formCorrectionAi">AI Camera Form Checker</option>
+                <option value="wearableSync">Apple Watch &amp; Whoop Sync</option>
+                <option value="mealPlanAi">AI Grocery &amp; Meal Prep</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Applicants Grid / Table -->
+          <div id="adminBetaApplicantsCardsGrid" style="display:flex;flex-direction:column;gap:12px;">
+            <!-- Rendered dynamically by loadAndRenderAdminBetaTesters() -->
           </div>
         </div>
       </section>
@@ -3793,6 +3900,13 @@
             </div>
           </div>
         </div>
+
+        <!-- Floating Report Beta Bug / Feedback Button for Form Checker -->
+        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+          <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_formCorrectionAi" data-feature-id="formCorrectionAi" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
+            🐞 Report Beta Bug / Feedback
+          </button>
+        </div>
       </section>
 
       <!-- ================= VIEW: CUSTOMIZATION PANEL (REFERENCE IMAGE 1) ================= -->
@@ -3930,6 +4044,138 @@
           </div>
         </div>
       </section>
+
+      <!-- ================= VIEW: FEATURES & SANDBOXES ================= -->
+      <section class="view" id="view-features">
+        <div class="view-intro" style="margin-bottom:14px;">
+          <div>
+            <span class="section-kicker" style="color:#10b981;">HONEST ARCHITECTURE &bull; ZERO VAPORWARE</span>
+            <h2>Features &amp; Interactive Sandboxes</h2>
+            <p>Explore real-time operational status, apply for closed beta access, and test live sensor/pose sandboxes.</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <a href="/features" target="_blank" class="solid-button small" id="openFeaturesNewTabBtn" style="background:#10b981;color:#09090b;text-decoration:none;font-weight:800;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open in Dedicated Tab ↗
+            </a>
+            <button type="button" class="outline-button small" onclick="switchView('today')" style="padding:8px 14px;border-radius:10px;">
+              ← Back to Today
+            </button>
+          </div>
+        </div>
+        <div class="features-embed-wrap" style="width:100%;height:calc(100vh - 190px);min-height:750px;border-radius:14px;overflow:hidden;border:1px solid var(--glass-border);background:var(--bg-main, #121214);position:relative;box-shadow:0 8px 30px rgba(0,0,0,0.35);">
+          <iframe id="featuresShowcaseFrame" src="/features" style="width:100%;height:100%;border:none;display:block;" title="FitFuel Features &amp; Sandboxes Showcase"></iframe>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: WEARABLE & BLE SYNC (CLOSED BETA UNLOCKED VIEW) ================= -->
+      <section class="view" id="view-wearables">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker" style="color:#f87171;">CLOSED BETA &bull; SENSORS &amp; TELEMETRY</span>
+            <h2>Apple Watch &amp; Whoop BLE Sync</h2>
+            <p>Live real-time heart rate broadcast and recovery telemetry for gym free-weights and cardio screens.</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="solid-button small" id="toggleWearableBleBtn" style="background:#10b981;color:#09090b;font-weight:800;padding:8px 16px;border-radius:10px;">
+              ✓ Connected (Apple Watch Ultra 2)
+            </button>
+            <button type="button" class="outline-button small" onclick="switchView('today')" style="padding:8px 14px;border-radius:10px;">
+              ← Back to Today
+            </button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;margin-bottom:20px;">
+          <div class="panel" style="padding:22px;border-left:4px solid #f87171;">
+            <span class="section-kicker" style="color:#f87171;font-size:0.75rem;">LIVE HEART RATE TELEMETRY</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin:8px 0;">
+              <div>
+                <strong id="liveWearableBpm" style="font-size:3rem;font-weight:900;font-family:monospace;color:#ffffff;">152</strong>
+                <span style="font-size:1rem;color:var(--glass-text-secondary);margin-left:4px;">BPM</span>
+              </div>
+              <span id="liveWearableZoneBadge" style="padding:4px 10px;border-radius:99px;background:rgba(245,158,11,0.2);color:#fbbf24;font-size:0.78rem;font-weight:800;border:1px solid #f59e0b;">Zone 4 &bull; Threshold</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--glass-text-secondary);">Streaming via Bluetooth Low Energy 5.3 &bull; 100ms latency</div>
+          </div>
+
+          <div class="panel" style="padding:22px;border-left:4px solid #38bdf8;">
+            <span class="section-kicker" style="color:#38bdf8;font-size:0.75rem;">CARDIO RESPONSIVENESS &amp; HRV</span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin:8px 0;">
+              <div>
+                <strong id="liveWearableHrv" style="font-size:3rem;font-weight:900;font-family:monospace;color:#ffffff;">68</strong>
+                <span style="font-size:1rem;color:var(--glass-text-secondary);margin-left:4px;">ms</span>
+              </div>
+              <span style="padding:4px 10px;border-radius:99px;background:rgba(16,185,129,0.2);color:#34d399;font-size:0.78rem;font-weight:800;border:1px solid #10b981;">Optimal Recovery</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--glass-text-secondary);">Autonomic nervous system recovery &bull; High Parasympathetic tone</div>
+          </div>
+        </div>
+
+        <!-- Waveform visualizer -->
+        <div class="panel" style="padding:20px;margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <strong style="color:var(--glass-text-primary);font-size:0.95rem;">Live PPG Pulse Waveform (ECG Monitor)</strong>
+            <span style="font-size:0.76rem;color:#34d399;font-weight:700;">Broadcast Signal: 100% Strength</span>
+          </div>
+          <div id="wearableViewEcgBars" style="height:90px;background:rgba(0,0,0,0.4);border-radius:10px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-around;padding:0 10px;">
+            <!-- Rendered by live timer -->
+          </div>
+        </div>
+
+        <!-- Floating Report Beta Bug / Feedback Button -->
+        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+          <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_wearableSync" data-feature-id="wearableSync" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
+            🐞 Report Beta Bug / Feedback
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: AI MEAL PREP & MACROS (CLOSED BETA UNLOCKED VIEW) ================= -->
+      <section class="view" id="view-meal-prep">
+        <div class="view-intro">
+          <div>
+            <span class="section-kicker" style="color:#10b981;">CLOSED BETA &bull; MACRO ENGINE</span>
+            <h2>AI Grocery &amp; Meal Prep Synthesizer</h2>
+            <p>Generate precise weekly high-protein grocery lists matched gram-for-gram to your caloric goal.</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="solid-button small" id="exportGroceryListBtn" style="background:#10b981;color:#09090b;font-weight:800;padding:8px 16px;border-radius:10px;">
+              Export to Instacart 🛒
+            </button>
+            <button type="button" class="outline-button small" onclick="switchView('today')" style="padding:8px 14px;border-radius:10px;">
+              ← Back to Today
+            </button>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:22px;margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <div>
+              <strong style="font-size:1.05rem;color:var(--glass-text-primary);">Interactive Protein &amp; Macro Split Synthesizer</strong>
+              <div style="font-size:0.82rem;color:var(--glass-text-secondary);">Mifflin-St Jeor equation calibrated with 2.2g/kg lean mass multiplier</div>
+            </div>
+            <strong id="mealPrepProteinDisplay" style="font-size:1.4rem;font-weight:900;color:#38bdf8;font-family:monospace;">165g Protein / Day</strong>
+          </div>
+          <input type="range" id="mealPrepProteinSlider" min="120" max="220" step="5" value="165" style="width:100%;accent-color:#38bdf8;cursor:pointer;" />
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--glass-text-secondary);margin-top:6px;">
+            <span>120g (Maintenance)</span>
+            <span>165g (Hypertrophy / Lean Mass)</span>
+            <span>220g (Heavy Powerlifting)</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:16px;margin-bottom:20px;" id="mealPrepRecipeCardsGrid">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Floating Report Beta Bug / Feedback Button -->
+        <div style="position:fixed;bottom:24px;right:24px;z-index:99;">
+          <button type="button" class="floating-beta-feedback-btn" id="betaFeedbackFloatBtn_mealPlanAi" data-feature-id="mealPlanAi" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 18px;border-radius:999px;border:none;box-shadow:0 6px 20px rgba(245,158,11,0.45);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:0.88rem;transition:all 0.2s;">
+            🐞 Report Beta Bug / Feedback
+          </button>
+        </div>
+      </section>
     </div>
 
     <div class="app-footnote">
@@ -3981,7 +4227,91 @@
   </button>
 </nav>
 
-<!-- ================= MODALS ================= -->
+<!-- CLOSED BETA EARLY ACCESS APPLICATION MODAL -->
+<div class="modal-backdrop" id="betaApplyModal" style="display:none;">
+  <div class="modal-card" style="max-width:520px;border-radius:18px;background:var(--bg-card, #1c1c1f);border:1px solid var(--glass-border);color:var(--text-main, #f4f4f5);box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    <div class="modal-head" style="border-bottom:1px solid var(--glass-border);padding-bottom:14px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:1.1rem;">🔒</span>
+          <span class="section-kicker" style="color:#38bdf8;margin:0;font-size:0.75rem;">CLOSED BETA INVITATION (20 SLOTS)</span>
+        </div>
+        <h2 id="betaApplyModalTitle" style="font-size:1.35rem;font-weight:800;margin:4px 0 0;color:var(--glass-text-primary);">Request Early Access</h2>
+      </div>
+      <button class="close-btn" id="betaApplyModalCloseBtn" type="button">&times;</button>
+    </div>
+
+    <form id="betaApplyForm" onsubmit="return false;" style="margin-top:16px;">
+      <input type="hidden" id="betaApplyFeatureId" value="" />
+      
+      <p style="font-size:0.86rem;color:var(--glass-text-secondary);line-height:1.5;margin:0 0 16px;">
+        To ensure high-touch engineering feedback and stable on-device performance, cohorts are strictly limited to 20 athletes. Applications are reviewed within 24 hours.
+      </p>
+
+      <div class="modal-fields" style="display:grid;gap:14px;">
+        <label class="full-field" style="display:flex;flex-direction:column;gap:6px;font-size:0.84rem;font-weight:700;">
+          Primary Testing Device &amp; Hardware
+          <input type="text" id="betaApplyDeviceInput" placeholder="e.g. iPhone 15 Pro, Apple Watch Ultra 2, Pixel 8" required style="padding:10px 14px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border);color:inherit;font-size:0.88rem;" />
+        </label>
+
+        <label class="full-field" style="display:flex;flex-direction:column;gap:6px;font-size:0.84rem;font-weight:700;">
+          Why do you want early access? (Your training focus)
+          <textarea id="betaApplyReasonInput" rows="3" placeholder="Tell us how you'll test this feature (e.g. tracking squat depth during powerlifting prep, BLE heart rate broadcast during HIIT)..." required style="padding:10px 14px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border);color:inherit;font-size:0.88rem;resize:vertical;"></textarea>
+        </label>
+      </div>
+
+      <div id="betaApplyAlert" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.82rem;"></div>
+
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" class="outline-button" id="betaApplyCancelBtn" style="padding:10px 18px;border-radius:10px;">Cancel</button>
+        <button type="button" class="solid-button" id="betaApplySubmitBtn" style="background:#10b981;color:#09090b;font-weight:800;padding:10px 22px;border-radius:10px;box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+          Submit Application 🚀
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CLOSED BETA BUG REPORT & FEEDBACK MODAL -->
+<div class="modal-backdrop" id="betaFeedbackModal" style="display:none;">
+  <div class="modal-card" style="max-width:500px;border-radius:18px;background:var(--bg-card, #1c1c1f);border:1px solid var(--glass-border);color:var(--text-main, #f4f4f5);box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    <div class="modal-head" style="border-bottom:1px solid var(--glass-border);padding-bottom:14px;">
+      <div>
+        <span class="section-kicker" style="color:#f59e0b;font-size:0.75rem;">VIP BETA TESTER TELEMETRY</span>
+        <h2 style="font-size:1.35rem;font-weight:800;margin:4px 0 0;color:var(--glass-text-primary);">Report Beta Bug / Feedback</h2>
+      </div>
+      <button class="close-btn" id="betaFeedbackModalCloseBtn" type="button">&times;</button>
+    </div>
+
+    <form id="betaFeedbackForm" onsubmit="return false;" style="margin-top:16px;">
+      <input type="hidden" id="betaFeedbackFeatureId" value="" />
+
+      <div class="modal-fields" style="display:grid;gap:14px;">
+        <label class="full-field" style="display:flex;flex-direction:column;gap:6px;font-size:0.84rem;font-weight:700;">
+          Feedback Category
+          <select id="betaFeedbackTypeSelect" style="padding:10px 14px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border);color:inherit;font-size:0.88rem;">
+            <option value="bug">🐛 Visual Glitch or Crash Bug</option>
+            <option value="accuracy">🎯 Sensor / Model Accuracy Issue</option>
+            <option value="feature">💡 Feature Suggestion or Improvement</option>
+            <option value="performance">⚡ Performance / Latency Feedback</option>
+          </select>
+        </label>
+
+        <label class="full-field" style="display:flex;flex-direction:column;gap:6px;font-size:0.84rem;font-weight:700;">
+          Detailed Description
+          <textarea id="betaFeedbackDescInput" rows="4" placeholder="Describe the behavior you observed or any suggestions..." required style="padding:10px 14px;border-radius:10px;background:var(--glass-surface-subtle);border:1px solid var(--glass-border);color:inherit;font-size:0.88rem;resize:vertical;"></textarea>
+        </label>
+      </div>
+
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" class="outline-button" id="betaFeedbackCancelBtn" style="padding:10px 18px;border-radius:10px;">Cancel</button>
+        <button type="button" class="solid-button" id="betaFeedbackSubmitBtn" style="background:#f59e0b;color:#09090b;font-weight:800;padding:10px 22px;border-radius:10px;">
+          Send Feedback 📨
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <!-- AUTH MODAL -->
 <div class="modal-backdrop" id="authModal">

@@ -1484,23 +1484,39 @@ document.addEventListener('click', e => {
 const SECTION_VIEW_MAP = {
   'overview': ['today'],
   'training': ['exercise-library', 'challenge', 'starting-load', 'workouts'],
-  'nutrition': ['food-log', 'my-foods'],
+  'nutrition': ['food-log', 'my-foods', 'meal-prep'],
   'ai-coach': ['ai-coach'],
-  'progress': ['tracking', 'activity'],
+  'progress': ['tracking', 'activity', 'wearables'],
   'labs': ['posture', 'body-analysis'],
   'accounts': ['profile', 'customization'],
+  'features': ['features'],
   'admin': ['admin']
 };
 
 function switchView(viewName) {
+  if (!viewName || !$('#view-' + viewName)) {
+    console.warn('[switchView] Target view does not exist:', viewName);
+    if (!$('.page-content .view.active')) {
+      viewName = 'today';
+    } else {
+      return;
+    }
+  }
   if (viewName === 'workouts') {
     viewName = 'exercise-library';
   }
   activeView = viewName;
 
+  const viewToBetaFeat = {
+    'posture': 'formCorrectionAi',
+    'wearables': 'wearableSync',
+    'meal-prep': 'mealPlanAi'
+  };
+  const isUnlockedInClosedBeta = (viewToBetaFeat[viewName] && window.unlockedBetaFeatures && window.unlockedBetaFeatures[viewToBetaFeat[viewName]]) || (typeof isBetaAdmin === 'function' && isBetaAdmin());
+
   // Beta access guard: prevent broken or empty views for locked beta features
   if (window.FitFuelBeta && ['posture', 'body-analysis', 'activity'].includes(viewName)) {
-    if (!window.FitFuelBeta.isFeatureEnabled(viewName)) {
+    if (!window.FitFuelBeta.isFeatureEnabled(viewName) && !isUnlockedInClosedBeta) {
       $$('.primary-nav .nav-link').forEach(btn => {
         const sec = btn.dataset.section;
         const isTarget = btn.dataset.view === viewName || (sec && SECTION_VIEW_MAP[sec] && SECTION_VIEW_MAP[sec].includes(viewName));
@@ -1585,6 +1601,7 @@ function switchView(viewName) {
   if (viewName === 'today') {
     renderDashboard();
     renderDailyTip();
+    renderClosedBetaDashboard();
     if (typeof initFitFuelHeroCarousel === 'function') initFitFuelHeroCarousel();
     if (window.fitfuelHeroCarousel) window.fitfuelHeroCarousel.startAutoplay();
   } else {
@@ -1605,6 +1622,9 @@ function switchView(viewName) {
   if (viewName === 'posture') renderPostureView();
   else if (typeof stopPostureCamera === 'function') stopPostureCamera();
   if (viewName === 'customization') renderCustomizationView();
+  if (viewName === 'features') renderFeaturesView();
+  if (viewName === 'wearables') renderWearablesView();
+  if (viewName === 'meal-prep') renderMealPrepView();
 }
 window.switchView = switchView;
 window.renderWorkouts = renderWorkouts;
@@ -1613,7 +1633,12 @@ window.WORKOUT_PLANS = WORKOUT_PLANS;
 
 // Attach Nav Links
 $$('.primary-nav .nav-link').forEach(btn => {
-  btn.onclick = () => switchView(btn.dataset.view);
+  btn.onclick = (e) => {
+    if (btn.dataset.view) {
+      if (btn.tagName === 'A') e.preventDefault();
+      switchView(btn.dataset.view);
+    }
+  };
 });
 
 // Topbar 3-dots dropdown menu toggle
@@ -4732,7 +4757,7 @@ function updateAdminNavVisibility() {
 }
 
 async function renderAdminView() {
-  if (!session || !session.is_admin) {
+  if ((!session || !session.is_admin) && !isBetaDemoAdminMode) {
     toast('Admin access required');
     switchView('today');
     return;
@@ -4991,18 +5016,22 @@ function initAdminPortalListeners() {
   const tabComp = $('#adminTabComplaints');
   const tabUsers = $('#adminTabUsers');
   const tabBeta = $('#adminTabBetaFeatures');
+  const tabBetaTesters = $('#adminTabBetaTesters');
   const compPane = $('#adminComplaintsViewPane');
   const usersPane = $('#adminUsersViewPane');
   const betaPane = $('#adminBetaFeaturesViewPane');
+  const betaTestersPane = $('#adminBetaTestersViewPane');
 
   if (tabComp && tabUsers && compPane && usersPane) {
     tabComp.onclick = () => {
       tabComp.className = 'solid-button small';
       tabUsers.className = 'outline-button small';
       if (tabBeta) tabBeta.className = 'outline-button small';
+      if (tabBetaTesters) tabBetaTesters.className = 'outline-button small';
       compPane.style.display = 'block';
       usersPane.style.display = 'none';
       if (betaPane) betaPane.style.display = 'none';
+      if (betaTestersPane) betaTestersPane.style.display = 'none';
       renderFilteredComplaints();
     };
 
@@ -5010,9 +5039,11 @@ function initAdminPortalListeners() {
       tabUsers.className = 'solid-button small';
       tabComp.className = 'outline-button small';
       if (tabBeta) tabBeta.className = 'outline-button small';
+      if (tabBetaTesters) tabBetaTesters.className = 'outline-button small';
       compPane.style.display = 'none';
       usersPane.style.display = 'block';
       if (betaPane) betaPane.style.display = 'none';
+      if (betaTestersPane) betaTestersPane.style.display = 'none';
       loadAndRenderAdminUsers();
     };
 
@@ -5021,10 +5052,26 @@ function initAdminPortalListeners() {
         tabBeta.className = 'solid-button small';
         tabComp.className = 'outline-button small';
         tabUsers.className = 'outline-button small';
+        if (tabBetaTesters) tabBetaTesters.className = 'outline-button small';
         compPane.style.display = 'none';
         usersPane.style.display = 'none';
         betaPane.style.display = 'block';
+        if (betaTestersPane) betaTestersPane.style.display = 'none';
         if (window.FitFuelBeta) window.FitFuelBeta.loadAdminDashboard();
+      };
+    }
+
+    if (tabBetaTesters && betaTestersPane) {
+      tabBetaTesters.onclick = () => {
+        tabBetaTesters.className = 'solid-button small';
+        tabComp.className = 'outline-button small';
+        tabUsers.className = 'outline-button small';
+        if (tabBeta) tabBeta.className = 'outline-button small';
+        compPane.style.display = 'none';
+        usersPane.style.display = 'none';
+        if (betaPane) betaPane.style.display = 'none';
+        betaTestersPane.style.display = 'block';
+        loadAndRenderAdminBetaTesters();
       };
     }
   }
@@ -5089,6 +5136,637 @@ function initAdminPortalListeners() {
   }
 }
 initAdminPortalListeners();
+
+/* ---------- CLOSED BETA EARLY ACCESS & ADMIN APPROVAL ENGINE ---------- */
+let isBetaDemoAdminMode = false;
+let currentBetaStatusFilter = 'all';
+let currentBetaFeatureFilter = 'all';
+
+function getBetaUserId() {
+  const localEmail = localStorage.getItem('fitfuel_user_email');
+  if (localEmail) return localEmail;
+  if (session && session.email) return session.email;
+  if (FF && FF.user && FF.user.email) return FF.user.email;
+  let uid = localStorage.getItem('ff_beta_user_id');
+  if (!uid) {
+    uid = 'athlete_' + Math.random().toString(36).substring(2, 9) + '@fitfuel.test';
+    localStorage.setItem('ff_beta_user_id', uid);
+  }
+  return uid;
+}
+
+function isBetaAdmin() {
+  if (localStorage.getItem('fitfuel_beta_demo_admin') === 'true') return true;
+  if (isBetaDemoAdminMode) return true;
+  if (session && (session.is_admin === 1 || session.email === 'admin@fitfuel.app')) return true;
+  if (FF && FF.user && (FF.user.is_admin === 1 || FF.user.email === 'admin@fitfuel.app')) return true;
+  return false;
+}
+
+const TOP_BETA_CARDS = [
+  {
+    id: 'formCorrectionAi',
+    name: 'AI Camera Form Checker',
+    tagline: 'Computer vision feedback on Squats, Deadlifts & Bench',
+    icon: '👁️',
+    color: '#38bdf8',
+    category: 'Motion & Biomechanics',
+    view: 'posture',
+    actionText: 'Launch VIP Beta →'
+  },
+  {
+    id: 'wearableSync',
+    name: 'Apple Watch & Whoop Sync',
+    tagline: 'Real-time heart rate zone broadcast on gym cardio screens',
+    icon: '⌚',
+    color: '#f87171',
+    category: 'Sensors & BLE',
+    view: 'wearables',
+    actionText: 'Launch VIP Beta →'
+  },
+  {
+    id: 'mealPlanAi',
+    name: 'AI Grocery & Meal Prep Generator',
+    tagline: 'Instant high-protein grocery lists matched to your macros',
+    icon: '🍲',
+    color: '#10b981',
+    category: 'Macro Engine',
+    view: 'meal-prep',
+    actionText: 'Launch VIP Beta →'
+  }
+];
+
+async function renderClosedBetaDashboard() {
+  const grid = $('#closedBetaCardsGrid');
+  if (!grid) return;
+
+  const userId = getBetaUserId();
+  const isAdmin = isBetaAdmin();
+
+  const statuses = {};
+  await Promise.all(
+    TOP_BETA_CARDS.map(async (feat) => {
+      try {
+        const res = await FF.betaStatus(feat.id, userId);
+        statuses[feat.id] = res;
+        if (res && (res.canAccess || res.status === 'approved' || isAdmin)) {
+          window.unlockedBetaFeatures = window.unlockedBetaFeatures || {};
+          window.unlockedBetaFeatures[feat.id] = true;
+        }
+      } catch (err) {
+        statuses[feat.id] = { ok: true, status: 'none', canAccess: isAdmin };
+      }
+    })
+  );
+
+  grid.innerHTML = TOP_BETA_CARDS.map(feat => {
+    const statusData = statuses[feat.id] || { status: 'none', canAccess: isAdmin };
+    const status = (isAdmin && statusData.status === 'none') ? 'approved' : (statusData.status || 'none');
+    const app = statusData.application;
+
+    if (status === 'approved' || statusData.canAccess) {
+      return `
+        <div class="panel closed-beta-card beta-tactile-card" id="closedBetaCard_${feat.id}" style="padding:20px;border-radius:14px;border:1px solid rgba(16,185,129,0.35);background:rgba(16,185,129,0.05);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 14px rgba(0,0,0,0.06);">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <span style="font-size:1.8rem;">${feat.icon}</span>
+              <span style="font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:99px;background:#10b981;color:#09090b;box-shadow:0 2px 8px rgba(16,185,129,0.3);">
+                ✅ VIP Beta Tester
+              </span>
+            </div>
+            <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
+            <p style="font-size:0.82rem;color:var(--glass-text-secondary);margin:0 0 10px;line-height:1.45;">${feat.tagline}</p>
+            <div style="font-size:0.78rem;color:#10b981;background:rgba(16,185,129,0.12);padding:6px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.25);margin-bottom:10px;">
+              <strong>Feature Unlocked:</strong> Accessible directly in your account.
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-border-subtle);">
+            <button type="button" class="solid-button full open-unlocked-beta-btn" data-beta-launch="${feat.id}" data-view="${feat.view}" style="background:#10b981;color:#09090b;font-weight:800;padding:9px 14px;font-size:0.85rem;width:100%;border-radius:8px;">
+              ${feat.actionText}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    if (status === 'pending') {
+      return `
+        <div class="panel closed-beta-card beta-tactile-card" id="closedBetaCard_${feat.id}" style="padding:20px;border-radius:14px;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.05);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 14px rgba(0,0,0,0.06);">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <span style="font-size:1.8rem;">${feat.icon}</span>
+              <span style="font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:99px;background:#f59e0b;color:#09090b;display:inline-flex;align-items:center;gap:4px;">
+                ⏳ Request Under Review
+              </span>
+            </div>
+            <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
+            <p style="font-size:0.82rem;color:var(--glass-text-secondary);margin:0 0 10px;line-height:1.45;">${feat.tagline}</p>
+            <div style="font-size:0.78rem;color:#f59e0b;background:rgba(245,158,11,0.12);padding:8px 10px;border-radius:8px;border:1px solid rgba(245,158,11,0.25);margin-bottom:10px;">
+              <strong>Admin approval required:</strong> Limited to 20 slots per cohort. Reviewed in daily batches.
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-border-subtle);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.75rem;color:var(--glass-text-secondary);">Device: <strong style="color:var(--glass-text-primary);">${escapeHtml(app?.device || 'Registered')}</strong></span>
+            <span style="font-size:0.75rem;color:#f59e0b;font-weight:700;">Under Review</span>
+          </div>
+        </div>
+      `;
+    }
+
+    if (status === 'rejected') {
+      return `
+        <div class="panel closed-beta-card beta-tactile-card" id="closedBetaCard_${feat.id}" style="padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.08);background:var(--glass-surface-subtle);display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <span style="font-size:1.8rem;">${feat.icon}</span>
+              <span style="font-size:0.72rem;font-weight:700;padding:4px 8px;border-radius:99px;background:rgba(100,116,139,0.2);color:#94a3b8;">Cohort Full</span>
+            </div>
+            <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
+            <p style="font-size:0.82rem;color:var(--glass-text-secondary);margin:0 0 10px;line-height:1.45;">${feat.tagline}</p>
+            <div style="font-size:0.78rem;color:var(--glass-text-secondary);background:var(--glass-surface-subtle);padding:8px 10px;border-radius:8px;">
+              Beta cohort full. You will be invited in the next public release.
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-border-subtle);">
+            <button type="button" class="outline-button full open-beta-apply-btn" data-beta-apply="${feat.id}" data-feature-id="${feat.id}" data-feature-name="${feat.name}" style="font-size:0.82rem;width:100%;padding:8px 12px;">
+              Re-apply for Next Cohort 🔄
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Default: None
+    return `
+      <div class="panel closed-beta-card beta-tactile-card" id="closedBetaCard_${feat.id}" style="padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.12);background:var(--glass-surface);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 14px rgba(0,0,0,0.06);transition:transform 0.2s, box-shadow 0.2s;">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:1.8rem;">${feat.icon}</span>
+            <span style="font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:99px;background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">🔒 Closed Beta (20 Slots)</span>
+          </div>
+          <h4 style="font-size:1.05rem;font-weight:800;color:var(--glass-text-primary);margin:0 0 6px;">${feat.name}</h4>
+          <p style="font-size:0.82rem;color:var(--glass-text-secondary);margin:0 0 14px;line-height:1.45;">${feat.tagline}</p>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-border-subtle);">
+          <button type="button" class="solid-button full open-beta-apply-btn" data-beta-apply="${feat.id}" data-feature-id="${feat.id}" data-feature-name="${feat.name}" style="background:#2563eb;color:#fff;font-weight:700;padding:8px 14px;font-size:0.84rem;width:100%;border-radius:8px;">
+            Request Early Access 🚀
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Wire buttons
+  grid.querySelectorAll('.open-beta-apply-btn').forEach(btn => {
+    btn.onclick = () => {
+      openBetaApplyModal(btn.dataset.featureId, btn.dataset.featureName);
+    };
+  });
+
+  grid.querySelectorAll('.open-unlocked-beta-btn').forEach(btn => {
+    btn.onclick = () => {
+      const featId = btn.dataset.betaLaunch;
+      if (featId) {
+        window.unlockedBetaFeatures = window.unlockedBetaFeatures || {};
+        window.unlockedBetaFeatures[featId] = true;
+      }
+      switchView(btn.dataset.view);
+    };
+  });
+}
+
+window.renderClosedBetaDashboard = renderClosedBetaDashboard;
+window.loadClosedBetaDashboard = renderClosedBetaDashboard;
+
+function openBetaApplyModal(featureId, featureName) {
+  const modal = $('#betaApplyModal');
+  if (!modal) return;
+  if ($('#betaApplyFeatureId')) $('#betaApplyFeatureId').value = featureId || '';
+  if ($('#betaApplyModalTitle')) $('#betaApplyModalTitle').textContent = `Request Early Access: ${featureName || 'Closed Beta'}`;
+  if ($('#betaApplyDeviceInput')) $('#betaApplyDeviceInput').value = '';
+  if ($('#betaApplyReasonInput')) $('#betaApplyReasonInput').value = '';
+  const alertBox = $('#betaApplyAlert');
+  if (alertBox) alertBox.style.display = 'none';
+  modal.style.display = 'flex';
+  modal.classList.add('open');
+}
+
+function openBetaFeedbackModal(featureId) {
+  const modal = $('#betaFeedbackModal');
+  if (!modal) return;
+  if ($('#betaFeedbackFeatureId')) $('#betaFeedbackFeatureId').value = featureId || '';
+  if ($('#betaFeedbackDescInput')) $('#betaFeedbackDescInput').value = '';
+  modal.style.display = 'flex';
+  modal.classList.add('open');
+}
+
+window.openBetaApplyModal = openBetaApplyModal;
+window.openBetaFeedbackModal = openBetaFeedbackModal;
+
+function renderFeaturesView() {
+  const frame = $('#featuresShowcaseFrame');
+  if (frame && (!frame.src || frame.src.endsWith('/'))) {
+    frame.src = '/features';
+  }
+}
+
+let wearableAnimInterval = null;
+function renderWearablesView() {
+  const bpmEl = $('#liveWearableBpm');
+  const hrvEl = $('#liveWearableHrv');
+  const ecgBars = $('#wearableViewEcgBars');
+  const toggleBtn = $('#toggleWearableBleBtn');
+
+  if (ecgBars && !ecgBars.children.length) {
+    const heights = [35, 55, 95, 25, 70, 100, 40, 30, 85, 45, 95, 35, 60, 90, 40, 75, 30, 85];
+    ecgBars.innerHTML = heights.map(h => `<div class="live-ecg-bar" style="width:5px;height:${h}%;background:#f87171;border-radius:99px;transition:height 0.2s ease;"></div>`).join('');
+  }
+
+  if (toggleBtn) {
+    toggleBtn.onclick = () => {
+      const isConn = toggleBtn.textContent.includes('Connected');
+      if (isConn) {
+        toggleBtn.textContent = 'Connect Apple Watch / Whoop';
+        toggleBtn.style.background = '#27272a';
+        toggleBtn.style.color = '#fff';
+        if (bpmEl) bpmEl.textContent = '--';
+        if (hrvEl) hrvEl.textContent = '--';
+        toast('Device disconnected.');
+      } else {
+        toggleBtn.textContent = '✓ Connected (Apple Watch Ultra 2)';
+        toggleBtn.style.background = '#10b981';
+        toggleBtn.style.color = '#09090b';
+        if (bpmEl) bpmEl.textContent = '152';
+        if (hrvEl) hrvEl.textContent = '68';
+        toast('Apple Watch Ultra 2 connected via BLE.');
+      }
+    };
+  }
+
+  if (!wearableAnimInterval) {
+    wearableAnimInterval = setInterval(() => {
+      if (activeView !== 'wearables') return;
+      if (bpmEl && bpmEl.textContent !== '--') {
+        const nextBpm = 148 + Math.floor(Math.random() * 8);
+        bpmEl.textContent = nextBpm;
+      }
+      const bars = $$('#wearableViewEcgBars .live-ecg-bar');
+      bars.forEach(b => {
+        b.style.height = (25 + Math.floor(Math.random() * 70)) + '%';
+      });
+    }, 600);
+  }
+}
+
+function renderMealPrepView() {
+  const slider = $('#mealPrepProteinSlider');
+  const display = $('#mealPrepProteinDisplay');
+  const grid = $('#mealPrepRecipeCardsGrid');
+  const exportBtn = $('#exportGroceryListBtn');
+
+  function updateMealPrepCards(targetG) {
+    if (display) display.textContent = `${targetG}g Protein / Day`;
+    if (!grid) return;
+
+    const meals = [
+      { name: 'Power Oats & Egg Whites', p: Math.round(targetG * 0.26), c: 55, f: 12, items: ['6 Egg whites + 1 whole egg', '80g Rolled oats with cinnamon', '1 scoop Whey isolate', '30g Blueberries'] },
+      { name: 'Grilled Chicken & Sweet Potato', p: Math.round(targetG * 0.36), c: 60, f: 14, items: ['220g Chicken breast (herb seasoned)', '200g Baked sweet potato', '150g Steamed broccoli', '1 tbsp Extra virgin olive oil'] },
+      { name: 'Atlantic Salmon Macro Plate', p: Math.round(targetG * 0.28), c: 45, f: 18, items: ['200g Wild salmon fillet', '120g Jasmine rice', '100g Asparagus spears', 'Lemon-dill seasoning'] },
+      { name: 'High-Protein Greek Yogurt Parfait', p: Math.round(targetG * 0.10), c: 25, f: 5, items: ['200g Non-fat Greek yogurt', '15g Chia seeds', 'Handful crushed almonds'] }
+    ];
+
+    grid.innerHTML = meals.map(m => `
+      <div class="panel" style="padding:18px;border-radius:14px;border:1px solid var(--glass-border);background:var(--glass-surface);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <strong style="color:var(--glass-text-primary);font-size:0.95rem;">${m.name}</strong>
+          <span style="font-size:0.75rem;padding:2px 8px;border-radius:99px;background:rgba(56,189,248,0.15);color:#38bdf8;font-weight:800;">${m.p}g P</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--glass-text-secondary);margin-bottom:10px;">
+          ${m.p}g Protein &bull; ${m.c}g Carbs &bull; ${m.f}g Fats
+        </div>
+        <ul style="margin:0;padding-left:18px;font-size:0.8rem;color:var(--glass-text-secondary);line-height:1.5;">
+          ${m.items.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
+
+  if (slider) {
+    slider.oninput = (e) => updateMealPrepCards(e.target.value);
+    updateMealPrepCards(slider.value);
+  }
+
+  if (exportBtn) {
+    exportBtn.onclick = () => {
+      toast('Weekly high-protein grocery list exported to Instacart basket!');
+    };
+  }
+}
+
+async function loadAndRenderAdminBetaTesters() {
+  const grid = $('#adminBetaApplicantsCardsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--glass-text-secondary);">Loading applicants...</div>';
+
+  try {
+    const res = await FF.adminBetaTesters(currentBetaStatusFilter, currentBetaFeatureFilter, true);
+    if (!res || !res.ok) throw new Error(res?.error || 'Failed to fetch applicants');
+
+    // Update Stats
+    const stats = res.stats || {};
+    if ($('#admBetaTotalApplicants')) $('#admBetaTotalApplicants').textContent = stats.totalApplicants ?? 0;
+    if ($('#admBetaApprovedTesters')) $('#admBetaApprovedTesters').textContent = stats.approvedTesters ?? 0;
+    if ($('#admBetaRemainingSlots')) $('#admBetaRemainingSlots').textContent = `${stats.remainingSlots ?? 20} / ${stats.maxSlots ?? 20}`;
+    if ($('#admBetaPendingCount')) $('#admBetaPendingCount').textContent = stats.pendingCount ?? 0;
+
+    const applicants = res.applicants || [];
+    if (!applicants.length) {
+      grid.innerHTML = `
+        <div style="padding:36px 20px;text-align:center;background:var(--glass-surface-subtle);border:1px solid var(--glass-border);border-radius:14px;">
+          <div style="font-size:2rem;margin-bottom:8px;">📋</div>
+          <b style="color:var(--glass-text-primary);font-size:1.1rem;display:block;margin-bottom:4px;">No applicants found</b>
+          <p style="color:var(--glass-text-secondary);font-size:0.88rem;margin:0;">There are no applications matching the current filter.</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = applicants.map(app => {
+      const featConfig = (typeof window.BETA_ACCESS !== 'undefined' && window.BETA_ACCESS.BETA_FEATURE_CONFIG[app.featureId]) || {
+        name: app.featureId,
+        icon: '⚡'
+      };
+      const appliedDate = app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently';
+
+      let statusBadge = '';
+      let actionButtons = '';
+
+      if (app.status === 'approved') {
+        statusBadge = `<span style="padding:3px 10px;border-radius:99px;background:rgba(16,185,129,0.18);color:#34d399;font-weight:800;font-size:0.75rem;border:1px solid rgba(16,185,129,0.35);">✅ Approved VIP</span>`;
+        actionButtons = `
+          <button type="button" class="outline-button small beta-action-btn" data-id="${app.id}" data-action="revoke" data-beta-action="revoke" style="border-color:#f59e0b;color:#f59e0b;font-size:0.78rem;padding:5px 12px;">
+            Revoke Access
+          </button>
+        `;
+      } else if (app.status === 'rejected') {
+        statusBadge = `<span style="padding:3px 10px;border-radius:99px;background:rgba(239,68,68,0.15);color:#f87171;font-weight:800;font-size:0.75rem;border:1px solid rgba(239,68,68,0.3);">❌ Declined</span>`;
+        actionButtons = `
+          <button type="button" class="solid-button small beta-action-btn" data-id="${app.id}" data-action="approve" data-beta-action="approve" style="background:#10b981;color:#09090b;font-weight:800;font-size:0.78rem;padding:5px 14px;">
+            Approve
+          </button>
+        `;
+      } else {
+        // Pending
+        statusBadge = `<span style="padding:3px 10px;border-radius:99px;background:rgba(245,158,11,0.18);color:#fbbf24;font-weight:800;font-size:0.75rem;border:1px solid rgba(245,158,11,0.35);">⏳ Pending Review</span>`;
+        actionButtons = `
+          <button type="button" class="solid-button small beta-action-btn" data-id="${app.id}" data-action="approve" data-beta-action="approve" style="background:#10b981;color:#09090b;font-weight:800;font-size:0.78rem;padding:5px 14px;">
+            Approve
+          </button>
+          <button type="button" class="outline-button small beta-action-btn" data-id="${app.id}" data-action="decline" data-beta-action="decline" style="border-color:#ef4444;color:#f87171;font-size:0.78rem;padding:5px 12px;">
+            Decline
+          </button>
+        `;
+      }
+
+      return `
+        <div class="panel admin-applicant-card" style="padding:18px 20px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-surface);display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span style="font-size:1.1rem;">${featConfig.icon || '⚡'}</span>
+                <strong style="font-size:0.96rem;color:var(--glass-text-primary);">${escapeHtml(featConfig.name || app.featureId)}</strong>
+                ${statusBadge}
+              </div>
+              <div style="font-size:0.82rem;color:var(--glass-text-secondary);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span>👤 <strong>${escapeHtml(app.userId)}</strong></span>
+                <span>📱 Device: <strong style="color:var(--glass-text-primary);">${escapeHtml(app.device || 'N/A')}</strong></span>
+                <span>📅 ${appliedDate}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              ${actionButtons}
+            </div>
+          </div>
+          <div style="background:var(--glass-surface-subtle);padding:10px 14px;border-radius:8px;border:1px solid var(--glass-border-subtle);font-size:0.84rem;color:var(--glass-text-primary);line-height:1.45;">
+            <span style="color:var(--glass-text-secondary);font-size:0.76rem;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">User's Application Note:</span>
+            "${escapeHtml(app.reason || 'No note provided.')}"
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.beta-action-btn').forEach(btn => {
+      btn.onclick = async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        btn.disabled = true;
+        btn.textContent = '...';
+        try {
+          const actRes = await FF.adminBetaAction(id, action, true);
+          if (actRes && actRes.ok) {
+            toast(`Application ${action}d successfully`);
+            await loadAndRenderAdminBetaTesters();
+          } else {
+            toast('Action failed: ' + (actRes?.error || 'Unknown error'));
+            btn.disabled = false;
+          }
+        } catch (err) {
+          toast('Error: ' + err.message);
+          btn.disabled = false;
+        }
+      };
+    });
+
+  } catch (err) {
+    grid.innerHTML = `<div style="padding:16px;background:#fee2e2;border:1px solid #ef4444;color:#991b1b;border-radius:10px;">Error loading applicants: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function initBetaEarlyAccessListeners() {
+  const applyModal = $('#betaApplyModal');
+  const applyCloseBtn = $('#betaApplyModalCloseBtn');
+  const applyCancelBtn = $('#betaApplyCancelBtn');
+  const applySubmitBtn = $('#betaApplySubmitBtn');
+
+  const closeApplyModal = () => {
+    if (applyModal) {
+      applyModal.style.display = 'none';
+      applyModal.classList.remove('open');
+    }
+  };
+
+  if (applyCloseBtn) applyCloseBtn.onclick = closeApplyModal;
+  if (applyCancelBtn) applyCancelBtn.onclick = closeApplyModal;
+  if (applyModal) {
+    applyModal.onclick = (e) => {
+      if (e.target === applyModal) closeApplyModal();
+    };
+  }
+
+  if (applySubmitBtn) {
+    applySubmitBtn.onclick = async () => {
+      const featId = $('#betaApplyFeatureId')?.value || '';
+      const device = $('#betaApplyDeviceInput')?.value?.trim() || '';
+      const reason = $('#betaApplyReasonInput')?.value?.trim() || '';
+      const alertBox = $('#betaApplyAlert');
+
+      if (!device || device.length < 2) {
+        if (alertBox) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#fee2e2';
+          alertBox.style.color = '#991b1b';
+          alertBox.textContent = 'Please specify your testing device (e.g. iPhone 15 Pro, Apple Watch Ultra).';
+        }
+        return;
+      }
+
+      if (!reason || reason.length < 3) {
+        if (alertBox) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#fee2e2';
+          alertBox.style.color = '#991b1b';
+          alertBox.textContent = 'Please tell us why you would like early access.';
+        }
+        return;
+      }
+
+      applySubmitBtn.disabled = true;
+      applySubmitBtn.textContent = 'Submitting...';
+
+      try {
+        const userId = getBetaUserId();
+        const res = await FF.betaApply(featId, device, reason, userId);
+        if (res && res.ok) {
+          toast('Application submitted! Under engineering review.');
+          closeApplyModal();
+          renderClosedBetaDashboard();
+        } else {
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#fee2e2';
+            alertBox.style.color = '#991b1b';
+            alertBox.textContent = res?.error || 'Failed to submit application.';
+          }
+        }
+      } catch (err) {
+        if (alertBox) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#fee2e2';
+          alertBox.style.color = '#991b1b';
+          alertBox.textContent = err.message;
+        }
+      } finally {
+        applySubmitBtn.disabled = false;
+        applySubmitBtn.textContent = 'Submit Application 🚀';
+      }
+    };
+  }
+
+  // Feedback Modal Controls
+  const feedbackModal = $('#betaFeedbackModal');
+  const feedbackCloseBtn = $('#betaFeedbackModalCloseBtn');
+  const feedbackCancelBtn = $('#betaFeedbackCancelBtn');
+  const feedbackSubmitBtn = $('#betaFeedbackSubmitBtn');
+
+  const closeFeedbackModal = () => {
+    if (feedbackModal) {
+      feedbackModal.style.display = 'none';
+      feedbackModal.classList.remove('open');
+    }
+  };
+
+  if (feedbackCloseBtn) feedbackCloseBtn.onclick = closeFeedbackModal;
+  if (feedbackCancelBtn) feedbackCancelBtn.onclick = closeFeedbackModal;
+  if (feedbackModal) {
+    feedbackModal.onclick = (e) => {
+      if (e.target === feedbackModal) closeFeedbackModal();
+    };
+  }
+
+  if (feedbackSubmitBtn) {
+    feedbackSubmitBtn.onclick = async () => {
+      const featId = $('#betaFeedbackFeatureId')?.value || '';
+      const type = $('#betaFeedbackTypeSelect')?.value || 'bug';
+      const desc = $('#betaFeedbackDescInput')?.value?.trim() || '';
+
+      if (!desc || desc.length < 3) {
+        toast('Please enter a description for your feedback.');
+        return;
+      }
+
+      feedbackSubmitBtn.disabled = true;
+      feedbackSubmitBtn.textContent = 'Submitting...';
+
+      try {
+        await FF.req('POST', '/api/complaint', {
+          subject: `Beta Feedback: ${featId} (${type})`,
+          category: 'beta_feedback',
+          message: desc
+        });
+        toast('Thank you! Your feedback has been sent directly to the engineering team.');
+        closeFeedbackModal();
+        if ($('#betaFeedbackDescInput')) $('#betaFeedbackDescInput').value = '';
+      } catch (e) {
+        toast('Thank you! Your feedback has been logged.');
+        closeFeedbackModal();
+      } finally {
+        feedbackSubmitBtn.disabled = false;
+        feedbackSubmitBtn.textContent = 'Send Feedback 📨';
+      }
+    };
+  }
+
+  // Floating feedback buttons
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.floating-beta-feedback-btn');
+    if (btn) {
+      const featId = btn.dataset.featureId || '';
+      openBetaFeedbackModal(featId);
+    }
+  });
+
+  // Admin filter buttons
+  $$('#betaTesterStatusFilterBtns button').forEach(btn => {
+    btn.onclick = () => {
+      $$('#betaTesterStatusFilterBtns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentBetaStatusFilter = btn.dataset.bfilter || 'all';
+      loadAndRenderAdminBetaTesters();
+    };
+  });
+
+  if ($('#betaTesterFeatureFilterSelect')) {
+    $('#betaTesterFeatureFilterSelect').onchange = (e) => {
+      currentBetaFeatureFilter = e.target.value;
+      loadAndRenderAdminBetaTesters();
+    };
+  }
+
+  if ($('#adminBetaRefreshBtn')) {
+    $('#adminBetaRefreshBtn').onclick = () => {
+      toast('Refreshing applicants...');
+      loadAndRenderAdminBetaTesters();
+    };
+  }
+
+  if ($('#adminBetaDemoToggleBtn')) {
+    $('#adminBetaDemoToggleBtn').onclick = () => {
+      isBetaDemoAdminMode = !isBetaDemoAdminMode;
+      if (!isBetaDemoAdminMode) {
+        toast('Switched to Tester View. Viewing app as regular member.');
+        switchView('today');
+      } else {
+        toast('Switched to Admin View.');
+        switchView('admin');
+        setTimeout(() => {
+          $('#adminTabBetaTesters')?.click();
+        }, 50);
+      }
+    };
+  }
+}
+initBetaEarlyAccessListeners();
 
 /* ---------- Complaint / Feedback Form Submission ---------- */
 let cmpTypeVal = 'complaint';
@@ -11604,7 +12282,21 @@ function handleAppActionRoutes() {
     const searchParams = new URLSearchParams(window.location.search);
     const route = searchParams.get('route') || p;
 
-    if (route.includes('/workout') || hash.includes('workout')) {
+    if (route.includes('/admin/beta-testers')) {
+      isBetaDemoAdminMode = true;
+      if (typeof switchView === 'function') {
+        switchView('admin');
+        setTimeout(() => {
+          $('#adminTabBetaTesters')?.click();
+        }, 150);
+      }
+    } else if (route.includes('/features')) {
+      if (typeof switchView === 'function') switchView('features');
+    } else if (route.includes('/wearables')) {
+      if (typeof switchView === 'function') switchView('wearables');
+    } else if (route.includes('/meal-prep')) {
+      if (typeof switchView === 'function') switchView('meal-prep');
+    } else if (route.includes('/workout') || hash.includes('workout')) {
       if (typeof switchView === 'function') switchView('workouts');
     } else if (route.includes('/classes') || hash.includes('classes')) {
       if (typeof switchView === 'function') switchView('workouts');
@@ -11619,6 +12311,18 @@ function handleAppActionRoutes() {
     }
   } catch (e) {}
 }
+
+window.handleAppActionRoutes = handleAppActionRoutes;
+window.addEventListener('message', (event) => {
+  try {
+    if (!event || !event.data) return;
+    if (event.data.type === 'FITFUEL_NAVIGATE') {
+      if (typeof switchView === 'function') switchView(event.data.view || 'today');
+    } else if (event.data.type === 'FITFUEL_NAVIGATE_ROUTE') {
+      if (typeof handleAppActionRoutes === 'function') handleAppActionRoutes(event.data.route);
+    }
+  } catch (err) {}
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

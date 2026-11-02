@@ -278,7 +278,56 @@
     });
   }
 
+  function navigateBackToApp() {
+    if (window.parent && window.parent !== window && typeof window.parent.switchView === 'function') {
+      window.parent.switchView('today');
+    } else if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'FITFUEL_NAVIGATE', view: 'today' }, '*');
+    } else {
+      window.location.href = '/';
+    }
+  }
+
+  function handleRouteNavigation(route) {
+    if (!route) return;
+    if (window.parent && window.parent !== window && typeof window.parent.handleAppActionRoutes === 'function') {
+      window.parent.handleAppActionRoutes(route);
+    } else if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'FITFUEL_NAVIGATE_ROUTE', route: route }, '*');
+    } else {
+      window.location.href = route;
+    }
+  }
+
   function setupEventListeners() {
+    // Back to FitFuel App buttons
+    const headerBackBtn = document.getElementById('headerBackToAppBtn');
+    if (headerBackBtn) {
+      headerBackBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateBackToApp();
+      });
+    }
+    const heroBackBtn = document.getElementById('heroBackToAppBtn');
+    if (heroBackBtn) {
+      heroBackBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateBackToApp();
+      });
+    }
+
+    // Intercept app navigation clicks if inside iframe
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-route], a.btn-action-primary, a.btn-action-beta');
+      if (link && window.parent && window.parent !== window) {
+        const href = link.getAttribute('data-route') || link.getAttribute('href');
+        if (href && (href.startsWith('/app') || href.startsWith('/'))) {
+          e.preventDefault();
+          handleRouteNavigation(href);
+        }
+      }
+    });
+
     // Tabs
     if (tabsContainerEl) {
       tabsContainerEl.querySelectorAll('.tab-btn').forEach(btn => {
