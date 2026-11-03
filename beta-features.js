@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_DIR = path.join(__dirname, 'config');
+const CONFIG_DIR = path.join(typeof __dirname !== 'undefined' ? __dirname : '.', 'config');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'beta-features.json');
 
 // The 6 Canonical Beta Features

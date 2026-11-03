@@ -67,7 +67,7 @@ const FF = {
       throw new Error('Server se connection nahi ho raha — terminal me "npm start" chalao, phir http://localhost:3000 kholo');
     }
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    if (!r.ok) throw new Error(j.error || (r.status === 405 ? 'Server API is deploying (HTTP 405). Please refresh.' : ('HTTP ' + r.status)));
     return j;
   },
 

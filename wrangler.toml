@@ -1,6 +1,13 @@
 name = "gym-app"
+main = "worker.js"
 compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
+
+[vars]
+TURSO_DATABASE_URL = "libsql://gym-app-pantherliftz777.aws-ap-south-1.turso.io"
+TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTIzMTY4NzYsImlkIjoiMDFhMTRlNjgtZmYwMS03MTBlLWE0YmItOTUxYzAwNTAzNjc0Iiwia2lkIjoidldIWDFnYjZCNEtoT0l5WXpxVHQ2MDkxR18zQUhKZnNOZ3FmRTBkaUNJUSIsInJpZCI6Ijk2Mjg4OTRmLWRlMGYtNDlmZC1hYzA3LTgyZGQ2MjlmMzY4MCJ9.2GeLWOkLpH2QYFCB2gAgHk-qlpRg3MfUmuD8XH_qf-9qUEcwQpg8xbg5DzE7Gq_vwpXSbT2fN7z0BQyNDuJGAA"

@@ -12,7 +12,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "/server.js?path=:path*"
+      "destination": "/api/index.js"
     }
   ],
   "headers": [

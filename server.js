@@ -6,7 +6,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { createClient } = require('@libsql/client');
+const { createClient } = require('@libsql/client/web');
 const FF_ALGO = require('./public/algo.js');
 const betaFeatures = require('./beta-features.js');
 
@@ -21,7 +21,7 @@ function ensureBetaInit() {
 }
 
 const PORT = process.env.PORT || 3000;
-const ROOT = __dirname;
+const ROOT = typeof __dirname !== 'undefined' ? __dirname : '.';
 
 // Load local .env if present
 try {
@@ -40,8 +40,8 @@ try {
   }
 } catch (e) {}
 
-const TURSO_URL = process.env.TURSO_DATABASE_URL || 'file:fitfuel.db';
-const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || undefined;
+const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://gym-app-pantherliftz777.aws-ap-south-1.turso.io';
+const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTIzMTY4NzYsImlkIjoiMDFhMTRlNjgtZmYwMS03MTBlLWE0YmItOTUxYzAwNTAzNjc0Iiwia2lkIjoidldIWDFnYjZCNEtoT0l5WXpxVHQ2MDkxR18zQUhKZnNOZ3FmRTBkaUNJUSIsInJpZCI6Ijk2Mjg4OTRmLWRlMGYtNDlmZC1hYzA3LTgyZGQ2MjlmMzY4MCJ9.2GeLWOkLpH2QYFCB2gAgHk-qlpRg3MfUmuD8XH_qf-9qUEcwQpg8xbg5DzE7Gq_vwpXSbT2fN7z0BQyNDuJGAA';
 
 const client = createClient({
   url: TURSO_URL,
@@ -112,12 +112,16 @@ function checkRateLimit(ip, routeType, maxRequests, windowMs) {
 }
 
 // Clean up stale rate limit entries every 10 minutes
-setInterval(() => {
+if (typeof addEventListener === 'undefined' && typeof setInterval === 'function') {
+  try {
+    setInterval(() => {
   const now = Date.now();
   for (const [k, v] of rateLimits.entries()) {
     if (now - v.start > 1800000) rateLimits.delete(k);
   }
-}, 600000).unref();
+}, 600000)?.unref?.();
+  } catch (e) {}
+}
 
 const readBody = req => new Promise((resolve, reject) => {
   let b = '';
