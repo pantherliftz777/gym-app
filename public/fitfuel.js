@@ -5724,7 +5724,7 @@ async function loadAndRenderAdminBetaTesters() {
       }
 
       return `
-        <div class="panel admin-applicant-card" style="padding:18px 20px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-surface);display:flex;flex-direction:column;gap:10px;">
+        <div class="panel admin-applicant-card" data-feature="${escapeHtml(app.featureId)}" style="padding:18px 20px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-surface);display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
             <div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">

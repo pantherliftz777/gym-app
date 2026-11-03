@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const { ensureServerRunning, stopServerIfSpawned } = require('./server_helper.js');
 
 const SCREENSHOT_DIR = path.join(__dirname, '..', 'test_screenshots');
 if (!fs.existsSync(SCREENSHOT_DIR)) {
@@ -12,6 +13,7 @@ function delay(ms) {
 }
 
 async function runE2ETests() {
+  await ensureServerRunning();
   console.log('=== STARTING FITFUEL BETA ACCESS & BIDIRECTIONAL NAVIGATION E2E TEST ===\n');
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -90,14 +92,15 @@ async function runE2ETests() {
 
     // Ensure unique fresh demo user is set
     const testUserEmail = `athlete_e2e_${Date.now()}@fitfuel.test`;
-    await page.evaluate((email) => {
+    await page.evaluate(async (email) => {
       localStorage.setItem('fitfuel_user_email', email);
       localStorage.setItem('fitfuel_beta_demo_admin', 'false');
       if (typeof window.loadClosedBetaDashboard === 'function') {
-        window.loadClosedBetaDashboard();
+        await window.loadClosedBetaDashboard();
       }
     }, testUserEmail);
-    await delay(1000);
+    await page.waitForSelector('.closed-beta-card', { timeout: 5000 });
+    await delay(500);
 
     const cardsCount = await page.$$eval('.closed-beta-card', cards => cards.length);
     assert(cardsCount === 3, 'Dashboard renders exactly 3 closed beta feature cards (Form AI, Wearable BLE, Meal Prep AI)');
@@ -121,7 +124,13 @@ async function runE2ETests() {
 
     // Submit modal
     await page.click('#betaApplySubmitBtn');
-    await delay(1200);
+    await page.waitForFunction(() => {
+      const card = document.getElementById('closedBetaCard_formCorrectionAi');
+      if (!card) return false;
+      const text = card.textContent || '';
+      return text.includes('Under Review') || text.includes('pending');
+    }, { timeout: 8000 });
+    await delay(300);
 
     const cardStateAfterApply = await page.$eval('#closedBetaCard_formCorrectionAi', el => el.textContent);
     assert(
@@ -140,7 +149,9 @@ async function runE2ETests() {
         if (adminTab) adminTab.click();
       }
     });
-    await delay(1200);
+    await page.waitForSelector('#adminBetaTestersViewPane', { visible: true, timeout: 8000 });
+    await page.waitForSelector('#adminBetaApplicantsCardsGrid .admin-applicant-card', { timeout: 8000 });
+    await delay(300);
 
     const adminPaneVisible = await page.$eval('#adminBetaTestersViewPane', el => el.style.display !== 'none');
     assert(adminPaneVisible, 'Admin Closed Beta Applicants tab pane is visible');
@@ -168,7 +179,12 @@ async function runE2ETests() {
       return false;
     }, testUserEmail);
     assert(applicantRow, `Found pending application for ${testUserEmail} and clicked Approve button`);
-    await delay(1500);
+    await page.waitForFunction((email) => {
+      const cards = Array.from(document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card'));
+      const target = cards.find(c => c.textContent.includes(email));
+      return target && (target.textContent.includes('Approved VIP') || target.textContent.includes('Revoke Access'));
+    }, { timeout: 8000 }, testUserEmail);
+    await delay(300);
 
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '08_admin_applicant_approved.png') });
 
@@ -185,7 +201,13 @@ async function runE2ETests() {
         await window.renderClosedBetaDashboard();
       }
     });
-    await delay(1200);
+    await page.waitForFunction(() => {
+      const card = document.getElementById('closedBetaCard_formCorrectionAi');
+      if (!card) return false;
+      const text = card.textContent || '';
+      return text.includes('VIP Beta Tester') || text.includes('Launch VIP Beta');
+    }, { timeout: 8000 });
+    await delay(300);
 
     const cardStateAfterApproval = await page.$eval('#closedBetaCard_formCorrectionAi', el => el.textContent);
     assert(
@@ -196,7 +218,9 @@ async function runE2ETests() {
 
     // Launch unlocked feature
     await page.click('#closedBetaCard_formCorrectionAi button[data-beta-launch="formCorrectionAi"]');
-    await delay(1000);
+    await page.waitForSelector('#view-posture.active', { timeout: 8000 });
+    await page.waitForSelector('#betaFeedbackFloatBtn_formCorrectionAi', { visible: true, timeout: 8000 });
+    await delay(300);
 
     const activeUnlockedView = await page.$eval('.page-content .view.active', el => el.id);
     assert(activeUnlockedView === 'view-posture', 'Clicking Launch VIP Beta successfully opens #view-posture');
@@ -208,7 +232,8 @@ async function runE2ETests() {
 
     // Click feedback button
     await page.click('#betaFeedbackFloatBtn_formCorrectionAi');
-    await delay(500);
+    await page.waitForSelector('#betaFeedbackModal.open', { timeout: 8000 });
+    await delay(300);
 
     const isFeedbackModalOpen = await page.$eval('#betaFeedbackModal', el => el.classList.contains('open'));
     assert(isFeedbackModalOpen, 'Clicking floating feedback button opens #betaFeedbackModal');
@@ -217,7 +242,11 @@ async function runE2ETests() {
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_beta_feedback_modal.png') });
 
     await page.click('#betaFeedbackSubmitBtn');
-    await delay(1000);
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('betaFeedbackModal');
+      return !modal || !modal.classList.contains('open') || modal.style.display === 'none';
+    }, { timeout: 8000 });
+    await delay(500);
 
     const isFeedbackModalClosed = await page.$eval('#betaFeedbackModal', el => !el.classList.contains('open'));
     assert(isFeedbackModalClosed, 'Submitting feedback successfully closes the modal');
@@ -251,11 +280,16 @@ async function runE2ETests() {
         if (adminTab) adminTab.click();
       }
     });
-    await delay(1200);
+    await page.waitForSelector('#adminBetaApplicantsCardsGrid .admin-applicant-card', { timeout: 8000 });
+    await delay(500);
 
     // Test feature filter dropdown
     await page.select('#betaTesterFeatureFilterSelect', 'formCorrectionAi');
-    await delay(1000);
+    await page.waitForFunction(() => {
+      const cards = document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card');
+      return cards.length > 0 && Array.from(cards).every(c => c.textContent.includes('AI Camera Form Checker') || c.getAttribute('data-feature') === 'formCorrectionAi');
+    }, { timeout: 8000 });
+    await delay(300);
     const filteredCount = await page.$$eval('#adminBetaApplicantsCardsGrid .admin-applicant-card', cards => cards.length);
     assert(filteredCount >= 1, `Feature filter correctly isolates applicants for formCorrectionAi (found: ${filteredCount})`);
 
@@ -273,9 +307,15 @@ async function runE2ETests() {
       return false;
     }, testUserEmail);
     assert(revoked, `Clicked Revoke Access button for ${testUserEmail}`);
-    await delay(2000);
 
     // Verify card now shows declined/rejected badge
+    await page.waitForFunction((email) => {
+      const cards = Array.from(document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card'));
+      const target = cards.find(c => c.textContent.includes(email));
+      return target && target.textContent.includes('Declined');
+    }, { timeout: 8000 }, testUserEmail);
+    await delay(300);
+
     const postRevokeStatus = await page.evaluate((email) => {
       const cards = Array.from(document.querySelectorAll('#adminBetaApplicantsCardsGrid .admin-applicant-card'));
       const target = cards.find(c => c.textContent.includes(email));
@@ -288,11 +328,20 @@ async function runE2ETests() {
       const toggle = document.getElementById('adminBetaDemoToggleBtn');
       if (toggle) toggle.click();
     });
-    await delay(1200);
+    await page.waitForSelector('#view-today.active', { timeout: 8000 });
+    await delay(300);
     const returnedToToday = await page.$eval('.page-content .view.active', el => el.id);
     assert(returnedToToday === 'view-today', 'Clicking "Switch to Tester View" navigates directly to Today dashboard');
 
     // User dashboard card should reflect rejected / cohort full state with re-apply option
+    await page.waitForFunction(() => {
+      const card = document.getElementById('closedBetaCard_formCorrectionAi');
+      if (!card) return false;
+      const text = card.textContent || '';
+      return text.includes('Cohort Full') || text.includes('Re-apply');
+    }, { timeout: 8000 });
+    await delay(300);
+
     const cardStateAfterRevoke = await page.$eval('#closedBetaCard_formCorrectionAi', el => el.textContent);
     assert(
       cardStateAfterRevoke.includes('Cohort Full') || cardStateAfterRevoke.includes('Re-apply'),
@@ -304,7 +353,9 @@ async function runE2ETests() {
       const shortcut = document.getElementById('closedBetaAdminShortcutBtn');
       if (shortcut) shortcut.click();
     });
-    await delay(1200);
+    await page.waitForSelector('#view-admin.active', { timeout: 8000 });
+    await page.waitForSelector('#adminBetaTestersViewPane', { visible: true, timeout: 8000 });
+    await delay(300);
     const switchedBackToAdmin = await page.$eval('.page-content .view.active', el => el.id);
     assert(switchedBackToAdmin === 'view-admin', 'Clicking "🛡️ Admin Approvals" on Closed Beta Hub returns to Admin Portal');
 
@@ -313,6 +364,7 @@ async function runE2ETests() {
     failCount++;
   } finally {
     await browser.close();
+    stopServerIfSpawned();
   }
 
   console.log(`\n=== E2E TEST SUMMARY: ${passCount} PASSED, ${failCount} FAILED ===`);

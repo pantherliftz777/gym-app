@@ -123,6 +123,14 @@ console.log('Test 2: canUseGymFeature Capability Checker');
 console.log('Test 3: /api/features & /api/features/waitlist Endpoint Integrity');
 (async () => {
   const http = require('http');
+  const { ensureServerRunning, stopServerIfSpawned } = require('./server_helper.js');
+
+  try {
+    await ensureServerRunning();
+  } catch (err) {
+    console.error('Failed to connect or spawn server:', err.message);
+    process.exit(1);
+  }
 
   function makeRequest(urlPath, method = 'GET', data = null) {
     return new Promise((resolve, reject) => {
@@ -199,4 +207,8 @@ console.log('Test 3: /api/features & /api/features/waitlist Endpoint Integrity')
   console.log('  [PASS] Duplicate submission returns stable queue position without inflating count.');
 
   console.log('\n=== ALL UNIT & INTEGRITY CHECKS PASSED ===\n');
-})();
+})().catch(err => {
+  console.error('Fatal API test error in feature_engine.test.js:', err);
+  process.exit(1);
+});
+

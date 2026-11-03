@@ -67,7 +67,12 @@
   function initPWA() {
     if ('serviceWorker' in navigator) {
       let refreshing = false;
+      let hadController = Boolean(navigator.serviceWorker.controller);
       navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController) {
+          hadController = true;
+          return;
+        }
         if (!refreshing) {
           refreshing = true;
           console.log('[FitFuel PWA] Service Worker controller changed, auto-reloading to apply latest updates...');

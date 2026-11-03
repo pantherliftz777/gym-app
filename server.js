@@ -281,6 +281,29 @@ async function ensureBetaTable() {
   return betaTableInitPromise;
 }
 
+let featureWaitlistTableInitPromise = null;
+async function ensureFeatureWaitlistTable() {
+  if (!featureWaitlistTableInitPromise) {
+    featureWaitlistTableInitPromise = (async () => {
+      try {
+        await db.exec(`
+          CREATE TABLE IF NOT EXISTS feature_waitlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            feature_id TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE UNIQUE INDEX IF NOT EXISTS idx_feature_waitlist_unique 
+          ON feature_waitlist(email, feature_id);
+        `);
+      } catch (tableErr) {
+        console.warn('[server.js] ensureFeatureWaitlistTable error:', tableErr.message);
+      }
+    })();
+  }
+  return featureWaitlistTableInitPromise;
+}
+
 /* ---------- routes ---------- */
 const routes = {
   'GET /api/beta/status': async (req, res) => {
@@ -565,18 +588,7 @@ const routes = {
   },
   'POST /api/features/waitlist': async (req, res) => {
     try {
-      try {
-        await db.exec(`
-          CREATE TABLE IF NOT EXISTS feature_waitlist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
-            feature_id TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-          );
-          CREATE UNIQUE INDEX IF NOT EXISTS idx_feature_waitlist_unique 
-          ON feature_waitlist(email, feature_id);
-        `);
-      } catch (tableErr) {}
+      await ensureFeatureWaitlistTable();
 
       const body = await readBody(req);
       const { email, featureId } = body || {};

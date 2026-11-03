@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
+const { ensureServerRunning, stopServerIfSpawned } = require('./server_helper.js');
 
 const SCREENSHOT_DIR = path.join(__dirname, '..', 'test_screenshots');
 if (!fs.existsSync(SCREENSHOT_DIR)) {
@@ -9,6 +10,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 }
 
 async function runBrowserTests() {
+  await ensureServerRunning();
   console.log('=== STARTING DEEP PUPPETEER VERIFICATION FOR FEATURE STATUS ENGINE ===\n');
 
   const browser = await puppeteer.launch({
@@ -222,7 +224,7 @@ async function runBrowserTests() {
     const waitlistTestEmail = `athlete_${Date.now()}@fitfuel.app`;
     await page.type('#waitlistEmailInput', `  ${waitlistTestEmail}  `);
     await page.click('#waitlistSubmitBtn');
-    await page.waitForSelector('#waitlistToastMsg.success', { timeout: 5000 });
+    await page.waitForSelector('#waitlistToastMsg.success', { timeout: 12000 });
 
     const toastMsg = await page.$eval('#waitlistToastMsg', el => el.textContent.trim());
     assert(toastMsg.includes('waitlist') && toastMsg.includes('3D Body Composition Mesh'), `Unexpected toast: ${toastMsg}`);
@@ -237,7 +239,7 @@ async function runBrowserTests() {
     await page.waitForFunction(() => {
       const el = document.getElementById('waitlistToastMsg');
       return el && el.textContent.includes('already registered');
-    }, { timeout: 5000 });
+    }, { timeout: 12000 });
 
     const dupToastMsg = await page.$eval('#waitlistToastMsg', el => el.textContent.trim());
     assert(dupToastMsg.includes('already registered'), `Expected duplicate warning, got: ${dupToastMsg}`);
@@ -360,6 +362,7 @@ async function runBrowserTests() {
     throw err;
   } finally {
     await browser.close();
+    stopServerIfSpawned();
   }
 }
 

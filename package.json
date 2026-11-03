@@ -6,7 +6,10 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node tests/run_all_tests.js",
+    "test:unit": "node tests/anthropometrics.test.js && node tests/feature_engine.test.js",
+    "test:e2e": "node tests/verify_merged_gym_features.js && node tests/feature_engine_browser.test.js && node tests/beta_access_e2e.test.js"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const { ensureServerRunning, stopServerIfSpawned } = require('./server_helper.js');
 
 async function testMergedFeatures() {
+  await ensureServerRunning();
   console.log('=== VERIFYING MERGED GYM FEATURES & BETA ACCESS CONTROL ===\n');
 
   const browser = await puppeteer.launch({
@@ -176,6 +178,7 @@ async function testMergedFeatures() {
     process.exit(1);
   } finally {
     await browser.close();
+    stopServerIfSpawned();
   }
 }
 
