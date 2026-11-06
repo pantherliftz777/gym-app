@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   FITFUEL DESIGN TOKENS & DUAL-THEME ENGINE
+   ========================================================================== */
+
+/* DARK — signature high-energy theme */
+:root, [data-theme="dark"] {
+  --bg: #060709;
+  --surface: #0D0F12;
+  --surface-card: #14171F;
+  --surface-hover: #1A1E27;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --accent: #CEFF1A;
+  --accent-glow: rgba(206, 255, 26, 0.35);
+  --accent-soft: #E2F885;
+  --on-accent: #060709;
+  --text: #F5F7FA;
+  --text-muted: #8A93A0;
+  --protein: #2DD4BF;
+  --carbs: #F5B93B;
+  --fat: #F43F5E;
+  --warn: #F59E0B;
+  --danger: #EF4444;
+  --cone-glow: radial-gradient(circle at var(--cone-x, 50%) var(--cone-y, 45%), rgba(206,255,26,0.22) 0%, rgba(255,255,255,0.12) 25%, transparent 68%);
+}
+
+/* LIGHT — warm porcelain editorial sibling (NOT an inversion) */
+[data-theme="light"] {
+  --bg: #F6F5F0;
+  --surface: #FFFFFF;
+  --surface-card: #EFEFEA;
+  --surface-hover: #E7E7E0;
+  --border: rgba(10, 20, 15, 0.10);
+  --border-strong: rgba(10, 20, 15, 0.20);
+  --accent: #0E9F6E;
+  --accent-glow: rgba(14, 159, 110, 0.28);
+  --accent-soft: #D6F2E6;
+  --on-accent: #FFFFFF;
+  --text: #0B1410;
+  --text-muted: #5B665F;
+  --protein: #0D9488;
+  --carbs: #D97706;
+  --fat: #E11D48;
+  --warn: #D97706;
+  --danger: #DC2626;
+  --cone-glow: radial-gradient(circle at var(--cone-x, 50%) var(--cone-y, 45%), rgba(255, 235, 180, 0.45) 0%, rgba(14, 159, 110, 0.12) 30%, transparent 70%);
+}
+
+/* Custom Accent Overrides (Appearance Studio) */
+[data-accent="cyan"] {
+  --accent: #06B6D4;
+  --accent-glow: rgba(6, 182, 212, 0.35);
+  --accent-soft: #A5F3FC;
+  --on-accent: #060709;
+}
+[data-accent="crimson"] {
+  --accent: #F43F5E;
+  --accent-glow: rgba(244, 63, 94, 0.35);
+  --accent-soft: #FECDD3;
+  --on-accent: #FFFFFF;
+}
+[data-accent="emerald"] {
+  --accent: #10B981;
+  --accent-glow: rgba(16, 185, 129, 0.35);
+  --accent-soft: #A7F3D0;
+  --on-accent: #060709;
+}
+[data-accent="lime"] {
+  --accent: #CEFF1A;
+  --accent-glow: rgba(206, 255, 26, 0.35);
+  --accent-soft: #E2F885;
+  --on-accent: #060709;
+}
+
+:root {
+  --font-display: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, monospace;
+  --ease-spring: cubic-bezier(.16, 1, .3, 1);
+  --ease-smooth: cubic-bezier(.4, 0, .2, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 300ms;
+  --dur-slow: 600ms;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --cone-x: 50%;
+  --cone-y: 45%;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+}
+
+/* Global resets & typography */
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  transition: background-color 300ms var(--ease-smooth), color 300ms var(--ease-smooth);
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus Visible Requirement */
+:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 3px !important;
+}
+
+/* Angled Card Chamfered Corner */
+.angled-card-shape {
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+}
+
+/* Marquee infinite scroll */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Pulse animation for Demo Lifter button */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--accent-glow);
+    border-color: var(--accent);
+  }
+  50% {
+    box-shadow: 0 0 14px 2px var(--accent-glow);
+    border-color: var(--accent-soft);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.4s infinite var(--ease-smooth);
+}
+
+/* Volumetric Light Cone tracking */
+.hero-volumetric-cone {
+  background: var(--cone-glow);
+  transform: perspective(800px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 80ms var(--ease-smooth);
+  pointer-events: none;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+    overflow-x: auto;
+  }
+  .hero-volumetric-cone {
+    transform: none !important;
+    transition: none !important;
+  }
+}

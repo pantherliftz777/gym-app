@@ -171,7 +171,7 @@ let streakTracker = session ? store.get('streakTracker', {
   history: []
 };
 let activeChallengePlan = session ? store.get('activeChallengePlan', null) : null;
-let activeView = 'today';
+let activeView = 'landing';
 let selectedExerciseCategory = 'Legs';
 let selectedSubMuscle = 'All Legs';
 
@@ -1482,6 +1482,7 @@ document.addEventListener('click', e => {
 
 /* ---------- Navigation & Views Switching ---------- */
 const SECTION_VIEW_MAP = {
+  'landing': ['landing'],
   'overview': ['today'],
   'training': ['exercise-library', 'challenge', 'starting-load', 'workouts'],
   'nutrition': ['food-log', 'my-foods', 'meal-prep'],
@@ -2544,7 +2545,7 @@ if ($('#saveWeatherTempBtn')) {
 
 /* ================= VISUAL THEME ENGINE (LIGHT / DARK / SYSTEM) ================= */
 function getActiveThemeSetting() {
-  return localStorage.getItem('fitfuel_theme') || 'system';
+  return localStorage.getItem('fitfuel_theme') || 'light';
 }
 
 function applyTheme(themeChoice) {
@@ -2552,7 +2553,7 @@ function applyTheme(themeChoice) {
   localStorage.setItem('fitfuel_theme', themeChoice);
 
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const effectiveTheme = themeChoice === 'system' ? (prefersDark ? 'dark' : 'light') : themeChoice;
+  const effectiveTheme = themeChoice === 'dark' ? 'dark' : 'light';
 
   if (effectiveTheme === 'dark') {
     document.documentElement.classList.add('dark');

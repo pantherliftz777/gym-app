@@ -1,0 +1,216 @@
+{
+  "passed": 52,
+  "failed": 0,
+  "notTested": [],
+  "issues": [],
+  "logs": [
+    {
+      "status": "PASS",
+      "test": "GET /api/health returned 200 (Turso Cloud Connected)"
+    },
+    {
+      "status": "PASS",
+      "test": "Page load at desktop (1440x900) status 200"
+    },
+    {
+      "status": "PASS",
+      "test": "No horizontal overflow at desktop (1440x900)"
+    },
+    {
+      "status": "PASS",
+      "test": "Page load at tablet (768x1024) status 200"
+    },
+    {
+      "status": "PASS",
+      "test": "No horizontal overflow at tablet (768x1024)"
+    },
+    {
+      "status": "PASS",
+      "test": "Page load at mobile (390x844) status 200"
+    },
+    {
+      "status": "PASS",
+      "test": "No horizontal overflow at mobile (390x844)"
+    },
+    {
+      "status": "PASS",
+      "test": "Favicon link tag present in head"
+    },
+    {
+      "status": "PASS",
+      "test": "Manifest link tag present in head"
+    },
+    {
+      "status": "PASS",
+      "test": "Theme toggled to light and saved in localStorage"
+    },
+    {
+      "status": "PASS",
+      "test": "Hero volumetric light cone rendered"
+    },
+    {
+      "status": "PASS",
+      "test": "Cursor lerp loop active: --cone-x is -4.17px"
+    },
+    {
+      "status": "PASS",
+      "test": "Sponsor marquee pauses on hover"
+    },
+    {
+      "status": "PASS",
+      "test": "1RM Epley Calculator: 140kg x 8 reps = 177 kg"
+    },
+    {
+      "status": "PASS",
+      "test": "Hydration quick-log incremented: 1,250 ml -> 1,750 ml"
+    },
+    {
+      "status": "PASS",
+      "test": "Role tabs switch cleanly to Coaches portal"
+    },
+    {
+      "status": "PASS",
+      "test": "Mobile hamburger button toggles navigation drawer open"
+    },
+    {
+      "status": "PASS",
+      "test": "Auth modal opens on .auth-trigger click"
+    },
+    {
+      "status": "PASS",
+      "test": "Escape key dismisses auth modal"
+    },
+    {
+      "status": "PASS",
+      "test": "POST /api/auth/register created user (qa_test_1793990431241@fitfuel.app) with token"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/auth/me validated active session"
+    },
+    {
+      "status": "PASS",
+      "test": "POST /api/auth/logout invalidated token"
+    },
+    {
+      "status": "PASS",
+      "test": "Token replay rejected with 401 Unauthorized after logout"
+    },
+    {
+      "status": "PASS",
+      "test": "POST /api/auth/login rejected wrong password with 401"
+    },
+    {
+      "status": "PASS",
+      "test": "POST /api/auth/register rejected duplicate email gracefully (no 500)"
+    },
+    {
+      "status": "PASS",
+      "test": "Instant Demo Lifter redirected to: http://localhost:3000/dashboard.html"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-today' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-food-log' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-exercise-library' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-tracking' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-starting-load' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-posture' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-body-analysis' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-ai-coach' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-features' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-activity' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-wearables' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-meal-prep' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-customization' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-my-foods' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-profile' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-challenge' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view '#view-admin' rendered and visible"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard sidebar width is constrained (250px)"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard view-today has full content rendered (3714.15625px)"
+    },
+    {
+      "status": "PASS",
+      "test": "No oversized SVGs or unconstrained logo paths (logo: 0px)"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/features returned 200 (expected 200 / 403)"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/data returned 401 (expected 401 / 403)"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/beta-features returned 200 (expected 200 / 403)"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/plans returned 401 (expected 401 / 403)"
+    },
+    {
+      "status": "PASS",
+      "test": "GET /api/admin/stats returned 403 (expected 401 / 403)"
+    },
+    {
+      "status": "PASS",
+      "test": "Service Worker is registered and controlling scope"
+    }
+  ]
+}
