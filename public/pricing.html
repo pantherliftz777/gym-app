@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FitFuel Pricing &mdash; Simple, Transparent Performance Tiers</title>
+  <meta name="description" content="Choose the perfect FitFuel tier for your goals: Core Free, Pro Lifter, Coach, or Commercial Facility.">
+
+  <!-- Anti-flicker Theme Script -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('fitfuel_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <!-- Typography: Syne & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Favicon & PWA Web Manifest -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#060709">
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="/styles.css?v=2.0.0">
+</head>
+<body>
+
+  <!-- ================= TOPBAR NAVBAR ================= -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="brand-wrap" aria-label="FitFuel Home">
+        <div class="brand-symbol">
+          <svg viewBox="0 0 24 24"><path d="M4 14L16 4V12L24 10L12 24V16L4 14Z"/></svg>
+        </div>
+        <span class="brand-text">Fit<span>Fuel</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main Navigation">
+        <a href="/product.html" class="nav-link">Features</a>
+        <a href="/index.html#bentoGrid" class="nav-link">Programs</a>
+        <a href="/pricing.html" class="nav-link active">Pricing</a>
+        <a href="/index.html#rolesSection" class="nav-link">Coaches</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-theme-toggle" id="themeToggleBtn" aria-label="Toggle Theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark</span>
+        </button>
+
+        <button class="btn-ghost demo-lifter-trigger">
+          Try Demo Lifter
+        </button>
+
+        <button class="btn-primary auth-trigger">
+          Start Free
+        </button>
+
+        <button class="mobile-nav-toggle" id="mobileNavBtn" aria-label="Open Navigation">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= PRICING HERO ================= -->
+  <section class="section-wrap light-stage" style="padding-top: 150px; text-align: center;" data-light="pricing-hero">
+    <div class="volumetric-cone" aria-hidden="true">
+      <div class="cone-core"></div>
+      <div class="cone-ambient"></div>
+    </div>
+
+    <div class="hero-eyebrow">SIMPLE &bull; TRANSPARENT &bull; NO SURPRISES</div>
+    <h1 class="hero-heading" style="font-size: clamp(2.4rem, 4.8vw, 4.4rem);">
+      Invest in Strength &amp; Longevity
+    </h1>
+    <p class="hero-subhead">
+      Every plan comes with full offline PWA capability, zero tracking bloat, and cancel-anytime freedom.
+    </p>
+
+    <!-- Monthly / Yearly Billing Toggle -->
+    <div class="pricing-toggle-wrap">
+      <span class="pricing-billing-label active" data-billing="monthly">Monthly Billing</span>
+      <div class="billing-switch" id="pricingSwitch" title="Toggle Yearly Billing">
+        <div class="billing-knob"></div>
+      </div>
+      <span class="pricing-billing-label" data-billing="yearly">Yearly Billing</span>
+      <span class="badge-discount">SAVE 20%</span>
+    </div>
+  </section>
+
+  <!-- ================= 4 PRICING CARDS ================= -->
+  <section class="section-wrap" style="padding-top: 0;">
+    <div class="pricing-grid">
+      <!-- Tier 1: Core Free -->
+      <div class="pricing-card spotlight-card">
+        <div>
+          <h3 class="plan-tier-name">Core Free</h3>
+          <p style="font-size: 0.88rem; color: var(--muted);">Essential daily fitness logging</p>
+          <div class="plan-price-wrap">
+            <span class="plan-price">$0</span>
+            <span class="plan-period">/ forever</span>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="plan-check">&#10003;</span> Full workout &amp; set logging</li>
+            <li><span class="plan-check">&#10003;</span> 120+ exercise animated library</li>
+            <li><span class="plan-check">&#10003;</span> Manual macro &amp; calorie targets</li>
+            <li><span class="plan-check">&#10003;</span> 1-tap hydration wave tracker</li>
+            <li><span class="plan-check">&#10003;</span> Offline PWA background sync</li>
+          </ul>
+        </div>
+        <button class="btn-ghost auth-trigger" style="width: 100%;">Get Started</button>
+      </div>
+
+      <!-- Tier 2: Pro Lifter (Most Popular) -->
+      <div class="pricing-card spotlight-card featured">
+        <span class="featured-pill">Most Popular</span>
+        <div>
+          <h3 class="plan-tier-name">Pro Lifter</h3>
+          <p style="font-size: 0.88rem; color: var(--muted);">AI intelligence for serious athletes</p>
+          <div class="plan-price-wrap">
+            <span class="plan-price" data-monthly-price="$9.99" data-yearly-price="$7.99">$9.99</span>
+            <span class="plan-period">/ month</span>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="plan-check">&#10003;</span> <strong>Everything in Core Free</strong></li>
+            <li><span class="plan-check">&#10003;</span> Context-aware AI Coach Chat</li>
+            <li><span class="plan-check">&#10003;</span> <strong>AI Meal Photo Scanner</strong> (Gemini)</li>
+            <li><span class="plan-check">&#10003;</span> MediaPipe camera posture feedback</li>
+            <li><span class="plan-check">&#10003;</span> 3D anthropometric body fat scans</li>
+          </ul>
+        </div>
+        <button class="btn-primary auth-trigger" style="width: 100%;">Start 14-Day Free Trial</button>
+      </div>
+
+      <!-- Tier 3: Coach -->
+      <div class="pricing-card spotlight-card">
+        <div>
+          <h3 class="plan-tier-name">Coach</h3>
+          <p style="font-size: 0.88rem; color: var(--muted);">Scale your personal training business</p>
+          <div class="plan-price-wrap">
+            <span class="plan-price" data-monthly-price="$29.99" data-yearly-price="$23.99">$29.99</span>
+            <span class="plan-period">/ month</span>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="plan-check">&#10003;</span> Manage up to 15 active clients</li>
+            <li><span class="plan-check">&#10003;</span> Async video form review tool</li>
+            <li><span class="plan-check">&#10003;</span> Nutrition compliance heatmaps</li>
+            <li><span class="plan-check">&#10003;</span> Custom routine periodization</li>
+          </ul>
+        </div>
+        <button class="btn-ghost auth-trigger" style="width: 100%;">Join as Coach</button>
+      </div>
+
+      <!-- Tier 4: Facility -->
+      <div class="pricing-card spotlight-card">
+        <div>
+          <h3 class="plan-tier-name">Facility</h3>
+          <p style="font-size: 0.88rem; color: var(--muted);">Commercial gym operational system</p>
+          <div class="plan-price-wrap">
+            <span class="plan-price" data-monthly-price="$99" data-yearly-price="$79">$99</span>
+            <span class="plan-period">/ month</span>
+          </div>
+          <ul class="plan-features-list">
+            <li><span class="plan-check">&#10003;</span> Dynamic turnstile QR code entry</li>
+            <li><span class="plan-check">&#10003;</span> Live gym floor crowd heatmap</li>
+            <li><span class="plan-check">&#10003;</span> Equipment maintenance ticketing</li>
+            <li><span class="plan-check">&#10003;</span> Facility KPI &amp; retention stats</li>
+          </ul>
+        </div>
+        <button class="btn-ghost auth-trigger" style="width: 100%;">Contact Sales</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DETAILED FEATURE COMPARISON TABLE ================= -->
+  <section class="section-wrap">
+    <div class="section-header">
+      <div class="section-eyebrow">FEATURE MATRIX</div>
+      <h2 class="section-title">Compare Plan Capabilities</h2>
+    </div>
+
+    <div class="comparison-table-wrap">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Core Free</th>
+            <th>Pro Lifter ($9.99)</th>
+            <th>Coach ($29.99)</th>
+            <th>Facility ($99+)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Workout &amp; Set Logging</td>
+            <td>&#10003; Unlimited</td>
+            <td>&#10003; Unlimited</td>
+            <td>&#10003; Unlimited</td>
+            <td>&#10003; Unlimited</td>
+          </tr>
+          <tr>
+            <td>120+ Biomechanical Exercise Library</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+          </tr>
+          <tr>
+            <td>Offline PWA Background Sync</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+          </tr>
+          <tr>
+            <td>AI Meal Photo Scanner (Gemini Vision)</td>
+            <td>&mdash;</td>
+            <td>&#10003; Unlimited</td>
+            <td>&#10003; Unlimited</td>
+            <td>&#10003; Unlimited</td>
+          </tr>
+          <tr>
+            <td>MediaPipe Camera Posture &amp; Depth</td>
+            <td>&mdash;</td>
+            <td>&#10003; On-Device</td>
+            <td>&#10003; On-Device</td>
+            <td>&#10003; On-Device</td>
+          </tr>
+          <tr>
+            <td>Context-Aware AI Coach Chat</td>
+            <td>&mdash;</td>
+            <td>&#10003; Full Context</td>
+            <td>&#10003; Full Context</td>
+            <td>&#10003; Full Context</td>
+          </tr>
+          <tr>
+            <td>3D Anthropometric Body Fat Scans</td>
+            <td>&mdash;</td>
+            <td>&#10003; Monthly Scans</td>
+            <td>&#10003; All Clients</td>
+            <td>&#10003; All Members</td>
+          </tr>
+          <tr>
+            <td>Client Roster Management</td>
+            <td>&mdash;</td>
+            <td>&mdash;</td>
+            <td>&#10003; Up to 15 Clients</td>
+            <td>&#10003; Unlimited</td>
+          </tr>
+          <tr>
+            <td>Dynamic Turnstile QR Gateway</td>
+            <td>&mdash;</td>
+            <td>&mdash;</td>
+            <td>&mdash;</td>
+            <td>&#10003; 30s Rotating</td>
+          </tr>
+          <tr>
+            <td>Live Gym Floor Crowd Heatmap</td>
+            <td>&mdash;</td>
+            <td>&mdash;</td>
+            <td>&mdash;</td>
+            <td>&#10003; Multi-Zone</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ACCORDION ================= -->
+  <section class="section-wrap" id="faq">
+    <div class="section-header">
+      <div class="section-eyebrow">COMMON QUESTIONS</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-accordion">
+      <div class="faq-item open">
+        <button class="faq-question">
+          <span>Can I really use FitFuel without internet in an underground gym?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Yes! FitFuel is engineered as an offline-first Progressive Web App (PWA). All exercise databases, video demos, and workout templates are cached locally in your browser's IndexedDB. When you log sets or meals underground, they queue locally and automatically sync to Turso Cloud SQLite the moment you regain cellular or Wi-Fi signal.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>How does the AI Meal Photo Scanner estimate my portions?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          When you snap a photo of your plate, FitFuel compresses the image and queries Gemini 2.0 Flash Vision using a structured JSON schema. The model identifies discrete ingredients (e.g., grilled chicken breast, jasmine rice, steamed broccoli) and estimates realistic volumetric portions, converting them into exact protein, carb, fat, and calorie counts for one-tap food logging.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Is my video stored when using the MediaPipe camera form checker?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          No. Absolutely zero video or camera frames leave your device. The MediaPipe machine learning model runs locally on your smartphone or laptop GPU via WebAssembly and WebGL. Only numerical joint angles (e.g. knee flexion angle: 88&deg;) are measured in real time.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Can personal trainers manage more than 15 clients?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Yes. The base Coach tier includes 15 active client slots. Additional client packs can be added dynamically at $2/client/month directly through the Stripe customer billing portal.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>How can I cancel or change my plan?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          You can upgrade, downgrade, or cancel your subscription at any time with one click inside your account settings. There are no lock-in contracts or cancellation penalties.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA & FOOTER ================= -->
+  <section class="section-wrap" style="padding-top: 20px;">
+    <div class="cta-banner light-stage" data-light="cta">
+      <div class="volumetric-cone" aria-hidden="true"><div class="cone-core"></div></div>
+      <div class="cta-banner-content">
+        <h2 class="section-title">Start Elevating Your Training Today</h2>
+        <p class="section-desc" style="margin-bottom: 28px;">Instant 1-click access to the full dashboard with zero credit card required.</p>
+        <button class="btn-primary demo-lifter-trigger">🚀 Launch Instant Demo Lifter</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <a href="/" class="brand-wrap">
+          <div class="brand-symbol"><svg viewBox="0 0 24 24"><path d="M4 14L16 4V12L24 10L12 24V16L4 14Z"/></svg></div>
+          <span class="brand-text">Fit<span>Fuel</span></span>
+        </a>
+        <p class="footer-col-desc">Front-facing athletic intelligence platform of FitFuel.</p>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Pages</h4>
+        <ul class="footer-links-list">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/product.html">Features</a></li>
+          <li><a href="/dashboard.html" class="demo-lifter-trigger">Dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Legal &amp; Privacy</h4>
+        <ul class="footer-links-list">
+          <li><a href="/FITFUEL_COMPREHENSIVE_GUIDE.md">Technical Specification</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Theme</h4>
+        <button class="btn-theme-toggle" style="margin-top: 8px;">
+          <span class="theme-icon">🌙</span> <span class="theme-text">Toggle Theme</span>
+        </button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FitFuel &bull; FitFuel Performance Technologies.</span>
+    </div>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div class="auth-overlay" id="authOverlay" aria-hidden="true">
+    <div class="auth-modal-card light-stage">
+      <div class="volumetric-cone" style="--cone-size: 420px;" aria-hidden="true"><div class="cone-core"></div></div>
+      <button class="auth-close-btn" id="authCloseBtn" aria-label="Close Modal">&times;</button>
+      <div style="text-align: center; margin-bottom: 24px; position: relative; z-index: 2;">
+        <h3 style="font-size: 1.6rem;">FitFuel Access</h3>
+        <p style="font-size: 0.88rem; color: var(--muted);">Launch the full dashboard</p>
+      </div>
+      <button type="button" class="btn-auth-submit demo-lifter-trigger" style="position: relative; z-index: 2;">
+        🚀 Instant Demo Lifter
+      </button>
+    </div>
+  </div>
+
+  <script src="/app.js?v=2.0.0"></script>
+</body>
+</html>

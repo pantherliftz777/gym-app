@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FitFuel Features &mdash; Full Product Intelligence Deep Dive</title>
+  <meta name="description" content="Explore every technical module of FitFuel: Scientific nutrition equations, live workout tracking, MediaPipe form checks, and turnstile access.">
+
+  <!-- Anti-flicker Theme Script -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('fitfuel_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <!-- Typography: Syne & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Favicon & PWA Web Manifest -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#060709">
+
+  <!-- Shared FitFuel Styles -->
+  <link rel="stylesheet" href="/styles.css?v=2.0.0">
+</head>
+<body>
+
+  <!-- ================= TOPBAR NAVBAR ================= -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="brand-wrap" aria-label="FitFuel Home">
+        <div class="brand-symbol">
+          <svg viewBox="0 0 24 24"><path d="M4 14L16 4V12L24 10L12 24V16L4 14Z"/></svg>
+        </div>
+        <span class="brand-text">Fit<span>Fuel</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main Navigation">
+        <a href="/product.html" class="nav-link active">Features</a>
+        <a href="/index.html#bentoGrid" class="nav-link">Programs</a>
+        <a href="/pricing.html" class="nav-link">Pricing</a>
+        <a href="/index.html#rolesSection" class="nav-link">Coaches</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-theme-toggle" id="themeToggleBtn" aria-label="Toggle Theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark</span>
+        </button>
+
+        <button class="btn-ghost demo-lifter-trigger">
+          Try Demo Lifter
+        </button>
+
+        <button class="btn-primary auth-trigger">
+          Start Free
+        </button>
+
+        <button class="mobile-nav-toggle" id="mobileNavBtn" aria-label="Open Navigation">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= PRODUCT HERO ================= -->
+  <section class="section-wrap light-stage" style="padding-top: 150px; text-align: center;" data-light="product-hero">
+    <div class="volumetric-cone" aria-hidden="true">
+      <div class="cone-core"></div>
+      <div class="cone-ambient"></div>
+    </div>
+
+    <div class="hero-eyebrow">DEEP TECHNICAL SPECIFICATION</div>
+    <h1 class="hero-heading" style="font-size: clamp(2.4rem, 4.5vw, 4.2rem);">
+      Engineered Down to the Gram &amp; Joint Angle
+    </h1>
+    <p class="hero-subhead">
+      Explore the mathematical equations, computer vision architectures, and cloud sync pipelines powering FitFuel.
+    </p>
+  </section>
+
+  <!-- ================= PRODUCT LAYOUT WITH STICKY SUB-NAV ================= -->
+  <div class="section-wrap" style="padding-top: 0;">
+    <div class="product-layout">
+      <!-- Sticky Left Sub-Nav (Scroll-Spy) -->
+      <aside class="product-sticky-nav" aria-label="Feature Quick Navigation">
+        <a href="#nutrition" class="product-nav-item active">1. Nutrition Engine</a>
+        <a href="#mealScanner" class="product-nav-item">2. AI Meal Scanner</a>
+        <a href="#training" class="product-nav-item">3. Workout &amp; Overload</a>
+        <a href="#formAi" class="product-nav-item">4. MediaPipe Form AI</a>
+        <a href="#bodyScan" class="product-nav-item">5. 3D Body Composition</a>
+        <a href="#coach" class="product-nav-item">6. AI Coach Engine</a>
+        <a href="#gymOps" class="product-nav-item">7. Gym Ops &amp; QR Entry</a>
+        <a href="#dashboards" class="product-nav-item">8. Live Dashboard Views</a>
+        <a href="#privacy" class="product-nav-item">9. Data Privacy &amp; GDPR</a>
+      </aside>
+
+      <!-- Content Area -->
+      <main class="product-content-area">
+
+        <!-- 1. Nutrition Engine -->
+        <section class="product-feature-section spotlight-card light-stage" id="nutrition">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge">Included in: Core Free &bull; Pro Lifter</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">Scientific Energy &amp; Macro Balance</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Calculates Basal Metabolic Rate using the validated Mifflin-St Jeor equation, modified with real-world activity multipliers (TDEE). Dynamically shifts target grams based on whether the lifter's goal is Hypertrophy (+300 kcal), Cutting (-500 kcal), or Body Recomposition.
+              </p>
+              <div class="formula-box">
+                // Mifflin-St Jeor Equation<br>
+                BMR (Men)   = 10 &times; Weight(kg) + 6.25 &times; Height(cm) - 5 &times; Age + 5<br>
+                BMR (Women) = 10 &times; Weight(kg) + 6.25 &times; Height(cm) - 5 &times; Age - 161<br>
+                TDEE = BMR &times; ActivityFactor (1.2 to 1.9)
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/athlete_hydration.png" alt="Hydration & Macros" style="margin: 0 auto; max-height: 220px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. AI Meal Scanner -->
+        <section class="product-feature-section spotlight-card light-stage" id="mealScanner">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge" style="border-color: var(--accent); color: var(--accent);">Included in: Pro Lifter ($9.99/mo)</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">Gemini 2.0 Flash Meal Photo Scanner</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Snap or upload any meal photo. The image is compressed to WebP and routed via a secure server gateway to Gemini 2.0 Flash Vision, parsing complex food plates into discrete items with gram weights, calories, and P/C/F splits.
+              </p>
+              <div class="formula-box">
+                POST /api/ai/analyze-meal<br>
+                Response: { meal_name: "Grilled Salmon &amp; Quinoa", calories: 580, protein: 42g, carbs: 48g, fat: 14g }
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/meal_prep_container.png" alt="Meal Photo AI" style="margin: 0 auto; max-height: 200px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Workout & Overload -->
+        <section class="product-feature-section spotlight-card light-stage" id="training">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge">Included in: Core Free &bull; All Tiers</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">Progressive Overload &amp; Starting Weights</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Features over 120 biomechanically verified exercise demos. Conservative starting weight ceilings protect beginners from injury, while dynamic RPE tracking suggests micro-load bumps (+2.5kg) when Rate of Perceived Exertion stays below 7.
+              </p>
+              <div class="formula-box">
+                // Epley 1RM Formula &amp; Load Recalibration<br>
+                Estimated_1RM = Weight &times; (1 + Reps / 30)<br>
+                Working_Load_Ceiling = Bodyweight &times; MovementTierRatio &times; ExperienceMultiplier
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/exercise_bench.png" alt="Exercise Tracker" style="margin: 0 auto; max-height: 200px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. MediaPipe Form AI -->
+        <section class="product-feature-section spotlight-card light-stage" id="formAi">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge" style="border-color: var(--accent); color: var(--accent);">Included in: Pro Lifter ($9.99/mo)</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">On-Device MediaPipe Joint Angle Estimation</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Runs 33-point skeletal landmark detection directly inside your browser via WebAssembly. Monitors parallel depth on squats (hip crease below knee joint) and alerts against dangerous lumbar spine flexion (butt wink).
+              </p>
+              <div class="formula-box">
+                Depth_Check: HipAngle(Y_hip &gt; Y_knee)<br>
+                Spine_Check: LumbarAngle &lt; 15&deg; safe variance<br>
+                Privacy: Zero video bytes transmitted to cloud
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/exercise_squat_female.png" alt="MediaPipe Squat Analysis" style="margin: 0 auto; max-height: 200px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. 3D Body Composition -->
+        <section class="product-feature-section spotlight-card light-stage" id="bodyScan">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge" style="border-color: var(--accent); color: var(--accent);">Included in: Pro Lifter ($9.99/mo)</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">3D Anthropometrics &amp; US Navy Body Fat</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Calculates true cross-sectional circumference of chest, waist, and hips utilizing Ramanujan's elliptical perimeter equations. Computes clinical Waist-to-Hip (WHR) and Waist-to-Height (WHtR) health risk ratios.
+              </p>
+              <div class="formula-box">
+                // U.S. Navy Body Fat (Men)<br>
+                %BF = 86.010 &times; log10(waist - neck) - 70.041 &times; log10(height) + 36.76<br>
+                Ramanujan Perimeter &approx; &pi; [3(a+b) - &radic;((3a+b)(a+3b))]
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/hero_athlete_front.png" alt="Body Composition" style="margin: 0 auto; max-height: 220px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. AI Coach Engine -->
+        <section class="product-feature-section spotlight-card light-stage" id="coach">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div>
+            <span class="tier-badge" style="border-color: var(--accent); color: var(--accent);">Included in: Pro Lifter ($9.99/mo)</span>
+            <h2 style="font-size: 2rem; margin: 12px 0;">Context-Aware Generative AI Coach</h2>
+            <p style="color: var(--muted); margin-bottom: 16px;">
+              Unlike generic ChatGPT wrappers, FitFuel AI Coach feeds off your live database session: it knows your morning bodyweight curve, daily protein deficits, and previous set volumes before you even ask a question.
+            </p>
+            <div class="formula-box">
+              Injected Context: { athlete: "Jordan Davis", streak: 14, protein_delta: -18g, recent_PR: "Deadlift 180kg", aches: "left shoulder" }<br>
+              Generates customized 4/5/6-day periodized resistance routines.
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Gym Ops & QR Entry -->
+        <section class="product-feature-section spotlight-card light-stage" id="gymOps">
+          <div class="volumetric-cone" style="--cone-size: 550px;" aria-hidden="true"><div class="cone-core"></div></div>
+          <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+              <span class="tier-badge">Included in: Commercial Facility ($99+/mo)</span>
+              <h2 style="font-size: 2rem; margin: 12px 0;">Turnstile QR Entry &amp; Live Crowd Meters</h2>
+              <p style="color: var(--muted); margin-bottom: 16px;">
+                Dynamic cryptographic time-based barcodes rotate every 30 seconds to block unauthorized badge sharing. Live floor occupancy heatmaps help members avoid peak rush hours.
+              </p>
+              <div class="formula-box">
+                Turnstile Auth: HMAC-SHA256(userId + timestamp + facilitySecret)<br>
+                Occupancy: BLE Beacon Signal Density &plus; Check-In Flow Velocity
+              </div>
+            </div>
+            <div style="width: 240px; flex-shrink: 0; text-align: center;">
+              <img src="/images/cutouts/role_facility_turnstile.png" alt="Facility Turnstiles" style="margin: 0 auto; max-height: 200px;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. Live Dashboard Views -->
+        <section class="product-feature-section spotlight-card" id="dashboards">
+          <h2 style="font-size: 2rem; margin-bottom: 12px;">Direct Access to Live Dashboard Views</h2>
+          <p style="color: var(--muted); margin-bottom: 24px;">
+            Click any module below to launch directly into the functioning dashboard application:
+          </p>
+          <div class="dash-preview-grid">
+            <a href="/dashboard.html#view-today" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">⚡</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Today's Health Command</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">Macro rings, hydration &amp; streak</p>
+            </a>
+            <a href="/dashboard.html#view-food-log" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">🥗</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Food Log &amp; Scanner</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">Meal slots &amp; barcode lookup</p>
+            </a>
+            <a href="/dashboard.html#view-exercise-library" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">🏋️</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Workout &amp; Exercises</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">120+ animated exercise demos</p>
+            </a>
+            <a href="/dashboard.html#view-posture" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">📷</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">AI Posture &amp; Depth</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">MediaPipe joint angle camera</p>
+            </a>
+            <a href="/dashboard.html#view-body-analysis" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">📐</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">3D Body Composition</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">Anthropometric tape &amp; fat %</p>
+            </a>
+            <a href="/dashboard.html#view-admin" class="dash-preview-card demo-lifter-trigger">
+              <div class="dash-screen-icon">⚙️</div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Enterprise Admin</h4>
+              <p style="font-size: 0.85rem; color: var(--muted);">Members, beta flags &amp; stats</p>
+            </a>
+          </div>
+        </section>
+
+        <!-- 9. Data Privacy & GDPR -->
+        <section class="product-feature-section spotlight-card" id="privacy">
+          <h2 style="font-size: 2rem; margin-bottom: 12px;">Zero Tracking Bloat &bull; Full Data Sovereignty</h2>
+          <p style="color: var(--muted); margin-bottom: 16px;">
+            FitFuel and FitFuel operate on an edge-distributed Turso SQLite infrastructure. Your camera stream is never uploaded. You have full self-service access to export your data or execute a permanent GDPR Article 17 erasure with one click.
+          </p>
+          <div class="formula-box">
+            POST /api/user/erase-data &bull; Permanently scrubs weights, logs, photos &amp; biometrics.<br>
+            POST /api/user/delete-account &bull; Revokes crypto tokens &amp; purges identity.
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= FINAL CTA & FOOTER ================= -->
+  <section class="section-wrap" style="padding-top: 40px;">
+    <div class="cta-banner light-stage" data-light="cta">
+      <div class="volumetric-cone" aria-hidden="true"><div class="cone-core"></div></div>
+      <div class="cta-banner-content">
+        <h2 class="section-title">Experience the Power of FitFuel</h2>
+        <p class="section-desc" style="margin-bottom: 28px;">Test the full platform in your browser with 1 click.</p>
+        <button class="btn-primary demo-lifter-trigger">🚀 Launch Instant Demo Lifter</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <a href="/" class="brand-wrap">
+          <div class="brand-symbol"><svg viewBox="0 0 24 24"><path d="M4 14L16 4V12L24 10L12 24V16L4 14Z"/></svg></div>
+          <span class="brand-text">Fit<span>Fuel</span></span>
+        </a>
+        <p class="footer-col-desc">Front-facing athletic intelligence platform of FitFuel.</p>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Features</h4>
+        <ul class="footer-links-list">
+          <li><a href="#nutrition">Nutrition Engine</a></li>
+          <li><a href="#training">Workout Tracker</a></li>
+          <li><a href="#formAi">Form Checker</a></li>
+          <li><a href="#bodyScan">3D Body Composition</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Pages</h4>
+        <ul class="footer-links-list">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/pricing.html">Pricing</a></li>
+          <li><a href="/dashboard.html" class="demo-lifter-trigger">Dashboard</a></li>
+          <li><a href="/FITFUEL_COMPREHENSIVE_GUIDE.md">Technical Guide (MD)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-links-title">Theme</h4>
+        <button class="btn-theme-toggle" style="margin-top: 8px;">
+          <span class="theme-icon">🌙</span> <span class="theme-text">Toggle Theme</span>
+        </button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FitFuel &bull; FitFuel Performance Technologies.</span>
+    </div>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div class="auth-overlay" id="authOverlay" aria-hidden="true">
+    <div class="auth-modal-card light-stage">
+      <div class="volumetric-cone" style="--cone-size: 420px;" aria-hidden="true"><div class="cone-core"></div></div>
+      <button class="auth-close-btn" id="authCloseBtn" aria-label="Close Modal">&times;</button>
+      <div style="text-align: center; margin-bottom: 24px; position: relative; z-index: 2;">
+        <h3 style="font-size: 1.6rem;">FitFuel Access</h3>
+        <p style="font-size: 0.88rem; color: var(--muted);">Launch the full dashboard</p>
+      </div>
+      <button type="button" class="btn-auth-submit demo-lifter-trigger" style="position: relative; z-index: 2;">
+        🚀 Instant Demo Lifter
+      </button>
+    </div>
+  </div>
+
+  <script src="/app.js?v=2.0.0"></script>
+</body>
+</html>

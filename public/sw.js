@@ -1,9 +1,11 @@
 /* FitFuel Service Worker v8.1.0 — Offline Gym Mode with Cache-Busting & Immediate Invalidation */
-const CACHE_NAME = 'fitfuel-cache-v8.1.0-merged';
+const CACHE_NAME = 'fitfuel-cache-v9.0.0-production';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/dashboard.html',
   '/styles.css',
+  '/dashboard-styles.css',
   '/fitfuel.js',
   '/api.js',
   '/data.js',
@@ -26,6 +28,7 @@ const STATIC_ASSETS = [
   '/modules/social-card.js',
   '/modules/mediapipe-posture.js',
   '/modules/hero-carousel.js',
+  '/modules/landing-controller.js',
   '/assets/hero-carousel/hero-01.png',
   '/assets/hero-carousel/hero-02.png',
   '/assets/hero-carousel/hero-03.png',
