@@ -15,8 +15,8 @@ async function testMergedFeatures() {
   await page.setViewport({ width: 1280, height: 900 });
 
   try {
-    // 1. Visit homepage
-    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded' });
+    // 1. Visit dashboard
+    await page.goto('http://localhost:3000/dashboard.html', { waitUntil: 'domcontentloaded' });
     await new Promise(r => setTimeout(r, 800));
 
     // Clear any admin flags so we test as a standard unapproved regular member
@@ -165,7 +165,7 @@ async function testMergedFeatures() {
       const res = await fetch('/sw.js');
       return await res.text();
     });
-    assert(swContent.includes('fitfuel-cache-v8.1.0-merged') || swContent.includes('fitfuel-cache-v8.0.0-merged'), 'Service worker has bumped cache version');
+    assert(swContent.includes('fitfuel-cache-v9.0.0-production') || swContent.includes('fitfuel-cache-v8.1.0-merged') || swContent.includes('fitfuel-cache-v8.0.0-merged'), 'Service worker has bumped cache version');
     assert(swContent.includes('Deleting obsolete cache'), 'Service worker deletes obsolete caches');
     console.log('  [PASS] Service worker cache-busting and obsolete cache deletion verified.');
 

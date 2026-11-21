@@ -2564,8 +2564,13 @@ const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p === '/') p = '/index.html';
+  if (p === '/dashboard' || p === '/dashboard/') p = '/dashboard.html';
+  if (p === '/catalog' || p === '/catalog/' || p === '/feature-catalog' || p === '/feature-catalog/') p = '/fitfuel-feature-catalog.html';
   if (p === '/features' || p === '/features/') p = '/features.html';
-  if (p.startsWith('/app/')) p = '/index.html';
+  if (p === '/app/admin/beta-approvals' || p === '/app/admin/beta-approvals/' || p === '/admin/beta-approvals' || p === '/admin/beta-approvals/') {
+    p = '/admin-beta-approvals.html';
+  }
+  if (p === '/app' || p === '/app/' || p.startsWith('/app/')) p = '/dashboard.html';
   let file = path.normalize(path.join(ROOT, 'public', p));
   if (!fs.existsSync(file)) file = path.normalize(path.join(ROOT, p));
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }

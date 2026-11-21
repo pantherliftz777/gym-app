@@ -37,8 +37,8 @@ async function runE2ETests() {
   }
 
   try {
-    // 1. Visit homepage
-    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded' });
+    // 1. Visit dashboard
+    await page.goto('http://localhost:3000/dashboard.html', { waitUntil: 'domcontentloaded' });
     await delay(1000);
     assert(await page.$('#view-today.active') !== null, 'FitFuel app initial load renders view-today as active');
 

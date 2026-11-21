@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitFuel — Athletic Intelligence Platform</title>
+    <meta name="description" content="FitFuel is the premier athletic intelligence platform uniting nutrition, strength tracking, computer vision form checking, and gym access." />
+
+    <!-- Anti-flicker Theme Script: Applied Before First Paint -->
+    <script>
+      (function() {
+        const saved = localStorage.getItem('fitfuel_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', saved);
+      })();
+    </script>
+
+    <!-- Typography: Syne (Display) & Outfit (Body) & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Favicon & PWA Web Manifest -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#060709">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

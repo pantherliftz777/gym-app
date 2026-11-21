@@ -284,7 +284,7 @@
     } else if (window.parent && window.parent !== window) {
       window.parent.postMessage({ type: 'FITFUEL_NAVIGATE', view: 'today' }, '*');
     } else {
-      window.location.href = '/';
+      window.location.href = '/dashboard.html';
     }
   }
 

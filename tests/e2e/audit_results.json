@@ -50,7 +50,7 @@
     },
     {
       "status": "PASS",
-      "test": "Cursor lerp loop active: --cone-x is -4.17px"
+      "test": "Cursor lerp loop active: --cone-x is -4.90px"
     },
     {
       "status": "PASS",
@@ -82,7 +82,7 @@
     },
     {
       "status": "PASS",
-      "test": "POST /api/auth/register created user (qa_test_1793990431241@fitfuel.app) with token"
+      "test": "POST /api/auth/register created user (qa_test_1795276210202@fitfuel.app) with token"
     },
     {
       "status": "PASS",
