@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitFuel — Complete Feature Catalog 2026</title>
+<style>
+  /* =====================================================
+     FITFUEL FEATURE CATALOG — PRINTABLE / PDF-READY
+     ===================================================== */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --live: #16C79A;
+    --live-bg: #0a2e22;
+    --live-light: #d0fdf0;
+    --beta: #f59e0b;
+    --beta-bg: #2e1f00;
+    --beta-light: #fef3c7;
+    --soon: #818cf8;
+    --soon-bg: #1e1a3a;
+    --soon-light: #e0e7ff;
+    --bg: #0d0d0f;
+    --card: #16161a;
+    --card2: #1c1c22;
+    --border: #2a2a35;
+    --text: #f1f1f3;
+    --muted: #9ca3af;
+    --accent: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── TOP HEADER ── */
+  .doc-header {
+    background: linear-gradient(135deg, #0d0d0f 0%, #1a0a2e 50%, #0d1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 40px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(124,58,237,0.18) 0%, transparent 70%);
+  }
+  .doc-logo {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #7c3aed, #16C79A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+  .doc-subtitle {
+    color: var(--muted); font-size: 15px; margin-top: 6px; position: relative;
+  }
+  .doc-meta {
+    display: flex; justify-content: center; gap: 32px; margin-top: 24px;
+    position: relative; flex-wrap: wrap;
+  }
+  .doc-meta-item {
+    text-align: center;
+  }
+  .doc-meta-num {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(135deg, #7c3aed, #16C79A);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .doc-meta-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  /* ── DOWNLOAD BAR ── */
+  .download-bar {
+    display: flex; justify-content: center; align-items: center;
+    gap: 12px; padding: 16px 40px;
+    background: var(--card); border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.2s; text-decoration: none;
+  }
+  .btn-pdf { background: #7c3aed; color: #fff; }
+  .btn-pdf:hover { background: #6d28d9; transform: translateY(-1px); }
+  .btn-print { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
+  .btn-print:hover { background: var(--border); }
+  .download-info { font-size: 13px; color: var(--muted); }
+
+  /* ── FILTER TABS ── */
+  .filter-wrap {
+    display: flex; justify-content: center; gap: 10px;
+    padding: 28px 40px 10px; flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 20px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: 1.5px solid var(--border); background: var(--card);
+    color: var(--muted); transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover { color: #fff; border-color: var(--accent); background: var(--accent); }
+  .tab-btn[data-tab="live"].active { background: var(--live); border-color: var(--live); }
+  .tab-btn[data-tab="beta"].active { background: var(--beta); border-color: var(--beta); color: #000; }
+  .tab-btn[data-tab="coming-soon"].active { background: var(--soon); border-color: var(--soon); }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    padding: 32px 40px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .pill-live { background: var(--live-bg); color: var(--live); border: 1px solid var(--live); }
+  .pill-beta { background: var(--beta-bg); color: var(--beta); border: 1px solid var(--beta); }
+  .pill-soon { background: var(--soon-bg); color: var(--soon); border: 1px solid var(--soon); }
+  .section-title { font-size: 22px; font-weight: 800; }
+  .section-desc { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+    padding: 0 40px 10px;
+  }
+
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  }
+  .feat-card.live:hover { border-color: var(--live); box-shadow: 0 12px 32px rgba(22,199,154,0.15); }
+  .feat-card.beta:hover { border-color: var(--beta); box-shadow: 0 12px 32px rgba(245,158,11,0.15); }
+  .feat-card.soon:hover { border-color: var(--soon); box-shadow: 0 12px 32px rgba(129,140,248,0.15); }
+
+  .feat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .feat-card.live::before { background: var(--live); }
+  .feat-card.beta::before { background: var(--beta); }
+  .feat-card.soon::before { background: var(--soon); }
+
+  .card-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600; color: var(--muted);
+    background: var(--card2); padding: 3px 8px; border-radius: 6px;
+  }
+  .card-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-live { background: var(--live-bg); color: var(--live); border: 1px solid rgba(22,199,154,0.3); }
+  .badge-beta { background: var(--beta-bg); color: var(--beta); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-soon { background: var(--soon-bg); color: var(--soon); border: 1px solid rgba(129,140,248,0.3); }
+
+  .card-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 10px;
+  }
+  .icon-live { background: var(--live-bg); border: 1px solid rgba(22,199,154,0.2); }
+  .icon-beta { background: var(--beta-bg); border: 1px solid rgba(245,158,11,0.2); }
+  .icon-soon { background: var(--soon-bg); border: 1px solid rgba(129,140,248,0.2); }
+
+  .card-name { font-size: 16px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
+  .card-tagline { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.4; }
+  .card-desc { font-size: 13px; color: #c0c0cc; line-height: 1.6; margin-bottom: 12px; }
+
+  .card-meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
+  .meta-chip {
+    font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px;
+    background: var(--card2); color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .meta-chip.cat { color: #a78bfa; background: #1e1a3a; }
+
+  .card-reason {
+    font-size: 11px; color: var(--beta); background: var(--beta-bg);
+    padding: 7px 10px; border-radius: 8px; margin-top: 8px;
+    border-left: 2px solid var(--beta); line-height: 1.4;
+  }
+  .card-eta {
+    font-size: 11px; color: var(--soon); background: var(--soon-bg);
+    padding: 7px 10px; border-radius: 8px; margin-top: 8px;
+    border-left: 2px solid var(--soon); line-height: 1.4;
+  }
+  .card-slots {
+    font-size: 11px; color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── ROUTE CHIP ── */
+  .card-route {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #60a5fa;
+    background: #0d1f33; padding: 3px 8px; border-radius: 6px;
+  }
+
+  /* ── LEGEND / SUMMARY TABLE ── */
+  .summary-section {
+    margin: 40px 40px 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .summary-title {
+    padding: 18px 24px; font-size: 16px; font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .summary-table {
+    width: 100%; border-collapse: collapse;
+  }
+  .summary-table th {
+    padding: 12px 20px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--muted); text-align: left;
+    background: var(--card2); border-bottom: 1px solid var(--border);
+  }
+  .summary-table td {
+    padding: 12px 20px; font-size: 13px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: var(--card2); }
+  .tbl-num { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; }
+  .tbl-name { font-weight: 600; }
+  .tbl-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #60a5fa; }
+  .tbl-route { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .tbl-tier { }
+
+  /* ── LEGEND BOXES ── */
+  .legend-wrap {
+    display: flex; justify-content: center; gap: 24px;
+    padding: 28px 40px 10px; flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: 12px; min-width: 200px;
+  }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    text-align: center; padding: 40px; color: var(--muted); font-size: 12px;
+    margin-top: 40px; border-top: 1px solid var(--border);
+  }
+  .doc-footer strong { color: var(--text); }
+
+  /* ── ICONS (emoji map) ── */
+  .ic::before { margin-right: 2px; }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    body { background: #fff; color: #111; }
+    .download-bar { display: none; }
+    .filter-wrap { display: none; }
+    .doc-header { background: #f8f8ff; border-bottom: 2px solid #ddd; color: #111; }
+    .doc-logo { -webkit-text-fill-color: #5b21b6; }
+    .feat-card { background: #fff; border: 1px solid #ddd; break-inside: avoid; }
+    .card-desc { color: #444; }
+    .summary-table td, .summary-table th { border-color: #ddd; }
+    .summary-section { border-color: #ddd; background: #fff; }
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── HIDDEN CLASS ── */
+  .hidden { display: none !important; }
+
+  /* ── ICONS as emoji ── */
+  .emoji { font-size: 22px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════ -->
+<header class="doc-header">
+  <div class="doc-logo">⚡ FitFuel</div>
+  <div class="doc-subtitle">Complete Feature Catalog &amp; Access Tier Guide — November 2026</div>
+  <div class="doc-meta">
+    <div class="doc-meta-item">
+      <div class="doc-meta-num">33</div>
+      <div class="doc-meta-label">Total Features</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-num" style="background:linear-gradient(135deg,#16C79A,#16C79A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">25</div>
+      <div class="doc-meta-label">Live / Ready</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-num" style="background:linear-gradient(135deg,#f59e0b,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4</div>
+      <div class="doc-meta-label">Beta / Gated</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-num" style="background:linear-gradient(135deg,#818cf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4</div>
+      <div class="doc-meta-label">Coming Soon</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-num">5</div>
+      <div class="doc-meta-label">Categories</div>
+    </div>
+  </div>
+</header>
+
+<!-- DOWNLOAD BAR -->
+<div class="download-bar">
+  <button class="btn-download btn-pdf" onclick="downloadPDF()">📥 Download as PDF</button>
+  <button class="btn-download btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  <span class="download-info">Use <strong>Print → Save as PDF</strong> in your browser for the best quality</span>
+</div>
+
+<!-- LEGEND -->
+<div class="legend-wrap">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--live);"></div>
+    <div>
+      <div style="font-weight:700;font-size:14px;">🟢 Live</div>
+      <div style="font-size:12px;color:var(--muted);">Open to all users. No registration required.</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--beta);"></div>
+    <div>
+      <div style="font-weight:700;font-size:14px;">🟡 Beta</div>
+      <div style="font-size:12px;color:var(--muted);">Visible to all. Admin approval required to unlock.</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--soon);"></div>
+    <div>
+      <div style="font-weight:700;font-size:14px;">🔵 Coming Soon</div>
+      <div style="font-size:12px;color:var(--muted);">Interactive sandbox. Admin approval for early preview.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER TABS -->
+<div class="filter-wrap">
+  <button class="tab-btn active" data-tab="all" onclick="filterTab('all',this)">All (35)</button>
+  <button class="tab-btn" data-tab="live" onclick="filterTab('live',this)">🟢 Live (27)</button>
+  <button class="tab-btn" data-tab="beta" onclick="filterTab('beta',this)">🟡 Beta (4)</button>
+  <button class="tab-btn" data-tab="coming-soon" onclick="filterTab('coming-soon',this)">🔵 Coming Soon (4)</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 1: LIVE FEATURES (25)
+══════════════════════════════════════════════════════ -->
+<div class="section-header" data-section="live">
+  <div class="section-pill pill-live">● Live</div>
+  <div class="section-title">Live Features — Open to Everyone</div>
+  <div class="section-desc">27 features · No registration needed</div>
+</div>
+
+<div class="cards-grid" id="grid-live">
+
+  <!-- 1 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#01</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🏋️</div>
+    <div class="card-name">Live Workout Tracker &amp; Logging</div>
+    <div class="card-tagline">Log sets, reps, and RPE with automated rest timers &amp; progressive overload</div>
+    <div class="card-desc">Real-time exercise logging with progressive overload metrics, PR tracking, and custom workout routines. Tracks Volume, Intensity, and RPE per session with automatic rest timer countdowns.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/workouts</span>
+      <span class="meta-chip">ID: workoutTracking</span>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#02</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📖</div>
+    <div class="card-name">Exercise Library &amp; Demonstrations</div>
+    <div class="card-tagline">1,300+ animated exercise movement guides with muscle &amp; equipment filters</div>
+    <div class="card-desc">Comprehensive exercise directory featuring high-definition demonstration animations, primary/secondary muscle targets, and equipment alternatives. Filter by muscle group, equipment type, or movement pattern.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/exercises</span>
+      <span class="meta-chip">ID: exerciseLibrary</span>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#03</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🧮</div>
+    <div class="card-name">Starting Load &amp; 1RM Calculator</div>
+    <div class="card-tagline">Scientific 1RM estimation &amp; warm-up pyramid sets using Brzycki &amp; Epley equations</div>
+    <div class="card-desc">Calculates precise starting weights and ramp-up sets for Barbell Squat, Bench Press, Deadlift, and Overhead Press using the Brzycki (1RM = w × 36/(37-r)) and Epley formulas.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/starting-load</span>
+      <span class="meta-chip">ID: startingLoad</span>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#04</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🏆</div>
+    <div class="card-name">Gym Challenges &amp; Streaks</div>
+    <div class="card-tagline">30-day streak challenges and progressive consistency milestones</div>
+    <div class="card-desc">Gamified workout consistency engine with milestone badges, weekly habit streaks, and goal-oriented programs. Tracks consecutive gym days, monthly volume targets, and personal records.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/challenge</span>
+      <span class="meta-chip">ID: gymChallenges</span>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#05</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🍽️</div>
+    <div class="card-name">Daily Nutrition &amp; Calorie Tracking</div>
+    <div class="card-tagline">Log meals, micronutrients, water intake, and daily macro targets</div>
+    <div class="card-desc">Complete daily nutrition log tracking breakfast, lunch, dinner, snacks, and water balance with instant macro feedback. Visual macro rings update in real-time as you log each meal.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/nutrition</span>
+      <span class="meta-chip">ID: foodLogging</span>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#06</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📊</div>
+    <div class="card-name">Macro &amp; Calorie Engine</div>
+    <div class="card-tagline">Tailored TDEE and macro splits for bulking, cutting, or maintenance</div>
+    <div class="card-desc">Scientifically calibrated macronutrient and caloric target generator based on Mifflin-St Jeor equations. Generates protein, carb, and fat gram targets for Bulk / Cut / Maintain goals.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/nutrition</span>
+      <span class="meta-chip">ID: macroCalculator</span>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#07</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">➕</div>
+    <div class="card-name">Custom Foods &amp; Recipe Database</div>
+    <div class="card-tagline">Create custom nutritional recipes and grocery barcode entries</div>
+    <div class="card-desc">Save custom recipes, ingredients, and nutritional profiles directly into your local offline-first food database. Supports gram-precise custom entries with full macro breakdown stored persistently.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/my-foods</span>
+      <span class="meta-chip">ID: customFoods</span>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#08</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🤖</div>
+    <div class="card-name">FitFuel AI Coach &amp; Assistant</div>
+    <div class="card-tagline">Interactive 24/7 fitness advice, workout generation, and form tips</div>
+    <div class="card-desc">Intelligent coaching assistant powered by sports medicine models for workout modifications, plateau busting, and recovery tips. Chat interface with contextual memory within session.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/ai-coach</span>
+      <span class="meta-chip">ID: aiCoach</span>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#09</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📈</div>
+    <div class="card-name">Body Weight &amp; Progress Analytics</div>
+    <div class="card-tagline">Visual volume progression, weigh-in charts, and PR badges</div>
+    <div class="card-desc">Interactive time-series charts displaying body weight trends, weekly training volume, and personal record milestones. Data visualized across 7-day, 30-day, and 90-day windows.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/tracking</span>
+      <span class="meta-chip">ID: progressTracking</span>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#10</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📏</div>
+    <div class="card-name">3D Anthropometric Body Scan</div>
+    <div class="card-tagline">Navy tape circumferences, body fat %, and lean mass analysis</div>
+    <div class="card-desc">ISO 8559-1 anatomical circumferences, Ramanujan elliptical tape model, and U.S. Navy Hodgdon-Beckett body composition calculations. Tracks 10+ body measurements with trend history.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/body-analysis</span>
+      <span class="meta-chip">ID: bodyAnalysis</span>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#11</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📍</div>
+    <div class="card-name">Outdoor GPS Activity Tracker</div>
+    <div class="card-tagline">Live run/walk mapping, split pace HUD, and elevation telemetry</div>
+    <div class="card-desc">Real-time outdoor GPS route mapping, live pace telemetry, and calorie expenditure calculation for runs and walks. Displays split pace per kilometer and cumulative elevation gain.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/activity</span>
+      <span class="meta-chip">ID: gpsActivity</span>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#12</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">💳</div>
+    <div class="card-name">Gym Membership &amp; Plans</div>
+    <div class="card-tagline">Personal, Pro, and Elite gym membership tier management</div>
+    <div class="card-desc">Manage your gym membership subscription, billing preferences, and facility access permissions. Supports Personal, Pro, and Elite tier plans with respective access controls.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/profile</span>
+      <span class="meta-chip">ID: memberPlans</span>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#13</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📅</div>
+    <div class="card-name">Gym Attendance &amp; Check-in History</div>
+    <div class="card-tagline">Track gym visit consistency, check-in history, and weekly streaks</div>
+    <div class="card-desc">Automated turnstile check-in logs, monthly gym attendance records, and streak consistency analytics. View your longest streak, monthly frequency, and hour-of-day visit heatmap.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/profile</span>
+      <span class="meta-chip">ID: attendanceTracking</span>
+    </div>
+  </div>
+
+  <!-- 14 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#14</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📲</div>
+    <div class="card-name">Contactless QR Turnstile Entry</div>
+    <div class="card-tagline">Touchless gate access via your phone screen</div>
+    <div class="card-desc">Dynamic cryptographic time-based QR code for instant, badge-free gym check-in at front desk turnstiles. QR regenerates every 60 seconds to prevent screenshot replay attacks.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/pass</span>
+      <span class="meta-chip">ID: qrEntry</span>
+    </div>
+  </div>
+
+  <!-- 15 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#15</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🗓️</div>
+    <div class="card-name">Class Schedule &amp; Booking</div>
+    <div class="card-tagline">Reserve spots in Spin, HIIT, Yoga, and CrossFit sessions</div>
+    <div class="card-desc">Browse calendar schedules, view instructor bios, and reserve your spot with instant calendar sync. Supports Spin, HIIT, Yoga, CrossFit, and Pilates classes with waitlist management.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/classes</span>
+      <span class="meta-chip">ID: classBooking</span>
+    </div>
+  </div>
+
+  <!-- 16 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#16</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🛡️</div>
+    <div class="card-name">Admin Operations &amp; Beta Approvals</div>
+    <div class="card-tagline">Front-desk turnstile monitor, user complaints, and beta entitlements</div>
+    <div class="card-desc">Dedicated operations dashboard for staff to manage facility turnstiles, resolve complaints, and review beta applications. Includes Tester Feedback &amp; Reviews tab for collecting pros/cons from beta testers.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/admin/beta-approvals</span>
+      <span class="meta-chip">ID: adminPortal</span>
+    </div>
+  </div>
+
+  <!-- 17 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#17</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📋</div>
+    <div class="card-name">Daily Gym Planner &amp; Sub-Muscle Balancer</div>
+    <div class="card-tagline">Stratified round-robin muscle balancing with MET calorie burning</div>
+    <div class="card-desc">Custom daily workout planner with stratified round-robin sub-muscle group balancing. Select major muscle groups (Chest, Back, Legs, etc.) → reveals sub-muscle chips (Upper, Mid, Lower) → number stepper selects workout count → generates balanced 1-day plan. MET-based calorie calculation on completion. Single-day lifespan (auto-resets next day).</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/gym-planner</span>
+      <span class="meta-chip">ID: gymPlanner</span>
+    </div>
+  </div>
+
+  <!-- 18 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#18</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📸</div>
+    <div class="card-name">Glassmorphic Social PR Story Cards</div>
+    <div class="card-tagline">1080×1920 Instagram Story and X/Twitter achievement generator</div>
+    <div class="card-desc">High-resolution glassmorphic PR badge and workout summary card exporter for sharing personal records on social platforms. Generates 1080×1920 cards for Instagram Stories and Twitter/X posts with branded FitFuel design.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">👥 Community</span>
+      <span class="meta-chip card-route">/app/social-card</span>
+      <span class="meta-chip">ID: socialStoryCard</span>
+    </div>
+  </div>
+
+  <!-- 19 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#19</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📶</div>
+    <div class="card-name">Offline PWA &amp; Turso Cloud Sync</div>
+    <div class="card-tagline">Zero-signal gym basement resilience with offline background queue</div>
+    <div class="card-desc">Progressive Web App engine enabling full offline logging in basements, auto-reconnecting and syncing with Turso Cloud when signal returns. Service Worker v8.1.0 caches all critical assets for instant load.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🔧 Hardware</span>
+      <span class="meta-chip card-route">/app/profile</span>
+      <span class="meta-chip">ID: pwaOfflineSync</span>
+    </div>
+  </div>
+
+  <!-- 20 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#20</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">💧</div>
+    <div class="card-name">Interactive 12-Cup Hydration Tracker</div>
+    <div class="card-tagline">Tactile water balance tracking with persistent local synchronization</div>
+    <div class="card-desc">Interactive 12-cup water intake manager with tactile controls, hydration milestones, and daily fluid balance calculations. Cups fill visually as you log each glass. Resets daily with streak tracking.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/nutrition</span>
+      <span class="meta-chip">ID: hydrationTracker</span>
+    </div>
+  </div>
+
+  <!-- 21 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#21</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🔊</div>
+    <div class="card-name">Web Audio Cues &amp; Rest Timer</div>
+    <div class="card-tagline">Hands-free synthesized beeps, tempo metronome, and vocal rest warnings</div>
+    <div class="card-desc">Web Audio API real-time sound synthesizer providing countdown beeps, rep completion chimes (C5→E5→G5 arpeggio), and vocal speech intervals ("30 seconds remaining", "Rep 3"). Zero dependency — all tones generated algorithmically.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/workout</span>
+      <span class="meta-chip">ID: audioRestTimer</span>
+    </div>
+  </div>
+
+  <!-- 22 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#22</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🔄</div>
+    <div class="card-name">Exercise Equipment Engine &amp; Swaps</div>
+    <div class="card-tagline">Intelligent biomechanical movement swaps for crowded gym floors</div>
+    <div class="card-desc">Dynamic alternative exercise recommender that swaps barbell, dumbbell, cable, and machine movements based on equipment availability. Maintains same muscle targets and movement patterns while adapting to available gear.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/exercises</span>
+      <span class="meta-chip">ID: equipmentEngine</span>
+    </div>
+  </div>
+
+  <!-- 23 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#23</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🔒</div>
+    <div class="card-name">Enterprise Security &amp; Rate Limiting</div>
+    <div class="card-tagline">In-memory sliding-window request protection and payload sanitization</div>
+    <div class="card-desc">Sliding-window rate limiter protecting authentication endpoints and AI generation against abuse with strict payload filtering. Guards all /api/auth and /api/ai routes with per-IP throttling and XSS sanitization.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/admin</span>
+      <span class="meta-chip">ID: rateLimitingSecurity</span>
+    </div>
+  </div>
+
+  <!-- 24 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#24</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">📷</div>
+    <div class="card-name">AI Food Photo &amp; Meal Plate Vision</div>
+    <div class="card-tagline">Visual plate photo recognition for automated macronutrient auditing</div>
+    <div class="card-desc">Multimodal food photo classification identifying portions, macro distribution, and logging items directly into nutrition logs. Snap a photo of your plate — AI estimates calories, protein, carbs, fats per item.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/nutrition</span>
+      <span class="meta-chip">ID: foodScannerAi</span>
+    </div>
+  </div>
+
+  <!-- 25 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#25</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🎙️</div>
+    <div class="card-name">Interactive Voice Mode &amp; Coaching</div>
+    <div class="card-tagline">Live bidirectional voice dialogue for hands-free workout guidance</div>
+    <div class="card-desc">Bidirectional voice conversation engine: speak a question → Web Speech Recognition transcribes it → AI Coach generates a response → reply appears in chat bubble AND is spoken aloud via Speech Synthesis. Toggle voice on/off via mic button. Prefers Google / Samantha / Aaron natural voices at 1.1× speed.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">👥 Community</span>
+      <span class="meta-chip card-route">/app/ai-coach</span>
+      <span class="meta-chip">ID: voiceCoach</span>
+    </div>
+  </div>
+
+
+  <!-- 26 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#26</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">✨</div>
+    <div class="card-name">Volumetric Light Cone &amp; Kinetic Landing Showcase</div>
+    <div class="card-tagline">60 FPS requestAnimationFrame lerp cursor tracking with 3D mouse tilt cards</div>
+    <div class="card-desc">Interactive volumetric lighting physics simulation that tracks cursor coordinates with real-time bloom decay, accompanied by 3D mouse tilt cards, infinite partner marquee, and responsive viewport geometry.</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🎨 Appearance</span>
+      <span class="meta-chip card-route">/</span>
+      <span class="meta-chip">ID: volumetricLightCone</span>
+    </div>
+  </div>
+
+  <!-- 27 -->
+  <div class="feat-card live" data-tier="live">
+    <div class="card-top">
+      <span class="card-num">#27</span>
+      <span class="card-badge badge-live">● Live</span>
+    </div>
+    <div class="card-icon icon-live">🎨</div>
+    <div class="card-name">Dual-Theme Studio &amp; Chromatic Accent Swatches</div>
+    <div class="card-tagline">Zero-inversion Obsidian (#060709) &amp; Porcelain (#F6F5F0) themes with 4 performance accents</div>
+    <div class="card-desc">Dedicated appearance personalization studio supporting Signature Obsidian dark theme and Warm Porcelain editorial sibling theme with 4 dynamic chromatic accent swatches: Electric Neon Lime (#CEFF1A), Porcelain Emerald (#10B981), Cyber Cyan (#06B6D4), and Crimson Surge (#F43F5E).</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🎨 Appearance</span>
+      <span class="meta-chip card-route">/app/customization</span>
+      <span class="meta-chip">ID: appearanceStudio</span>
+    </div>
+  </div>
+
+</div><!-- /grid-live -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 2: BETA FEATURES (4)
+══════════════════════════════════════════════════════ -->
+<div class="section-header" data-section="beta">
+  <div class="section-pill pill-beta">◆ Beta</div>
+  <div class="section-title">Beta Features — Admin Approval Required</div>
+  <div class="section-desc">4 features · Register &amp; apply at /features</div>
+</div>
+
+<div class="cards-grid" id="grid-beta">
+
+  <!-- 26 -->
+  <div class="feat-card beta" data-tier="beta">
+    <div class="card-top">
+      <span class="card-num">#26</span>
+      <span class="card-badge badge-beta">◆ Beta</span>
+    </div>
+    <div class="card-icon icon-beta">📹</div>
+    <div class="card-name">AI Camera Form Checker</div>
+    <div class="card-tagline">Computer vision feedback on Squats, Deadlifts &amp; Bench</div>
+    <div class="card-desc">Pose estimation engine running locally on-device to track bar path, hip depth, and back rounding in real-time. Uses MediaPipe / TensorFlow.js landmark detection to flag form breakdowns with visual skeleton overlay and voice cues.</div>
+    <div class="card-reason">⚙️ <strong>Beta reason:</strong> Currently calibrated for Squats and Deadlifts. Bench press angle calibration is in closed beta review.</div>
+    <div class="card-slots">👥 Max beta slots: 20 testers</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/form-checker</span>
+      <span class="meta-chip">ID: formCorrectionAi</span>
+    </div>
+  </div>
+
+  <!-- 27 -->
+  <div class="feat-card beta" data-tier="beta">
+    <div class="card-top">
+      <span class="card-num">#27</span>
+      <span class="card-badge badge-beta">◆ Beta</span>
+    </div>
+    <div class="card-icon icon-beta">💬</div>
+    <div class="card-name">Coach 1-on-1 Messaging &amp; Booking</div>
+    <div class="card-tagline">Direct encrypted chat and private session bookings with personal trainers</div>
+    <div class="card-desc">Direct encrypted messaging, video form check submissions, and weekly check-in feedback from certified trainers. Book private sessions, submit workout videos for coach review, and receive personalized training feedback.</div>
+    <div class="card-reason">⚙️ <strong>Beta reason:</strong> End-to-end Signal protocol encryption keys undergoing multi-device sync audit.</div>
+    <div class="card-slots">👥 Max beta slots: 25 testers</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">👥 Community</span>
+      <span class="meta-chip card-route">/app/messages</span>
+      <span class="meta-chip">ID: trainerChat</span>
+    </div>
+  </div>
+
+  <!-- 28 -->
+  <div class="feat-card beta" data-tier="beta">
+    <div class="card-top">
+      <span class="card-num">#28</span>
+      <span class="card-badge badge-beta">◆ Beta</span>
+    </div>
+    <div class="card-icon icon-beta">🎤</div>
+    <div class="card-name">Voice-Dictated Recipe Studio</div>
+    <div class="card-tagline">Freeform voice-dictated recipe builder with instant macro calculations &amp; PDF export</div>
+    <div class="card-desc">Hands-free voice recognition parses spoken culinary instructions, extracts ingredient names, gram quantities, and units (grams/ml/scoops/tbsp), computes full macros, and exports a branded nutrition PDF. Saves all recipes to an In-App Recipe Vault with persistent PDF download buttons.</div>
+    <div class="card-reason">⚙️ <strong>Beta reason:</strong> Web Speech API microphone acoustic model undergoing accent calibration across Indian English, British, and American dialects.</div>
+    <div class="card-slots">👥 Max beta slots: 30 testers</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/recipe-studio</span>
+      <span class="meta-chip">ID: voiceRecipeStudio</span>
+    </div>
+  </div>
+
+  <!-- 29 -->
+  <div class="feat-card beta" data-tier="beta">
+    <div class="card-top">
+      <span class="card-num">#29</span>
+      <span class="card-badge badge-beta">◆ Beta</span>
+    </div>
+    <div class="card-icon icon-beta">📦</div>
+    <div class="card-name">Product Barcode Scanner &amp; Vault</div>
+    <div class="card-tagline">Camera scanner with manual barcode digit entry &amp; OpenFoodFacts telemetry</div>
+    <div class="card-desc">High-speed camera barcode recognizer paired with a manual 13-digit numeric fallback keypad. Fetches product details from OpenFoodFacts API — nutrition facts, allergens, ingredients, and Nutri-Score grade — and logs macros directly into your food diary.</div>
+    <div class="card-reason">⚙️ <strong>Beta reason:</strong> Barcode continuous autofocus camera stream being optimized for low-light gym floor conditions.</div>
+    <div class="card-slots">👥 Max beta slots: 30 testers</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/barcode-scanner</span>
+      <span class="meta-chip">ID: barcodeScanner</span>
+    </div>
+  </div>
+
+</div><!-- /grid-beta -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 3: COMING SOON (4)
+══════════════════════════════════════════════════════ -->
+<div class="section-header" data-section="coming-soon">
+  <div class="section-pill pill-soon">◉ Coming Soon</div>
+  <div class="section-title">Coming Soon — Interactive Sandboxes Available</div>
+  <div class="section-desc">4 features · Preview sandbox · Admin approval for early access</div>
+</div>
+
+<div class="cards-grid" id="grid-soon">
+
+  <!-- 30 -->
+  <div class="feat-card soon" data-tier="coming-soon">
+    <div class="card-top">
+      <span class="card-num">#30</span>
+      <span class="card-badge badge-soon">◉ Soon</span>
+    </div>
+    <div class="card-icon icon-soon">⌚</div>
+    <div class="card-name">Apple Watch &amp; Whoop BLE Sync</div>
+    <div class="card-tagline">Real-time heart rate zone broadcast on gym cardio screens</div>
+    <div class="card-desc">Direct Bluetooth Low Energy (BLE) and HealthKit integration to stream live heart rate and recovery metrics. Displays active heart rate zone (Fat Burn / Cardio / Peak) on gym cardio displays and in-app HUD.</div>
+    <div class="card-eta">📅 <strong>ETA:</strong> Q2 2026 — Apple HealthKit &amp; Whoop API developer verification is currently in staging review.</div>
+    <div class="card-slots">👥 Max early-access slots: 20</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🔧 Hardware</span>
+      <span class="meta-chip card-route">/app/wearables</span>
+      <span class="meta-chip">ID: wearableSync</span>
+    </div>
+  </div>
+
+  <!-- 31 -->
+  <div class="feat-card soon" data-tier="coming-soon">
+    <div class="card-top">
+      <span class="card-num">#31</span>
+      <span class="card-badge badge-soon">◉ Soon</span>
+    </div>
+    <div class="card-icon icon-soon">🛒</div>
+    <div class="card-name">AI Grocery &amp; Meal Prep Generator</div>
+    <div class="card-tagline">Instant high-protein grocery lists matched to your macros</div>
+    <div class="card-desc">Generates weekly meal prep recipes matching exact gram protein/carb/fat targets with 1-click Instacart grocery export. AI plans 7 days of meals within your calorie budget, accounting for dietary restrictions and preferences.</div>
+    <div class="card-eta">📅 <strong>ETA:</strong> Q3 2026 — Local dietary constraint recommendation model undergoing accuracy verification.</div>
+    <div class="card-slots">👥 Max early-access slots: 20</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🥗 Nutrition</span>
+      <span class="meta-chip card-route">/app/meal-prep</span>
+      <span class="meta-chip">ID: mealPlanAi</span>
+    </div>
+  </div>
+
+  <!-- 32 -->
+  <div class="feat-card soon" data-tier="coming-soon">
+    <div class="card-top">
+      <span class="card-num">#32</span>
+      <span class="card-badge badge-soon">◉ Soon</span>
+    </div>
+    <div class="card-icon icon-soon">🧊</div>
+    <div class="card-name">3D Body Composition Mesh</div>
+    <div class="card-tagline">3D body mesh avatar and circumference calipers via mobile LiDAR</div>
+    <div class="card-desc">Transforms a 10-second turntable video into a millimeter-accurate 3D body avatar with virtual tape measurement comparisons. Tracks physique changes month-over-month with side-by-side 3D overlays.</div>
+    <div class="card-eta">📅 <strong>ETA:</strong> Q3 2026 — Requires WebGPU NeRF avatar reconstruction engine currently in development.</div>
+    <div class="card-slots">👥 Max early-access slots: 15</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">💪 Workout</span>
+      <span class="meta-chip card-route">/app/body-scan</span>
+      <span class="meta-chip">ID: bodyScan3D</span>
+    </div>
+  </div>
+
+  <!-- 33 -->
+  <div class="feat-card soon" data-tier="coming-soon">
+    <div class="card-top">
+      <span class="card-num">#33</span>
+      <span class="card-badge badge-soon">◉ Soon</span>
+    </div>
+    <div class="card-icon icon-soon">🗺️</div>
+    <div class="card-name">Live Gym Occupancy Heatmap</div>
+    <div class="card-tagline">Real-time equipment occupancy heatmaps and squat rack wait times</div>
+    <div class="card-desc">Privacy-preserving BLE beacon heatmaps showing current gym floor traffic and equipment availability. See real-time squat rack wait times, bench availability, and cable machine queue length without leaving your desk.</div>
+    <div class="card-eta">📅 <strong>ETA:</strong> Q2 2026 — Hardware optical turnstile sensors are being deployed at gym locations.</div>
+    <div class="card-slots">👥 Max early-access slots: 25</div>
+    <div class="card-meta">
+      <span class="meta-chip cat">🏢 Membership</span>
+      <span class="meta-chip card-route">/app/crowd-meter</span>
+      <span class="meta-chip">ID: gymCrowdMeter</span>
+    </div>
+  </div>
+
+</div><!-- /grid-soon -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     QUICK-REFERENCE SUMMARY TABLE
+══════════════════════════════════════════════════════ -->
+<div class="summary-section">
+  <div class="summary-title">📋 Quick-Reference Index — All 35 Features</div>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Feature Name</th>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Tier</th>
+        <th>Route</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="tbl-num">01</td><td class="tbl-name">Live Workout Tracker &amp; Logging</td><td class="tbl-id">workoutTracking</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/workouts</td></tr>
+      <tr><td class="tbl-num">02</td><td class="tbl-name">Exercise Library &amp; Demonstrations</td><td class="tbl-id">exerciseLibrary</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/exercises</td></tr>
+      <tr><td class="tbl-num">03</td><td class="tbl-name">Starting Load &amp; 1RM Calculator</td><td class="tbl-id">startingLoad</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/starting-load</td></tr>
+      <tr><td class="tbl-num">04</td><td class="tbl-name">Gym Challenges &amp; Streaks</td><td class="tbl-id">gymChallenges</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/challenge</td></tr>
+      <tr><td class="tbl-num">05</td><td class="tbl-name">Daily Nutrition &amp; Calorie Tracking</td><td class="tbl-id">foodLogging</td><td>Nutrition</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/nutrition</td></tr>
+      <tr><td class="tbl-num">06</td><td class="tbl-name">Macro &amp; Calorie Engine</td><td class="tbl-id">macroCalculator</td><td>Nutrition</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/nutrition</td></tr>
+      <tr><td class="tbl-num">07</td><td class="tbl-name">Custom Foods &amp; Recipe Database</td><td class="tbl-id">customFoods</td><td>Nutrition</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/my-foods</td></tr>
+      <tr><td class="tbl-num">08</td><td class="tbl-name">FitFuel AI Coach &amp; Assistant</td><td class="tbl-id">aiCoach</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/ai-coach</td></tr>
+      <tr><td class="tbl-num">09</td><td class="tbl-name">Body Weight &amp; Progress Analytics</td><td class="tbl-id">progressTracking</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/tracking</td></tr>
+      <tr><td class="tbl-num">10</td><td class="tbl-name">3D Anthropometric Body Scan</td><td class="tbl-id">bodyAnalysis</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/body-analysis</td></tr>
+      <tr><td class="tbl-num">11</td><td class="tbl-name">Outdoor GPS Activity Tracker</td><td class="tbl-id">gpsActivity</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/activity</td></tr>
+      <tr><td class="tbl-num">12</td><td class="tbl-name">Gym Membership &amp; Plans</td><td class="tbl-id">memberPlans</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/profile</td></tr>
+      <tr><td class="tbl-num">13</td><td class="tbl-name">Gym Attendance &amp; Check-in History</td><td class="tbl-id">attendanceTracking</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/profile</td></tr>
+      <tr><td class="tbl-num">14</td><td class="tbl-name">Contactless QR Turnstile Entry</td><td class="tbl-id">qrEntry</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/pass</td></tr>
+      <tr><td class="tbl-num">15</td><td class="tbl-name">Class Schedule &amp; Booking</td><td class="tbl-id">classBooking</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/classes</td></tr>
+      <tr><td class="tbl-num">16</td><td class="tbl-name">Admin Operations &amp; Beta Approvals</td><td class="tbl-id">adminPortal</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/admin/beta-approvals</td></tr>
+      <tr><td class="tbl-num">17</td><td class="tbl-name">Daily Gym Planner &amp; Sub-Muscle Balancer</td><td class="tbl-id">gymPlanner</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/gym-planner</td></tr>
+      <tr><td class="tbl-num">18</td><td class="tbl-name">Glassmorphic Social PR Story Cards</td><td class="tbl-id">socialStoryCard</td><td>Community</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/social-card</td></tr>
+      <tr><td class="tbl-num">19</td><td class="tbl-name">Offline PWA &amp; Turso Cloud Sync</td><td class="tbl-id">pwaOfflineSync</td><td>Hardware</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/profile</td></tr>
+      <tr><td class="tbl-num">20</td><td class="tbl-name">Interactive 12-Cup Hydration Tracker</td><td class="tbl-id">hydrationTracker</td><td>Nutrition</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/nutrition</td></tr>
+      <tr><td class="tbl-num">21</td><td class="tbl-name">Web Audio Cues &amp; Rest Timer</td><td class="tbl-id">audioRestTimer</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/workout</td></tr>
+      <tr><td class="tbl-num">22</td><td class="tbl-name">Exercise Equipment Engine &amp; Swaps</td><td class="tbl-id">equipmentEngine</td><td>Workout</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/exercises</td></tr>
+      <tr><td class="tbl-num">23</td><td class="tbl-name">Enterprise Security &amp; Rate Limiting</td><td class="tbl-id">rateLimitingSecurity</td><td>Membership</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/admin</td></tr>
+      <tr><td class="tbl-num">24</td><td class="tbl-name">AI Food Photo &amp; Meal Plate Vision</td><td class="tbl-id">foodScannerAi</td><td>Nutrition</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/nutrition</td></tr>
+            <tr><td class="tbl-num">25</td><td class="tbl-name">Interactive Voice Mode &amp; Coaching</td><td class="tbl-id">voiceCoach</td><td>Community</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/ai-coach</td></tr>
+      <tr><td class="tbl-num">26</td><td class="tbl-name">Volumetric Light Cone &amp; Kinetic Landing Showcase</td><td class="tbl-id">volumetricLightCone</td><td>Appearance</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/</td></tr>
+      <tr><td class="tbl-num">27</td><td class="tbl-name">Dual-Theme Studio &amp; Chromatic Accent Swatches</td><td class="tbl-id">appearanceStudio</td><td>Appearance</td><td><span class="card-badge badge-live">● Live</span></td><td class="tbl-route">/app/customization</td></tr>
+      <tr><td class="tbl-num">28</td><td class="tbl-name">AI Camera Form Checker</td><td class="tbl-id">formCorrectionAi</td><td>Workout</td><td><span class="card-badge badge-beta">◆ Beta</span></td><td class="tbl-route">/app/form-checker</td></tr>
+      <tr><td class="tbl-num">29</td><td class="tbl-name">Coach 1-on-1 Messaging &amp; Booking</td><td class="tbl-id">trainerChat</td><td>Community</td><td><span class="card-badge badge-beta">◆ Beta</span></td><td class="tbl-route">/app/messages</td></tr>
+      <tr><td class="tbl-num">30</td><td class="tbl-name">Voice-Dictated Recipe Studio</td><td class="tbl-id">voiceRecipeStudio</td><td>Nutrition</td><td><span class="card-badge badge-beta">◆ Beta</span></td><td class="tbl-route">/app/recipe-studio</td></tr>
+      <tr><td class="tbl-num">31</td><td class="tbl-name">Product Barcode Scanner &amp; Vault</td><td class="tbl-id">barcodeScanner</td><td>Nutrition</td><td><span class="card-badge badge-beta">◆ Beta</span></td><td class="tbl-route">/app/barcode-scanner</td></tr>
+      <tr><td class="tbl-num">32</td><td class="tbl-name">Apple Watch &amp; Whoop BLE Sync</td><td class="tbl-id">wearableSync</td><td>Hardware</td><td><span class="card-badge badge-soon">◉ Soon</span></td><td class="tbl-route">/app/wearables</td></tr>
+      <tr><td class="tbl-num">33</td><td class="tbl-name">AI Grocery &amp; Meal Prep Generator</td><td class="tbl-id">mealPlanAi</td><td>Nutrition</td><td><span class="card-badge badge-soon">◉ Soon</span></td><td class="tbl-route">/app/meal-prep</td></tr>
+      <tr><td class="tbl-num">34</td><td class="tbl-name">3D Body Composition Mesh</td><td class="tbl-id">bodyScan3D</td><td>Workout</td><td><span class="card-badge badge-soon">◉ Soon</span></td><td class="tbl-route">/app/body-scan</td></tr>
+      <tr><td class="tbl-num">35</td><td class="tbl-name">Live Gym Occupancy Heatmap</td><td class="tbl-id">gymCrowdMeter</td><td>Membership</td><td><span class="card-badge badge-soon">◉ Soon</span></td><td class="tbl-route">/app/crowd-meter</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <strong>FitFuel Platform</strong> — Feature Catalog v2.0 &nbsp;·&nbsp; Generated: November 2026 &nbsp;·&nbsp;
+  35 features across Workout, Nutrition, Membership, Hardware &amp; Community categories<br>
+  <span style="margin-top:6px;display:block;">🌐 <strong>localhost:3000</strong> &nbsp;·&nbsp; Branch: <code>feature/gated-beta-approvals</code> &nbsp;·&nbsp; Database: Turso Cloud SQLite</span>
+</div>
+
+<script>
+  // ── FILTER TABS ──
+  function filterTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.feat-card');
+    const headers = document.querySelectorAll('.section-header');
+    const grids = document.querySelectorAll('.cards-grid');
+
+    cards.forEach(c => {
+      if (tab === 'all') {
+        c.classList.remove('hidden');
+      } else {
+        c.classList.toggle('hidden', c.dataset.tier !== tab);
+      }
+    });
+
+    // Show/hide section headers
+    headers.forEach(h => {
+      const section = h.dataset.section;
+      if (tab === 'all') {
+        h.classList.remove('hidden');
+      } else {
+        h.classList.toggle('hidden', section !== tab);
+      }
+    });
+
+    grids.forEach(g => {
+      const visibleCards = g.querySelectorAll('.feat-card:not(.hidden)');
+      g.classList.toggle('hidden', visibleCards.length === 0);
+    });
+  }
+
+  // ── DOWNLOAD PDF (via print dialog) ──
+  function downloadPDF() {
+    // Try to open print dialog which allows Save as PDF
+    const msg = document.createElement('div');
+    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5)';
+    msg.textContent = '🖨️ Opening print dialog — choose "Save as PDF" as destination';
+    document.body.appendChild(msg);
+    setTimeout(() => { document.body.removeChild(msg); window.print(); }, 800);
+  }
+
+  // ── KEYBOARD SHORTCUT: Ctrl+P already opens print ──
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      e.preventDefault(); downloadPDF();
+    }
+  });
+</script>
+</body>
+</html>
